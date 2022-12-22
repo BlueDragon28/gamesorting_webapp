@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS listRowsType(
 DROP TABLE IF EXISTS items;
 
 CREATE TABLE IF NOT EXISTS items(
-    ItemsID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    ItemID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     ListID BIGINT UNSIGNED NOT NULL, -- To wich list the item is own
     Name VARCHAR(300) NOT NULL, -- The name of the item
     URL VARCHAR(10000)
@@ -34,7 +34,7 @@ DROP TABLE IF EXISTS customRowsItems;
 
 CREATE TABLE IF NOT EXISTS customRowsItems(
     CustomRowsItemsID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    ItemsID BIGINT UNSIGNED NOT NULL, -- To wich list item this custom items is linked to
+    ItemID BIGINT UNSIGNED NOT NULL, -- To wich list item this custom items is linked to
     ListRowsTypeID BIGINT UNSIGNED NOT NULL, -- To wich list custom rows this custom items in linked to.
     Name VARCHAR(300) NOT NULL -- The name of the custom item
 );
