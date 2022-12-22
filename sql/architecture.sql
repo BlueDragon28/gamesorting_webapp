@@ -36,5 +36,5 @@ CREATE TABLE IF NOT EXISTS customRowsItems(
     CustomRowItemsID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     ItemID BIGINT UNSIGNED NOT NULL, -- To wich list item this custom items is linked to
     ListRowTypeID BIGINT UNSIGNED NOT NULL, -- To wich list custom rows this custom items in linked to.
-    Name VARCHAR(300) NOT NULL -- The name of the custom item
+    Value VARCHAR(300) NOT NULL -- The name of the custom item
 );
