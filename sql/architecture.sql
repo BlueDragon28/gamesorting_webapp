@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS listRowsType;
 
 CREATE TABLE IF NOT EXISTS listRowsType(
     ListRowsTypeID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    ListID BIGINT UNSIGNED NOT NULL,
     Name VARCHAR(300) NOT NULL, -- The name of the custom row
     Type VARCHAR(300) NOT NULL, -- The type of the custom row
     Position TINYINT UNSIGNED NOT NULL -- The position of the custom row
