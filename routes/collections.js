@@ -14,7 +14,6 @@ module.exports = (app) => {
             res.send("<h1>Failed to query collections</h1>");
         }
 
-        console.log(collections);
         res.render("collections/collectionsIndex.ejs", { collections });
     });
 };
