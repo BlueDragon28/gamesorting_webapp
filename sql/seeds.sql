@@ -1,11 +1,20 @@
 USE gamesorting_webapp;
 
+-- Insert data into collections table
+DELETE FROM collections;
+
+INSERT INTO collections(CollectionID, Name)
+VALUES
+    (1, "Games"),
+    (2, "Books"),
+    (3, "Movies");
+
 -- Insert data into the lists table
 DELETE FROM lists;
 
-INSERT INTO lists(ListID, Name)
+INSERT INTO lists(ListID, CollectionID, Name)
 VALUES
-    (1, "Games"), (2, "Books"), (3, "Movies");
+    (1, 1, "Played Games"), (2, 2, "Readed Books"), (3, 3, "Watched Movies");
 
 -- Insert data into items list
 DELETE FROM items;

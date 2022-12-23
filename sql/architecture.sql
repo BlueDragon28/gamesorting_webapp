@@ -1,10 +1,21 @@
 USE gamesorting_webapp;
 
--- This table hold the list of all the lists (game list, books list, etc)
+-- This table hold the list of collections, a collection hold one or many list inside.
+-- Each collections is based on a specific subject (ex: games, books, etc)
+DROP TABLE IF EXISTS collections;
+
+CREATE TABLE IF NOT EXISTS collections(
+    CollectionID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(300) NOT NULL -- The name of the collection
+);
+
+-- This table hold the list of all the lists of all collections.
+-- A list hold items of a specific section of a collection (ex: readed books, wanted books, etc)
 DROP TABLE IF EXISTS lists;
 
 CREATE TABLE IF NOT EXISTS lists(
     ListID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    CollectionID BIGINT UNSIGNED NOT NULL, -- To which collection the list linked.
     Name VARCHAR(300) NOT NULL -- The name of the list
 );
 
