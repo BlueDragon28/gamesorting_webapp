@@ -41,6 +41,8 @@ module.exports = {
             return null;
         }
 
-        return retrieveAllData(connection, table);
+        const queryData = await retrieveAllData(connection, table);
+        connection.close();
+        return queryData;
     }
 };
