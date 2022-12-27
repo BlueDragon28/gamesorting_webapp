@@ -1,5 +1,5 @@
 /*
-All the SQL interaction with the gamesorting_webapp SQL databases are made here.
+All the SQL interaction with the gamesorting_webapp SQL databases are made here
 */
 const mariadb = require("../sql/connection");
 const collections = require("./collections");
@@ -11,7 +11,7 @@ const Tables = {
 };
 
 /*
-Retrieving all the data of a specific table.
+Retrieving all the data of a specific table
 */
 async function retrieveAllData(connection, table, args) {
     if (!connection) {
@@ -36,7 +36,7 @@ async function retrieveAllData(connection, table, args) {
 }
 
 module.exports = {
-    // The enum of the SQL tables available.
+    // The enum of the SQL tables available
     ...Tables,
 
     /*

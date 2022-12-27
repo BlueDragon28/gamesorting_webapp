@@ -5,7 +5,7 @@ const strRetrieveAll = "SELECT CollectionID, Name FROM collections";
 
 module.exports = {
     /*
-    Return the list of items inside the collections SQL table.
+    Return the list of items inside the collections SQL table
     */
     find: async (connection) => {
         if (!connection) {

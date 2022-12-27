@@ -1,5 +1,5 @@
 /*
-Statement to query the lists available in a collection.
+Statement to query the lists available in a collection
 */
 function strRetrieveListsFromCollection(collectionID) {
     if (!collectionID ||
@@ -22,7 +22,7 @@ function strRetrieveListsFromCollection(collectionID) {
 
 module.exports = {
     /*
-    Returning the lists available inside a collection.
+    Returning the lists available inside a collection
     */
     find: async (connection, collectionID) => {
         if (!connection) {

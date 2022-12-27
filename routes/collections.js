@@ -5,7 +5,7 @@ const database = require("../models/gameSortingDB");
 
 module.exports = (app) => {
     /*
-    Entry to see the collections list.
+    Entry to see the collections list
     */
     app.get("/collections", async (req, res) => {
         const collections = await database.find(database.COLLECTIONS);
