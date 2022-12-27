@@ -44,7 +44,11 @@ module.exports = {
         let queryResult = null;
         try {
             queryResult = await connection.query(`SELECT Name FROM collections WHERE CollectionID = ${collectionID.toString()}`);
-            queryResult = queryResult[0].Name;
+            if (queryResult.length === 1) {
+                queryResult = queryResult[0].Name;
+            } else {
+                queryResult = null;
+            }
         } catch {
             console.error("Failed to get the name of a collection.");
         }
