@@ -24,6 +24,7 @@ module.exports = (app) => {
     app.get("/collections/new", (req, res) => {
         res.render("collections/new");
     });
+
     /*
     Entry to see the lists available inside a collection
     */
@@ -38,5 +39,21 @@ module.exports = (app) => {
         }
 
         res.render("collections/lists.ejs", { lists });
+    });
+
+    /*
+    Create a new collection
+    */
+    app.post("/collections", async (req, res) => {
+        const { name } = req.body;
+
+        const result = await database.new(database.COLLECTIONS, name);
+
+        if (!result) {
+            res.send("<h1>Failed to insert a new collection.");
+            return;
+        }
+
+        res.redirect("/collections");
     });
 };

@@ -3,6 +3,23 @@ Handling reading and writing of the collections SQL table
 */
 const strRetrieveAll = "SELECT CollectionID, Name FROM collections";
 
+const findID = async (connection, collectionName) => {
+    if (!connection || 
+            (!collectionName &&
+            typeof collectionName !== "string")) {
+        return null;
+    }
+
+    let queryResult = null;
+    try {
+        queryResult = await connection.query(`SELECT Name FROM collections WHERE Name = "${collectionName}"`);
+    } catch (error) {
+        console.error(`Failed to retrieve collection id from name\n\t${error}`);
+    }
+
+    return queryResult;
+}
+
 module.exports = {
     /*
     Return the list of items inside the collections SQL table
@@ -54,5 +71,35 @@ module.exports = {
         }
 
         return queryResult;
+    },
+
+    /*
+    Get CollectionID from name
+    */
+    findID,
+
+    /*
+    Adding a new collection
+    */
+    new: async (connection, collectionName) => {
+        if (!connection || 
+                (!collectionName &&
+                typeof collectionName !== "string")) {
+            return null;
+        }
+
+        // Do not allow collection duplicate
+        if ((await findID(connection, collectionName)).length > 0) {
+            return false;
+        }
+
+        try {
+            await connection.query(`INSERT INTO collections (Name) VALUES ("${collectionName}")`);
+        } catch (error) {
+            console.error(`Failed to insert a new collection.\n\t${error}`);
+            return false;
+        }
+
+        return true;
     }
 }

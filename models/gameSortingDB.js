@@ -35,6 +35,19 @@ async function retrieveAllData(connection, table, args) {
     }
 }
 
+async function addData(connection, table, params) {
+    if (!connection) {
+        return null;
+    }
+
+    switch (table) {
+
+    case Tables.COLLECTIONS:
+        return await collections.new(connection, params.name);
+
+    }
+}
+
 module.exports = {
     // The enum of the SQL tables available
     ...Tables,
@@ -55,5 +68,25 @@ module.exports = {
         const queryData = await retrieveAllData(connection, table, args);
         connection.close();
         return queryData;
+    },
+
+    /*
+    Add data to a specific table
+    */
+    new: async (table, params) => {
+        if ((!table && typeof table !== "string" && table.length === 0) ||
+                (!params && typeof params !== "object")) {
+            return null;
+        }
+
+        const connection = await mariadb.getConnection();
+        if (!connection) {
+            return null;
+        }
+
+        const result = await addData(connection, table, { name: params });
+
+        connection.close();
+        return result;
     }
 };
