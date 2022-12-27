@@ -20,5 +20,35 @@ module.exports = {
         }
 
         return queryResult;
+    },
+
+    /*
+    Return the name of a collection from a CollectionID
+    */
+    findName: async (connection, collectionID) => {
+        if (!connection || !collectionID || 
+                (typeof collectionID !== "number" && 
+                 typeof collectionID !== "bigint" &&
+                 typeof collectionID !== "string")) {
+            return null;
+        }
+
+        if (typeof collectionID === "string") {
+            try {
+                collectionID = BigInt(collectionID);
+            } catch {
+                return null;
+            }
+        }
+
+        let queryResult = null;
+        try {
+            queryResult = await connection.query(`SELECT Name FROM collections WHERE CollectionID = ${collectionID.toString()}`);
+            queryResult = queryResult[0].Name;
+        } catch {
+            console.error("Failed to get the name of a collection.");
+        }
+
+        return queryResult;
     }
 }
