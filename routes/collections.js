@@ -12,6 +12,7 @@ module.exports = (app) => {
 
         if (!collections) {
             res.send("<h1>Failed to query collections</h1>");
+            return;
         }
 
         res.render("collections/collectionsIndex.ejs", { collections });
@@ -27,6 +28,7 @@ module.exports = (app) => {
 
         if (!lists) {
             res.send("<h1>Failed to query the lists from the collection");
+            return;
         }
 
         res.render("collections/lists.ejs", { lists });
