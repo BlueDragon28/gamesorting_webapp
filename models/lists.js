@@ -37,7 +37,7 @@ module.exports = {
 
         let queryResult = null;
         try {
-            queryResult = connection.query(strStatement);
+            queryResult = await connection.query(strStatement);
         } catch (error) {
             console.error(`Failed to query data from lists SQL table\n\t${error}`)
         }
