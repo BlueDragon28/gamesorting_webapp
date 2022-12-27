@@ -19,6 +19,12 @@ module.exports = (app) => {
     });
 
     /*
+    Form to create a new collection
+    */
+    app.get("/collections/new", (req, res) => {
+        res.render("collections/new");
+    });
+    /*
     Entry to see the lists available inside a collection
     */
     app.get("/collections/:collectionID", async (req, res) => {
