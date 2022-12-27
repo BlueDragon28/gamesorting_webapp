@@ -11,7 +11,7 @@
 
     <ul>
         <% for (let collection of collections) { %> 
-            <li><%= collection.Name %></li>
+            <li><a href="/collections/<%= collection.CollectionID %>"><%= collection.Name %></a></li>
         <% } %> 
     <ul>
 </body>
