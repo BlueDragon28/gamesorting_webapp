@@ -17,16 +17,48 @@ function strRetrieveNameAndIDFromListID(listID) {
     listID = bigint.toBigInt(listID);
 
     if (!bigint.isValid(listID)) {
-            return null;
-        }
-
-    return `SELECT ListID, Name FROM lists WHERE ListID = ${listID.toString()}`;
+        return null;
     }
 
-    return `SELECT ListID, Name FROM lists WHERE CollectionID = ${collectionID.toString()}`;
+    return `SELECT ListID, Name FROM lists WHERE ListID = ${listID.toString()}`;
+}
+
+function strCheckIfListExists(collectionID, listID) {
+    collectionID = bigint.toBigInt(collectionID);
+    listID = bigint.toBigInt(listID);
+
+    if (!bigint.isValid(collectionID) || !bigint.isValid(listID)) {
+        return null;
+    }
+
+    return "SELECT COUNT(ListID) AS count FROM lists " +
+           "INNER JOIN collections USING (CollectionID) " +
+           `WHERE ListID = ${listID} AND collections.CollectionID = ${collectionID}`;
 }
 
 module.exports = {
+    /*
+    Check if a list exist and is part of a collection.
+    */
+    exists: async (connection, collectionID, listID) => {
+        const strStatement = strCheckIfListExists(collectionID, listID);
+
+        if (!connection || !strStatement) {
+            return false;
+        }
+
+        try {
+            const queryResult = await connection.query(strStatement);
+            if (queryResult[0].count > 0) {
+                return true;
+            }
+        } catch (error) {
+            console.error(`Failed to find if list ${listID} exists and is part of collection ${collectionID}\n\t${error}`);
+        }
+
+        return false;
+    },
+
     /*
     Returning the lists available inside a collection
     */
@@ -38,6 +70,12 @@ module.exports = {
         }
 
         let queryResult = null;
+        try {
+            queryResult = await connection.query(strStatement);
+        } catch (error) {
+            console.error(`Failed to query data from lists SQL table\n\t${error}`)
+        }
+
         return queryResult;
     },
 
@@ -56,12 +94,6 @@ module.exports = {
             queryResult = await connection.query(strStatement);
         } catch (error) {
             console.error(`Failed to query ListID and Name from list table ${listID}\n\t${error}`);
-        }
-
-        try {
-            queryResult = await connection.query(strStatement);
-        } catch (error) {
-            console.error(`Failed to query data from lists SQL table\n\t${error}`)
         }
 
         return queryResult;

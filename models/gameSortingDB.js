@@ -4,11 +4,13 @@ All the SQL interaction with the gamesorting_webapp SQL databases are made here
 const mariadb = require("../sql/connection");
 const collections = require("./collections");
 const lists = require("./lists");
+const items = require("./items");
 const bigint = require("../common/numbers/bigint");
 
 const Tables = {
     COLLECTIONS: "collections",
-    LISTS: "lists"
+    LISTS: "lists",
+    ITEMS: "items"
 };
 
 /*
@@ -23,6 +25,9 @@ async function checkIfExists(connection, table, args) {
 
     case Tables.COLLECTIONS:
         return await collections.exists(connection, ...args);
+
+    case Tables.LISTS:
+        return await lists.exists(connection, ...args);
 
     }
 }
@@ -49,6 +54,17 @@ async function retrieveAllData(connection, table, args) {
         }
 
         return { collection: collection[0], data: returnLists };
+
+    case Tables.ITEMS:
+        const list = await lists.findNameAndID(connection, ...args);
+        const returnItems = await items.find(connection, ...args);
+
+        if (!list || !returnItems) {
+            return null;
+        }
+
+        return { list: list[0], data: returnItems }
+
     }
 }
 
