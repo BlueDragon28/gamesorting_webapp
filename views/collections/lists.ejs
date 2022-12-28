@@ -17,6 +17,10 @@
         <% } %> 
     </ul>
 
+    <form action="/collections/<%= lists.collection.CollectionID %>?_method=DELETE" method="post">
+        <button>Delete</button>
+    </form>
+
     <a href="/collections">Go Back!</a>
 </body>
 </html>

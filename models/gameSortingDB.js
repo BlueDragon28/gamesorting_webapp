@@ -48,6 +48,22 @@ async function addData(connection, table, params) {
     }
 }
 
+/*
+Deleting an item from a table
+*/
+async function deleteData(connection, table, params) {
+    if (!connection) {
+        return null;
+    }
+
+    switch (table) {
+
+    case Tables.COLLECTIONS:
+        return await collections.delete(connection, params.id);
+
+    }
+}
+
 module.exports = {
     // The enum of the SQL tables available
     ...Tables,
@@ -85,6 +101,27 @@ module.exports = {
         }
 
         const result = await addData(connection, table, { name: params });
+
+        connection.close();
+        return result;
+    },
+
+    /*
+    Deleting an item from a table
+    */
+    delete: async (table, params) => {
+        if ((!table && typeof table !== "string" && table.length === 0) ||
+                (!params && typeof params !== "number" && typeof params !== "bigint" && typeof params !== "string")) {
+            return null;
+        }
+
+        const connection = await mariadb.getConnection();
+
+        if (!connection) {
+            return null;
+        }
+
+        const result = await deleteData(connection, table, { id: params });
 
         connection.close();
         return result;

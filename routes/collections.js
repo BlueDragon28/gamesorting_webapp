@@ -56,4 +56,25 @@ module.exports = (app) => {
 
         res.redirect("/collections");
     });
+
+    /*
+    Delete a collection
+    */
+    app.delete("/collections/:collectionID", async (req, res) => {
+        const { collectionID } = req.params;
+        
+        if (!collectionID) {
+            res.send("<h1>Invalid ID</h1>");
+            return;
+        }
+
+        const result = await database.delete(database.COLLECTIONS, collectionID);
+
+        if (!result) {
+            res.send(`<h1>Failed to delete ${collectionID}`);
+            return;
+        }
+
+        res.redirect("/collections");
+    });
 };

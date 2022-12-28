@@ -20,6 +20,16 @@ const findID = async (connection, collectionName) => {
     return queryResult;
 }
 
+const checkIfIDExists = async (connection, collectionID) => {
+    try {
+        const queryResult = await connection.query(`SELECT COUNT(CollectionID) AS count FROM collections WHERE CollectionID = ${collectionID.toString()}`);
+        return queryResult[0].count > 0;
+    } catch (error) {
+        console.error(`Failed to check if ID ${collectionID} exists\n\t${error}`);
+        return false;
+    }
+}
+
 module.exports = {
     /*
     Return the list of items inside the collections SQL table
@@ -95,6 +105,39 @@ module.exports = {
             await connection.query(`INSERT INTO collections (Name) VALUES ("${collectionName}")`);
         } catch (error) {
             console.error(`Failed to insert a new collection.\n\t${error}`);
+            return false;
+        }
+
+        return true;
+    },
+
+    /*
+    Delete a collection by ID
+    */
+    delete: async (connection, collectionID) => {
+        if (!connection || !collectionID || 
+                (typeof collectionID !== "number" && 
+                 typeof collectionID !== "bigint" &&
+                 typeof collectionID !== "string")) {
+            return null;
+        }
+
+        if (typeof collectionID === "string") {
+            collectionID = BigInt(collectionID);
+
+            if (!collectionID) {
+                return null;
+            }
+        }
+
+        if (!await checkIfIDExists(connection, collectionID)) {
+            return null;
+        }
+
+        try {
+            await connection.query(`DELETE FROM collections WHERE CollectionID = ${collectionID.toString()}`);
+        } catch (error) {
+            console.error(`Failed to delete collection ${collectionID}\n\t${error}`);
             return false;
         }
 
