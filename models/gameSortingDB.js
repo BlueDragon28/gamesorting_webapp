@@ -49,29 +49,26 @@ async function retrieveAllData(connection, table, args) {
     }
 
     case Tables.LISTS: {
-
-    case Tables.LISTS:
         const collection = await collections.findNameAndID(connection, ...args);
         const returnLists = await lists.find(connection, ...args);
 
         if (!collection || !returnLists) {
             return null;
         }
-    case Tables.ITEMS: {
 
         return { collection: collection[0], data: returnLists };
     }
 
     case Tables.ITEMS: {
+        const collection = await collections.findNameAndID(connection, ...args);
         const list = await lists.findNameAndID(connection, ...args);
         const returnItems = await items.find(connection, ...args);
 
         if (!list || !returnItems) {
-    }
             return null;
         }
 
-        return { list: list[0], data: returnItems }
+        return { collection: collection[0], list: list[0], data: returnItems }
     }
 
     }
