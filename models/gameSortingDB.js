@@ -23,11 +23,13 @@ async function checkIfExists(connection, table, args) {
 
     switch (table) {
 
-    case Tables.COLLECTIONS:
+    case Tables.COLLECTIONS: {
         return await collections.exists(connection, ...args);
+    }
 
-    case Tables.LISTS:
+    case Tables.LISTS: {
         return await lists.exists(connection, ...args);
+    }
 
     }
 }
@@ -42,8 +44,11 @@ async function retrieveAllData(connection, table, args) {
 
     switch (table) {
 
-    case Tables.COLLECTIONS:
+    case Tables.COLLECTIONS: {
         return await collections.find(connection);
+    }
+
+    case Tables.LISTS: {
 
     case Tables.LISTS:
         const collection = await collections.findNameAndID(connection, ...args);
@@ -52,18 +57,22 @@ async function retrieveAllData(connection, table, args) {
         if (!collection || !returnLists) {
             return null;
         }
+    case Tables.ITEMS: {
 
         return { collection: collection[0], data: returnLists };
+    }
 
-    case Tables.ITEMS:
+    case Tables.ITEMS: {
         const list = await lists.findNameAndID(connection, ...args);
         const returnItems = await items.find(connection, ...args);
 
         if (!list || !returnItems) {
+    }
             return null;
         }
 
         return { list: list[0], data: returnItems }
+    }
 
     }
 }
@@ -75,8 +84,9 @@ async function addData(connection, table, params) {
 
     switch (table) {
 
-    case Tables.COLLECTIONS:
+    case Tables.COLLECTIONS: {
         return await collections.new(connection, params.name);
+    }
 
     }
 }
@@ -91,8 +101,9 @@ async function deleteData(connection, table, params) {
 
     switch (table) {
 
-    case Tables.COLLECTIONS:
+    case Tables.COLLECTIONS: {
         return await collections.delete(connection, params.id);
+    }
 
     }
 }
