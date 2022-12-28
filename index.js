@@ -4,6 +4,7 @@ Required packages and js files
 const path = require("path");
 const express = require("express");
 const collectionsRoute = require("./routes/collections");
+const listsRoute = require("./routes/lists");
 const methodOverride = require("method-override");
 
 // Initializeing express
@@ -24,6 +25,11 @@ app.get("/", (req, res) => {
 Adding the collections routes
 */
 collectionsRoute(app);
+
+/*
+Adding the lists routes
+*/
+listsRoute(app);
 
 app.listen(8080, () => {
     console.log("Listing on port 8080");
