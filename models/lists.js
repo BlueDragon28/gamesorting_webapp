@@ -25,13 +25,9 @@ module.exports = {
     Returning the lists available inside a collection
     */
     find: async (connection, collectionID) => {
-        if (!connection) {
-            return null;
-        }
-
         const strStatement = strRetrieveListsFromCollection(collectionID);
 
-        if (!strStatement) {
+        if (!connection || !strStatement) {
             return null;
         }
 
