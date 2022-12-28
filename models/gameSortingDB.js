@@ -12,6 +12,22 @@ const Tables = {
 };
 
 /*
+Check if an item exists
+*/
+async function checkIfExists(connection, table, args) {
+    if (!connection) {
+        return null;
+    }
+
+    switch (table) {
+
+    case Tables.COLLECTIONS:
+        return await collections.exists(connection, ...args);
+
+    }
+}
+
+/*
 Retrieving all the data of a specific table
 */
 async function retrieveAllData(connection, table, args) {
@@ -68,6 +84,24 @@ async function deleteData(connection, table, params) {
 module.exports = {
     // The enum of the SQL tables available
     ...Tables,
+
+    /*
+    Check if an item exists
+    */
+    exists: async (table, ...args) => {
+        if (!table || typeof table !== "string" || table.length === 0) {
+            return null;
+        }
+
+        const connection = await mariadb.getConnection();
+        if (!connection) {
+            return null;
+        }
+
+        const queryData = await checkIfExists(connection, table, args);
+        connection.close();
+        return queryData;
+    },
 
     /*
     Retrieve data from a specific table

@@ -34,6 +34,11 @@ const checkIfIDExists = async (connection, collectionID) => {
 
 module.exports = {
     /*
+    Check if ID exists
+    */
+    exists: checkIfIDExists,
+
+    /*
     Return the list of items inside the collections SQL table
     */
     find: async (connection) => {
