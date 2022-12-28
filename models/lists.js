@@ -1,18 +1,18 @@
+const bigint = require("../common/numbers/bigint");
+
 /*
 Statement to query the lists available in a collection
 */
 function strRetrieveListsFromCollection(collectionID) {
-    if (!collectionID ||
-            (typeof collectionID !== "number" &&
-             typeof collectionID !== "bigint" &&
-             typeof collectionID !== "string")) {
+    collectionID = bigint.toBigInt(collectionID);
+
+    if (!bigint.isValid(collectionID)) {
         return null;
     }
 
-    if (typeof collectionID === "string") {
-        try {
-            collectionID = BigInt(collectionID);
-        } catch {
+    return `SELECT ListID, Name FROM lists WHERE CollectionID = ${collectionID.toString()}`;
+}
+
             return null;
         }
     }
