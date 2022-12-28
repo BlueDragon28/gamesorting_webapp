@@ -4,6 +4,7 @@ All the SQL interaction with the gamesorting_webapp SQL databases are made here
 const mariadb = require("../sql/connection");
 const collections = require("./collections");
 const lists = require("./lists");
+const bigint = require("../common/numbers/bigint");
 
 const Tables = {
     COLLECTIONS: "collections",
@@ -111,7 +112,7 @@ module.exports = {
     */
     delete: async (table, params) => {
         if ((!table && typeof table !== "string" && table.length === 0) ||
-                (!params && typeof params !== "number" && typeof params !== "bigint" && typeof params !== "string")) {
+                !bigint.isValid(params)) {
             return null;
         }
 

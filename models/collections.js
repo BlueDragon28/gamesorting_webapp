@@ -1,3 +1,5 @@
+const bigint = require("../common/numbers/bigint");
+
 /*
 Handling reading and writing of the collections SQL table
 */
@@ -53,19 +55,10 @@ module.exports = {
     Return the name of a collection from a CollectionID
     */
     findNameAndID: async (connection, collectionID) => {
-        if (!connection || !collectionID || 
-                (typeof collectionID !== "number" && 
-                 typeof collectionID !== "bigint" &&
-                 typeof collectionID !== "string")) {
-            return null;
-        }
+        collectionID = bigint.toBigInt(collectionID);
 
-        if (typeof collectionID === "string") {
-            try {
-                collectionID = BigInt(collectionID);
-            } catch {
-                return null;
-            }
+        if (!connection || !bigint.isValid(collectionID)) {
+            return null;
         }
 
         let queryResult = null;
@@ -115,19 +108,10 @@ module.exports = {
     Delete a collection by ID
     */
     delete: async (connection, collectionID) => {
-        if (!connection || !collectionID || 
-                (typeof collectionID !== "number" && 
-                 typeof collectionID !== "bigint" &&
-                 typeof collectionID !== "string")) {
+        collectionID = bigint.toBigInt(collectionID);
+
+        if (!connection || !bigint.isValid(collectionID)) {
             return null;
-        }
-
-        if (typeof collectionID === "string") {
-            collectionID = BigInt(collectionID);
-
-            if (!collectionID) {
-                return null;
-            }
         }
 
         if (!await checkIfIDExists(connection, collectionID)) {
