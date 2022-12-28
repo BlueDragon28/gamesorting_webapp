@@ -9,6 +9,8 @@
 <body>
     <h1>Collections List:</h1>
 
+    <a href="/collections/new">New Collection</a>
+
     <ul>
         <% for (let collection of collections) { %> 
             <li><a href="/collections/<%= collection.CollectionID %>"><%= collection.Name %></a></li>
