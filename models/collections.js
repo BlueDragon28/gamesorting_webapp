@@ -42,7 +42,7 @@ module.exports = {
     /*
     Return the name of a collection from a CollectionID
     */
-    findName: async (connection, collectionID) => {
+    findNameAndID: async (connection, collectionID) => {
         if (!connection || !collectionID || 
                 (typeof collectionID !== "number" && 
                  typeof collectionID !== "bigint" &&
@@ -60,10 +60,8 @@ module.exports = {
 
         let queryResult = null;
         try {
-            queryResult = await connection.query(`SELECT Name FROM collections WHERE CollectionID = ${collectionID.toString()}`);
-            if (queryResult.length === 1) {
-                queryResult = queryResult[0].Name;
-            } else {
+            queryResult = await connection.query(`SELECT CollectionID, Name FROM collections WHERE CollectionID = ${collectionID.toString()}`);
+            if (queryResult.length === 0) {
                 queryResult = null;
             }
         } catch {

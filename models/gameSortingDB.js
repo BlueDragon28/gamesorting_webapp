@@ -24,14 +24,14 @@ async function retrieveAllData(connection, table, args) {
         return await collections.find(connection);
 
     case Tables.LISTS:
-        const collectionName = await collections.findName(connection, ...args);
+        const collection = await collections.findNameAndID(connection, ...args);
         const returnLists = await lists.find(connection, ...args);
 
-        if (!collectionName || !returnLists) {
+        if (!collection || !returnLists) {
             return null;
         }
 
-        return { collectionName, data: returnLists };
+        return { collection: collection[0], data: returnLists };
     }
 }
 
