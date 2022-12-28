@@ -52,7 +52,7 @@ module.exports = {
     },
 
     /*
-    Return the name of a collection from a CollectionID
+    Return the name and the id of a collection from a CollectionID
     */
     findNameAndID: async (connection, collectionID) => {
         collectionID = bigint.toBigInt(collectionID);
