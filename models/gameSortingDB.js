@@ -31,6 +31,10 @@ async function checkIfExists(connection, table, args) {
         return await lists.exists(connection, ...args);
     }
 
+    case Tables.ITEMS: {
+        return await items.exists(connection, ...args);
+    }
+
     }
 }
 
