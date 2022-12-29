@@ -9,7 +9,9 @@
 <body>
     <h1><%= item.data.Name %></h1>
 
-    <a href="<%= item.data.URL %>"><%= item.data.URL %></a><br><br><br>
+    <% if (item.data.URL) { %> 
+        <a href="<%= item.data.URL %>"><%= item.data.URL %></a><br><br><br>
+    <% } %> 
 
     <a href="/collections/<%= item.collection.CollectionID %>/<%= item.list.ListID %>">Go Back!</a>
 </body>
