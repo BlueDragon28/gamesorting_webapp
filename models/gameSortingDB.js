@@ -107,7 +107,7 @@ async function deleteData(connection, table, params) {
     switch (table) {
 
     case Tables.COLLECTIONS: {
-        return await collections.delete(connection, params.id);
+        return await collections.delete(connection, params);
     }
 
     }
@@ -188,7 +188,7 @@ module.exports = {
             return null;
         }
 
-        const result = await deleteData(connection, table, { id: params });
+        const result = await deleteData(connection, table, params);
 
         connection.close();
         return result;
