@@ -85,6 +85,14 @@ async function addData(connection, table, params) {
         return await collections.new(connection, params.name);
     }
 
+    case Tables.LISTS: {
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, params.collectionID)) {
+            return false;
+        }
+
+        return await lists.new(connection, params.collectionID, params.name);
+    }
+
     }
 }
 
@@ -159,7 +167,7 @@ module.exports = {
             return null;
         }
 
-        const result = await addData(connection, table, { name: params });
+        const result = await addData(connection, table, params);
 
         connection.close();
         return result;

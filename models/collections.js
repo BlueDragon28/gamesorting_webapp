@@ -41,26 +41,26 @@ const checkIfIDExists = async (connection, collectionID) => {
 }
 
 module.exports = {
-    find: async (connection, collectionID) => {
-        if (!connection || (collectionID && !bigint.isValid(collectionID))) {
+    /*
+    Check if ID exists
     */
     exists: checkIfIDExists,
 
     /*
     Return the list of items inside the collections SQL table
-            if (collectionID) {
-                queryResult = await connection.query(findByID(connection, collectionID))
-            } else {
     */
-            }
-    find: async (connection) => {
-        if (!connection) {
+    find: async (connection, collectionID) => {
+        if (!connection || (collectionID && !bigint.isValid(collectionID))) {
             return null;
         }
 
         let queryResult;
         try {
-            queryResult = await connection.query(strRetrieveAll);
+            if (collectionID) {
+                queryResult = await connection.query(findByID(connection, collectionID))
+            } else {
+                queryResult = await connection.query(strRetrieveAll);
+            }
         } catch (error) {
             console.error(`Failed to query data from collections SQL table\n\t${error}`)
         }

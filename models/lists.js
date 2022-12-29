@@ -36,6 +36,17 @@ function strCheckIfListExists(collectionID, listID) {
            `WHERE ListID = ${listID} AND collections.CollectionID = ${collectionID}`;
 }
 
+function strAddNewList(collectionID, listName) {
+    collectionID = bigint.toBigInt(collectionID);
+
+    if (!bigint.isValid(collectionID) || (typeof listName !== "string" || listName.length === 0)) {
+        return null;
+    }
+
+    return "INSERT INTO lists(CollectionID, Name) " +
+           `VALUES (${collectionID}, "${listName}")`
+}
+
 module.exports = {
     /*
     Check if a list exist and is part of a collection.
@@ -97,5 +108,26 @@ module.exports = {
         }
 
         return queryResult;
+    },
+
+    /*
+    Add a new list
+    */
+    new: async (connection, collectionID, listName) => {
+        const strStatement = strAddNewList(collectionID, listName);
+
+        if (!connection || !strStatement) {
+            return false;
+        }
+
+        try {
+            await connection.query(strStatement);
+
+            return true;
+        } catch (error) {
+            console.error(`Failed to insert a new list into collection ${collectionID}\n\t${error}`)
+        }
+
+        return false;
     }
 }

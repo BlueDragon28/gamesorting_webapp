@@ -47,4 +47,26 @@ module.exports = (app) => {
 
         res.render("collections/items", { lists });
     });
+
+    /*
+    Add a new list to a collection
+    */
+    app.post("/collections/:collectionID", async (req, res) => {
+        const { collectionID } = req.params;
+        const { name } = req.body;
+
+        if (!await database.exists(database.COLLECTIONS, collectionID)) {
+            res.send("Invalid Collection");
+            return;
+        }
+
+        const result = await database.new(database.LISTS, { collectionID, name });
+
+        if (!result) {
+            res.send("<h1>Failed to create a new list</h1>");
+            return;
+        }
+
+        res.redirect(`/collections/${collectionID}`);
+    });
 }

@@ -47,7 +47,7 @@ module.exports = (app) => {
     app.post("/collections", async (req, res) => {
         const { name } = req.body;
 
-        const result = await database.new(database.COLLECTIONS, name);
+        const result = await database.new(database.COLLECTIONS, { name });
 
         if (!result) {
             res.send("<h1>Failed to insert a new collection.");
