@@ -58,28 +58,30 @@ function strDeleteList(collectionID, listID) {
     return `DELETE FROM lists WHERE CollectionID = ${collectionID} AND ListID = ${listID}`;
 }
 
+const checkIfListExists = async (connection, collectionID, listID) => {
+    const strStatement = strCheckIfListExists(collectionID, listID);
+
+    if (!connection || !strStatement) {
+        return false;
+    }
+
+    try {
+        const queryResult = await connection.query(strStatement);
+        if (queryResult[0].count > 0) {
+            return true;
+        }
+    } catch (error) {
+        console.error(`Failed to find if list ${listID} exists and is part of collection ${collectionID}\n\t${error}`);
+    }
+
+    return false;
+}
+
 module.exports = {
     /*
     Check if a list exist and is part of a collection.
     */
-    exists: async (connection, collectionID, listID) => {
-        const strStatement = strCheckIfListExists(collectionID, listID);
-
-        if (!connection || !strStatement) {
-            return false;
-        }
-
-        try {
-            const queryResult = await connection.query(strStatement);
-            if (queryResult[0].count > 0) {
-                return true;
-            }
-        } catch (error) {
-            console.error(`Failed to find if list ${listID} exists and is part of collection ${collectionID}\n\t${error}`);
-        }
-
-        return false;
-    },
+    exists: checkIfListExists,
 
     /*
     Returning the lists available inside a collection
