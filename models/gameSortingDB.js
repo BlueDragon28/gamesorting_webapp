@@ -45,7 +45,7 @@ async function retrieveAllData(connection, table, args) {
     switch (table) {
 
     case Tables.COLLECTIONS: {
-        return await collections.find(connection);
+        return await collections.find(connection, ...args);
     }
 
     case Tables.LISTS: {

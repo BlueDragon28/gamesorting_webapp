@@ -5,6 +5,14 @@ Handling reading and writing of the collections SQL table
 */
 const strRetrieveAll = "SELECT CollectionID, Name FROM collections";
 
+const findByID = (connection, collectionID) => {
+    if (!connection || !bigint.isValid(collectionID)) {
+        return null;
+    }
+
+    return `SELECT CollectionID, Name FROM collections WHERE CollectionID = ${collectionID}`;
+}
+
 const findID = async (connection, collectionName) => {
     if (!connection || 
             (!collectionName &&
@@ -33,14 +41,18 @@ const checkIfIDExists = async (connection, collectionID) => {
 }
 
 module.exports = {
-    /*
-    Check if ID exists
+    find: async (connection, collectionID) => {
+        if (!connection || (collectionID && !bigint.isValid(collectionID))) {
     */
     exists: checkIfIDExists,
 
     /*
     Return the list of items inside the collections SQL table
+            if (collectionID) {
+                queryResult = await connection.query(findByID(connection, collectionID))
+            } else {
     */
+            }
     find: async (connection) => {
         if (!connection) {
             return null;
