@@ -47,6 +47,17 @@ function strAddNewList(collectionID, listName) {
            `VALUES (${collectionID}, "${listName}")`;
 }
 
+function strDeleteList(collectionID, listID) {
+    collectionID = bigint.toBigInt(collectionID);
+    listID = bigint.toBigInt(listID);
+
+    if (!bigint.isValid(collectionID) || !bigint.isValid(listID)) {
+        return null;
+    }
+
+    return `DELETE FROM lists WHERE CollectionID = ${collectionID} AND ListID = ${listID}`;
+}
+
 module.exports = {
     /*
     Check if a list exist and is part of a collection.
@@ -126,6 +137,27 @@ module.exports = {
             return true;
         } catch (error) {
             console.error(`Failed to insert a new list into collection ${collectionID}\n\t${error}`);
+        }
+
+        return false;
+    },
+
+    /*
+    Delete a list
+    */
+    delete: async (connection, collectionID, listID) => {
+        const strStatement = strDeleteList(collectionID, listID);
+
+        if (!connection || !strStatement) {
+            return false;
+        }
+
+        try {
+            await connection.query(strStatement);
+
+            return true;
+        } catch (error) {
+            console.error(`Failed to delete a list from collection ${collectionID}\n\t${error}`);
         }
 
         return false;
