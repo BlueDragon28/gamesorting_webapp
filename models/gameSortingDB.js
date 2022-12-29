@@ -60,8 +60,8 @@ async function retrieveAllData(connection, table, args) {
     }
 
     case Tables.ITEMS: {
-        const collection = await collections.findNameAndID(connection, ...args);
-        const list = await lists.findNameAndID(connection, ...args);
+        const collection = await collections.findNameAndID(connection, args[0]);
+        const list = await lists.findNameAndID(connection, args[1]);
         const returnItems = await items.find(connection, ...args);
 
         if (!list || !returnItems) {
