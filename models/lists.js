@@ -44,7 +44,7 @@ function strAddNewList(collectionID, listName) {
     }
 
     return "INSERT INTO lists(CollectionID, Name) " +
-           `VALUES (${collectionID}, "${listName}")`
+           `VALUES (${collectionID}, "${listName}")`;
 }
 
 module.exports = {
@@ -125,7 +125,7 @@ module.exports = {
 
             return true;
         } catch (error) {
-            console.error(`Failed to insert a new list into collection ${collectionID}\n\t${error}`)
+            console.error(`Failed to insert a new list into collection ${collectionID}\n\t${error}`);
         }
 
         return false;
