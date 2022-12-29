@@ -12,7 +12,7 @@
     <ul>
         <% for (let list of lists.data) { %> 
             <li>
-                <%= list.Name %> 
+                <a href="/collections/<%= lists.collection.CollectionID %>/<%= lists.list.ListID %>/<%= list.ItemID %>"><%= list.Name %></a>
             </li>
         <% } %> 
     </ul>
