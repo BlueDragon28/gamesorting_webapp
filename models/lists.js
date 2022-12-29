@@ -58,6 +58,18 @@ function strDeleteList(collectionID, listID) {
     return `DELETE FROM lists WHERE CollectionID = ${collectionID} AND ListID = ${listID}`;
 }
 
+function strCheckForDuplicate(collectionID, listName) {
+    collectionID = bigint.toBigInt(collectionID);
+
+    if (!bigint.isValid(collectionID) || typeof listName !== "string" || listName.length === 0) {
+        return null;
+    }
+
+    return "SELECT COUNT(ListID) AS count FROM lists " +
+           "INNER JOIN collections USING (CollectionID) " +
+           `WHERE lists.Name = "${listName}" AND collections.CollectionID = ${collectionID}`;
+}
+
 const checkIfListExists = async (connection, collectionID, listID) => {
     const strStatement = strCheckIfListExists(collectionID, listID);
 
@@ -72,6 +84,29 @@ const checkIfListExists = async (connection, collectionID, listID) => {
         }
     } catch (error) {
         console.error(`Failed to find if list ${listID} exists and is part of collection ${collectionID}\n\t${error}`);
+    }
+
+    return false;
+}
+
+/*
+Check if a list do not alrady exists
+*/
+const checkForDuplicate = async (connection, collectionID, listName) => {
+    const strStatement = strCheckForDuplicate(collectionID, listName);
+
+    if (!connection || !strStatement) {
+        return false;
+    }
+
+    try {
+        const queryResult = await connection.query(strStatement);
+
+        if (queryResult[0].count > 0n) {
+            return true;
+        }
+    } catch (error) {
+        console.log(`Failed to check if a list already exists\n\t${error}`);
     }
 
     return false;
@@ -130,6 +165,10 @@ module.exports = {
         const strStatement = strAddNewList(collectionID, listName);
 
         if (!connection || !strStatement) {
+            return false;
+        }
+
+        if (await checkForDuplicate(connection, collectionID, listName)) {
             return false;
         }
 
