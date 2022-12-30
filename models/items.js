@@ -25,6 +25,19 @@ function strRetrieveItemsFromList(collectionID, listID, itemID) {
     return strStatement;
 }
 
+function strAddNewItem(collectionID, listID, itemData) {
+    collectionID = bigint.toBigInt(collectionID);
+    listID = bigint.toBigInt(listID);
+
+    if (!bigint.isValid(collectionID) || !bigint.isValid(listID) || 
+        typeof itemData !== "object" || !itemData.name) {
+        return null;
+    }
+
+    return `INSERT INTO items(ListID, Name ${itemData.url ? ", Url":""}) ` +
+           `VALUES (${listID}, "${itemData.name}" ${itemData.url ? ", \"" + itemData.url + "\"":""})`;
+}
+
 function strCheckIfItemExists(collectionID, listID, itemID) {
     collectionID = bigint.toBigInt(collectionID);
     listID = bigint.toBigInt(listID);
@@ -88,5 +101,26 @@ module.exports = {
         }
 
         return queryResult;
+    },
+
+    /*
+    Insert a new item into a list
+    */
+    new: async (connection, collectionID, listID, itemData) => {
+        const strStatement = strAddNewItem(collectionID, listID, itemData);
+
+        if (!connection || !strStatement) {
+            return false;
+        }
+
+        try {
+            queryResult = await connection.query(strStatement);
+
+            return true;
+        } catch (error) {
+            console.log(`Failed to insert value into items table\n\t${error}`);
+        }
+
+        return false;
     }
 };

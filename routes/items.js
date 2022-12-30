@@ -24,6 +24,8 @@ module.exports = (app) => {
             return;
         }
 
+        console.dir(list);
+
         res.render("collections/newItem", { list });
     });
 
@@ -56,5 +58,44 @@ module.exports = (app) => {
         }
 
         res.render("collections/viewItem", { item });
+    });
+
+    /*
+    Insert a new item into a list inside a collection
+    */
+    app.post("/collections/:collectionID/:listID", async (req, res) => {
+        const { collectionID, listID } = req.params;
+        const { name, url } = req.body;
+
+        if (!await database.exists(database.COLLECTIONS, collectionID)) {
+            res.send("Invalid Collection");
+            return;
+        }
+
+        if (!await database.exists(database.LISTS, collectionID, listID)) {
+            res.send("Invalid List");
+            return;
+        }
+
+        if (typeof name !== "string" || name.length === 0) {
+            res.send("Name is Required");
+            return;
+        }
+
+        const queryResult = await database.new(database.ITEMS, {
+            collectionID,
+            listID,
+            item: {
+                name,
+                url
+            }
+        });
+
+        if (!queryResult) {
+            res.send("Failed to insert a new element");
+            return;
+        }
+
+        res.redirect(`/collections/${collectionID}/${listID}`);
     });
 };

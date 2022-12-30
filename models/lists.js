@@ -3,14 +3,21 @@ const bigint = require("../common/numbers/bigint");
 /*
 Statement to query the lists available in a collection
 */
-function strRetrieveListsFromCollection(collectionID) {
+function strRetrieveListsFromCollection(collectionID, listID) {
     collectionID = bigint.toBigInt(collectionID);
+    listID = bigint.toBigInt(listID);
 
     if (!bigint.isValid(collectionID)) {
         return null;
     }
 
-    return `SELECT ListID, Name FROM lists WHERE CollectionID = ${collectionID.toString()}`;
+    let strStatement = `SELECT ListID, Name FROM lists WHERE CollectionID = ${collectionID.toString()}`;
+
+    if (bigint.isValid(listID)) {
+        strStatement += ` AND ListID = ${listID}`;
+    }
+
+    return strStatement;
 }
 
 function strRetrieveNameAndIDFromListID(listID) {
@@ -121,8 +128,8 @@ module.exports = {
     /*
     Returning the lists available inside a collection
     */
-    find: async (connection, collectionID) => {
-        const strStatement = strRetrieveListsFromCollection(collectionID);
+    find: async (connection, collectionID, listID) => {
+        const strStatement = strRetrieveListsFromCollection(collectionID, listID);
 
         if (!connection || !strStatement) {
             return null;
@@ -131,6 +138,10 @@ module.exports = {
         let queryResult = null;
         try {
             queryResult = await connection.query(strStatement);
+
+            if (bigint.isValid(listID) && queryResult.length > 0) {
+                queryResult = queryResult[0];
+            }
         } catch (error) {
             console.error(`Failed to query data from lists SQL table\n\t${error}`)
         }
