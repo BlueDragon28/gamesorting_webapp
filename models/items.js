@@ -38,6 +38,19 @@ function strAddNewItem(collectionID, listID, itemData) {
            `VALUES (${listID}, "${itemData.name}" ${itemData.url ? ", \"" + itemData.url + "\"":""})`;
 }
 
+function strDeleteItem(collectionID, listID, itemID) {
+    collectionID = bigint.toBigInt(collectionID);
+    listID = bigint.toBigInt(listID);
+    itemID = bigint.toBigInt(itemID);
+
+    if (!bigint.isValid(collectionID) || !bigint.isValid(listID) || !bigint.isValid(itemID)) {
+        return null;
+    }
+
+    return "DELETE FROM items " +
+           `WHERE items.ItemID = ${itemID} AND items.ListID = ${listID}`;
+}
+
 function strCheckIfItemExists(collectionID, listID, itemID) {
     collectionID = bigint.toBigInt(collectionID);
     listID = bigint.toBigInt(listID);
@@ -119,6 +132,27 @@ module.exports = {
             return true;
         } catch (error) {
             console.log(`Failed to insert value into items table\n\t${error}`);
+        }
+
+        return false;
+    },
+
+    /*
+    Delete an item from a list
+    */
+    delete: async (connection, collectionID, listID, itemID) => {
+        const strStatement = strDeleteItem(collectionID, listID, itemID);
+
+        if (!connection || !strStatement) {
+            return false;
+        }
+
+        try {
+            await connection.query(strStatement);
+
+            return true;
+        } catch (error) {
+            console.log(`Failed to delete item from items table\n\t${error}`);
         }
 
         return false;

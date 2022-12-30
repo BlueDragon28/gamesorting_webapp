@@ -98,4 +98,40 @@ module.exports = (app) => {
 
         res.redirect(`/collections/${collectionID}/${listID}`);
     });
+
+    /*
+    Delete an item from a list
+    */
+    app.delete("/collections/:collectionID/:listID/:itemID", async (req, res) => {
+
+        const { collectionID, listID, itemID } = req.params;
+
+        if (!await database.exists(database.COLLECTIONS, collectionID)) {
+            res.send("Invalid Collection");
+            return;
+        }
+
+        if (!await database.exists(database.LISTS, collectionID, listID)) {
+            res.send("Invalid List");
+            return;
+        }
+
+        if (!await database.exists(database.ITEMS, collectionID, listID, itemID)) {
+            res.send("Invalid Item");
+            return;
+        }
+
+        const queryResult = await database.delete(database.ITEMS, {
+            collectionID,
+            listID,
+            itemID
+        });
+
+        if (!queryResult) {
+            res.send("Failed to delete item");
+            return;
+        }
+
+        res.redirect(`/collections/${collectionID}/${listID}`);
+    });
 };

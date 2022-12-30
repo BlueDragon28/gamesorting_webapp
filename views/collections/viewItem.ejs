@@ -13,6 +13,10 @@
         <a href="<%= item.data.URL %>"><%= item.data.URL %></a><br><br><br>
     <% } %> 
 
+    <form action="/collections/<%= item.collection.CollectionID %>/<%= item.list.ListID %>/<%= item.data.ItemID %>?_method=DELETE" method="post">
+        <button>Delete</button>
+    </form>
+
     <a href="/collections/<%= item.collection.CollectionID %>/<%= item.list.ListID %>">Go Back!</a>
 </body>
 </html>

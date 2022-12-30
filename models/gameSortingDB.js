@@ -135,6 +135,16 @@ async function deleteData(connection, table, params) {
         return await lists.delete(connection, params.collectionID, params.listID);
     }
 
+    case Tables.ITEMS: {
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ params.collectionID ]) ||
+            !await checkIfExists(connection, Tables.LISTS, [ params.collectionID, params.listID ]) ||
+            !await checkIfExists(connection, Tables.ITEMS, [ params.collectionID, params.listID, params.itemID ])) {
+            return false;
+        }
+
+        return await items.delete(connection, params.collectionID, params.listID, params.itemID);
+    }
+
     }
 }
 
