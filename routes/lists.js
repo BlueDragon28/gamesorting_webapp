@@ -19,7 +19,7 @@ module.exports = (app) => {
             return;
         }
 
-        res.render("collections/newList", { collection: collection[0] });
+        res.render("collections/newList", { collection: collection });
     });
 
     /*

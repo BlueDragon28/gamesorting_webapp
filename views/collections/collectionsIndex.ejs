@@ -12,7 +12,7 @@
     <a href="/collections/new">New Collection</a>
 
     <ul>
-        <% for (let collection of collections) { %> 
+        <% for (let collection of collections.data) { %> 
             <li><a href="/collections/<%= collection.CollectionID %>"><%= collection.Name %></a></li>
         <% } %> 
     <ul>

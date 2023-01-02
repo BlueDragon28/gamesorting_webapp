@@ -9,7 +9,7 @@
 <body>
     <h1>New Item In <%= list.data.Name %> List:</h1>
 
-    <form action="/collections/<%= list.collection.CollectionID %>/<%= list.data.ListID %>" method="post">
+    <form action="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>" method="post">
         <section>
             <label for="Name">Name</label>
             <input type="text" name="name" id="name">
@@ -22,6 +22,6 @@
         <button>Create</button>
     </form>
 
-    <a href="/collections/<%= list.collection.CollectionID %>/<%= list.data.ListID %>">Cancel!</a>
+    <a href="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>">Cancel!</a>
 </body>
 </html>

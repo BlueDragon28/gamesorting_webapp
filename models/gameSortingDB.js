@@ -14,6 +14,50 @@ const Tables = {
 };
 
 /*
+Parse the collections data before returning it
+ - data: the collection data to parse
+ - unique: there should be only one item there
+*/
+function parseCollectionsData(data, unique = false) {
+    delete data.meta;
+    return {
+        data: unique === true && data.length > 0 ? data[0] : data
+    };
+}
+
+/*
+Parse the lists data before returning it
+*/
+function parseListData(collectionData, listsData) {
+    delete collectionData.meta;
+    delete listsData.meta;
+
+    return {
+        parent: {
+            collection: collectionData[0]
+        },
+        data: listsData
+    };
+}
+
+/*
+Parse the items data before returning it
+*/
+function parseItemsData(collectionData, listData, itemsData) {
+    delete collectionData.meta;
+    delete listData.meta;
+    delete itemsData.meta;
+
+    return {
+        parent: {
+            collection: collectionData[0],
+            list: listData[0]
+        },
+        data: itemsData
+    };
+}
+
+/*
 Check if an item exists
 */
 async function checkIfExists(connection, table, args) {
@@ -49,7 +93,8 @@ async function retrieveAllData(connection, table, args) {
     switch (table) {
 
     case Tables.COLLECTIONS: {
-        return await collections.find(connection, ...args);
+        const queryCollections = await collections.find(connection, ...args);
+        return parseCollectionsData(queryCollections, args.length > 0);
     }
 
     case Tables.LISTS: {
@@ -60,7 +105,7 @@ async function retrieveAllData(connection, table, args) {
             return null;
         }
 
-        return { collection: collection[0], data: returnLists };
+        return parseListData(collection, returnLists);
     }
 
     case Tables.ITEMS: {
@@ -72,7 +117,7 @@ async function retrieveAllData(connection, table, args) {
             return null;
         }
 
-        return { collection: collection[0], list: list[0], data: returnItems }
+        return parseItemsData(collection, list, returnItems);
     }
 
     }

@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= lists.list.Name %></title>
+    <title><%= lists.parent.list.Name %></title>
 </head>
 <body>
-    <h1><%= lists.list.Name %>:</h1>
+    <h1><%= lists.parent.list.Name %>:</h1>
 
     <ul>
         <% for (let list of lists.data) { %> 
             <li>
-                <a href="/collections/<%= lists.collection.CollectionID %>/<%= lists.list.ListID %>/<%= list.ItemID %>"><%= list.Name %></a>
+                <a href="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>/<%= list.ItemID %>"><%= list.Name %></a>
             </li>
         <% } %> 
     </ul>
 
-    <form action="/collections/<%= lists.collection.CollectionID %>/<%= lists.list.ListID %>?_method=DELETE" method="post">
+    <form action="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>?_method=DELETE" method="post">
         <button>Delete</button>
     </form>
 
-    <a href="/collections/<%= lists.collection.CollectionID %>/<%= lists.list.ListID %>/new">New Item</a>
-    <a href="/collections/<%= lists.collection.CollectionID %>">Go Back!</a>
+    <a href="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>/new">New Item</a>
+    <a href="/collections/<%= lists.parent.collection.CollectionID %>">Go Back!</a>
 </body>
 </html>

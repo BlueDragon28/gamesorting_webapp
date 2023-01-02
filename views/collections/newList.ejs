@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New List In <%= collection.Name %> Collection </title>
+    <title>New List In <%= collection.data.Name %> Collection </title>
 </head>
 <body>
-    <h1>New List In <%= collection.Name %> Collection: </h1>
+    <h1>New List In <%= collection.data.Name %> Collection: </h1>
 
-    <form action="/collections/<%= collection.CollectionID %>" method="post">
+    <form action="/collections/<%= collection.data.CollectionID %>" method="post">
         <section>
             <label for="name">Name</label>
             <input type="text" name="name" id="name">
@@ -18,6 +18,6 @@
         <button style="margin-top: 1rem; margin-bottom: 1rem;">Create</button>
     </form>
 
-    <a href="/collections/<%= collection.CollectionID %>">Cancel!</a>
+    <a href="/collections/<%= collection.data.CollectionID %>">Cancel!</a>
 </body>
 </html>

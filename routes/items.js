@@ -57,6 +57,8 @@ module.exports = (app) => {
             return;
         }
 
+        console.log(item);
+
         res.render("collections/viewItem", { item });
     });
 
