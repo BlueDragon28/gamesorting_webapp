@@ -21,7 +21,16 @@ class ValueError extends Error {
     }
 }
 
+class InternalError extends Error {
+    constructor(message) {
+        super(message);
+        this.statusCode = 500;
+        this.name = "InternalError";
+    }
+}
+
 module.exports = {
     SqlError,
-    ValueError
+    ValueError,
+    InternalError
 }

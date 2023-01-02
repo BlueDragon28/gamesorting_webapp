@@ -6,6 +6,7 @@ const collections = require("./collections");
 const lists = require("./lists");
 const items = require("./items");
 const bigint = require("../utils/numbers/bigint");
+const { ValueError, InternalError } = require("../utils/errors/exceptions");
 
 const Tables = {
     COLLECTIONS: "collections",
@@ -101,8 +102,12 @@ async function retrieveAllData(connection, table, args) {
         const collection = await collections.findNameAndID(connection, ...args);
         const returnLists = await lists.find(connection, ...args);
 
-        if (!collection || !returnLists) {
-            return null;
+        if (!collection) {
+            throw new ValueError(400, `Collection ${args[0]} is not a valid collection`);
+        }
+
+        if (!returnLists) {
+            throw new InternalError("Failed To Query Lists");
         }
 
         return parseListData(collection, returnLists);
@@ -113,8 +118,12 @@ async function retrieveAllData(connection, table, args) {
         const list = await lists.findNameAndID(connection, args[1]);
         const returnItems = await items.find(connection, ...args);
 
-        if (!list || !returnItems) {
-            return null;
+        if (!collection || !list) {
+            throw new ValueError(400, "Invalid collection or list");
+        }
+
+        if (!returnItems) {
+            throw new InternalError("Failed To Query Items");
         }
 
         return parseItemsData(collection, list, returnItems);
@@ -136,7 +145,7 @@ async function addData(connection, table, params) {
 
     case Tables.LISTS: {
         if (!await checkIfExists(connection, Tables.COLLECTIONS, params.parent.collection.CollectionID)) {
-            return false;
+            throw new ValueError(400, "Invalid Collection");
         }
 
         return await lists.new(connection, params);
@@ -147,11 +156,11 @@ async function addData(connection, table, params) {
         const listID = params.parent.list.ListID;
 
         if (!await checkIfExists(connection, Tables.COLLECTIONS, [ collectionID ])) {
-            return false;
+            throw new ValueError(400, "Invalid Collection");
         }
 
         if (!await checkIfExists(connection, Tables.LISTS, [ collectionID, listID ])) {
-            return false;
+            throw new ValueError(400, "Invalid List");
         }
 
         return await items.new(connection, params);
@@ -177,7 +186,7 @@ async function deleteData(connection, table, params) {
     case Tables.LISTS: {
         if (!await checkIfExists(connection, Tables.COLLECTIONS, [ params.collectionID ]) ||
             !await checkIfExists(connection, Tables.LISTS, [ params.collectionID, params.listID ])) {
-            return false;
+            throw new ValueError(400, "Invalid Collection Or List");
         }
 
         return await lists.delete(connection, params.collectionID, params.listID);
@@ -187,7 +196,7 @@ async function deleteData(connection, table, params) {
         if (!await checkIfExists(connection, Tables.COLLECTIONS, [ params.collectionID ]) ||
             !await checkIfExists(connection, Tables.LISTS, [ params.collectionID, params.listID ]) ||
             !await checkIfExists(connection, Tables.ITEMS, [ params.collectionID, params.listID, params.itemID ])) {
-            return false;
+            throw new ValueError(400, "Invalid Collection Or List Or Item");
         }
 
         return await items.delete(connection, params.collectionID, params.listID, params.itemID);
@@ -204,8 +213,8 @@ module.exports = {
     Check if an item exists
     */
     exists: async (table, ...args) => {
-        if (!table || typeof table !== "string" || table.length === 0) {
-            return null;
+        if (!table || typeof table !== "string" || table.trim().length === 0) {
+            throw new InternalError(`${table} is not a valid table`);
         }
 
         const connection = await mariadb.getConnection();
@@ -223,7 +232,7 @@ module.exports = {
     */
     find: async (table, ...args) => {
         if (!table || typeof table !== "string" || table.length === 0) {
-            return null;
+            throw new InternalError(`${table} is not a valid table`);
         }
 
         const connection = await mariadb.getConnection();
@@ -240,9 +249,8 @@ module.exports = {
     Add data to a specific table
     */
     new: async (table, params) => {
-        if ((!table && typeof table !== "string" && table.length === 0) ||
-                (!params && typeof params !== "object")) {
-            return null;
+        if ((!table && typeof table !== "string" && table.length === 0)) {
+            throw new InternalError(`${table} is not a valid table`);
         }
 
         const connection = await mariadb.getConnection();
@@ -260,9 +268,8 @@ module.exports = {
     Deleting an item from a table
     */
     delete: async (table, params) => {
-        if ((!table && typeof table !== "string" && table.length === 0) ||
-                !bigint.isValid(params)) {
-            return null;
+        if ((!table && typeof table !== "string" && table.length === 0)) {
+            throw new InternalError(`${table} is not a valid table`);
         }
 
         const connection = await mariadb.getConnection();
