@@ -58,7 +58,7 @@ module.exports = {
     find: async (connection, collectionID) => {
         collectionID = bigint.toBigInt(collectionID);
 
-        if (!connection || !bigint.isValid(collectionID)) {
+        if (!connection || (collectionID && !bigint.isValid(collectionID))) {
             throw new ValueError(400, "Invalid Collection ID");
         }
 
