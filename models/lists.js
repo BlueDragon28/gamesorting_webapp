@@ -21,14 +21,15 @@ function strRetrieveListsFromCollection(collectionID, listID) {
     return strStatement;
 }
 
-function strRetrieveNameAndIDFromListID(listID) {
+function strRetrieveNameAndIDFromListID(collectionID, listID) {
+    collectionID = bigint.toBigInt(collectionID);
     listID = bigint.toBigInt(listID);
 
-    if (!bigint.isValid(listID)) {
-        throw new ValueError(400, "Invalid List ID");
+    if (!bigint.isValid(collectionID) || !bigint.isValid(listID)) {
+        throw new ValueError(400, "Invalid Collection ID or List ID");
     }
 
-    return `SELECT ListID, Name FROM lists WHERE ListID = ${listID.toString()}`;
+    return `SELECT ListID, Name FROM lists WHERE CollectionID = ${collectionID.toString()} AND ListID = ${listID.toString()}`;
 }
 
 function strCheckIfListExists(collectionID, listID) {
@@ -153,8 +154,8 @@ module.exports = {
     /*
     Return the name and id of a list from a ListID
     */
-    findNameAndID: async (connection, listID) => {
-        const strStatement = strRetrieveNameAndIDFromListID(listID);
+    findNameAndID: async (connection, collectionID, listID) => {
+        const strStatement = strRetrieveNameAndIDFromListID(collectionID, listID);
 
         if (!connection || !strStatement) {
             throw new SqlError("Failed to prepare statement");
