@@ -143,15 +143,18 @@ async function addData(connection, table, params) {
     }
 
     case Tables.ITEMS: {
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ params.collectionID ])) {
+        const collectionID = params.parent.collection.CollectionID;
+        const listID = params.parent.list.ListID;
+
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ collectionID ])) {
             return false;
         }
 
-        if (!await checkIfExists(connection, Tables.LISTS, [ params.collectionID, params.listID ])) {
+        if (!await checkIfExists(connection, Tables.LISTS, [ collectionID, listID ])) {
             return false;
         }
 
-        return await items.new(connection, params.collectionID, params.listID, params.item);
+        return await items.new(connection, params);
     }
 
     }

@@ -85,9 +85,11 @@ module.exports = (app) => {
         }
 
         const queryResult = await database.new(database.ITEMS, {
-            collectionID,
-            listID,
-            item: {
+            parent: {
+                collection: { CollectionID: collectionID },
+                list: { ListID: listID }
+            },
+            data: {
                 name,
                 url
             }

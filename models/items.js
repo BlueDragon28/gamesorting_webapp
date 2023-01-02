@@ -119,8 +119,11 @@ module.exports = {
     /*
     Insert a new item into a list
     */
-    new: async (connection, collectionID, listID, itemData) => {
-        const strStatement = strAddNewItem(collectionID, listID, itemData);
+    new: async (connection, itemData) => {
+        const strStatement = strAddNewItem(
+            itemData.parent.collection.CollectionID, 
+            itemData.parent.list.ListID, 
+            itemData.data);
 
         if (!connection || !strStatement) {
             return false;
