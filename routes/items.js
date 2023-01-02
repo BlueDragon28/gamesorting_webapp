@@ -24,8 +24,6 @@ module.exports = (app) => {
             return;
         }
 
-        console.dir(list);
-
         res.render("collections/newItem", { list });
     });
 
