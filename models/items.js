@@ -74,7 +74,7 @@ const checkIfItemExists = async (connection, collectionID, listID, itemID) => {
     const strStatement = strCheckIfItemExists(collectionID, listID, itemID);
 
     if (!connection || !strStatement) {
-        return false;
+        throw new SqlError("Failed to prepare statement");
     }
 
     try {
@@ -100,7 +100,7 @@ module.exports = {
         const strStatement = strRetrieveItemsFromList(collectionID, listID, itemID);
 
         if (!connection || !strStatement) {
-            return null;
+            throw new SqlError("Failed to prepare statement");
         }
 
         let queryResult = null;
@@ -127,7 +127,7 @@ module.exports = {
             itemData.data);
 
         if (!connection || !strStatement) {
-            return false;
+            throw new SqlError("Failed to prepare statement");
         }
 
         try {
@@ -146,7 +146,7 @@ module.exports = {
         const strStatement = strDeleteItem(collectionID, listID, itemID);
 
         if (!connection || !strStatement) {
-            return false;
+            throw new SqlError("Failed to prepare statement");
         }
 
         try {

@@ -82,7 +82,7 @@ const checkIfListExists = async (connection, collectionID, listID) => {
     const strStatement = strCheckIfListExists(collectionID, listID);
 
     if (!connection || !strStatement) {
-        return false;
+        throw new SqlError("Failed to prepare statement");
     }
 
     try {
@@ -104,7 +104,7 @@ const checkForDuplicate = async (connection, collectionID, listName) => {
     const strStatement = strCheckForDuplicate(collectionID, listName);
 
     if (!connection || !strStatement) {
-        return false;
+        throw new SqlError("Failed to prepare statement");
     }
 
     try {
@@ -133,7 +133,7 @@ module.exports = {
         const strStatement = strRetrieveListsFromCollection(collectionID, listID);
 
         if (!connection || !strStatement) {
-            return null;
+            throw new SqlError("Failed to prepare statement");
         }
 
         let queryResult = null;
@@ -157,7 +157,7 @@ module.exports = {
         const strStatement = strRetrieveNameAndIDFromListID(listID);
 
         if (!connection || !strStatement) {
-            return null;
+            throw new SqlError("Failed to prepare statement");
         }
 
         let queryResult = null;
@@ -180,7 +180,7 @@ module.exports = {
         );
 
         if (!connection || !strStatement) {
-            return false;
+            throw new SqlError("Failed to prepare statement");
         }
 
         if (await checkForDuplicate(connection, list.parent.collection.CollectionID, list.data.Name)) {
@@ -203,7 +203,7 @@ module.exports = {
         const strStatement = strDeleteList(collectionID, listID);
 
         if (!connection || !strStatement) {
-            return false;
+            throw new SqlError("Failed to prepare statement");
         }
 
         try {
