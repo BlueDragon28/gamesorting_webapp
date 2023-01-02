@@ -111,12 +111,11 @@ module.exports = {
         if (!connection || 
                 typeof collectionData !== "object" ||
                 typeof collectionData.Name !== "string" ||
-                collectionData.Name.length.trim().length === 0) {
+                collectionData.Name.trim().length === 0) {
             throw new ValueError(400, "Invalid Collection Name");
         }
 
-        const { Name } = collectionData;
-        Name = Name.trim();
+        const Name = collectionData.Name.trim();
 
         // Do not allow collection duplicate
         if ((await findID(connection, Name)).length > 0) {
