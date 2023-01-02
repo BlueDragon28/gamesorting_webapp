@@ -1,5 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
-const { SqlError } = require("../utils/errors/exceptions");
+const { SqlError, ValueError } = require("../utils/errors/exceptions");
 
 function strRetrieveItemsFromList(collectionID, listID, itemID) {
     collectionID = bigint.toBigInt(collectionID);
@@ -10,7 +10,7 @@ function strRetrieveItemsFromList(collectionID, listID, itemID) {
     }
 
     if (!bigint.isValid(collectionID) || !bigint.isValid(listID) || (itemID && !bigint.isValid(itemID))) {
-        return null;
+        throw new ValueError(400, "Invalid Collection ID or List ID or Item ID");
     }
 
     let strStatement = 
@@ -31,8 +31,8 @@ function strAddNewItem(collectionID, listID, itemData) {
     listID = bigint.toBigInt(listID);
 
     if (!bigint.isValid(collectionID) || !bigint.isValid(listID) || 
-        typeof itemData !== "object" || !itemData.name) {
-        return null;
+        typeof itemData !== "object" || !itemData.name || itemData.name.trim().length === 0) {
+        throw new ValueError(400, "Invalid Collection ID or List ID or Item Name");
     }
 
     return `INSERT INTO items(ListID, Name ${itemData.url ? ", Url":""}) ` +
@@ -45,7 +45,7 @@ function strDeleteItem(collectionID, listID, itemID) {
     itemID = bigint.toBigInt(itemID);
 
     if (!bigint.isValid(collectionID) || !bigint.isValid(listID) || !bigint.isValid(itemID)) {
-        return null;
+        throw new ValueError(400, "Invalid Collection ID or List ID or Item ID");
     }
 
     return "DELETE FROM items " +
@@ -58,7 +58,7 @@ function strCheckIfItemExists(collectionID, listID, itemID) {
     itemID = bigint.toBigInt(itemID);
 
     if (!collectionID || !listID || !itemID) {
-        return null;
+        throw new ValueError(400, "Invalid Collection ID or List ID or Item ID");
     }
 
     return "SELECT COUNT(i.ItemID) AS count FROM items i " +

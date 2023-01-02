@@ -1,5 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
-const { SqlError } = require("../utils/errors/exceptions");
+const { SqlError, ValueError } = require("../utils/errors/exceptions");
 
 /*
 Handling reading and writing of the collections SQL table
@@ -8,7 +8,7 @@ const strRetrieveAll = "SELECT CollectionID, Name FROM collections";
 
 const findByID = (connection, collectionID) => {
     if (!connection || !bigint.isValid(collectionID)) {
-        return null;
+        throw new ValueError(400, "Invalid Collection ID");
     }
 
     return `SELECT CollectionID, Name FROM collections WHERE CollectionID = ${collectionID}`;
@@ -16,14 +16,14 @@ const findByID = (connection, collectionID) => {
 
 const findID = async (connection, collectionName) => {
     if (!connection || 
-            (!collectionName &&
-            typeof collectionName !== "string")) {
-        return null;
+            !collectionName ||
+            typeof collectionName !== "string") {
+        throw new ValueError(400, "Invalid Collection Name");
     }
 
     let queryResult = null;
     try {
-        queryResult = await connection.query(`SELECT Name FROM collections WHERE Name = "${collectionName}"`);
+        queryResult = await connection.query(`SELECT Name FROM collections WHERE Name = "${collectionName.trim()}"`);
     } catch (error) {
         throw new SqlError(`Failed to find collection ${collectionName}: ${error.message}`);
     }
@@ -32,6 +32,12 @@ const findID = async (connection, collectionName) => {
 }
 
 const checkIfIDExists = async (connection, collectionID) => {
+    collectionID = bigint.toBigInt(collectionID);
+
+    if (!connection || !bigint.isValid(collectionID)) {
+        throw new ValueError(400, "Invalid Collection ID");
+    }
+
     try {
         const queryResult = await connection.query(`SELECT COUNT(CollectionID) AS count FROM collections WHERE CollectionID = ${collectionID.toString()}`);
         return queryResult[0].count > 0;
@@ -50,8 +56,10 @@ module.exports = {
     Return the list of items inside the collections SQL table
     */
     find: async (connection, collectionID) => {
-        if (!connection || (collectionID && !bigint.isValid(collectionID))) {
-            return null;
+        collectionID = bigint.toBigInt(collectionID);
+
+        if (!connection || !bigint.isValid(collectionID)) {
+            throw new ValueError(400, "Invalid Collection ID");
         }
 
         let queryResult;
@@ -75,7 +83,7 @@ module.exports = {
         collectionID = bigint.toBigInt(collectionID);
 
         if (!connection || !bigint.isValid(collectionID)) {
-            return null;
+            throw new ValueError(400, "Invalid Collection ID");
         }
 
         let queryResult = null;
@@ -102,11 +110,13 @@ module.exports = {
     new: async (connection, collectionData) => {
         if (!connection || 
                 typeof collectionData !== "object" ||
-                typeof collectionData.Name !== "string") {
-            return null;
+                typeof collectionData.Name !== "string" ||
+                collectionData.Name.length.trim().length === 0) {
+            throw new ValueError(400, "Invalid Collection Name");
         }
 
         const { Name } = collectionData;
+        Name = Name.trim();
 
         // Do not allow collection duplicate
         if ((await findID(connection, Name)).length > 0) {
@@ -129,7 +139,7 @@ module.exports = {
         collectionID = bigint.toBigInt(collectionID);
 
         if (!connection || !bigint.isValid(collectionID)) {
-            return null;
+            throw new ValueError(400, "Invalid Collection ID");
         }
 
         if (!await checkIfIDExists(connection, collectionID)) {

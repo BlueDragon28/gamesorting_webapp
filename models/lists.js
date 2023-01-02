@@ -1,5 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
-const { SqlError } = require("../utils/errors/exceptions");
+const { SqlError, ValueError } = require("../utils/errors/exceptions");
 
 /*
 Statement to query the lists available in a collection
@@ -8,8 +8,8 @@ function strRetrieveListsFromCollection(collectionID, listID) {
     collectionID = bigint.toBigInt(collectionID);
     listID = bigint.toBigInt(listID);
 
-    if (!bigint.isValid(collectionID)) {
-        return null;
+    if (!bigint.isValid(collectionID) || (listID && !bigint.isValid(listID))) {
+        throw new ValueError(400, "Invalid CollectionID or List ID");
     }
 
     let strStatement = `SELECT ListID, Name FROM lists WHERE CollectionID = ${collectionID.toString()}`;
@@ -25,7 +25,7 @@ function strRetrieveNameAndIDFromListID(listID) {
     listID = bigint.toBigInt(listID);
 
     if (!bigint.isValid(listID)) {
-        return null;
+        throw new ValueError(400, "Invalid List ID");
     }
 
     return `SELECT ListID, Name FROM lists WHERE ListID = ${listID.toString()}`;
@@ -36,7 +36,7 @@ function strCheckIfListExists(collectionID, listID) {
     listID = bigint.toBigInt(listID);
 
     if (!bigint.isValid(collectionID) || !bigint.isValid(listID)) {
-        return null;
+        throw new ValueError(400, "Invalid Collection ID or List ID");
     }
 
     return "SELECT COUNT(ListID) AS count FROM lists " +
@@ -47,12 +47,12 @@ function strCheckIfListExists(collectionID, listID) {
 function strAddNewList(collectionID, listName) {
     collectionID = bigint.toBigInt(collectionID);
 
-    if (!bigint.isValid(collectionID) || (typeof listName !== "string" || listName.length === 0)) {
-        return null;
+    if (!bigint.isValid(collectionID) || (typeof listName !== "string" || listName.trim().length === 0)) {
+        throw new ValueError(400, "Invalid CollectionID or List Name");
     }
 
     return "INSERT INTO lists(CollectionID, Name) " +
-           `VALUES (${collectionID}, "${listName}")`;
+           `VALUES (${collectionID}, "${listName.trim()}")`;
 }
 
 function strDeleteList(collectionID, listID) {
@@ -60,7 +60,7 @@ function strDeleteList(collectionID, listID) {
     listID = bigint.toBigInt(listID);
 
     if (!bigint.isValid(collectionID) || !bigint.isValid(listID)) {
-        return null;
+        throw new ValueError(400, "Invalid Collection ID or List ID");
     }
 
     return `DELETE FROM lists WHERE CollectionID = ${collectionID} AND ListID = ${listID}`;
@@ -69,13 +69,13 @@ function strDeleteList(collectionID, listID) {
 function strCheckForDuplicate(collectionID, listName) {
     collectionID = bigint.toBigInt(collectionID);
 
-    if (!bigint.isValid(collectionID) || typeof listName !== "string" || listName.length === 0) {
-        return null;
+    if (!bigint.isValid(collectionID) || typeof listName !== "string" || listName.trim().length === 0) {
+        throw new ValueError(400, "Invalid Collection ID or List Name");
     }
 
     return "SELECT COUNT(ListID) AS count FROM lists " +
            "INNER JOIN collections USING (CollectionID) " +
-           `WHERE lists.Name = "${listName}" AND collections.CollectionID = ${collectionID}`;
+           `WHERE lists.Name = "${listName.trim()}" AND collections.CollectionID = ${collectionID}`;
 }
 
 const checkIfListExists = async (connection, collectionID, listID) => {

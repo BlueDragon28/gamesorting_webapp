@@ -7,13 +7,21 @@ Thrown when a error happen to a sql query or connection
 */
 class SqlError extends Error {
     constructor(message) {
-        super();
+        super(message);
         this.statusCode = 500;
-        this.message = message;
         this.name = "SqlError";
     }
 }
 
+class ValueError extends Error {
+    constructor(statusCode, message) {
+        super(message);
+        this.statusCode = statusCode;
+        this.name = "ValueError";
+    }
+}
+
 module.exports = {
-    SqlError
+    SqlError,
+    ValueError
 }
