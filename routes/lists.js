@@ -60,7 +60,16 @@ module.exports = (app) => {
             return;
         }
 
-        const result = await database.new(database.LISTS, { collectionID, name });
+        const result = await database.new(database.LISTS, {
+            parent: {
+                collection: {
+                    CollectionID: collectionID
+                }
+            },
+            data: {
+                Name : name
+            }
+        });
 
         if (!result) {
             res.send("<h1>Failed to create a new list</h1>");

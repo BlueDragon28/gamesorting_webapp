@@ -172,14 +172,17 @@ module.exports = {
     /*
     Add a new list
     */
-    new: async (connection, collectionID, listName) => {
-        const strStatement = strAddNewList(collectionID, listName);
+    new: async (connection, list) => {
+        const strStatement = strAddNewList(
+            list.parent.collection.CollectionID,
+            list.data.Name
+        );
 
         if (!connection || !strStatement) {
             return false;
         }
 
-        if (await checkForDuplicate(connection, collectionID, listName)) {
+        if (await checkForDuplicate(connection, list.parent.collection.CollectionID, list.data.Name)) {
             return false;
         }
 
@@ -188,7 +191,7 @@ module.exports = {
 
             return true;
         } catch (error) {
-            console.error(`Failed to insert a new list into collection ${collectionID}\n\t${error}`);
+            console.error(`Failed to insert a new list into collection ${list.parent.collection.CollectionID}\n\t${error}`);
         }
 
         return false;
