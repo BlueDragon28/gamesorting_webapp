@@ -25,7 +25,7 @@ const findID = async (connection, collectionName) => {
     try {
         queryResult = await connection.query(`SELECT Name FROM collections WHERE Name = "${collectionName}"`);
     } catch (error) {
-        console.error(`Failed to retrieve collection id from name\n\t${error}`);
+        throw new SqlError(`Failed to find collection ${collectionName}: ${error.message}`);
     }
 
     return queryResult;
