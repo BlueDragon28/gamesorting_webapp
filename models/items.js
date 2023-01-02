@@ -1,4 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
+const { SqlError } = require("../utils/errors/exceptions");
 
 function strRetrieveItemsFromList(collectionID, listID, itemID) {
     collectionID = bigint.toBigInt(collectionID);
@@ -83,7 +84,7 @@ const checkIfItemExists = async (connection, collectionID, listID, itemID) => {
             return true;
         }
     } catch (error) {
-        console.log(`Failed to check if item exists\n\t${error}`);
+        throw new SqlError(`Failed to check if item ${itemID} already exists: ${error.message}`);
     }
 
     return false;
@@ -110,7 +111,7 @@ module.exports = {
                 queryResult = queryResult[0];
             }
         } catch (error) {
-            console.error(`Failed to retrieve items from list ${listID}\n\t${error}`);
+            throw new SqlError(`Failed to find item ${itemID}: ${error.message}`);
         }
 
         return queryResult;
@@ -131,13 +132,11 @@ module.exports = {
 
         try {
             queryResult = await connection.query(strStatement);
-
-            return true;
         } catch (error) {
-            console.log(`Failed to insert value into items table\n\t${error}`);
+            throw new SqlError(`Failed to insert a new item ${error.message}`);
         }
 
-        return false;
+        return true;
     },
 
     /*
@@ -152,12 +151,10 @@ module.exports = {
 
         try {
             await connection.query(strStatement);
-
-            return true;
         } catch (error) {
-            console.log(`Failed to delete item from items table\n\t${error}`);
+            throw new SqlError(`Failed to delete the item ${itemID}: ${error.message}`);
         }
 
-        return false;
+        return true;
     }
 };

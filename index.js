@@ -37,6 +37,16 @@ Adding the items routes
 */
 itemsRoute(app);
 
+/*
+Error handler. Every time an error is catch by express, this middleware is called.
+*/
+app.use((err, req, res, next) => {
+    const { statusCode = 500, 
+        message = "Oups, Something Went Wrong!" } = err;
+    
+    res.status(statusCode).send(message);
+})
+
 app.listen(8080, () => {
     console.log("Listing on port 8080");
 });

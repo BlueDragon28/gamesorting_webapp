@@ -1,4 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
+const { SqlError } = require("../utils/errors/exceptions");
 
 /*
 Handling reading and writing of the collections SQL table
@@ -35,8 +36,7 @@ const checkIfIDExists = async (connection, collectionID) => {
         const queryResult = await connection.query(`SELECT COUNT(CollectionID) AS count FROM collections WHERE CollectionID = ${collectionID.toString()}`);
         return queryResult[0].count > 0;
     } catch (error) {
-        console.error(`Failed to check if ID ${collectionID} exists\n\t${error}`);
-        return false;
+        throw new SqlError(`Failed to check if ID ${collectionID} exists: ${error.message}`);
     }
 }
 
@@ -62,7 +62,7 @@ module.exports = {
                 queryResult = await connection.query(strRetrieveAll);
             }
         } catch (error) {
-            console.error(`Failed to query data from collections SQL table\n\t${error}`)
+            throw new SqlError(`Failed to find collections: ${error.message}`);
         }
 
         return queryResult;
@@ -84,8 +84,8 @@ module.exports = {
             if (queryResult.length === 0) {
                 queryResult = null;
             }
-        } catch {
-            console.error("Failed to get the name of a collection.");
+        } catch (error) {
+            throw new SqlError(`Failed to find the name and the ID of the collection: ${error.message}`);
         }
 
         return queryResult;
@@ -116,8 +116,7 @@ module.exports = {
         try {
             await connection.query(`INSERT INTO collections (Name) VALUES ("${Name}")`);
         } catch (error) {
-            console.error(`Failed to insert a new collection.\n\t${error}`);
-            return false;
+            throw new SqlError(`Failed to insert a new collection: ${error.message}`);
         }
 
         return true;
@@ -140,8 +139,7 @@ module.exports = {
         try {
             await connection.query(`DELETE FROM collections WHERE CollectionID = ${collectionID.toString()}`);
         } catch (error) {
-            console.error(`Failed to delete collection ${collectionID}\n\t${error}`);
-            return false;
+            throw new SqlError(`Failed to delete collection ${collectionID}: ${error.message}`);
         }
 
         return true;
