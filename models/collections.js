@@ -1,4 +1,4 @@
-const bigint = require("../common/numbers/bigint");
+const bigint = require("../utils/numbers/bigint");
 
 /*
 Handling reading and writing of the collections SQL table

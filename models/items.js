@@ -1,4 +1,4 @@
-const bigint = require("../common/numbers/bigint");
+const bigint = require("../utils/numbers/bigint");
 
 function strRetrieveItemsFromList(collectionID, listID, itemID) {
     collectionID = bigint.toBigInt(collectionID);

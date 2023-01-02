@@ -1,4 +1,4 @@
-const bigint = require("../common/numbers/bigint");
+const bigint = require("../utils/numbers/bigint");
 
 /*
 Statement to query the lists available in a collection

@@ -5,7 +5,7 @@ const mariadb = require("../sql/connection");
 const collections = require("./collections");
 const lists = require("./lists");
 const items = require("./items");
-const bigint = require("../common/numbers/bigint");
+const bigint = require("../utils/numbers/bigint");
 
 const Tables = {
     COLLECTIONS: "collections",
