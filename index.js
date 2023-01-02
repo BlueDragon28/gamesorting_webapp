@@ -42,9 +42,10 @@ Error handler. Every time an error is catch by express, this middleware is calle
 */
 app.use((err, req, res, next) => {
     const { statusCode = 500, 
-        message = "Oups, Something Went Wrong!" } = err;
+        message = "Oups, Something Went Wrong!",
+        stack } = err;
     
-    res.status(statusCode).send(message);
+    res.status(statusCode).send("<p>" + message + (stack ? ("<br>" + stack) : "") + "</p>");
 })
 
 app.listen(8080, () => {
