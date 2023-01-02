@@ -1,10 +1,11 @@
 const database = require("../models/gameSortingDB");
+const wrapAsync = require("../utils/errors/wrapAsync");
 
 module.exports = (app) => {
     /*
     Form to create a new item in a list in a collection
     */
-    app.get("/collections/:collectionID/:listID/new", async (req ,res) => {
+    app.get("/collections/:collectionID/:listID/new", wrapAsync(async (req ,res) => {
         const { collectionID, listID } = req.params;
 
         if (!await database.exists(database.COLLECTIONS, collectionID)) {
@@ -25,12 +26,12 @@ module.exports = (app) => {
         }
 
         res.render("collections/newItem", { list });
-    });
+    }));
 
     /*
     Display informations about an item
     */
-    app.get("/collections/:collectionID/:listID/:itemID", async (req, res) => {
+    app.get("/collections/:collectionID/:listID/:itemID", wrapAsync(async (req, res) => {
         const { collectionID, listID, itemID } = req.params;
 
         if (!await database.exists(database.COLLECTIONS, collectionID)) {
@@ -58,12 +59,12 @@ module.exports = (app) => {
         console.log(item);
 
         res.render("collections/viewItem", { item });
-    });
+    }));
 
     /*
     Insert a new item into a list inside a collection
     */
-    app.post("/collections/:collectionID/:listID", async (req, res) => {
+    app.post("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
         const { collectionID, listID } = req.params;
         const { name, url } = req.body;
 
@@ -99,12 +100,12 @@ module.exports = (app) => {
         }
 
         res.redirect(`/collections/${collectionID}/${listID}`);
-    });
+    }));
 
     /*
     Delete an item from a list
     */
-    app.delete("/collections/:collectionID/:listID/:itemID", async (req, res) => {
+    app.delete("/collections/:collectionID/:listID/:itemID", wrapAsync(async (req, res) => {
 
         const { collectionID, listID, itemID } = req.params;
 
@@ -135,5 +136,5 @@ module.exports = (app) => {
         }
 
         res.redirect(`/collections/${collectionID}/${listID}`);
-    });
+    }));
 };

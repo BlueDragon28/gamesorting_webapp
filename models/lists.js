@@ -1,4 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
+const { SqlError } = require("../utils/errors/exceptions");
 
 /*
 Statement to query the lists available in a collection
@@ -90,7 +91,7 @@ const checkIfListExists = async (connection, collectionID, listID) => {
             return true;
         }
     } catch (error) {
-        console.error(`Failed to find if list ${listID} exists and is part of collection ${collectionID}\n\t${error}`);
+        throw new SqlError(`Failed to check if list ${listID} exists: ${error.message}`);
     }
 
     return false;
@@ -113,7 +114,7 @@ const checkForDuplicate = async (connection, collectionID, listName) => {
             return true;
         }
     } catch (error) {
-        console.log(`Failed to check if a list already exists\n\t${error}`);
+        throw new SqlError(`Failed to check for duplicate in list: ${error.message}`);
     }
 
     return false;
@@ -143,7 +144,7 @@ module.exports = {
                 queryResult = queryResult[0];
             }
         } catch (error) {
-            console.error(`Failed to query data from lists SQL table\n\t${error}`)
+            throw new SqlError(`Failed to find lists: ${error.message}`);
         }
 
         return queryResult;
@@ -163,7 +164,7 @@ module.exports = {
         try {
             queryResult = await connection.query(strStatement);
         } catch (error) {
-            console.error(`Failed to query ListID and Name from list table ${listID}\n\t${error}`);
+            throw new SqlError(`Failed to find list name and ID: ${error.message}`);
         }
 
         return queryResult;
@@ -188,13 +189,11 @@ module.exports = {
 
         try {
             await connection.query(strStatement);
-
-            return true;
         } catch (error) {
-            console.error(`Failed to insert a new list into collection ${list.parent.collection.CollectionID}\n\t${error}`);
+            throw new SqlError(`Failed to insert a new list: ${error.message}`);
         }
 
-        return false;
+        return true;
     },
 
     /*
@@ -209,12 +208,10 @@ module.exports = {
 
         try {
             await connection.query(strStatement);
-
-            return true;
         } catch (error) {
-            console.error(`Failed to delete a list from collection ${collectionID}\n\t${error}`);
+            throw new SqlError(`Failed to delete the list ${listID}: ${error.message}`);
         }
 
-        return false;
+        return true;
     }
 }

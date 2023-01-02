@@ -2,12 +2,13 @@
 The routes of the collections
 */
 const database = require("../models/gameSortingDB");
+const wrapAsync = require("../utils/errors/wrapAsync");
 
 module.exports = (app) => {
     /*
     Entry to see the collections list
     */
-    app.get("/collections", async (req, res) => {
+    app.get("/collections", wrapAsync(async (req, res) => {
         const collections = await database.find(database.COLLECTIONS);
 
         if (!collections) {
@@ -16,7 +17,7 @@ module.exports = (app) => {
         }
 
         res.render("collections/collectionsIndex.ejs", { collections });
-    });
+    }));
 
     /*
     Form to create a new collection
@@ -28,7 +29,7 @@ module.exports = (app) => {
     /*
     Entry to see the lists available inside a collection
     */
-    app.get("/collections/:collectionID", async (req, res) => {
+    app.get("/collections/:collectionID", wrapAsync(async (req, res) => {
         const { collectionID } = req.params;
 
         const lists = await database.find(database.LISTS, collectionID);
@@ -39,12 +40,12 @@ module.exports = (app) => {
         }
 
         res.render("collections/lists.ejs", { lists });
-    });
+    }));
 
     /*
     Create a new collection
     */
-    app.post("/collections", async (req, res) => {
+    app.post("/collections", wrapAsync(async (req, res) => {
         const { name } = req.body;
 
         const result = await database.new(database.COLLECTIONS, {
@@ -59,12 +60,12 @@ module.exports = (app) => {
         }
 
         res.redirect("/collections");
-    });
+    }));
 
     /*
     Delete a collection
     */
-    app.delete("/collections/:collectionID", async (req, res) => {
+    app.delete("/collections/:collectionID", wrapAsync(async (req, res) => {
         const { collectionID } = req.params;
         
         if (!collectionID) {
@@ -80,5 +81,5 @@ module.exports = (app) => {
         }
 
         res.redirect("/collections");
-    });
+    }));
 };

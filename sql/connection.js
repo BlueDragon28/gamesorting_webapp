@@ -4,6 +4,8 @@ functions to make queries.
 */
 
 const mariadb = require("mariadb");
+const { SqlError } = require("../utils/errors/exceptions");
+
 const pool = mariadb.createPool({
     user: "bluedragon28",
     socketPath: "/var/run/mysql/mysql.sock",
@@ -16,8 +18,8 @@ module.exports = {
         try {
             const connection = await pool.getConnection();
             return connection;
-        } catch {
-            return null;
+        } catch (error) {
+            throw new SqlError(`Cannot get a connection to mariadb: ${error.message}`);
         }
     }
 };

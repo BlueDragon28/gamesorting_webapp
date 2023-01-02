@@ -1,10 +1,11 @@
 const database = require("../models/gameSortingDB");
+const wrapAsync = require("../utils/errors/wrapAsync");
 
 module.exports = (app) => {
     /*
     Form to create a new lists in a collection
     */
-    app.get("/collections/:collectionID/new", async (req, res) => {
+    app.get("/collections/:collectionID/new", wrapAsync(async (req, res) => {
         const { collectionID } = req.params;
 
         if (!await database.exists(database.COLLECTIONS, collectionID)) {
@@ -20,12 +21,12 @@ module.exports = (app) => {
         }
 
         res.render("collections/newList", { collection: collection });
-    });
+    }));
 
     /*
     Entry point to list all items inside a list
     */
-    app.get("/collections/:collectionID/:listID", async (req, res) => {
+    app.get("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
         const { collectionID, listID } = req.params;
 
         if (!await database.exists(database.COLLECTIONS, collectionID)) {
@@ -46,12 +47,12 @@ module.exports = (app) => {
         }
 
         res.render("collections/items", { lists });
-    });
+    }));
 
     /*
     Add a new list to a collection
     */
-    app.post("/collections/:collectionID", async (req, res) => {
+    app.post("/collections/:collectionID", wrapAsync(async (req, res) => {
         const { collectionID } = req.params;
         const { name } = req.body;
 
@@ -77,12 +78,12 @@ module.exports = (app) => {
         }
 
         res.redirect(`/collections/${collectionID}`);
-    });
+    }));
 
     /*
     Delete a list from a collection
     */
-    app.delete("/collections/:collectionID/:listID", async (req, res) => {
+    app.delete("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
         const { collectionID, listID } = req.params;
 
         if (!await database.exists(database.COLLECTIONS, collectionID)) {
@@ -103,5 +104,5 @@ module.exports = (app) => {
         }
 
         res.redirect(`/collections/${collectionID}`);
-    });
+    }));
 }
