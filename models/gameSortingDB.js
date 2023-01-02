@@ -6,7 +6,7 @@ const collections = require("./collections");
 const lists = require("./lists");
 const items = require("./items");
 const bigint = require("../utils/numbers/bigint");
-const { ValueError, InternalError } = require("../utils/errors/exceptions");
+const { SqlError, ValueError, InternalError } = require("../utils/errors/exceptions");
 
 const Tables = {
     COLLECTIONS: "collections",
@@ -63,7 +63,7 @@ Check if an item exists
 */
 async function checkIfExists(connection, table, args) {
     if (!connection) {
-        return null;
+        throw new SqlError("Invalid Connection");
     }
 
     switch (table) {
@@ -88,7 +88,7 @@ Retrieving all the data of a specific table
 */
 async function retrieveAllData(connection, table, args) {
     if (!connection) {
-        return null;
+        throw new SqlError("Invalid Connection");
     }
 
     switch (table) {
@@ -134,7 +134,7 @@ async function retrieveAllData(connection, table, args) {
 
 async function addData(connection, table, params) {
     if (!connection) {
-        return null;
+        throw new SqlError("Invalid Connection");
     }
 
     switch (table) {
@@ -174,7 +174,7 @@ Deleting an item from a table
 */
 async function deleteData(connection, table, params) {
     if (!connection) {
-        return null;
+        throw new SqlError("Invalid Connection");
     }
 
     switch (table) {
@@ -219,11 +219,15 @@ module.exports = {
 
         const connection = await mariadb.getConnection();
         if (!connection) {
-            return null;
+            throw new SqlError("Invalid Connection");
         }
 
-        const queryData = await checkIfExists(connection, table, args);
-        connection.close();
+        let queryData = false;
+        try {
+            queryData = await checkIfExists(connection, table, args);
+        } finally {
+            connection.close();
+        }
         return queryData;
     },
 
@@ -237,11 +241,15 @@ module.exports = {
 
         const connection = await mariadb.getConnection();
         if (!connection) {
-            return null;
+            throw new SqlError("Invalid Connection");
         }
 
-        const queryData = await retrieveAllData(connection, table, args);
-        connection.close();
+        let queryData;
+        try {
+            queryData = await retrieveAllData(connection, table, args);
+        } finally {
+            connection.close();
+        }
         return queryData;
     },
 
@@ -255,12 +263,15 @@ module.exports = {
 
         const connection = await mariadb.getConnection();
         if (!connection) {
-            return null;
+            throw new SqlError("Invalid Connection");
         }
 
-        const result = await addData(connection, table, params);
-
-        connection.close();
+        let result = false;
+        try {
+            result = await addData(connection, table, params);
+        } finally {
+            connection.close();
+        }
         return result;
     },
 
@@ -275,12 +286,15 @@ module.exports = {
         const connection = await mariadb.getConnection();
 
         if (!connection) {
-            return null;
+            throw new SqlError("Invalid Connection");
         }
 
-        const result = await deleteData(connection, table, params);
-
-        connection.close();
+        let result = false;
+        try {
+            result = await deleteData(connection, table, params);
+        } finally {
+            connection.close();
+        }
         return result;
     }
 };
