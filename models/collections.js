@@ -99,20 +99,22 @@ module.exports = {
     /*
     Adding a new collection
     */
-    new: async (connection, collectionName) => {
+    new: async (connection, collectionData) => {
         if (!connection || 
-                (!collectionName &&
-                typeof collectionName !== "string")) {
+                typeof collectionData !== "object" ||
+                typeof collectionData.Name !== "string") {
             return null;
         }
 
+        const { Name } = collectionData;
+
         // Do not allow collection duplicate
-        if ((await findID(connection, collectionName)).length > 0) {
+        if ((await findID(connection, Name)).length > 0) {
             return false;
         }
 
         try {
-            await connection.query(`INSERT INTO collections (Name) VALUES ("${collectionName}")`);
+            await connection.query(`INSERT INTO collections (Name) VALUES ("${Name}")`);
         } catch (error) {
             console.error(`Failed to insert a new collection.\n\t${error}`);
             return false;

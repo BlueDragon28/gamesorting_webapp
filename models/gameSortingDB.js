@@ -131,7 +131,7 @@ async function addData(connection, table, params) {
     switch (table) {
 
     case Tables.COLLECTIONS: {
-        return await collections.new(connection, params.name);
+        return await collections.new(connection, params.data);
     }
 
     case Tables.LISTS: {
