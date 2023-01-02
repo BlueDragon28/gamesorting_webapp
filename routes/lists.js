@@ -1,5 +1,6 @@
 const database = require("../models/gameSortingDB");
 const wrapAsync = require("../utils/errors/wrapAsync");
+const { InternalError } = require("../utils/errors/exceptions");
 
 module.exports = (app) => {
     /*
@@ -8,16 +9,10 @@ module.exports = (app) => {
     app.get("/collections/:collectionID/new", wrapAsync(async (req, res) => {
         const { collectionID } = req.params;
 
-        if (!await database.exists(database.COLLECTIONS, collectionID)) {
-            res.send("Invalid Collection");
-            return;
-        }
-
         const collection = await database.find(database.COLLECTIONS, collectionID);
 
         if (!collection) {
-            res.send("Failed to get collection");
-            return;
+            throw new InternalError(`Failed To Query Collection ${collectionID}`);
         }
 
         res.render("collections/newList", { collection: collection });
@@ -29,21 +24,10 @@ module.exports = (app) => {
     app.get("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
         const { collectionID, listID } = req.params;
 
-        if (!await database.exists(database.COLLECTIONS, collectionID)) {
-            res.send("Invalid Collection");
-            return;
-        }
-
-        if (!await database.exists(database.LISTS, collectionID, listID)) {
-            res.send("Invalid Lists");
-            return;
-        }
-
         const lists = await database.find(database.ITEMS, collectionID, listID);
         
         if (!lists) {
-            res.send(`<h1>Failed to query items from list ${listID}`);
-            return;
+            throw new InternalError(`Failed To Query Items From List ${listID}`);
         }
 
         res.render("collections/items", { lists });
@@ -55,11 +39,6 @@ module.exports = (app) => {
     app.post("/collections/:collectionID", wrapAsync(async (req, res) => {
         const { collectionID } = req.params;
         const { name } = req.body;
-
-        if (!await database.exists(database.COLLECTIONS, collectionID)) {
-            res.send("Invalid Collection");
-            return;
-        }
 
         const result = await database.new(database.LISTS, {
             parent: {
@@ -73,8 +52,7 @@ module.exports = (app) => {
         });
 
         if (!result) {
-            res.send("<h1>Failed to create a new list</h1>");
-            return;
+            throw new InternalError(`Failed To Insert A New List Into Collection ${collectionID}`);
         }
 
         res.redirect(`/collections/${collectionID}`);
@@ -86,21 +64,10 @@ module.exports = (app) => {
     app.delete("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
         const { collectionID, listID } = req.params;
 
-        if (!await database.exists(database.COLLECTIONS, collectionID)) {
-            res.send("Invalid Collection");
-            return;
-        }
-
-        if (!await database.exists(database.LISTS, collectionID, listID)) {
-            res.send("Invalid List");
-            return;
-        }
-
         const result = await database.delete(database.LISTS, { collectionID, listID });
 
         if (!result) {
-            res.send("<h1>Failed to delete a list from a collection</h1>");
-            return;
+            throw new InternalError(`Failed To Delete List ${listID}`);
         }
 
         res.redirect(`/collections/${collectionID}`);

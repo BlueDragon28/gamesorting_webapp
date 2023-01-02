@@ -1,5 +1,6 @@
 const database = require("../models/gameSortingDB");
 const wrapAsync = require("../utils/errors/wrapAsync");
+const { InternalError } = require("../utils/errors/exceptions");
 
 module.exports = (app) => {
     /*
@@ -8,21 +9,10 @@ module.exports = (app) => {
     app.get("/collections/:collectionID/:listID/new", wrapAsync(async (req ,res) => {
         const { collectionID, listID } = req.params;
 
-        if (!await database.exists(database.COLLECTIONS, collectionID)) {
-            res.send("Invalid Collection");
-            return;
-        }
-
-        if (!await database.exists(database.LISTS, collectionID, listID)) {
-            res.send("Invalid List");
-            return;
-        }
-
         const list = await database.find(database.LISTS, collectionID, listID);
 
         if (!list) {
-            res.send("Cannot find list");
-            return;
+            throw new InternalError(`Failed To Query List ${listID}`);
         }
 
         res.render("collections/newItem", { list });
@@ -34,29 +24,11 @@ module.exports = (app) => {
     app.get("/collections/:collectionID/:listID/:itemID", wrapAsync(async (req, res) => {
         const { collectionID, listID, itemID } = req.params;
 
-        if (!await database.exists(database.COLLECTIONS, collectionID)) {
-            res.send("Invalid Collection");
-            return;
-        }
-
-        if (!await database.exists(database.LISTS, collectionID, listID)) {
-            res.send("Invalid List");
-            return;
-        }
-
-        if (!await database.exists(database.ITEMS, collectionID, listID, itemID)) {
-            res.send("Invalid Item");
-            return;
-        }
-
         const item = await database.find(database.ITEMS, collectionID, listID, itemID);
 
         if (!item) {
-            res.send("Failed to get item");
-            return;
+            throw new InternalError(`Failed To Query Item ${itemID}`);
         }
-
-        console.log(item);
 
         res.render("collections/viewItem", { item });
     }));
@@ -67,21 +39,6 @@ module.exports = (app) => {
     app.post("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
         const { collectionID, listID } = req.params;
         const { name, url } = req.body;
-
-        if (!await database.exists(database.COLLECTIONS, collectionID)) {
-            res.send("Invalid Collection");
-            return;
-        }
-
-        if (!await database.exists(database.LISTS, collectionID, listID)) {
-            res.send("Invalid List");
-            return;
-        }
-
-        if (typeof name !== "string" || name.length === 0) {
-            res.send("Name is Required");
-            return;
-        }
 
         const queryResult = await database.new(database.ITEMS, {
             parent: {
@@ -95,8 +52,7 @@ module.exports = (app) => {
         });
 
         if (!queryResult) {
-            res.send("Failed to insert a new element");
-            return;
+            throw new InternalError(`Failed To Insert A New Item Into List ${listID}`);
         }
 
         res.redirect(`/collections/${collectionID}/${listID}`);
@@ -109,21 +65,6 @@ module.exports = (app) => {
 
         const { collectionID, listID, itemID } = req.params;
 
-        if (!await database.exists(database.COLLECTIONS, collectionID)) {
-            res.send("Invalid Collection");
-            return;
-        }
-
-        if (!await database.exists(database.LISTS, collectionID, listID)) {
-            res.send("Invalid List");
-            return;
-        }
-
-        if (!await database.exists(database.ITEMS, collectionID, listID, itemID)) {
-            res.send("Invalid Item");
-            return;
-        }
-
         const queryResult = await database.delete(database.ITEMS, {
             collectionID,
             listID,
@@ -131,8 +72,7 @@ module.exports = (app) => {
         });
 
         if (!queryResult) {
-            res.send("Failed to delete item");
-            return;
+            throw new InternalError(`Failed To Delete Item ${itemID}`);
         }
 
         res.redirect(`/collections/${collectionID}/${listID}`);

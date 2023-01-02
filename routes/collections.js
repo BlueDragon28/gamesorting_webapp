@@ -3,6 +3,7 @@ The routes of the collections
 */
 const database = require("../models/gameSortingDB");
 const wrapAsync = require("../utils/errors/wrapAsync");
+const { InternalError } = require("../utils/errors/exceptions");
 
 module.exports = (app) => {
     /*
@@ -12,8 +13,7 @@ module.exports = (app) => {
         const collections = await database.find(database.COLLECTIONS);
 
         if (!collections) {
-            res.send("<h1>Failed to query collections</h1>");
-            return;
+            throw new InternalError("Failed To Query Collections");
         }
 
         res.render("collections/collectionsIndex.ejs", { collections });
@@ -35,8 +35,7 @@ module.exports = (app) => {
         const lists = await database.find(database.LISTS, collectionID);
 
         if (!lists) {
-            res.send("<h1>Failed to query the lists from the collection");
-            return;
+            throw new InternalError(`Failed To Query Lists From Collection ${collectionID}`);
         }
 
         res.render("collections/lists.ejs", { lists });
@@ -55,8 +54,7 @@ module.exports = (app) => {
         });
 
         if (!result) {
-            res.send("<h1>Failed to insert a new collection.");
-            return;
+            throw new InternalError("Failed To Insert A New Collection");
         }
 
         res.redirect("/collections");
@@ -67,17 +65,12 @@ module.exports = (app) => {
     */
     app.delete("/collections/:collectionID", wrapAsync(async (req, res) => {
         const { collectionID } = req.params;
-        
-        if (!collectionID) {
-            res.send("<h1>Invalid ID</h1>");
-            return;
-        }
+
 
         const result = await database.delete(database.COLLECTIONS, collectionID);
 
         if (!result) {
-            res.send(`<h1>Failed to delete ${collectionID}`);
-            return;
+            throw new InternalError(`Failed To Delete Collection ${collectionID}`);
         }
 
         res.redirect("/collections");
