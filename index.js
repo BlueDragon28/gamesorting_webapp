@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
 
 app.get("/", (req, res) => {
-    res.send("<h1>GameSorting index!</h1>");
+    res.render("index");
 });
 
 /*
