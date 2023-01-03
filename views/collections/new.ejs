@@ -1,13 +1,23 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
-<h1>Creating a new collection: </h1>
-<form action="/collections" method="post">
-    <section>
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name">
-    </section>
+<!-- A simple form to create a new collection -->
+<div class="row">
+    <div class="card col-md-6 offset-md-3">
+        <div class="card-body">
+            <h1 class="card-title fs-4">Create A New Collection</h1>
 
-    <button style="margin-top: 1rem; margin-bottom: 1rem;">Create</button>
-</form>
+            <!-- The only information we need for the form is the name of the collection -->
+            <form action="/collections" method="post">
+                <section class="mb-3">
+                    <label class="form-label" for="name">Name</label>
+                    <input class="form-control" type="text" name="name" id="name">
+                </section>
+            
+                <button class="btn btn-primary d-inline">Create</button>
 
-<a href="/collections">Cancel</a>
+                <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
+                <a class="btn btn-secondary" href="/collections">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
