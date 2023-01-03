@@ -1,27 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Item In <%= list.data.Name %> List</title>
-</head>
-<body>
-    <h1>New Item In <%= list.data.Name %> List:</h1>
+<% layout("layouts/boilerplate.ejs") -%> 
 
-    <form action="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>" method="post">
-        <section>
-            <label for="Name">Name</label>
-            <input type="text" name="name" id="name">
-        </section>
-        <section>
-            <label for="url">URL</label>
-            <input type="text" name="url" id="url">
-        </section>
+<h1>New Item In <%= list.data.Name %> List:</h1>
 
-        <button>Create</button>
-    </form>
+<form action="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>" method="post">
+    <section>
+        <label for="Name">Name</label>
+        <input type="text" name="name" id="name">
+    </section>
+    <section>
+        <label for="url">URL</label>
+        <input type="text" name="url" id="url">
+    </section>
 
-    <a href="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>">Cancel!</a>
-</body>
-</html>
+    <button>Create</button>
+</form>
+
+<a href="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>">Cancel!</a>
