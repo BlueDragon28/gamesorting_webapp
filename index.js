@@ -3,6 +3,7 @@ Required packages and js files
 */
 const path = require("path");
 const express = require("express");
+const ejsLayout = require("express-ejs-layouts");
 const collectionsRoute = require("./routes/collections");
 const listsRoute = require("./routes/lists");
 const itemsRoute = require("./routes/items");
@@ -12,6 +13,7 @@ const methodOverride = require("method-override");
 const app = express();
 
 // Use EJS has a view engine
+app.use(ejsLayout);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
