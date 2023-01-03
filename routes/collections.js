@@ -38,7 +38,7 @@ module.exports = (app) => {
             throw new InternalError(`Failed To Query Lists From Collection ${collectionID}`);
         }
 
-        res.render("collections/lists.ejs", { lists });
+        res.render("collections/lists/lists.ejs", { lists });
     }));
 
     /*

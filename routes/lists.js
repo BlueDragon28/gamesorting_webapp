@@ -15,7 +15,7 @@ module.exports = (app) => {
             throw new InternalError(`Failed To Query Collection ${collectionID}`);
         }
 
-        res.render("collections/newList", { collection: collection });
+        res.render("collections/lists/new", { collection: collection });
     }));
 
     /*
@@ -30,7 +30,7 @@ module.exports = (app) => {
             throw new InternalError(`Failed To Query Items From List ${listID}`);
         }
 
-        res.render("collections/items", { lists });
+        res.render("collections/lists/items/items", { lists });
     }));
 
     /*
