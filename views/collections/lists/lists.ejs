@@ -1,19 +1,27 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
-<h1><%= lists.parent.collection.Name %>:</h1>
+<h1 class="display-4"><%= lists.parent.collection.Name %></h1>
 
-<ul>
-    <% for (let list of lists.data) { %> 
-        <li>
-            <a href="/collections/<%= lists.parent.collection.CollectionID %>/<%= list.ListID %>"><%= list.Name %></a>
-        </li>
-    <% } %> 
-</ul>
+<section class="mb-4">
+    <a class="btn btn-primary" href="/collections/<%= lists.parent.collection.CollectionID %>/new">New List</a>
+    <a class="btn btn-secondary" href="/collections">Go Back</a>
 
-<form action="/collections/<%= lists.parent.collection.CollectionID %>?_method=DELETE" method="post">
-    <button>Delete</button>
-</form>
+    <form class="d-inline" action="/collections/<%= lists.parent.collection.CollectionID %>?_method=DELETE" method="post">
+        <button class="btn btn-danger">Delete</button>
+    </form>
+</section>
 
-<a href="/collections/<%= lists.parent.collection.CollectionID %>/new">New List</a>
+<!-- Display the available lists in a list of cards -->
+<% for(let list of lists.data) { %>
+    <div class="row pb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="fs-4 fw-normal pb-3"><%= list.Name %></h2>
 
-<a href="/collections">Go Back!</a>
+                    <a class="btn btn-info" href="/collections/<%= lists.parent.collection.CollectionID %>/<%= list.ListID %>">View List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
