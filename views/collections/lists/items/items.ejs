@@ -12,21 +12,21 @@
 </section>
 
 
-<% for(let list of lists.data) { %>
+<% for(let item of lists.data) { %>
     <div class="row pb-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="fs-4 fw-normal"><%= list.Name %></h2>
+                    <h2 class="fs-4 fw-normal"><%= item.Name %></h2>
 
                     <section class="pb-2">
                         <!-- Add the URL only if there is one -->
-                        <% if (list.URL) { %> 
-                            <a class="card-link" href="<%= list.URL %>">URL</a>
+                        <% if (item.URL) { %> 
+                            <a class="card-link" href="<%= item.URL %>">URL</a>
                         <% } %> 
                     </section>
 
-                    <a href="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>/<%= list.ItemID %>" 
+                    <a href="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>/<%= item.ItemID %>" 
                         class="btn btn-info">View Details</a>
                 </div>
             </div>
