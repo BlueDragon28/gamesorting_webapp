@@ -1,13 +1,30 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
-<h1><%= item.data.Name %></h1>
+<div class="row">
+    <div class="card col-6 offset-3">
+        <ul class="list-group list-group-flush p-2">
 
-<% if (item.data.URL) { %> 
-    <a href="<%= item.data.URL %>"><%= item.data.URL %></a><br><br><br>
-<% } %> 
+            <!-- The information about the item -->
+            <li class="list-group-item">
+                <section>
+                    <h1 class="card-title fs-3"><%= item.data.Name %></h1>
 
-<form action="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>/<%= item.data.ItemID %>?_method=DELETE" method="post">
-    <button>Delete</button>
-</form>
+                    <% if (item.data.URL) { %> 
+                        <p class="text-muted">URL: <a class="card-link" href="<%= item.data.URL %>"><%= item.data.URL %></a></p>
+                    <% } %> 
+                </section>
+            </li>
 
-<a href="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>">Go Back!</a>
+            <!-- The button to destroy the item or going back -->
+            <li class="list-group-item">
+                <form class="d-inline"
+                        action="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>/<%= item.data.ItemID %>?_method=DELETE" 
+                        method="post">
+                    <button class="btn btn-danger">Delete</button>
+                </form>
+
+                <a class="btn btn-secondary" href="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>">Go Back!</a>
+            </li>
+        </ul>
+    </div>
+</div>
