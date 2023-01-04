@@ -1,14 +1,23 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
-<h1>New List In <%= collection.data.Name %> Collection: </h1>
+<!-- A simple form to create a new list -->
+<div class="row">
+    <div class="card col-md-6 offset-md-3">
+        <div class="card-body">
+            <h1 class="card-title fs-4">Add A New List Into <%= collection.data.Name %> Collection</h1>
 
-<form action="/collections/<%= collection.data.CollectionID %>" method="post">
-    <section>
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name">
-    </section>
+            <!-- The only information we need for the form is the name of the collection -->
+            <form action="/collections/<%= collection.data.CollectionID %>" method="post">
+                <section class="mb-3">
+                    <label class="form-label" for="name">Name</label>
+                    <input class="form-control" type="text" name="name" id="name">
+                </section>
+            
+                <button class="btn btn-primary d-inline">Add</button>
 
-    <button style="margin-top: 1rem; margin-bottom: 1rem;">Create</button>
-</form>
-
-<a href="/collections/<%= collection.data.CollectionID %>">Cancel!</a>
+                <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
+                <a class="btn btn-secondary" href="/collections/<%= collection.data.CollectionID %>">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
