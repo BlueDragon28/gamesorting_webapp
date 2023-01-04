@@ -11,9 +11,10 @@
     </form>
 </section>
 
-<div class="container">
-    <% for(let list of lists.data) { %>
-        <div class="row pb-3">
+
+<% for(let list of lists.data) { %>
+    <div class="row pb-3">
+        <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <h2 class="fs-4 fw-normal"><%= list.Name %></h2>
@@ -30,5 +31,5 @@
                 </div>
             </div>
         </div>
-    <% } %>
-</div>
+    </div>
+<% } %>
