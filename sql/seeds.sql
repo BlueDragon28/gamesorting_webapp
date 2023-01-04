@@ -25,7 +25,7 @@ VALUES
     (2, 1, "SnowRunner"),
 
     (3, 2, "DragonSpell"),
-    (4, 2, "The Hero's Lot"),
+    (4, 2, "Raisin Dragons"),
 
     (5, 3, "Frozen II"),
     (6, 3, "Raya and the Last Dragon"),
