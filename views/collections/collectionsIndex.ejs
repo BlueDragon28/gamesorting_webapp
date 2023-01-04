@@ -1,11 +1,21 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
-<h1>Collections List:</h1>
+<h1 class="display-4">Collections</h1>
 
-<a href="/collections/new">New Collection</a>
+<section class="mb-4">
+    <a class="btn btn-primary" href="/collections/new">New Collection</a>
+</section>
 
-<ul>
-    <% for (let collection of collections.data) { %> 
-        <li><a href="/collections/<%= collection.CollectionID %>"><%= collection.Name %></a></li>
-    <% } %> 
-</ul>
+<% for(let collection of collections.data) { %>
+    <div class="row pb-3">
+        <div class="col-16">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="fs-4 fw-normal mb-4"><%= collection.Name %></h2>
+
+                    <a class="btn btn-info" href="/collections/<%= collection.CollectionID %>">View Collection</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
