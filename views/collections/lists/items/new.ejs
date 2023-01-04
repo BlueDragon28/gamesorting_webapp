@@ -3,28 +3,30 @@
 <!-- A form to create a new items
 The form have two fields, Name and Url. -->
 <div class="row">
-    <div class="card col-md-6 offset-md-3">
-        <div class="card-body">
-            <h1 class="card-title fs-4">Add A New Item In <%= list.data.Name %> List</h1>
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title fs-4">Add A New Item In <%= list.data.Name %> List</h1>
 
-            <!-- The only information we need for the form is the name of the collection -->
-            <form action="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>" method="post">
-                <section class="mb-3">
-                    <label class="form-label" for="name">Name</label>
-                    <input class="form-control" type="text" name="name" id="name">
-                </section>
-                <section>
-                    <label class="form-label" for="url">URL</label>
-                    <input class="form-control" type="text" name="url" id="url">
-                </section>
-            
-                <section class="mt-4">
-                    <button class="btn btn-primary d-inline">Add</button>
+                <!-- The only information we need for the form is the name of the collection -->
+                <form action="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>" method="post">
+                    <section class="mb-3">
+                        <label class="form-label" for="name">Name</label>
+                        <input class="form-control" type="text" name="name" id="name">
+                    </section>
+                    <section>
+                        <label class="form-label" for="url">URL</label>
+                        <input class="form-control" type="text" name="url" id="url">
+                    </section>
+                
+                    <section class="mt-4">
+                        <button class="btn btn-primary d-inline">Add</button>
 
-                    <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
-                    <a class="btn btn-secondary" href="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>">Cancel</a>
-                </section>
-            </form>
+                        <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
+                        <a class="btn btn-secondary" href="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>">Cancel</a>
+                    </section>
+                </form>
+            </div>
         </div>
     </div>
 </div>
