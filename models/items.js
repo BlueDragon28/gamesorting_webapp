@@ -52,6 +52,18 @@ function strDeleteItem(collectionID, listID, itemID) {
            `WHERE items.ItemID = ${itemID} AND items.ListID = ${listID}`;
 }
 
+function strDeleteAllItemsFromList(collectionID, listID) {
+    collectionID = bigint.toBigInt(collectionID);
+    listID = bigint.toBigInt(listID);
+
+    if (!bigint.isValid(collectionID) || !bigint.isValid(listID)) {
+        throw new ValueError(400, "Invalid Collection ID or List ID");
+    }
+
+    return "DELETE FROM items " +
+           `WHERE items.ListID = ${listID}`
+}
+
 function strCheckIfItemExists(collectionID, listID, itemID) {
     collectionID = bigint.toBigInt(collectionID);
     listID = bigint.toBigInt(listID);
@@ -143,7 +155,12 @@ module.exports = {
     Delete an item from a list
     */
     delete: async function(connection, collectionID, listID, itemID) {
-        const strStatement = strDeleteItem(collectionID, listID, itemID);
+        let strStatement;
+        if (collectionID && listID && itemID) {
+            strStatement = strDeleteItem(collectionID, listID, itemID);
+        } else if (collectionID && listID) {
+            strStatement = strDeleteAllItemsFromList(collectionID, listID);
+        }
 
         if (!connection || !strStatement) {
             throw new SqlError("Failed to prepare statement");

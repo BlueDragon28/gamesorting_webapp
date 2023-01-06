@@ -189,7 +189,10 @@ async function deleteData(connection, table, params) {
             throw new ValueError(400, "Invalid Collection Or List");
         }
 
-        return await lists.delete(connection, params.collectionID, params.listID);
+        await lists.delete(connection, params.collectionID, params.listID);
+
+        // Delete all items from the list
+        return await items.delete(connection, params.collectionID, params.listID);
     }
 
     case Tables.ITEMS: {
