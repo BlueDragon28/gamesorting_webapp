@@ -212,7 +212,7 @@ module.exports = {
     /*
     Check if an item exists
     */
-    exists: async (table, ...args) => {
+    exists: async function(table, ...args) {
         if (!table || typeof table !== "string" || table.trim().length === 0) {
             throw new InternalError(`${table} is not a valid table`);
         }
@@ -234,7 +234,7 @@ module.exports = {
     /*
     Retrieve data from a specific table
     */
-    find: async (table, ...args) => {
+    find: async function(table, ...args) {
         if (!table || typeof table !== "string" || table.length === 0) {
             throw new InternalError(`${table} is not a valid table`);
         }
@@ -256,7 +256,7 @@ module.exports = {
     /*
     Add data to a specific table
     */
-    new: async (table, params) => {
+    new: async function(table, params) {
         if ((!table && typeof table !== "string" && table.length === 0)) {
             throw new InternalError(`${table} is not a valid table`);
         }
@@ -278,7 +278,7 @@ module.exports = {
     /*
     Deleting an item from a table
     */
-    delete: async (table, params) => {
+    delete: async function(table, params) {
         if ((!table && typeof table !== "string" && table.length === 0)) {
             throw new InternalError(`${table} is not a valid table`);
         }
