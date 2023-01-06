@@ -180,7 +180,18 @@ async function deleteData(connection, table, params) {
     switch (table) {
 
     case Tables.COLLECTIONS: {
-        return await collections.delete(connection, params);
+        // Find the lists available in the collection
+        const foundLists = await lists.find(connection, params);
+
+        const result = await collections.delete(connection, params);
+
+        // Delete all the lists and items in the collection
+        for (let list of foundLists) {
+            await lists.delete(connection, params, list.ListID);
+            await items.delete(connection, params, list.ListID);
+        }
+
+        return result;
     }
 
     case Tables.LISTS: {
