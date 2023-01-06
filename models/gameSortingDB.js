@@ -180,40 +180,46 @@ async function deleteData(connection, table, params) {
     switch (table) {
 
     case Tables.COLLECTIONS: {
-        // Find the lists available in the collection
-        const foundLists = await lists.find(connection, params);
+        const collection = params;
 
-        const result = await collections.delete(connection, params);
+        // Find the lists available in the collection
+        const foundLists = await lists.find(connection, collection);
+
+        const result = await collections.delete(connection, collection);
 
         // Delete all the lists and items in the collection
         for (let list of foundLists) {
-            await lists.delete(connection, params, list.ListID);
-            await items.delete(connection, params, list.ListID);
+            await lists.delete(connection, collection, list.ListID);
+            await items.delete(connection, collection, list.ListID);
         }
 
         return result;
     }
 
     case Tables.LISTS: {
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ params.collectionID ]) ||
-            !await checkIfExists(connection, Tables.LISTS, [ params.collectionID, params.listID ])) {
+        const { collectionID, listID } = params;
+
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ collectionID ]) ||
+            !await checkIfExists(connection, Tables.LISTS, [ collectionID, listID ])) {
             throw new ValueError(400, "Invalid Collection Or List");
         }
 
-        await lists.delete(connection, params.collectionID, params.listID);
+        await lists.delete(connection, collectionID, listID);
 
         // Delete all items from the list
-        return await items.delete(connection, params.collectionID, params.listID);
+        return await items.delete(connection, collectionID, listID);
     }
 
     case Tables.ITEMS: {
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ params.collectionID ]) ||
-            !await checkIfExists(connection, Tables.LISTS, [ params.collectionID, params.listID ]) ||
-            !await checkIfExists(connection, Tables.ITEMS, [ params.collectionID, params.listID, params.itemID ])) {
+        const { collectionID, listID, itemID } = params;
+
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ collectionID ]) ||
+            !await checkIfExists(connection, Tables.LISTS, [ collectionID, listID ]) ||
+            !await checkIfExists(connection, Tables.ITEMS, [ collectionID, listID, itemID ])) {
             throw new ValueError(400, "Invalid Collection Or List Or Item");
         }
 
-        return await items.delete(connection, params.collectionID, params.listID, params.itemID);
+        return await items.delete(connection, collectionID, listID, itemID);
     }
 
     }
