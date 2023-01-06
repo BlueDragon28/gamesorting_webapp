@@ -6,7 +6,7 @@ Handling reading and writing of the collections SQL table
 */
 const strRetrieveAll = "SELECT CollectionID, Name FROM collections";
 
-const findByID = (connection, collectionID) => {
+function findByID(connection, collectionID) {
     if (!connection || !bigint.isValid(collectionID)) {
         throw new ValueError(400, "Invalid Collection ID");
     }
@@ -14,7 +14,7 @@ const findByID = (connection, collectionID) => {
     return `SELECT CollectionID, Name FROM collections WHERE CollectionID = ${collectionID}`;
 }
 
-const findID = async (connection, collectionName) => {
+async function findID(connection, collectionName) {
     if (!connection || 
             !collectionName ||
             typeof collectionName !== "string") {
@@ -31,7 +31,7 @@ const findID = async (connection, collectionName) => {
     return queryResult;
 }
 
-const checkIfIDExists = async (connection, collectionID) => {
+async function checkIfIDExists(connection, collectionID) {
     collectionID = bigint.toBigInt(collectionID);
 
     if (!connection || !bigint.isValid(collectionID)) {
@@ -55,7 +55,7 @@ module.exports = {
     /*
     Return the list of items inside the collections SQL table
     */
-    find: async (connection, collectionID) => {
+    find: async function(connection, collectionID) {
         collectionID = bigint.toBigInt(collectionID);
 
         if (!connection || (collectionID && !bigint.isValid(collectionID))) {
@@ -79,7 +79,7 @@ module.exports = {
     /*
     Return the name and the id of a collection from a CollectionID
     */
-    findNameAndID: async (connection, collectionID) => {
+    findNameAndID: async function(connection, collectionID) {
         collectionID = bigint.toBigInt(collectionID);
 
         if (!connection || !bigint.isValid(collectionID)) {
@@ -107,7 +107,7 @@ module.exports = {
     /*
     Adding a new collection
     */
-    new: async (connection, collectionData) => {
+    new: async function(connection, collectionData) {
         if (!connection || 
                 typeof collectionData !== "object" ||
                 typeof collectionData.Name !== "string" ||
@@ -134,7 +134,7 @@ module.exports = {
     /*
     Delete a collection by ID
     */
-    delete: async (connection, collectionID) => {
+    delete: async function(connection, collectionID) {
         collectionID = bigint.toBigInt(collectionID);
 
         if (!connection || !bigint.isValid(collectionID)) {
