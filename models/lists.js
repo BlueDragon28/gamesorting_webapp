@@ -83,7 +83,7 @@ function strCheckForDuplicate(collectionID, listName) {
            `WHERE l.Name = "${listName.trim()}" AND c.CollectionID = ${collectionID}`;
 }
 
-const checkIfListExists = async (connection, collectionID, listID) => {
+async function checkIfListExists(connection, collectionID, listID) {
     const strStatement = strCheckIfListExists(collectionID, listID);
 
     if (!connection || !strStatement) {
@@ -105,7 +105,7 @@ const checkIfListExists = async (connection, collectionID, listID) => {
 /*
 Check if a list do not alrady exists
 */
-const checkForDuplicate = async (connection, collectionID, listName) => {
+async function checkForDuplicate(connection, collectionID, listName) {
     const strStatement = strCheckForDuplicate(collectionID, listName);
 
     if (!connection || !strStatement) {
@@ -134,7 +134,7 @@ module.exports = {
     /*
     Returning the lists available inside a collection
     */
-    find: async (connection, collectionID, listID) => {
+    find: async function(connection, collectionID, listID) {
         const strStatement = strRetrieveListsFromCollection(collectionID, listID);
 
         if (!connection || !strStatement) {
@@ -158,7 +158,7 @@ module.exports = {
     /*
     Return the name and id of a list from a ListID
     */
-    findNameAndID: async (connection, collectionID, listID) => {
+    findNameAndID: async function(connection, collectionID, listID) {
         const strStatement = strRetrieveNameAndIDFromListID(collectionID, listID);
 
         if (!connection || !strStatement) {
@@ -178,7 +178,7 @@ module.exports = {
     /*
     Add a new list
     */
-    new: async (connection, list) => {
+    new: async function(connection, list) {
         const strStatement = strAddNewList(
             list.parent.collection.CollectionID,
             list.data.Name
@@ -204,7 +204,7 @@ module.exports = {
     /*
     Delete a list
     */
-    delete: async (connection, collectionID, listID) => {
+    delete: async function(connection, collectionID, listID) {
         const strStatement = strDeleteList(collectionID, listID);
 
         if (!connection || !strStatement) {
