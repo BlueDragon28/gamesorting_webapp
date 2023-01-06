@@ -60,6 +60,16 @@ function strAddNewList(collectionID, listName) {
            `VALUES (${collectionID}, "${listName.trim()}")`;
 }
 
+function strEditList(listID, listName) {
+    listID = bigint.toBigInt(listID);
+
+    if (!bigint.isValid(listID) || typeof listName !== "string") {
+        throw new ValueError(400, "Invalid ListID or Name");
+    }
+
+    return `UPDATE lists SET Name = "${listName}" WHERE ListID = ${listID}`;
+} 
+
 function strDeleteList(collectionID, listID) {
     collectionID = bigint.toBigInt(collectionID);
     listID = bigint.toBigInt(listID);
@@ -196,6 +206,30 @@ module.exports = {
             await connection.query(strStatement);
         } catch (error) {
             throw new SqlError(`Failed to insert a new list: ${error.message}`);
+        }
+
+        return true;
+    },
+
+    /*
+    Edit a list name
+    */
+    edit: async function(connection, list) {
+        const strStatement = strEditList(list.data.ListID, list.data.Name);
+        const collectionID = bigint.toBigInt(list.parent.collection.CollectionID);
+
+        if (!connection || !bigint.isValid(collectionID) || !strStatement) {
+            throw new SqlError("Failed to prepare statement");
+        }
+
+        if (await checkForDuplicate(connection, collectionID, list.data.Name)) {
+            throw new ValueError(400, "Dupplicate name are not allowed");
+        }
+
+        try {
+            await connection.query(strStatement);
+        } catch (error) {
+            throw new SqlError(`Failed to update list ${list.data.ListID}`)
         }
 
         return true;

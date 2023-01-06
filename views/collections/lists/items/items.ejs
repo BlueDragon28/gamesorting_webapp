@@ -4,6 +4,7 @@
 
 <section class="pb-4">
     <a class="btn btn-primary" href="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>/new">New Item</a>
+    <a class="btn btn-success" href="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>/edit">Edit List</a>
     <a class="btn btn-secondary" href="/collections/<%= lists.parent.collection.CollectionID %>">Go Back!</a>
 
     <form class="d-inline" action="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>?_method=DELETE" method="post">

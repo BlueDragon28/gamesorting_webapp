@@ -34,6 +34,21 @@ module.exports = (app) => {
     }));
 
     /*
+    Form to edit a list
+    */
+    app.get("/collections/:collectionID/:listID/edit", wrapAsync(async (req, res) => {
+        const { collectionID, listID } = req.params;
+
+        const list = await database.find(database.LISTS, collectionID, listID);
+
+        if (!list) {
+            throw new InternalError(`Failed To Query Items From List ${listID}`);
+        }
+
+        res.render("collections/lists/edit", { list });
+    }));
+
+    /*
     Add a new list to a collection
     */
     app.post("/collections/:collectionID", wrapAsync(async (req, res) => {
@@ -56,6 +71,32 @@ module.exports = (app) => {
         }
 
         res.redirect(`/collections/${collectionID}`);
+    }));
+
+    /*
+    Edit list
+    */
+    app.put("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
+        const { collectionID, listID } = req.params;
+        const { name } = req.body;
+
+        const result = await database.edit(database.LISTS, {
+            parent: {
+                collection: {
+                    CollectionID: collectionID
+                }
+            },
+            data: {
+                ListID: listID,
+                Name: name
+            }
+        });
+
+        if (!result) {
+            throw new InternalError(`Failed To Edit A List ${listID}`);
+        }
+
+        res.redirect(`/collections/${collectionID}/${listID}`);
     }));
 
     /*
