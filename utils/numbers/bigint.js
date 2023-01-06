@@ -5,7 +5,7 @@ Handle bigint manipulation
 /*
 Convert string to BigInt
 */
-const fromStringToBigInt = (str) => {
+const fromStringToBigInt = function (str) {
     if (!str && typeof str !== "string") {
         return null;
     }
@@ -22,7 +22,7 @@ const fromStringToBigInt = (str) => {
 /*
 Check if a value is a valid number
 */
-const isValid = (bigint) => {
+const isValid = function(bigint) {
     if (!bigint && 
             typeof bigint !== "number" &&
             typeof bigint !== "bigint" &&
@@ -40,7 +40,7 @@ const isValid = (bigint) => {
 /*
 Convert a value to a bigint
 */
-const toBigInt = (value) => {
+const toBigInt = function(value) {
     if (!isValid(value)) {
         return null;
     }
