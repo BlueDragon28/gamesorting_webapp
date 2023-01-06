@@ -34,6 +34,21 @@ module.exports = (app) => {
     }));
 
     /*
+    Form to edit an item
+    */
+    app.get("/collections/:collectionID/:listID/:itemID/edit", wrapAsync(async (req, res) => {
+        const { collectionID, listID, itemID } = req.params;
+
+        const item = await database.find(database.ITEMS, collectionID, listID, itemID);
+
+        if (!item) {
+            throw new InternalError(`Failed To Query Item ${itemID}`);
+        }
+
+        res.render("collections/lists/items/edit", { item });
+    }));
+
+    /*
     Insert a new item into a list inside a collection
     */
     app.post("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
@@ -56,6 +71,32 @@ module.exports = (app) => {
         }
 
         res.redirect(`/collections/${collectionID}/${listID}`);
+    }));
+
+    /*
+    Edit An Item
+    */
+    app.put("/collections/:collectionID/:listID/:itemID", wrapAsync(async (req, res) => {
+        const { collectionID, listID, itemID } = req.params;
+        const { name, url } = req.body;
+
+        const queryResult = await database.edit(database.ITEMS, {
+            parent: {
+                collection: { CollectionID: collectionID },
+                list: { ListID: listID }
+            },
+            data: {
+                ItemID: itemID,
+                Name: name,
+                URL: url
+            }
+        });
+
+        if (!queryResult) {
+            throw new InternalError(`Failed To Edit Item ${itemID}`)
+        }
+
+        res.redirect(`/collections/${collectionID}/${listID}/${itemID}`);
     }));
 
     /*

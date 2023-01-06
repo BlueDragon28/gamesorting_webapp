@@ -203,6 +203,24 @@ async function editData(connection, table, params) {
         return await lists.edit(connection, listData);
     }
 
+    case Tables.ITEMS: {
+        const itemData = params;
+
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, itemData.parent.collection.CollectionID)) {
+            throw new ValueError(400, "Invalid Collection");
+        }
+
+        if (!await checkIfExists(connection, Tables.LISTS, [ itemData.parent.collection.CollectionID, itemData.parent.list.ListID ])) {
+            throw new ValueError(400, "Invalid List");
+        }
+
+        if (!await checkIfExists(connection, Tables.ITEMS, [ itemData.parent.collection.CollectionID, itemData.parent.list.ListID, itemData.data.ItemID ])) {
+            throw new ValueError(400, "Invalid Item");
+        }
+
+        return await items.edit(connection, itemData);
+    }
+
     }
 }
 

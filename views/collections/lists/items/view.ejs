@@ -18,6 +18,8 @@
 
                 <!-- The button to destroy the item or going back -->
                 <li class="list-group-item pt-3">
+                    <a class="btn btn-success" href="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>/<%= item.data.ItemID %>/edit">Edit</a>
+
                     <form class="d-inline"
                             action="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>/<%= item.data.ItemID %>?_method=DELETE" 
                             method="post">

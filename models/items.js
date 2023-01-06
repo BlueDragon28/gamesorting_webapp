@@ -39,6 +39,17 @@ function strAddNewItem(collectionID, listID, itemData) {
            `VALUES (${listID}, "${itemData.name}" ${itemData.url ? ", \"" + itemData.url + "\"":""})`;
 }
 
+function strEditItem(itemData) {
+    const itemID = bigint.toBigInt(itemData.ItemID);
+    const { Name, URL } = itemData;
+
+    if (!bigint.isValid(itemID) || !Name || Name.trim().length === 0) {
+        throw new ValueError(400, "Invalid Item Data");
+    }
+
+    return `UPDATE items SET Name = "${Name.trim()}", URL = ${URL ? '"' + URL + '"' : "NULL"} WHERE ItemID = ${itemID}`;
+}
+
 function strDeleteItem(collectionID, listID, itemID) {
     collectionID = bigint.toBigInt(collectionID);
     listID = bigint.toBigInt(listID);
@@ -146,6 +157,25 @@ module.exports = {
             queryResult = await connection.query(strStatement);
         } catch (error) {
             throw new SqlError(`Failed to insert a new item ${error.message}`);
+        }
+
+        return true;
+    },  
+
+    /*
+    Edit an item
+    */
+    edit: async function(connection, itemData) {
+        const strStatement = strEditItem(itemData.data);
+
+        if (!connection || !strStatement) {
+            throw new SqlError("Failed to prepare statement");
+        }
+
+        try {
+            queryResult = await connection.query(strStatement);
+        } catch (error) {
+            throw new SqlError(`Failed to edit an item ${error.message}`);
         }
 
         return true;

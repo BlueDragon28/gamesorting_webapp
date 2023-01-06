@@ -1,0 +1,32 @@
+<% layout("layouts/boilerplate.ejs") -%>
+
+<!-- A form to edit an items
+The form have two fields, Name and Url. -->
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title fs-4">Edit <%= item.data.Name %> Item</h1>
+
+                <!-- The only information we need for the form is the name of the collection -->
+                <form action="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>/<%= item.data.ItemID %>?_method=PUT" method="post">
+                    <section class="mb-3">
+                        <label class="form-label" for="name">Name</label>
+                        <input class="form-control" type="text" name="name" id="name" value="<%= item.data.Name %>">
+                    </section>
+                    <section>
+                        <label class="form-label" for="url">URL</label>
+                        <input class="form-control" type="text" name="url" id="url" value="<%= item.data.URL %>">
+                    </section>
+                
+                    <section class="mt-4">
+                        <button class="btn btn-primary d-inline">Edit</button>
+
+                        <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
+                        <a class="btn btn-secondary" href="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>/<%= item.data.ItemID %>">Cancel</a>
+                    </section>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
