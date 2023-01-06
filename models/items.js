@@ -70,7 +70,7 @@ function strCheckIfItemExists(collectionID, listID, itemID) {
 /*
 Checking if an item exists and is part of a specific list and collection.
 */
-const checkIfItemExists = async (connection, collectionID, listID, itemID) => {
+async function checkIfItemExists(connection, collectionID, listID, itemID) {
     const strStatement = strCheckIfItemExists(collectionID, listID, itemID);
 
     if (!connection || !strStatement) {
@@ -96,7 +96,7 @@ module.exports = {
     /*
     Return the items inside a list
     */
-    find: async (connection, collectionID, listID, itemID) => {
+    find: async function(connection, collectionID, listID, itemID) {
         const strStatement = strRetrieveItemsFromList(collectionID, listID, itemID);
 
         if (!connection || !strStatement) {
@@ -120,7 +120,7 @@ module.exports = {
     /*
     Insert a new item into a list
     */
-    new: async (connection, itemData) => {
+    new: async function(connection, itemData) {
         const strStatement = strAddNewItem(
             itemData.parent.collection.CollectionID, 
             itemData.parent.list.ListID, 
@@ -142,7 +142,7 @@ module.exports = {
     /*
     Delete an item from a list
     */
-    delete: async (connection, collectionID, listID, itemID) => {
+    delete: async function(connection, collectionID, listID, itemID) {
         const strStatement = strDeleteItem(collectionID, listID, itemID);
 
         if (!connection || !strStatement) {
