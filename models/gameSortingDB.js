@@ -300,7 +300,7 @@ module.exports = {
     Add data to a specific table
     */
     new: async function(table, params) {
-        if ((!table && typeof table !== "string" && table.length === 0)) {
+        if ((!table || typeof table !== "string" || table.length === 0)) {
             throw new InternalError(`${table} is not a valid table`);
         }
 
@@ -322,7 +322,7 @@ module.exports = {
     Edit an item from a table
     */
     edit: async function(table, params) {
-        if ((!table && typeof table !== "string" && table.length === 0)) {
+        if ((!table || typeof table !== "string" || table.length === 0)) {
             throw new InternalError(`${table} is not a valid table`);
         }
 
@@ -345,7 +345,7 @@ module.exports = {
     Deleting an item from a table
     */
     delete: async function(table, params) {
-        if ((!table && typeof table !== "string" && table.length === 0)) {
+        if ((!table || typeof table !== "string" || table.length === 0)) {
             throw new InternalError(`${table} is not a valid table`);
         }
 
