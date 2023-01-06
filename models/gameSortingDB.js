@@ -170,6 +170,29 @@ async function addData(connection, table, params) {
 }
 
 /*
+Edit an item from a table
+*/
+async function editData(connection, table, params) {
+    if (!connection) {
+        throw new SqlError("Invalid Connection");
+    }
+
+    switch (table) {
+    
+    case Tables.COLLECTIONS: {
+        const collectionData = params;
+
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, collectionData.data.CollectionID)) {
+            throw new ValueError(400, "Invalid Collection");
+        }
+
+        return await collections.edit(connection, collectionData);
+    }
+
+    }
+}
+
+/*
 Deleting an item from a table
 */
 async function deleteData(connection, table, params) {
@@ -292,6 +315,29 @@ module.exports = {
         } finally {
             connection.close();
         }
+        return result;
+    },
+
+    /*
+    Edit an item from a table
+    */
+    edit: async function(table, params) {
+        if ((!table && typeof table !== "string" && table.length === 0)) {
+            throw new InternalError(`${table} is not a valid table`);
+        }
+
+        const connection = await mariadb.getConnection();
+        if (!connection) {
+            throw new SqlError("Invalid Connection");
+        }
+
+        let result = false;
+        try {
+            result = await editData(connection, table, params);
+        } finally {
+            connection.close();
+        }
+
         return result;
     },
 

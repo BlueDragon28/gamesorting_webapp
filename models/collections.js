@@ -132,6 +132,36 @@ module.exports = {
     },
 
     /*
+    Edit a collection
+    */
+    edit: async function(connection, collectionData) {
+        if (!connection ||
+                typeof collectionData !== "object" ||
+                typeof collectionData.data !== "object" ||
+                typeof collectionData.data.Name !== "string" ||
+                collectionData.data.Name.trim().length === 0 ||
+                !bigint.isValid(collectionData.data.CollectionID)) {
+            throw new ValueError(400, "Invalid Collection ID or Name");
+        }
+
+        const collectionID = collectionData.data.CollectionID;
+        const name = collectionData.data.Name.trim();
+
+        // Do not allow for duplicate or same name has the current one
+        if ((await findID(connection, name)).length > 0) {
+            throw ValueError(400, "There can't be any dupplicate");
+        }
+
+        try {
+            await connection.query(`UPDATE collections SET Name = "${name}" WHERE CollectionID = ${collectionID}`);
+        } catch (error) {
+            throw new SqlError(`Failed to edit a collection ${error.message}`);
+        }
+
+        return true;
+    },
+
+    /*
     Delete a collection by ID
     */
     delete: async function(connection, collectionID) {
