@@ -12,7 +12,9 @@ function strRetrieveListsFromCollection(collectionID, listID) {
         throw new ValueError(400, "Invalid CollectionID or List ID");
     }
 
-    let strStatement = `SELECT ListID, Name FROM lists WHERE CollectionID = ${collectionID.toString()}`;
+    let strStatement = "SELECT l.ListID, l.Name FROM lists l " + 
+        "INNER JOIN collections c USING (CollectionID) " +
+        `WHERE c.CollectionID = ${collectionID.toString()}`;
 
     if (bigint.isValid(listID)) {
         strStatement += ` AND ListID = ${listID}`;
@@ -29,7 +31,9 @@ function strRetrieveNameAndIDFromListID(collectionID, listID) {
         throw new ValueError(400, "Invalid Collection ID or List ID");
     }
 
-    return `SELECT ListID, Name FROM lists WHERE CollectionID = ${collectionID.toString()} AND ListID = ${listID.toString()}`;
+    return "SELECT l.ListID, l.Name FROM lists l " + 
+        "INNER JOIN collections c USING (CollectionID) " +
+        `WHERE c.CollectionID = ${collectionID.toString()} AND l.ListID = ${listID.toString()}`;
 }
 
 function strCheckIfListExists(collectionID, listID) {
@@ -40,9 +44,9 @@ function strCheckIfListExists(collectionID, listID) {
         throw new ValueError(400, "Invalid Collection ID or List ID");
     }
 
-    return "SELECT COUNT(ListID) AS count FROM lists " +
-           "INNER JOIN collections USING (CollectionID) " +
-           `WHERE ListID = ${listID} AND collections.CollectionID = ${collectionID}`;
+    return "SELECT COUNT(l.ListID) AS count FROM lists l " +
+           "INNER JOIN collections c USING (CollectionID) " +
+           `WHERE l.ListID = ${listID} AND c.CollectionID = ${collectionID}`;
 }
 
 function strAddNewList(collectionID, listName) {
@@ -74,9 +78,9 @@ function strCheckForDuplicate(collectionID, listName) {
         throw new ValueError(400, "Invalid Collection ID or List Name");
     }
 
-    return "SELECT COUNT(ListID) AS count FROM lists " +
-           "INNER JOIN collections USING (CollectionID) " +
-           `WHERE lists.Name = "${listName.trim()}" AND collections.CollectionID = ${collectionID}`;
+    return "SELECT COUNT(l.ListID) AS count FROM lists l " +
+           "INNER JOIN collections c USING (CollectionID) " +
+           `WHERE l.Name = "${listName.trim()}" AND c.CollectionID = ${collectionID}`;
 }
 
 const checkIfListExists = async (connection, collectionID, listID) => {
