@@ -144,7 +144,7 @@ async function addData(connection, table, params) {
     }
 
     case Tables.LISTS: {
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, params.parent.collection.CollectionID)) {
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ params.parent.collection.CollectionID ])) {
             throw new ValueError(400, "Invalid Collection");
         }
 
@@ -182,7 +182,7 @@ async function editData(connection, table, params) {
     case Tables.COLLECTIONS: {
         const collectionData = params;
 
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, collectionData.data.CollectionID)) {
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ collectionData.data.CollectionID ])) {
             throw new ValueError(400, "Invalid Collection");
         }
 
@@ -192,7 +192,7 @@ async function editData(connection, table, params) {
     case Tables.LISTS: {
         const listData = params;
 
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, listData.parent.collection.CollectionID)) {
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ listData.parent.collection.CollectionID ])) {
             throw new ValueError(400, "Invalid Collection");
         }
 
@@ -206,7 +206,7 @@ async function editData(connection, table, params) {
     case Tables.ITEMS: {
         const itemData = params;
 
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, itemData.parent.collection.CollectionID)) {
+        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ itemData.parent.collection.CollectionID ])) {
             throw new ValueError(400, "Invalid Collection");
         }
 
