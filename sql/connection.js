@@ -14,12 +14,28 @@ const pool = mariadb.createPool({
 })
 
 module.exports = {
-    getConnection: async () => {
+    getConnection: async function(func) {
+        if (!func) {
+            throw new Error("Invalid Function");
+        }
+
+        let connection;
         try {
-            const connection = await pool.getConnection();
-            return connection;
+            connection = await pool.getConnection();
         } catch (error) {
             throw new SqlError(`Cannot get a connection to mariadb: ${error.message}`);
+        }
+
+        if (!connection) {
+            throw new SqlError("Invalid Connection");
+        }
+
+        try {
+            const result = await func(connection);
+            connection.close();
+            return result;
+        } finally {
+            connection.close();
         }
     }
 };

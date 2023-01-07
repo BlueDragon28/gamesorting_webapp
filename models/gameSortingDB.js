@@ -292,18 +292,9 @@ module.exports = {
             throw new InternalError(`${table} is not a valid table`);
         }
 
-        const connection = await mariadb.getConnection();
-        if (!connection) {
-            throw new SqlError("Invalid Connection");
-        }
-
-        let queryData = false;
-        try {
-            queryData = await checkIfExists(connection, table, args);
-        } finally {
-            connection.close();
-        }
-        return queryData;
+        return await mariadb.getConnection(async function(connection) {
+            return await checkIfExists(connection, table, args);
+        });
     },
 
     /*
@@ -314,18 +305,9 @@ module.exports = {
             throw new InternalError(`${table} is not a valid table`);
         }
 
-        const connection = await mariadb.getConnection();
-        if (!connection) {
-            throw new SqlError("Invalid Connection");
-        }
-
-        let queryData;
-        try {
-            queryData = await retrieveAllData(connection, table, args);
-        } finally {
-            connection.close();
-        }
-        return queryData;
+        return await mariadb.getConnection(async function(connection) {
+            return await retrieveAllData(connection, table, args);
+        });
     },
 
     /*
@@ -336,18 +318,9 @@ module.exports = {
             throw new InternalError(`${table} is not a valid table`);
         }
 
-        const connection = await mariadb.getConnection();
-        if (!connection) {
-            throw new SqlError("Invalid Connection");
-        }
-
-        let result = false;
-        try {
-            result = await addData(connection, table, params);
-        } finally {
-            connection.close();
-        }
-        return result;
+        return await mariadb.getConnection(async function(connection) {
+            return await addData(connection, table, params);
+        });
     },
 
     /*
@@ -358,19 +331,9 @@ module.exports = {
             throw new InternalError(`${table} is not a valid table`);
         }
 
-        const connection = await mariadb.getConnection();
-        if (!connection) {
-            throw new SqlError("Invalid Connection");
-        }
-
-        let result = false;
-        try {
-            result = await editData(connection, table, params);
-        } finally {
-            connection.close();
-        }
-
-        return result;
+        return await mariadb.getConnection(async function(connection) {
+            return await editData(connection, table, params);
+        });
     },
 
     /*
@@ -381,18 +344,8 @@ module.exports = {
             throw new InternalError(`${table} is not a valid table`);
         }
 
-        const connection = await mariadb.getConnection();
-
-        if (!connection) {
-            throw new SqlError("Invalid Connection");
-        }
-
-        let result = false;
-        try {
-            result = await deleteData(connection, table, params);
-        } finally {
-            connection.close();
-        }
-        return result;
+        return await mariadb.getConnection(async function(connection) {
+            return await deleteData(connection, table, params);
+        });
     }
 };
