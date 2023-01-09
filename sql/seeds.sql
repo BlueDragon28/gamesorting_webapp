@@ -32,9 +32,9 @@ VALUES
     (7, 3, "The Passion of the Christ");
 
 -- Insert data into listRowsType
-DELETE FROM listRowsType;
+DELETE FROM listColumnsType;
 
-INSERT INTO listRowsType(ListRowTypeID, ListID, Name, Type, Position)
+INSERT INTO listColumnsType(ListColumnTypeID, ListID, Name, Type, Position)
 VALUES
     (1, 1, "Categories", "@String", 0),
 
@@ -45,7 +45,7 @@ VALUES
 -- Insert data into customRowsItems
 DELETE FROM customRowsItems;
 
-INSERT INTO customRowsItems(CustomRowItemsID, ItemID, ListRowTypeID, Value)
+INSERT INTO customRowsItems(CustomRowItemsID, ItemID, ListColumnTypeID, Value)
 VALUES
     (1, 1, 1, "Action"),
     (2, 2, 1, "Trucks"),

@@ -20,10 +20,10 @@ CREATE TABLE IF NOT EXISTS lists(
 );
 
 -- This table hold the user defined rows in their list
-DROP TABLE IF EXISTS listRowsType;
+DROP TABLE IF EXISTS listColumnsType;
 
-CREATE TABLE IF NOT EXISTS listRowsType(
-    ListRowTypeID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS listColumnsType(
+    ListColumnTypeID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     ListID BIGINT UNSIGNED NOT NULL,
     Name VARCHAR(300) NOT NULL, -- The name of the custom row
     Type VARCHAR(300) NOT NULL, -- The type of the custom row
@@ -46,6 +46,6 @@ DROP TABLE IF EXISTS customRowsItems;
 CREATE TABLE IF NOT EXISTS customRowsItems(
     CustomRowItemsID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     ItemID BIGINT UNSIGNED NOT NULL, -- To wich list item this custom items is linked to
-    ListRowTypeID BIGINT UNSIGNED NOT NULL, -- To wich list custom rows this custom items in linked to.
+    ListColumnTypeID BIGINT UNSIGNED NOT NULL, -- To wich list custom rows this custom items in linked to.
     Value VARCHAR(300) NOT NULL -- The name of the custom item
 );
