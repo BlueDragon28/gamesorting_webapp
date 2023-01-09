@@ -13,6 +13,10 @@
                         <% if (item.data.URL) { %> 
                             <p class="text-muted">URL: <a class="card-link" href="<%= item.data.URL %>"><%= item.data.URL %></a></p>
                         <% } %> 
+
+                        <% for(let rowData of item.customColumns) { %>
+                            <p class="text-muted"><%= rowData.Name %>:</p>
+                        <% } %>
                     </section>
                 </li>
 
