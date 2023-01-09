@@ -45,19 +45,17 @@ function parseListData(collectionData, listsData) {
 /*
 Parse the items data before returning it
 */
-function parseItemsData(collectionData, listData, itemsData, customColumnsType) {
+function parseItemsData(collectionData, listData, itemsData) {
     delete collectionData.meta;
     delete listData.meta;
     delete itemsData.meta;
-    delete customColumnsType.meta;
 
     return {
         parent: {
             collection: collectionData[0],
             list: listData[0]
         },
-        data: itemsData,
-        customColumns: customColumnsType
+        data: itemsData
     };
 }
 
@@ -163,7 +161,7 @@ async function retrieveAllData(connection, table, args) {
             throw new InternalError("Failed To Query Items");
         }
 
-        return parseItemsData(collection, list, parsedItems, customColumnsType);
+        return parseItemsData(collection, list, parsedItems);
     }
 
     }
