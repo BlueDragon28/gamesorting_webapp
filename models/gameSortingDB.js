@@ -5,6 +5,7 @@ const mariadb = require("../sql/connection");
 const collections = require("./collections");
 const lists = require("./lists");
 const items = require("./items");
+const customUserData = require("./customUserData");
 const bigint = require("../utils/numbers/bigint");
 const { SqlError, ValueError, InternalError } = require("../utils/errors/exceptions");
 
@@ -44,17 +45,19 @@ function parseListData(collectionData, listsData) {
 /*
 Parse the items data before returning it
 */
-function parseItemsData(collectionData, listData, itemsData) {
+function parseItemsData(collectionData, listData, itemsData, customColumnsType) {
     delete collectionData.meta;
     delete listData.meta;
     delete itemsData.meta;
+    delete customColumnsType.meta;
 
     return {
         parent: {
             collection: collectionData[0],
             list: listData[0]
         },
-        data: itemsData
+        data: itemsData,
+        customColumns: customColumnsType
     };
 }
 
@@ -117,6 +120,7 @@ async function retrieveAllData(connection, table, args) {
         const collection = await collections.findNameAndID(connection, args[0]);
         const list = await lists.findNameAndID(connection, args[0], args[1]);
         const returnItems = await items.find(connection, ...args);
+        const customColumnsType = await customUserData.getListColumnsType(connection, args[1]);
 
         if (!collection || !list) {
             throw new ValueError(400, "Invalid collection or list");
@@ -126,7 +130,7 @@ async function retrieveAllData(connection, table, args) {
             throw new InternalError("Failed To Query Items");
         }
 
-        return parseItemsData(collection, list, returnItems);
+        return parseItemsData(collection, list, returnItems, customColumnsType);
     }
 
     }
