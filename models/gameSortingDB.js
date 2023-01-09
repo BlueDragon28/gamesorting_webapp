@@ -68,8 +68,11 @@ async function queryCustomDataPerItems(connection, customColumnsType, itemData) 
 
     for (let customColumn of customColumnsType) {
         const returnData = await customUserData.getCustomData(connection, customColumn.ListColumnTypeID, itemData.ItemID);
-        delete returnData.meta;
-        customData.push(returnData);
+
+        if (returnData) {
+            delete returnData.meta;
+            customData.push(returnData);
+        }
     }
 
     return customData;

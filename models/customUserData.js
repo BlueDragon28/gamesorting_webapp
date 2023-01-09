@@ -66,10 +66,6 @@ async function getCustomData(connection, listColumnTypeID, itemID) {
         } else {
             queryResult = null;
         }
-
-        if (!queryResult) {
-            throw new Error("Return query result is invalid");
-        }
     } catch (error) {
         throw new SqlError(`Failed to get custom data from item ${itemID}: ${error.message}`);
     }
