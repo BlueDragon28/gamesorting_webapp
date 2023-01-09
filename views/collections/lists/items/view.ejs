@@ -1,5 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
+<%= console.log(item.data) %> 
+
 <div class="row pb-3">
     <div class="col-md-6 offset-md-3">
         <div class="card">
@@ -14,8 +16,8 @@
                             <p class="text-muted">URL: <a class="card-link" href="<%= item.data.URL %>"><%= item.data.URL %></a></p>
                         <% } %> 
 
-                        <% for(let rowData of item.customColumns) { %>
-                            <p class="text-muted"><%= rowData.Name %>:</p>
+                        <% for(let customData of item.data.customData) { %>
+                            <p class="text-muted"><%= customData.ColumnName %>: <%= customData.Value %></p>
                         <% } %>
                     </section>
                 </li>

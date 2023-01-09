@@ -61,6 +61,38 @@ function parseItemsData(collectionData, listData, itemsData, customColumnsType) 
     };
 }
 
+async function queryCustomDataPerItems(connection, customColumnsType, itemData) {
+    if (!connection || !customColumnsType || !itemData) {
+        throw new InternalError("Invalid Data");
+    }
+
+    let customData = [];
+
+    for (let customColumn of customColumnsType) {
+        const returnData = await customUserData.getCustomData(connection, customColumn.ListColumnTypeID, itemData.ItemID);
+        delete returnData.meta;
+        customData.push(returnData);
+    }
+
+    return customData;
+}
+
+async function retrieveCustomItemsData(connection, customColumnsType, itemsData) {
+    if (!connection || !customColumnsType || !itemsData) {
+        throw new InternalError("Invalid Data");
+    }
+
+    if (Array.isArray(itemsData)) {
+        for (let item of itemsData) {
+            item.customData = await queryCustomDataPerItems(connection, customColumnsType, item);
+        }
+    } else {
+        itemsData.customData = await queryCustomDataPerItems(connection, customColumnsType, itemsData);
+    }
+
+    return itemsData;
+}
+
 /*
 Check if an item exists
 */
@@ -121,6 +153,7 @@ async function retrieveAllData(connection, table, args) {
         const list = await lists.findNameAndID(connection, args[0], args[1]);
         const returnItems = await items.find(connection, ...args);
         const customColumnsType = await customUserData.getListColumnsType(connection, args[1]);
+        const parsedItems = await retrieveCustomItemsData(connection, customColumnsType, returnItems);
 
         if (!collection || !list) {
             throw new ValueError(400, "Invalid collection or list");
@@ -130,7 +163,7 @@ async function retrieveAllData(connection, table, args) {
             throw new InternalError("Failed To Query Items");
         }
 
-        return parseItemsData(collection, list, returnItems, customColumnsType);
+        return parseItemsData(collection, list, parsedItems, customColumnsType);
     }
 
     }
