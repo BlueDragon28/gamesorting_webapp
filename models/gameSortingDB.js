@@ -30,16 +30,25 @@ function parseCollectionsData(data, unique = false) {
 /*
 Parse the lists data before returning it
 */
-function parseListData(collectionData, listsData) {
+function parseListData(collectionData, listsData, customColumns) {
     delete collectionData.meta;
     delete listsData.meta;
+    if (customColumns) {
+        delete customColumns.meta;
+    }
 
-    return {
+    const parsedList = {
         parent: {
             collection: collectionData[0]
         },
-        data: listsData
+        data: listsData,
     };
+
+    if (customColumns) {
+        parsedList.customColumns = customColumns;
+    }
+
+    return parsedList;
 }
 
 /*
@@ -137,6 +146,10 @@ async function retrieveAllData(connection, table, args) {
     case Tables.LISTS: {
         const collection = await collections.findNameAndID(connection, ...args);
         const returnLists = await lists.find(connection, ...args);
+        let customColumns;
+        if (args[1]) {
+            customColumns = await customUserData.getListColumnsType(connection, args[1]);
+        }
 
         if (!collection) {
             throw new ValueError(400, `Collection ${args[0]} is not a valid collection`);
@@ -146,7 +159,11 @@ async function retrieveAllData(connection, table, args) {
             throw new InternalError("Failed To Query Lists");
         }
 
-        return parseListData(collection, returnLists);
+        if (args[1] && !customColumns) {
+            throw new InternalError("Failed To Query Custom Columns");
+        }
+
+        return parseListData(collection, returnLists, customColumns);
     }
 
     case Tables.ITEMS: {
