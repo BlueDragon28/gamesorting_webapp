@@ -18,7 +18,7 @@ async function getListColumnsType(connection, listID) {
     const strStatement = strGetListColumnsType(listID);
 
     if (!connection || !strGetListColumnsType) {
-        throw new InternalError("Invalid Connection");
+        throw new SqlError("Invalid Connection");
     }
 
     let queryResult;
@@ -54,7 +54,7 @@ async function getCustomData(connection, listColumnTypeID, itemID) {
     const strStatement = strGetCustomData(listColumnTypeID, itemID);
 
     if (!connection || !strStatement) {
-        throw new InternalError("Invalid Connection");
+        throw new SqlError("Invalid Connection");
     }
 
     let queryResult;
@@ -89,7 +89,7 @@ Inserting the custom data into the item itemID
 */
 async function insertCustomData(connection, itemID, customDatas) {
     if (!connection) {
-        throw new InternalError("Invalid Connection");
+        throw new SqlError("Invalid Connection");
     }
 
     for (let customData of customDatas) {
