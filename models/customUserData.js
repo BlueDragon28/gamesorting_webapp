@@ -93,6 +93,11 @@ async function insertCustomData(connection, itemID, customDatas) {
     }
 
     for (let customData of customDatas) {
+        // Do not add empty data
+        if (customData.Value.trim().length === 0) {
+            continue;
+        }
+
         const strStatement = strInsertCustomData(itemID, customData);
 
         if (!strStatement) {
