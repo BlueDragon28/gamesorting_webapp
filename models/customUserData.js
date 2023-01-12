@@ -114,8 +114,38 @@ async function insertCustomData(connection, itemID, customDatas) {
     return true;
 }
 
+function strDeleteCustomDatas(itemID) {
+    itemID = bigint.toBigInt(itemID);
+
+    if (!bigint.isValid(itemID)) {
+        throw new ValueError(400, "Invalid ItemID");
+    }
+
+    return `DELETE FROM customRowsItems WHERE ItemID = ${itemID}`;
+}
+
+/*
+Delete all custom data of a specific itemID
+*/
+async function deleteCustomDatasFromItemID(connection, itemID) {
+    const strStatement = strDeleteCustomDatas(itemID);
+
+    if (!connection || !strStatement) {
+        throw new SqlError("Invalid Connection");
+    }
+
+    try {
+        await connection.query(strStatement);
+    } catch (error) {
+        throw new SqlError(`Failed to delete custom datas from item ${itemID}: ${error.message}`);
+    }
+
+    return true;
+}
+
 module.exports = {
     getListColumnsType,
     getCustomData,
-    insert: insertCustomData
+    insert: insertCustomData,
+    delete: deleteCustomDatasFromItemID
 };

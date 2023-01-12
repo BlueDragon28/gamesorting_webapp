@@ -337,7 +337,8 @@ async function deleteData(connection, table, params) {
             throw new ValueError(400, "Invalid Collection Or List Or Item");
         }
 
-        return await items.delete(connection, collectionID, listID, itemID);
+        await items.delete(connection, collectionID, listID, itemID);
+        return customUserData.delete(connection, itemID);
     }
 
     }
