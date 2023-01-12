@@ -1,4 +1,4 @@
-<% layout("layouts/boilerplate.ejs") -%> 
+<% layout("layouts/boilerplate.ejs") -%> <% console.log(list) %> 
 
 <!-- A form to create a new items
 The form have two fields, Name and Url. -->
@@ -14,10 +14,19 @@ The form have two fields, Name and Url. -->
                         <label class="form-label" for="name">Name</label>
                         <input class="form-control" type="text" name="name" id="name">
                     </section>
-                    <section>
+                    <section class="mb-3">
                         <label class="form-label" for="url">URL</label>
                         <input class="form-control" type="text" name="url" id="url">
                     </section>
+
+                    <!-- Inserting the control the custom columns -->
+                    <% for(let customColumn of list.customColumns) { %>
+                        <% let customColumnID = `customColumn_${customColumn.ListColumnTypeID}`; %> 
+                        <section class="mb-3">
+                            <label class="form-label" for="<%= customColumnID %>"><%= customColumn.Name %></label>
+                            <input class="form-control" type="text" name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>">
+                        </section>
+                    <% } %>
                 
                     <section class="mt-4">
                         <button class="btn btn-primary d-inline">Add</button>
