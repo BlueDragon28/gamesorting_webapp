@@ -73,7 +73,44 @@ async function getCustomData(connection, listColumnTypeID, itemID) {
     return queryResult;
 }
 
+function strInsertCustomData(itemID, customData) {
+    itemID = bigint.toBigInt(itemID);
+    
+    if (!bigint.isValid(itemID) || !customData || !customData.ListColumnTypeID || !customData.Value) {
+        throw new ValueError(400, "Invalid Custom Column Data");
+    }
+
+    return "INSERT INTO customRowsItems(ItemID, ListColumnTypeID, Value) " +
+           `VALUES (${itemID}, ${customData.ListColumnTypeID}, "${customData.Value}")`;
+}
+
+/*
+Inserting the custom data into the item itemID
+*/
+async function insertCustomData(connection, itemID, customDatas) {
+    if (!connection) {
+        throw new InternalError("Invalid Connection");
+    }
+
+    for (let customData of customDatas) {
+        const strStatement = strInsertCustomData(itemID, customData);
+
+        if (!strStatement) {
+            throw new InternalError("Failed to make query statement");
+        }
+
+        try {
+            await connection.query(strStatement);
+        } catch (error) {
+            throw new SqlError(`Failed to insert custom data of item ${itemID}: ${error.message}`);
+        }
+    }
+
+    return true;
+}
+
 module.exports = {
     getListColumnsType,
-    getCustomData
+    getCustomData,
+    insert: insertCustomData
 };

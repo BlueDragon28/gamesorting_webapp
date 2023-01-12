@@ -1,6 +1,37 @@
 const database = require("../models/gameSortingDB");
 const wrapAsync = require("../utils/errors/wrapAsync");
-const { InternalError } = require("../utils/errors/exceptions");
+const bigint = require("../utils/numbers/bigint");
+const { InternalError, ValueError } = require("../utils/errors/exceptions");
+
+/*
+Parse the custom columns data.
+The format used is :
+[
+    {
+        ListColumnTypeID: ID of the custom column type,
+        Value: The value of this column for a specific item
+    }
+]
+*/
+function parseCustomColumnsData(req, res, next) {
+    const customColumnsData = [];
+
+    for (let [strID, value] of Object.entries(req.body.customColumns)) {
+        const id = bigint.toBigInt(strID.split("_")[1]);
+
+        if (!bigint.isValid(id)) {
+            throw new ValueError(400, "Invalid ListColumnTypeID");
+        }
+
+        customColumnsData.push({
+            ListColumnTypeID: id,
+            Value: value
+        });
+    }
+
+    req.body.customColumns = customColumnsData;
+    next();
+}
 
 module.exports = (app) => {
     /*
@@ -51,9 +82,9 @@ module.exports = (app) => {
     /*
     Insert a new item into a list inside a collection
     */
-    app.post("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
+    app.post("/collections/:collectionID/:listID", parseCustomColumnsData, wrapAsync(async (req, res) => {
         const { collectionID, listID } = req.params;
-        const { name, url } = req.body;
+        const { name, url, customColumns } = req.body;
 
         const queryResult = await database.new(database.ITEMS, {
             parent: {
@@ -62,7 +93,8 @@ module.exports = (app) => {
             },
             data: {
                 name,
-                url
+                url,
+                customData: customColumns
             }
         });
 

@@ -153,13 +153,19 @@ module.exports = {
             throw new SqlError("Failed to prepare statement");
         }
 
+        let itemID;
         try {
-            queryResult = await connection.query(strStatement);
+            const queryResult = await connection.query(strStatement);
+            itemID = queryResult.insertId;
         } catch (error) {
             throw new SqlError(`Failed to insert a new item ${error.message}`);
         }
 
-        return true;
+        if (typeof itemID !== "bigint" || itemID <= 0) {
+            itemID = null;
+        }
+
+        return itemID;
     },  
 
     /*

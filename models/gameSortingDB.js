@@ -218,7 +218,15 @@ async function addData(connection, table, params) {
             throw new ValueError(400, "Invalid List");
         }
 
-        return await items.new(connection, params);
+        const itemID = await items.new(connection, params);
+
+        if (!itemID) {
+            return false;
+        }
+
+        await customUserData.insert(connection, itemID, params.data.customData);
+
+        return true;
     }
 
     }
