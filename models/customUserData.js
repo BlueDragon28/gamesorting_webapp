@@ -76,12 +76,13 @@ async function getCustomData(connection, listColumnTypeID, itemID) {
 function strInsertCustomData(itemID, customData) {
     itemID = bigint.toBigInt(itemID);
     
-    if (!bigint.isValid(itemID) || !customData || !customData.ListColumnTypeID || !customData.Value) {
+    if (!bigint.isValid(itemID) || !customData || !customData.ListColumnTypeID || 
+            (!customData.Value || !customData.Value.trim().length === 0)) {
         throw new ValueError(400, "Invalid Custom Column Data");
     }
 
     return "INSERT INTO customRowsItems(ItemID, ListColumnTypeID, Value) " +
-           `VALUES (${itemID}, ${customData.ListColumnTypeID}, "${customData.Value}")`;
+           `VALUES (${itemID}, ${customData.ListColumnTypeID}, "${customData.Value.trim()}")`;
 }
 
 /*
@@ -150,12 +151,14 @@ function strEditCustomDatas(itemID, customData) {
         throw new ValueError(400, "Invalid itemID or customData");
     }
 
-    if (customData.Value.trim().length > 0) {
+    const value = customData.Value.trim();
+
+    if (value.length > 0) {
         if (customData.CustomRowItemsID >= 0) {
-            return `UPDATE customRowsItems SET Value = "${customData.Value}" WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;
+            return `UPDATE customRowsItems SET Value = "${value}" WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;
         } else {
             return "INSERT INTO customRowsItems(ItemID, ListColumnTypeID, Value) " +
-                   `VALUES (${itemID}, ${-customData.CustomRowItemsID}, "${customData.Value}")`;
+                   `VALUES (${itemID}, ${-customData.CustomRowItemsID}, "${value}")`;
         }
     } else {
         return `DELETE FROM customRowsItems WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;
