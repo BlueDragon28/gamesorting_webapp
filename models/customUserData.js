@@ -146,14 +146,16 @@ async function deleteCustomDatasFromItemID(connection, itemID) {
 function strEditCustomDatas(itemID, customData) {
     itemID = bigint.toBigInt(itemID);
 
-    console.log(customData);
-
     if (!bigint.isValid(itemID) || !customData || !customData.CustomRowItemsID || typeof customData.Value !== "string") {
         throw new ValueError(400, "Invalid itemID or customData");
     }
 
     if (customData.Value.trim().length > 0) {
-        return `UPDATE customRowsItems SET Value = "${customData.Value}" WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;
+        if (customData.CustomRowItemsID >= 0) {
+            return `UPDATE customRowsItems SET Value = "${customData.Value}" WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;
+        } else {
+            return null;
+        }
     } else {
         return `DELETE FROM customRowsItems WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;
     }
