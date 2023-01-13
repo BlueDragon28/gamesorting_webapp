@@ -63,7 +63,7 @@ function strAddNewList(collectionID, listName) {
 function strEditList(listID, listName) {
     listID = bigint.toBigInt(listID);
 
-    if (!bigint.isValid(listID) || typeof listName !== "string") {
+    if (!bigint.isValid(listID) || (typeof listName !== "string" || listName.trim().length === 0)) {
         throw new ValueError(400, "Invalid ListID or Name");
     }
 
