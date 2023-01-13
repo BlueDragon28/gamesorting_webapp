@@ -36,7 +36,7 @@ function strAddNewItem(collectionID, listID, itemData) {
     }
 
     return `INSERT INTO items(ListID, Name ${itemData.url ? ", Url":""}) ` +
-           `VALUES (${listID}, "${itemData.name}" ${itemData.url ? ", \"" + itemData.url + "\"":""})`;
+           `VALUES (${listID}, "${itemData.name.trim()}" ${itemData.url ? ", \"" + itemData.url + "\"":""})`;
 }
 
 function strEditItem(itemData) {
