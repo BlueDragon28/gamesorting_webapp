@@ -14,10 +14,19 @@ The form have two fields, Name and Url. -->
                         <label class="form-label" for="name">Name</label>
                         <input class="form-control" type="text" name="name" id="name" value="<%= item.data.Name %>">
                     </section>
-                    <section>
+                    <section class="mb-3">
                         <label class="form-label" for="url">URL</label>
                         <input class="form-control" type="text" name="url" id="url" value="<%= item.data.URL %>">
                     </section>
+
+                    <!-- Inserting the control of the custom datas -->
+                    <% for(let customColumn of item.data.customData) { %>
+                        <% let customColumnID = `customColumn_${customColumn.CustomRowItemsID}`; %> 
+                        <section class="mb-3">
+                            <label class="form-label" for="<%= customColumnID %>"><%= customColumn.ColumnName %></label>
+                            <input class="form-control" type="text" name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>" value="<%= customColumn.Value %>">
+                        </section>
+                    <% } %>
                 
                     <section class="mt-4">
                         <button class="btn btn-primary d-inline">Edit</button>
