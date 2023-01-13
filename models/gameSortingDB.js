@@ -281,7 +281,9 @@ async function editData(connection, table, params) {
             throw new ValueError(400, "Invalid Item");
         }
 
-        return await items.edit(connection, itemData);
+        const result = await items.edit(connection, itemData);
+        await customUserData.edit(connection, itemData);
+        return result;
     }
 
     }

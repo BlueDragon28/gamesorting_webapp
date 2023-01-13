@@ -23,8 +23,10 @@ function parseCustomColumnsData(req, res, next) {
             throw new ValueError(400, "Invalid ListColumnTypeID");
         }
 
+        const columnIDName = req.method === "POST" ? "ListColumnTypeID" : "CustomRowItemsID";
+
         customColumnsData.push({
-            ListColumnTypeID: id,
+            [columnIDName]: id,
             Value: value
         });
     }
@@ -108,9 +110,9 @@ module.exports = (app) => {
     /*
     Edit An Item
     */
-    app.put("/collections/:collectionID/:listID/:itemID", wrapAsync(async (req, res) => {
+    app.put("/collections/:collectionID/:listID/:itemID", parseCustomColumnsData, wrapAsync(async (req, res) => {
         const { collectionID, listID, itemID } = req.params;
-        const { name, url } = req.body;
+        const { name, url, customColumns } = req.body;
 
         const queryResult = await database.edit(database.ITEMS, {
             parent: {
@@ -120,7 +122,8 @@ module.exports = (app) => {
             data: {
                 ItemID: itemID,
                 Name: name,
-                URL: url
+                URL: url,
+                customData: customColumns
             }
         });
 

@@ -143,9 +143,55 @@ async function deleteCustomDatasFromItemID(connection, itemID) {
     return true;
 }
 
+function strEditCustomDatas(itemID, customData) {
+    itemID = bigint.toBigInt(itemID);
+
+    console.log(customData);
+
+    if (!bigint.isValid(itemID) || !customData || !customData.CustomRowItemsID || typeof customData.Value !== "string") {
+        throw new ValueError(400, "Invalid itemID or customData");
+    }
+
+    if (customData.Value.trim().length > 0) {
+        return `UPDATE customRowsItems SET Value = "${customData.Value}" WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;
+    } else {
+        return `DELETE FROM customRowsItems WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;
+    }
+}
+
+/*
+Edit all custom data of a specific itemID.
+If a Value is null, it will remove the existing customData
+*/
+async function editCustomDatasFromItemID(connection, itemData) {
+    const itemID = itemData.data.ItemID;
+    const customDatas = itemData.data.customData;
+
+    if (!connection) {
+        throw new SqlError("Invalid Connection!");
+    }
+
+    for (let customData of customDatas) {
+        const strStatement = strEditCustomDatas(itemID, customData);
+
+        if (!strStatement) {
+            throw new InternalError("Failed to make a query statement");
+        }
+
+        try {
+            await connection.query(strStatement);
+        } catch (error) {
+            throw new SqlError(`Failed to update customData ${customData.CustomRowItemsID}: ${error.message}`);
+        }
+    }
+
+    return true;
+}
+
 module.exports = {
     getListColumnsType,
     getCustomData,
     insert: insertCustomData,
-    delete: deleteCustomDatasFromItemID
+    delete: deleteCustomDatasFromItemID,
+    edit: editCustomDatasFromItemID
 };
