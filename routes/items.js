@@ -15,6 +15,10 @@ The format used is :
 ]
 */
 function parseCustomColumnsData(req, res, next) {
+    if (!req.body.customColumns) {
+        req.body.customColumns = [];
+    }
+
     const customColumnsData = [];
 
     for (let [strID, value] of Object.entries(req.body.customColumns)) {
