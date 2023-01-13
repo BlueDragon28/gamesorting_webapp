@@ -154,7 +154,8 @@ function strEditCustomDatas(itemID, customData) {
         if (customData.CustomRowItemsID >= 0) {
             return `UPDATE customRowsItems SET Value = "${customData.Value}" WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;
         } else {
-            return null;
+            return "INSERT INTO customRowsItems(ItemID, ListColumnTypeID, Value) " +
+                   `VALUES (${itemID}, ${-customData.CustomRowItemsID}, "${customData.Value}")`;
         }
     } else {
         return `DELETE FROM customRowsItems WHERE CustomRowItemsID = ${customData.CustomRowItemsID}`;

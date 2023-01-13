@@ -15,24 +15,12 @@ function addEmptyIfNotFound(customDatasList, itemID, customColumn, customDatas) 
     }
 
     customDatasList.push({
-        CustomRowItemsID: -1n,
+        CustomRowItemsID: -customColumn.ListColumnTypeID,
         ItemID: itemID,
         ListColumnTypeID: customColumn.ListColumnTypeID,
         Value: "",
         ColumnName: customColumn.Name
     });
-}
-
-/*
-Make sure the empty customDatas do not have the same negative value
-*/
-function fillNegativeValue(customDatas) {
-    let negativeValue = -1n;
-    for (let customData of customDatas) {
-        if (customData.CustomRowItemsID === -1n) {
-            customData.CustomRowItemsID = negativeValue--;
-        }
-    }
 }
 
 /*
@@ -47,8 +35,6 @@ function includeEmpty(itemData) {
     for (let customColumn of itemData.customColumns) {
         addEmptyIfNotFound(parsedCustomDatas, itemData.data.ItemID, customColumn, itemData.data.customData);
     }
-
-    fillNegativeValue(parsedCustomDatas);
 
     itemData.data.customData = parsedCustomDatas;
 }
