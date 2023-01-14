@@ -313,13 +313,8 @@ async function deleteData(connection, table, params) {
 
         // Delete all the lists, items and custom rows in the collection
         for (let list of foundLists) {
-            const itemsFromList = await items.find(connection, collection, list.ListID);
-            await lists.delete(connection, collection, list.ListID);
             await items.delete(connection, collection, list.ListID);
-            
-            for (let item of itemsFromList) {
-                await customUserData.delete(connection, item.ItemID);
-            }
+            await lists.delete(connection, collection, list.ListID);
         }
 
         const result = await collections.delete(connection, collection);
@@ -335,18 +330,8 @@ async function deleteData(connection, table, params) {
             throw new ValueError(400, "Invalid Collection Or List");
         }
 
-        // Get all items
-        const itemsFromList = await items.find(connection, collectionID, listID);
-
-        await lists.delete(connection, collectionID, listID);
-
-        // Delete all customs columns
-        for (let item of itemsFromList) {
-            await customUserData.delete(connection, item.ItemID);
-        }
-
-        // Delete all items from the list
-        return await items.delete(connection, collectionID, listID);
+        await items.delete(connection, collectionID, listID);
+        return await lists.delete(connection, collectionID, listID);
     }
 
     case Tables.ITEMS: {
@@ -358,8 +343,7 @@ async function deleteData(connection, table, params) {
             throw new ValueError(400, "Invalid Collection Or List Or Item");
         }
 
-        await items.delete(connection, collectionID, listID, itemID);
-        return customUserData.delete(connection, itemID);
+        return await items.delete(connection, collectionID, listID, itemID);
     }
 
     }

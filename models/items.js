@@ -1,5 +1,6 @@
 const bigint = require("../utils/numbers/bigint");
-const { SqlError, ValueError } = require("../utils/errors/exceptions");
+const customUserData = require("./customUserData");
+const { SqlError, ValueError, InternalError } = require("../utils/errors/exceptions");
 
 function strRetrieveItemsFromList(collectionID, listID, itemID) {
     collectionID = bigint.toBigInt(collectionID);
@@ -113,6 +114,43 @@ async function checkIfItemExists(connection, collectionID, listID, itemID) {
     return false;
 }
 
+/*
+Deleting all the custom data from a bunch of items
+*/
+async function deleteCustomDatas(connection, collectionID, listID, itemID) {
+    collectionID = bigint.toBigInt(collectionID);
+    listID = bigint.toBigInt(listID);
+    itemID = bigint.toBigInt(itemID);
+
+    if (!connection || !bigint.isValid(collectionID) || !bigint.isValid(listID) || (itemID && !bigint.isValid(itemID))) {
+        throw new ValueError(400, "Invalid Informations");
+    }
+
+    if (bigint.isValid(itemID)) {
+        await customUserData.delete(connection, itemID);
+        return;
+    }
+
+    let items;
+    try {
+        items = await connection.query(
+            "SELECT ItemID FROM items i " + 
+            "INNER JOIN lists l ON i.ListID = l.ListID " + 
+            "INNER JOIN collections c ON l.CollectionID = c.CollectionID " +
+            `WHERE i.ListID = ${listID} AND c.CollectionID = ${collectionID}`);
+    } catch (error) {
+        throw new SqlError(`Failed to query items: ${error.message}`);
+    }
+
+    if (!items) {
+        throw new InternalError("Invalid Items List");
+    }
+
+    for (let item of items) {
+        await customUserData.delete(connection, item.ItemID);
+    }
+}
+
 module.exports = {
     exists: checkIfItemExists,
 
@@ -201,6 +239,9 @@ module.exports = {
         if (!connection || !strStatement) {
             throw new SqlError("Failed to prepare statement");
         }
+
+        // Delete all custom data from itemID or listID
+        deleteCustomDatas(connection, collectionID, listID, itemID);
 
         try {
             await connection.query(strStatement);
