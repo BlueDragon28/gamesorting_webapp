@@ -1,4 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
+const customUserData = require("./customUserData");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 
 /*
@@ -250,6 +251,9 @@ module.exports = {
         } catch (error) {
             throw new SqlError(`Failed to delete the list ${listID}: ${error.message}`);
         }
+
+        // Delete custom columns type informations
+        customUserData.deleteColumns(connection, listID);
 
         return true;
     }

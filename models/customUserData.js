@@ -144,6 +144,35 @@ async function deleteCustomDatasFromItemID(connection, itemID) {
     return true;
 }
 
+function strDeleteListColumnsType(listID) {
+    listID = bigint.toBigInt(listID);
+
+    if (!bigint.isValid(listID)) {
+        throw new ValueError(400, "Invalid ListID");
+    }
+
+    return `DELETE FROM listColumnsType WHERE ListID = ${listID}`;
+}
+
+/*
+Delete list columns type information from a listID
+*/
+async function deleteListColumnsType(connection, listID) {
+    const strStatement = strDeleteListColumnsType(listID);
+
+    if (!connection || !strStatement) {
+        throw new SqlError("Invalid Connection");
+    }
+
+    try {
+        await connection.query(strStatement);
+    } catch (error) {
+        throw new SqlError(`Failed to delete list columns type informations form list ${listID}: ${error.message}`);
+    }
+
+    return true;
+}
+
 function strEditCustomDatas(itemID, customData) {
     itemID = bigint.toBigInt(itemID);
 
@@ -196,6 +225,7 @@ async function editCustomDatasFromItemID(connection, itemData) {
 
 module.exports = {
     getListColumnsType,
+    deleteColumns: deleteListColumnsType,
     getCustomData,
     insert: insertCustomData,
     delete: deleteCustomDatasFromItemID,
