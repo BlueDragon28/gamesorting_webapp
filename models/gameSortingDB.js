@@ -183,6 +183,10 @@ async function retrieveAllData(connection, table, args) {
             throw new InternalError("Failed To Query Items");
         }
 
+        if (!customColumnsType) {
+            throw new InternalError("Failed To Query Custom Columns");
+        }
+
         return parseItemsData(collection, list, parsedItems, customColumnsType);
     }
 
