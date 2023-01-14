@@ -311,13 +311,18 @@ async function deleteData(connection, table, params) {
         // Find the lists available in the collection
         const foundLists = await lists.find(connection, collection);
 
-        const result = await collections.delete(connection, collection);
-
-        // Delete all the lists and items in the collection
+        // Delete all the lists, items and custom rows in the collection
         for (let list of foundLists) {
+            const itemsFromList = await items.find(connection, collection, list.ListID);
             await lists.delete(connection, collection, list.ListID);
             await items.delete(connection, collection, list.ListID);
+            
+            for (let item of itemsFromList) {
+                await customUserData.delete(connection, item.ItemID);
+            }
         }
+
+        const result = await collections.delete(connection, collection);
 
         return result;
     }
@@ -330,7 +335,15 @@ async function deleteData(connection, table, params) {
             throw new ValueError(400, "Invalid Collection Or List");
         }
 
+        // Get all items
+        const itemsFromList = await items.find(connection, collectionID, listID);
+
         await lists.delete(connection, collectionID, listID);
+
+        // Delete all customs columns
+        for (let item of itemsFromList) {
+            await customUserData.delete(connection, item.ItemID);
+        }
 
         // Delete all items from the list
         return await items.delete(connection, collectionID, listID);
