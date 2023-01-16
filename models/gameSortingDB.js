@@ -216,12 +216,8 @@ async function addData(connection, table, params) {
         const collectionID = params.parent.collection.CollectionID;
         const listID = params.parent.list.ListID;
 
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ collectionID ])) {
-            throw new ValueError(400, "Invalid Collection");
-        }
-
         if (!await checkIfExists(connection, Tables.LISTS, [ collectionID, listID ])) {
-            throw new ValueError(400, "Invalid List");
+            throw new ValueError(400, "Invalid Collection Or List");
         }
 
         const itemID = await items.new(connection, params);
@@ -261,12 +257,8 @@ async function editData(connection, table, params) {
     case Tables.LISTS: {
         const listData = params;
 
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ listData.parent.collection.CollectionID ])) {
-            throw new ValueError(400, "Invalid Collection");
-        }
-
         if (!await checkIfExists(connection, Tables.LISTS, [ listData.parent.collection.CollectionID, listData.data.ListID ])) {
-            throw new ValueError(400, "Invalid List");
+            throw new ValueError(400, "Invalid Collection Or List");
         }
 
         return await lists.edit(connection, listData);
@@ -275,16 +267,8 @@ async function editData(connection, table, params) {
     case Tables.ITEMS: {
         const itemData = params;
 
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ itemData.parent.collection.CollectionID ])) {
-            throw new ValueError(400, "Invalid Collection");
-        }
-
-        if (!await checkIfExists(connection, Tables.LISTS, [ itemData.parent.collection.CollectionID, itemData.parent.list.ListID ])) {
-            throw new ValueError(400, "Invalid List");
-        }
-
         if (!await checkIfExists(connection, Tables.ITEMS, [ itemData.parent.collection.CollectionID, itemData.parent.list.ListID, itemData.data.ItemID ])) {
-            throw new ValueError(400, "Invalid Item");
+            throw new ValueError(400, "Invalid Collection Or List Or Item");
         }
 
         const result = await items.edit(connection, itemData);
@@ -313,8 +297,7 @@ async function deleteData(connection, table, params) {
     case Tables.LISTS: {
         const { collectionID, listID } = params;
 
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ collectionID ]) ||
-            !await checkIfExists(connection, Tables.LISTS, [ collectionID, listID ])) {
+        if (!await checkIfExists(connection, Tables.LISTS, [ collectionID, listID ])) {
             throw new ValueError(400, "Invalid Collection Or List");
         }
 
@@ -324,9 +307,7 @@ async function deleteData(connection, table, params) {
     case Tables.ITEMS: {
         const { collectionID, listID, itemID } = params;
 
-        if (!await checkIfExists(connection, Tables.COLLECTIONS, [ collectionID ]) ||
-            !await checkIfExists(connection, Tables.LISTS, [ collectionID, listID ]) ||
-            !await checkIfExists(connection, Tables.ITEMS, [ collectionID, listID, itemID ])) {
+        if (!await checkIfExists(connection, Tables.ITEMS, [ collectionID, listID, itemID ])) {
             throw new ValueError(400, "Invalid Collection Or List Or Item");
         }
 
