@@ -9,10 +9,8 @@ const listsRouter = require("./routes/lists");
 const itemsRouter = require("./routes/items");
 const methodOverride = require("method-override");
 
-// Initializeing express
 const app = express();
 
-// Use EJS has a view engine
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -24,19 +22,8 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
-/*
-Adding the collections routes
-*/
 app.use("/", collectionsRouter);
-
-/*
-Adding the lists routes
-*/
 app.use("/", listsRouter);
-
-/*
-Adding the items routes
-*/
 app.use("/", itemsRouter);
 
 /*
