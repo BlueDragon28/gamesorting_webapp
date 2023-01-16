@@ -44,7 +44,7 @@ router.get("/new", (req, res) => {
 /*
 Entry to see the lists available inside a collection
 */
-router.get("/:collectionID", wrapAsync(async (req, res) => {
+router.get("/:collectionID", validateCollectionID, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const lists = await database.find(database.LISTS, collectionID);
@@ -59,7 +59,7 @@ router.get("/:collectionID", wrapAsync(async (req, res) => {
 /*
 Form to edit a collection
 */
-router.get("/:collectionID/edit", wrapAsync(async (req, res) => {
+router.get("/:collectionID/edit", validateCollectionID, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await database.find(database.COLLECTIONS, collectionID);
@@ -114,9 +114,8 @@ router.put("/:collectionID", validateCollectionID, validateCollectionName, wrapA
 /*
 Delete a collection
 */
-router.delete("/:collectionID", wrapAsync(async (req, res) => {
+router.delete("/:collectionID", validateCollectionID, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
-
 
     const result = await database.delete(database.COLLECTIONS, collectionID);
 
