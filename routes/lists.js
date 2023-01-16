@@ -8,7 +8,7 @@ const router = express.Router();
 /*
 Form to create a new lists in a collection
 */
-router.get("/collections/:collectionID/new", wrapAsync(async (req, res) => {
+router.get("/:collectionID/new", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await database.find(database.COLLECTIONS, collectionID);
@@ -23,7 +23,7 @@ router.get("/collections/:collectionID/new", wrapAsync(async (req, res) => {
 /*
 Entry point to list all items inside a list
 */
-router.get("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
+router.get("/:collectionID/:listID", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const lists = await database.find(database.ITEMS, collectionID, listID);
@@ -38,7 +38,7 @@ router.get("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
 /*
 Form to edit a list
 */
-router.get("/collections/:collectionID/:listID/edit", wrapAsync(async (req, res) => {
+router.get("/:collectionID/:listID/edit", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const list = await database.find(database.LISTS, collectionID, listID);
@@ -53,7 +53,7 @@ router.get("/collections/:collectionID/:listID/edit", wrapAsync(async (req, res)
 /*
 Add a new list to a collection
 */
-router.post("/collections/:collectionID", wrapAsync(async (req, res) => {
+router.post("/:collectionID/", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
 
@@ -72,13 +72,14 @@ router.post("/collections/:collectionID", wrapAsync(async (req, res) => {
         throw new InternalError(`Failed To Insert A New List Into Collection ${collectionID}`);
     }
 
-    res.redirect(`/collections/${collectionID}`);
+    // res.redirect(`/collections/${collectionID}`);
+    res.redirect(`${req.baseUrl}/${collectionID}`);
 }));
 
 /*
 Edit list
 */
-router.put("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
+router.put("/:collectionID/:listID", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name } = req.body;
 
@@ -98,13 +99,14 @@ router.put("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
         throw new InternalError(`Failed To Edit A List ${listID}`);
     }
 
-    res.redirect(`/collections/${collectionID}/${listID}`);
+    // res.redirect(`/collections/${collectionID}/${listID}`);
+    res.redirect(`${req.baseUrl}/${collectionID}/${listID}`);
 }));
 
 /*
 Delete a list from a collection
 */
-router.delete("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
+router.delete("/:collectionID/:listID", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const result = await database.delete(database.LISTS, { collectionID, listID });
@@ -113,7 +115,8 @@ router.delete("/collections/:collectionID/:listID", wrapAsync(async (req, res) =
         throw new InternalError(`Failed To Delete List ${listID}`);
     }
 
-    res.redirect(`/collections/${collectionID}`);
+    // res.redirect(`/collections/${collectionID}`);
+    res.redirect(`${req.baseUrl}/${collectionID}`);
 }));
 
 module.exports = router;
