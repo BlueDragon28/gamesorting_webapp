@@ -203,6 +203,10 @@ module.exports = {
             itemID = null;
         }
 
+        if (itemID && itemData.data.customData) {
+            await customUserData.insert(connection, itemID, itemData.data.customData);
+        }
+
         return itemID;
     },  
 
