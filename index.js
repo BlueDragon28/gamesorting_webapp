@@ -5,7 +5,7 @@ const path = require("path");
 const express = require("express");
 const ejsMate = require("ejs-mate");
 const collectionsRouter = require("./routes/collections");
-const listsRoute = require("./routes/lists");
+const listsRouter = require("./routes/lists");
 const itemsRoute = require("./routes/items");
 const methodOverride = require("method-override");
 
@@ -32,7 +32,7 @@ app.use("/", collectionsRouter);
 /*
 Adding the lists routes
 */
-listsRoute(app);
+app.use("/", listsRouter);
 
 /*
 Adding the items routes

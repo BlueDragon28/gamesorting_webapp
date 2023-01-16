@@ -1,116 +1,119 @@
+const express = require("express");
 const database = require("../models/gameSortingDB");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 
-module.exports = (app) => {
-    /*
-    Form to create a new lists in a collection
-    */
-    app.get("/collections/:collectionID/new", wrapAsync(async (req, res) => {
-        const { collectionID } = req.params;
+const router = express.Router();
 
-        const collection = await database.find(database.COLLECTIONS, collectionID);
+/*
+Form to create a new lists in a collection
+*/
+router.get("/collections/:collectionID/new", wrapAsync(async (req, res) => {
+    const { collectionID } = req.params;
 
-        if (!collection) {
-            throw new InternalError(`Failed To Query Collection ${collectionID}`);
-        }
+    const collection = await database.find(database.COLLECTIONS, collectionID);
 
-        res.render("collections/lists/new", { collection: collection });
-    }));
+    if (!collection) {
+        throw new InternalError(`Failed To Query Collection ${collectionID}`);
+    }
 
-    /*
-    Entry point to list all items inside a list
-    */
-    app.get("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
-        const { collectionID, listID } = req.params;
+    res.render("collections/lists/new", { collection: collection });
+}));
 
-        const lists = await database.find(database.ITEMS, collectionID, listID);
-        
-        if (!lists) {
-            throw new InternalError(`Failed To Query Items From List ${listID}`);
-        }
+/*
+Entry point to list all items inside a list
+*/
+router.get("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
+    const { collectionID, listID } = req.params;
 
-        res.render("collections/lists/items/items", { lists });
-    }));
+    const lists = await database.find(database.ITEMS, collectionID, listID);
+    
+    if (!lists) {
+        throw new InternalError(`Failed To Query Items From List ${listID}`);
+    }
 
-    /*
-    Form to edit a list
-    */
-    app.get("/collections/:collectionID/:listID/edit", wrapAsync(async (req, res) => {
-        const { collectionID, listID } = req.params;
+    res.render("collections/lists/items/items", { lists });
+}));
 
-        const list = await database.find(database.LISTS, collectionID, listID);
+/*
+Form to edit a list
+*/
+router.get("/collections/:collectionID/:listID/edit", wrapAsync(async (req, res) => {
+    const { collectionID, listID } = req.params;
 
-        if (!list) {
-            throw new InternalError(`Failed To Query Items From List ${listID}`);
-        }
+    const list = await database.find(database.LISTS, collectionID, listID);
 
-        res.render("collections/lists/edit", { list });
-    }));
+    if (!list) {
+        throw new InternalError(`Failed To Query Items From List ${listID}`);
+    }
 
-    /*
-    Add a new list to a collection
-    */
-    app.post("/collections/:collectionID", wrapAsync(async (req, res) => {
-        const { collectionID } = req.params;
-        const { name } = req.body;
+    res.render("collections/lists/edit", { list });
+}));
 
-        const result = await database.new(database.LISTS, {
-            parent: {
-                collection: {
-                    CollectionID: collectionID
-                }
-            },
-            data: {
-                Name : name
+/*
+Add a new list to a collection
+*/
+router.post("/collections/:collectionID", wrapAsync(async (req, res) => {
+    const { collectionID } = req.params;
+    const { name } = req.body;
+
+    const result = await database.new(database.LISTS, {
+        parent: {
+            collection: {
+                CollectionID: collectionID
             }
-        });
-
-        if (!result) {
-            throw new InternalError(`Failed To Insert A New List Into Collection ${collectionID}`);
+        },
+        data: {
+            Name : name
         }
+    });
 
-        res.redirect(`/collections/${collectionID}`);
-    }));
+    if (!result) {
+        throw new InternalError(`Failed To Insert A New List Into Collection ${collectionID}`);
+    }
 
-    /*
-    Edit list
-    */
-    app.put("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
-        const { collectionID, listID } = req.params;
-        const { name } = req.body;
+    res.redirect(`/collections/${collectionID}`);
+}));
 
-        const result = await database.edit(database.LISTS, {
-            parent: {
-                collection: {
-                    CollectionID: collectionID
-                }
-            },
-            data: {
-                ListID: listID,
-                Name: name
+/*
+Edit list
+*/
+router.put("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
+    const { collectionID, listID } = req.params;
+    const { name } = req.body;
+
+    const result = await database.edit(database.LISTS, {
+        parent: {
+            collection: {
+                CollectionID: collectionID
             }
-        });
-
-        if (!result) {
-            throw new InternalError(`Failed To Edit A List ${listID}`);
+        },
+        data: {
+            ListID: listID,
+            Name: name
         }
+    });
 
-        res.redirect(`/collections/${collectionID}/${listID}`);
-    }));
+    if (!result) {
+        throw new InternalError(`Failed To Edit A List ${listID}`);
+    }
 
-    /*
-    Delete a list from a collection
-    */
-    app.delete("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
-        const { collectionID, listID } = req.params;
+    res.redirect(`/collections/${collectionID}/${listID}`);
+}));
 
-        const result = await database.delete(database.LISTS, { collectionID, listID });
+/*
+Delete a list from a collection
+*/
+router.delete("/collections/:collectionID/:listID", wrapAsync(async (req, res) => {
+    const { collectionID, listID } = req.params;
 
-        if (!result) {
-            throw new InternalError(`Failed To Delete List ${listID}`);
-        }
+    const result = await database.delete(database.LISTS, { collectionID, listID });
 
-        res.redirect(`/collections/${collectionID}`);
-    }));
-}
+    if (!result) {
+        throw new InternalError(`Failed To Delete List ${listID}`);
+    }
+
+    res.redirect(`/collections/${collectionID}`);
+}));
+
+module.exports = router;
