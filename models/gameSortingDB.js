@@ -307,19 +307,7 @@ async function deleteData(connection, table, params) {
 
     case Tables.COLLECTIONS: {
         const collection = params;
-
-        // Find the lists available in the collection
-        const foundLists = await lists.find(connection, collection);
-
-        // Delete all the lists, items and custom rows in the collection
-        for (let list of foundLists) {
-            await items.delete(connection, collection, list.ListID);
-            await lists.delete(connection, collection, list.ListID);
-        }
-
-        const result = await collections.delete(connection, collection);
-
-        return result;
+        return await collections.delete(connection, collection);
     }
 
     case Tables.LISTS: {

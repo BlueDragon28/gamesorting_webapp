@@ -1,4 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
+const lists = require("./lists");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 
 /*
@@ -43,6 +44,20 @@ async function checkIfIDExists(connection, collectionID) {
         return queryResult[0].count > 0;
     } catch (error) {
         throw new SqlError(`Failed to check if ID ${collectionID} exists: ${error.message}`);
+    }
+}
+
+async function deleteAllLists(connection, collectionID) {
+    collectionID = bigint.toBigInt(collectionID);
+
+    if (!connection || !bigint.isValid(collectionID)) {
+        throw new ValueError(400, "Invalid Connection Or CollectionID");
+    }
+
+    const collectionLists = await lists.find(connection, collectionID);
+
+    for (let list of collectionLists) {
+        await lists.delete(connection, collectionID, list.ListID);
     }
 }
 
@@ -174,6 +189,8 @@ module.exports = {
         if (!await checkIfIDExists(connection, collectionID)) {
             return null;
         }
+
+        await deleteAllLists(connection, collectionID);
 
         try {
             await connection.query(`DELETE FROM collections WHERE CollectionID = ${collectionID.toString()}`);
