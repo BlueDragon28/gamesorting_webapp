@@ -9,6 +9,18 @@ const { celebrate, Joi, errors, Segments } = require("celebrate");
 
 const router = express.Router();
 
+const validateCollectionID = celebrate({
+    [Segments.PARAMS]: Joi.object({
+        collectionID: Joi.number().greater(0).required()
+    })
+});
+
+const validateCollectionName = celebrate({
+    [Segments.BODY]: Joi.object({
+        name: Joi.string().trim().max(300, "utf8").required()
+    })
+});
+
 /*
 Entry to see the collections list
 */
@@ -62,11 +74,7 @@ router.get("/:collectionID/edit", wrapAsync(async (req, res) => {
 /*
 Create a new collection
 */
-router.post("/", celebrate({
-    [Segments.BODY]: Joi.object({
-        name: Joi.string().trim().max(300, "utf8").required()
-    })
-}), wrapAsync(async (req, res) => {
+router.post("/", validateCollectionName, wrapAsync(async (req, res) => {
     const { name } = req.body;
 
     const result = await database.new(database.COLLECTIONS, {
@@ -85,14 +93,7 @@ router.post("/", celebrate({
 /*
 Edit a collection
 */
-router.put("/:collectionID", celebrate({
-    [Segments.PARAMS]: Joi.object({
-        collectionID: Joi.number().greater(0).required()
-    }),
-    [Segments.BODY]: Joi.object({
-        name: Joi.string().trim().max(300, "utf8").required()
-    })
-}), wrapAsync(async (req, res) => {
+router.put("/:collectionID", validateCollectionID, validateCollectionName, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
 
