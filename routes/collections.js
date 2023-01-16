@@ -74,7 +74,7 @@ router.post("/", wrapAsync(async (req, res) => {
         throw new InternalError("Failed To Insert A New Collection");
     }
 
-    res.redirect("/collections");
+    res.redirect(req.baseUrl);
 }));
 
 /*
@@ -95,7 +95,7 @@ router.put("/:collectionID", wrapAsync(async (req, res) => {
         throw new InternalError("Failed To Edit A Collection");
     }
 
-    res.redirect(`/collections/${collectionID}`);
+    res.redirect(`${req.baseUrl}/${collectionID}`);
 }));
 
 /*
@@ -111,7 +111,7 @@ router.delete("/:collectionID", wrapAsync(async (req, res) => {
         throw new InternalError(`Failed To Delete Collection ${collectionID}`);
     }
 
-    res.redirect("/collections");
+    res.redirect(req.baseUrl);
 }));
 
 module.exports = router;
