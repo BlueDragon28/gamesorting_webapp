@@ -306,8 +306,8 @@ async function deleteData(connection, table, params) {
     switch (table) {
 
     case Tables.COLLECTIONS: {
-        const collection = params;
-        return await collections.delete(connection, collection);
+        const collectionID = params;
+        return await collections.delete(connection, collectionID);
     }
 
     case Tables.LISTS: {
