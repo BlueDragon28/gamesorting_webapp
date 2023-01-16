@@ -11,7 +11,7 @@ const router = express.Router();
 /*
 Entry to see the collections list
 */
-router.get("/collections", wrapAsync(async (req, res) => {
+router.get("/", wrapAsync(async (req, res) => {
     const collections = await database.find(database.COLLECTIONS);
 
     if (!collections) {
@@ -24,14 +24,14 @@ router.get("/collections", wrapAsync(async (req, res) => {
 /*
 Form to create a new collection
 */
-router.get("/collections/new", (req, res) => {
+router.get("/new", (req, res) => {
     res.render("collections/new");
 });
 
 /*
 Entry to see the lists available inside a collection
 */
-router.get("/collections/:collectionID", wrapAsync(async (req, res) => {
+router.get("/:collectionID", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const lists = await database.find(database.LISTS, collectionID);
@@ -46,7 +46,7 @@ router.get("/collections/:collectionID", wrapAsync(async (req, res) => {
 /*
 Form to edit a collection
 */
-router.get("/collections/:collectionID/edit", wrapAsync(async (req, res) => {
+router.get("/:collectionID/edit", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await database.find(database.COLLECTIONS, collectionID);
@@ -61,7 +61,7 @@ router.get("/collections/:collectionID/edit", wrapAsync(async (req, res) => {
 /*
 Create a new collection
 */
-router.post("/collections", wrapAsync(async (req, res) => {
+router.post("/", wrapAsync(async (req, res) => {
     const { name } = req.body;
 
     const result = await database.new(database.COLLECTIONS, {
@@ -80,7 +80,7 @@ router.post("/collections", wrapAsync(async (req, res) => {
 /*
 Edit a collection
 */
-router.put("/collections/:collectionID", wrapAsync(async (req, res) => {
+router.put("/:collectionID", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
 
@@ -101,7 +101,7 @@ router.put("/collections/:collectionID", wrapAsync(async (req, res) => {
 /*
 Delete a collection
 */
-router.delete("/collections/:collectionID", wrapAsync(async (req, res) => {
+router.delete("/:collectionID", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
 

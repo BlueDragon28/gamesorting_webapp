@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
-app.use("/", collectionsRouter);
+app.use("/collections", collectionsRouter);
 app.use("/", listsRouter);
 app.use("/", itemsRouter);
 
