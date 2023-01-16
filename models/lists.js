@@ -16,7 +16,7 @@ function strRetrieveListsFromCollection(collectionID, listID) {
 
     let strStatement = "SELECT l.ListID, l.Name FROM lists l " + 
         "INNER JOIN collections c USING (CollectionID) " +
-        `WHERE c.CollectionID = ${collectionID.toString()}`;
+        `WHERE c.CollectionID = ${collectionID}`;
 
     if (bigint.isValid(listID)) {
         strStatement += ` AND ListID = ${listID}`;
@@ -35,7 +35,7 @@ function strRetrieveNameAndIDFromListID(collectionID, listID) {
 
     return "SELECT l.ListID, l.Name FROM lists l " + 
         "INNER JOIN collections c USING (CollectionID) " +
-        `WHERE c.CollectionID = ${collectionID.toString()} AND l.ListID = ${listID.toString()}`;
+        `WHERE c.CollectionID = ${collectionID} AND l.ListID = ${listID}`;
 }
 
 function strCheckIfListExists(collectionID, listID) {

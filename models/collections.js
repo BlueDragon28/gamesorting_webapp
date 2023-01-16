@@ -40,7 +40,7 @@ async function checkIfIDExists(connection, collectionID) {
     }
 
     try {
-        const queryResult = await connection.query(`SELECT COUNT(CollectionID) AS count FROM collections WHERE CollectionID = ${collectionID.toString()}`);
+        const queryResult = await connection.query(`SELECT COUNT(CollectionID) AS count FROM collections WHERE CollectionID = ${collectionID}`);
         return queryResult[0].count > 0;
     } catch (error) {
         throw new SqlError(`Failed to check if ID ${collectionID} exists: ${error.message}`);
@@ -103,7 +103,7 @@ module.exports = {
 
         let queryResult = null;
         try {
-            queryResult = await connection.query(`SELECT CollectionID, Name FROM collections WHERE CollectionID = ${collectionID.toString()}`);
+            queryResult = await connection.query(`SELECT CollectionID, Name FROM collections WHERE CollectionID = ${collectionID}`);
             if (queryResult.length === 0) {
                 queryResult = null;
             }
@@ -193,7 +193,7 @@ module.exports = {
         await deleteAllLists(connection, collectionID);
 
         try {
-            await connection.query(`DELETE FROM collections WHERE CollectionID = ${collectionID.toString()}`);
+            await connection.query(`DELETE FROM collections WHERE CollectionID = ${collectionID}`);
         } catch (error) {
             throw new SqlError(`Failed to delete collection ${collectionID}: ${error.message}`);
         }

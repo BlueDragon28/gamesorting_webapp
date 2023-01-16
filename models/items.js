@@ -18,7 +18,7 @@ function strRetrieveItemsFromList(collectionID, listID, itemID) {
         "SELECT ItemID, i.Name AS Name, URL FROM items i " + 
         "INNER JOIN lists l ON i.ListID = l.ListID " + 
         "INNER JOIN collections c ON l.CollectionID = c.CollectionID " +
-        `WHERE i.ListID = ${listID.toString()} AND c.CollectionID = ${collectionID}`;
+        `WHERE i.ListID = ${listID} AND c.CollectionID = ${collectionID}`;
     
     if (itemID) {
         strStatement += ` AND i.ItemID = ${itemID}`;
@@ -88,7 +88,7 @@ function strCheckIfItemExists(collectionID, listID, itemID) {
     return "SELECT COUNT(i.ItemID) AS count FROM items i " +
            "INNER JOIN lists l ON i.ListID = i.ListID " +
            "INNER JOIN collections c ON l.CollectionID = c.CollectionID " +
-           `WHERE i.ItemID = ${itemID} AND l.ListID = ${listID.toString()} AND c.CollectionID = ${collectionID}`;
+           `WHERE i.ItemID = ${itemID} AND l.ListID = ${listID} AND c.CollectionID = ${collectionID}`;
 }
 
 /*
