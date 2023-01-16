@@ -253,7 +253,7 @@ module.exports = {
             throw new SqlError(`Failed to delete the list ${listID}: ${error.message}`);
         }
 
-        // Delete custom columns type informations
+        await items.delete(connection, collectionID, listID);
         await customUserData.deleteColumns(connection, listID);
 
         return true;
