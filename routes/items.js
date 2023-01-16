@@ -93,7 +93,7 @@ router.get("/:collectionID/lists/:listID/items/:itemID/edit", wrapAsync(async (r
 /*
 Insert a new item into a list inside a collection
 */
-router.post("/:collectionID/lists/:listID", parseCustomColumnsData, wrapAsync(async (req, res) => {
+router.post("/:collectionID/lists/:listID/items", parseCustomColumnsData, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name, url, customColumns } = req.body;
 
