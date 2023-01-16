@@ -146,22 +146,25 @@ async function retrieveAllData(connection, table, args) {
     }
 
     case Tables.LISTS: {
-        const collection = await collections.findNameAndID(connection, ...args);
-        const returnLists = await lists.find(connection, ...args);
+        const collectionID = args[0], listID = args[1];
+
+        const collection = await collections.findNameAndID(connection, collectionID);
+        const returnLists = await lists.find(connection, collectionID, listID);
+        
         let customColumns;
-        if (args[1]) {
-            customColumns = await customUserData.getListColumnsType(connection, args[1]);
+        if (listID) {
+            customColumns = await customUserData.getListColumnsType(connection, listID);
         }
 
         if (!collection) {
-            throw new ValueError(400, `Collection ${args[0]} is not a valid collection`);
+            throw new ValueError(400, `Collection ${collectionID} is not a valid collection`);
         }
 
         if (!returnLists) {
             throw new InternalError("Failed To Query Lists");
         }
 
-        if (args[1] && !customColumns) {
+        if (listID && !customColumns) {
             throw new InternalError("Failed To Query Custom Columns");
         }
 
@@ -169,10 +172,12 @@ async function retrieveAllData(connection, table, args) {
     }
 
     case Tables.ITEMS: {
-        const collection = await collections.findNameAndID(connection, args[0]);
-        const list = await lists.findNameAndID(connection, args[0], args[1]);
-        const returnItems = await items.find(connection, ...args);
-        const customColumnsType = await customUserData.getListColumnsType(connection, args[1]);
+        const collectionID = args[0], listID = args[1], itemID = args[2];
+
+        const collection = await collections.findNameAndID(connection, collectionID);
+        const list = await lists.findNameAndID(connection, collectionID, listID);
+        const returnItems = await items.find(connection, collectionID, listID, itemID);
+        const customColumnsType = await customUserData.getListColumnsType(connection, listID);
         const parsedItems = await retrieveCustomItemsData(connection, customColumnsType, returnItems);
 
         if (!collection || !list) {
