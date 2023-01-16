@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 
 app.use("/collections", collectionsRouter);
 app.use("/collections", listsRouter);
-app.use("/", itemsRouter);
+app.use("/collections", itemsRouter);
 
 /*
 Error handler. Every time an error is catch by express, this middleware is called.
