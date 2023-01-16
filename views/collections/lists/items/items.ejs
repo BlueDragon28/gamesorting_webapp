@@ -3,11 +3,11 @@
 <h1 class="display-4"><%= lists.parent.list.Name %></h1>
 
 <section class="pb-4">
-    <a class="btn btn-primary" href="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>/items/new">New Item</a>
-    <a class="btn btn-success" href="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>/edit">Edit List</a>
+    <a class="btn btn-primary" href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/items/new">New Item</a>
+    <a class="btn btn-success" href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/edit">Edit List</a>
     <a class="btn btn-secondary" href="/collections/<%= lists.parent.collection.CollectionID %>">Go Back!</a>
 
-    <form class="d-inline" action="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>?_method=DELETE" method="post">
+    <form class="d-inline" action="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>?_method=DELETE" method="post">
         <button class="btn btn-danger">Delete List</button>
     </form>
 </section>
@@ -27,7 +27,7 @@
                         <% } %> 
                     </section>
 
-                    <a href="/collections/<%= lists.parent.collection.CollectionID %>/<%= lists.parent.list.ListID %>/items/<%= item.ItemID %>" 
+                    <a href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/items/<%= item.ItemID %>" 
                         class="btn btn-info">View Details</a>
                 </div>
             </div>

@@ -46,7 +46,7 @@ function parseCustomColumnsData(req, res, next) {
 /*
 Form to create a new item in a list in a collection
 */
-router.get("/:collectionID/:listID/items/new", wrapAsync(async (req ,res) => {
+router.get("/:collectionID/lists/:listID/items/new", wrapAsync(async (req ,res) => {
     const { collectionID, listID } = req.params;
 
     const list = await database.find(database.LISTS, collectionID, listID);
@@ -61,7 +61,7 @@ router.get("/:collectionID/:listID/items/new", wrapAsync(async (req ,res) => {
 /*
 Display informations about an item
 */
-router.get("/:collectionID/:listID/items/:itemID", wrapAsync(async (req, res) => {
+router.get("/:collectionID/lists/:listID/items/:itemID", wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
     const item = await database.find(database.ITEMS, collectionID, listID, itemID);
@@ -76,7 +76,7 @@ router.get("/:collectionID/:listID/items/:itemID", wrapAsync(async (req, res) =>
 /*
 Form to edit an item
 */
-router.get("/:collectionID/:listID/items/:itemID/edit", wrapAsync(async (req, res) => {
+router.get("/:collectionID/lists/:listID/items/:itemID/edit", wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
     let item = await database.find(database.ITEMS, collectionID, listID, itemID);
@@ -93,7 +93,7 @@ router.get("/:collectionID/:listID/items/:itemID/edit", wrapAsync(async (req, re
 /*
 Insert a new item into a list inside a collection
 */
-router.post("/:collectionID/:listID", parseCustomColumnsData, wrapAsync(async (req, res) => {
+router.post("/:collectionID/lists/:listID", parseCustomColumnsData, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name, url, customColumns } = req.body;
 
@@ -113,13 +113,13 @@ router.post("/:collectionID/:listID", parseCustomColumnsData, wrapAsync(async (r
         throw new InternalError(`Failed To Insert A New Item Into List ${listID}`);
     }
 
-    res.redirect(`${req.baseUrl}/${collectionID}/${listID}`);
+    res.redirect(`${req.baseUrl}/${collectionID}/lists/${listID}`);
 }));
 
 /*
 Edit An Item
 */
-router.put("/:collectionID/:listID/items/:itemID", parseCustomColumnsData, wrapAsync(async (req, res) => {
+router.put("/:collectionID/lists/:listID/items/:itemID", parseCustomColumnsData, wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
     const { name, url, customColumns } = req.body;
 
@@ -140,13 +140,13 @@ router.put("/:collectionID/:listID/items/:itemID", parseCustomColumnsData, wrapA
         throw new InternalError(`Failed To Edit Item ${itemID}`)
     }
 
-    res.redirect(`${req.baseUrl}/${collectionID}/${listID}/items/${itemID}`);
+    res.redirect(`${req.baseUrl}/${collectionID}/lists/${listID}/items/${itemID}`);
 }));
 
 /*
 Delete an item from a list
 */
-router.delete("/:collectionID/:listID/items/:itemID", wrapAsync(async (req, res) => {
+router.delete("/:collectionID/lists/:listID/items/:itemID", wrapAsync(async (req, res) => {
 
     const { collectionID, listID, itemID } = req.params;
 
@@ -160,7 +160,7 @@ router.delete("/:collectionID/:listID/items/:itemID", wrapAsync(async (req, res)
         throw new InternalError(`Failed To Delete Item ${itemID}`);
     }
 
-    res.redirect(`${req.baseUrl}/${collectionID}/${listID}`);
+    res.redirect(`${req.baseUrl}/${collectionID}/lists/${listID}`);
 }));
 
 module.exports = router;

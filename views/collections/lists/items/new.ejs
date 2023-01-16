@@ -9,7 +9,7 @@ The form have two fields, Name and Url. -->
                 <h1 class="card-title fs-4">Add A New Item In <%= list.data.Name %> List</h1>
 
                 <!-- The only information we need for the form is the name of the collection -->
-                <form action="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>" method="post">
+                <form action="/collections/<%= list.parent.collection.CollectionID %>/lists/<%= list.data.ListID %>" method="post">
                     <section class="mb-3">
                         <label class="form-label" for="name">Name</label>
                         <input class="form-control" type="text" name="name" id="name">
@@ -32,7 +32,7 @@ The form have two fields, Name and Url. -->
                         <button class="btn btn-primary d-inline">Add</button>
 
                         <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
-                        <a class="btn btn-secondary" href="/collections/<%= list.parent.collection.CollectionID %>/<%= list.data.ListID %>">Cancel</a>
+                        <a class="btn btn-secondary" href="/collections/<%= list.parent.collection.CollectionID %>/lists/<%= list.data.ListID %>">Cancel</a>
                     </section>
                 </form>
             </div>

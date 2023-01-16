@@ -3,7 +3,7 @@
 <h1 class="display-4"><%= lists.parent.collection.Name %></h1>
 
 <section class="mb-4">
-    <a class="btn btn-primary" href="/collections/<%= lists.parent.collection.CollectionID %>/new">New List</a>
+    <a class="btn btn-primary" href="/collections/<%= lists.parent.collection.CollectionID %>/lists/new">New List</a>
     <a class="btn btn-success" href="/collections/<%= lists.parent.collection.CollectionID %>/edit">Edit Collection</a>
     <a class="btn btn-secondary" href="/collections">Go Back</a>
 
@@ -20,7 +20,7 @@
                 <div class="card-body">
                     <h2 class="fs-4 fw-normal pb-3"><%= list.Name %></h2>
 
-                    <a class="btn btn-info" href="/collections/<%= lists.parent.collection.CollectionID %>/<%= list.ListID %>">View List</a>
+                    <a class="btn btn-info" href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= list.ListID %>">View List</a>
                 </div>
             </div>
         </div>

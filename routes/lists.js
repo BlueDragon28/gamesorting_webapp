@@ -8,7 +8,7 @@ const router = express.Router();
 /*
 Form to create a new lists in a collection
 */
-router.get("/:collectionID/new", wrapAsync(async (req, res) => {
+router.get("/:collectionID/lists/new", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await database.find(database.COLLECTIONS, collectionID);
@@ -23,7 +23,7 @@ router.get("/:collectionID/new", wrapAsync(async (req, res) => {
 /*
 Entry point to list all items inside a list
 */
-router.get("/:collectionID/:listID", wrapAsync(async (req, res) => {
+router.get("/:collectionID/lists/:listID", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const lists = await database.find(database.ITEMS, collectionID, listID);
@@ -38,7 +38,7 @@ router.get("/:collectionID/:listID", wrapAsync(async (req, res) => {
 /*
 Form to edit a list
 */
-router.get("/:collectionID/:listID/edit", wrapAsync(async (req, res) => {
+router.get("/:collectionID/lists/:listID/edit", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const list = await database.find(database.LISTS, collectionID, listID);
@@ -79,7 +79,7 @@ router.post("/:collectionID/", wrapAsync(async (req, res) => {
 /*
 Edit list
 */
-router.put("/:collectionID/:listID", wrapAsync(async (req, res) => {
+router.put("/:collectionID/lists/:listID", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name } = req.body;
 
@@ -100,13 +100,13 @@ router.put("/:collectionID/:listID", wrapAsync(async (req, res) => {
     }
 
     // res.redirect(`/collections/${collectionID}/${listID}`);
-    res.redirect(`${req.baseUrl}/${collectionID}/${listID}`);
+    res.redirect(`${req.baseUrl}/${collectionID}/lists/${listID}`);
 }));
 
 /*
 Delete a list from a collection
 */
-router.delete("/:collectionID/:listID", wrapAsync(async (req, res) => {
+router.delete("/:collectionID/lists/:listID", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const result = await database.delete(database.LISTS, { collectionID, listID });

@@ -9,7 +9,7 @@ The form have two fields, Name and Url. -->
                 <h1 class="card-title fs-4">Edit <%= item.data.Name %> Item</h1>
 
                 <!-- The only information we need for the form is the name of the collection -->
-                <form action="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>?_method=PUT" method="post">
+                <form action="/collections/<%= item.parent.collection.CollectionID %>/lists/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>?_method=PUT" method="post">
                     <section class="mb-3">
                         <label class="form-label" for="name">Name</label>
                         <input class="form-control" type="text" name="name" id="name" value="<%= item.data.Name %>">
@@ -32,7 +32,7 @@ The form have two fields, Name and Url. -->
                         <button class="btn btn-primary d-inline">Edit</button>
 
                         <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
-                        <a class="btn btn-secondary" href="/collections/<%= item.parent.collection.CollectionID %>/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>">Cancel</a>
+                        <a class="btn btn-secondary" href="/collections/<%= item.parent.collection.CollectionID %>/lists/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>">Cancel</a>
                     </section>
                 </form>
             </div>
