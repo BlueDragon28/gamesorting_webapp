@@ -6,7 +6,7 @@ const express = require("express");
 const ejsMate = require("ejs-mate");
 const collectionsRouter = require("./routes/collections");
 const listsRouter = require("./routes/lists");
-const itemsRoute = require("./routes/items");
+const itemsRouter = require("./routes/items");
 const methodOverride = require("method-override");
 
 // Initializeing express
@@ -37,7 +37,7 @@ app.use("/", listsRouter);
 /*
 Adding the items routes
 */
-itemsRoute(app);
+app.use("/", itemsRouter);
 
 /*
 Error handler. Every time an error is catch by express, this middleware is called.
