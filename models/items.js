@@ -226,6 +226,8 @@ module.exports = {
             throw new SqlError(`Failed to edit an item ${error.message}`);
         }
 
+        await customUserData.edit(connection, itemData);
+
         return true;
     },
 

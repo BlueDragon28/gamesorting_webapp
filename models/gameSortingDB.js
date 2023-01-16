@@ -269,7 +269,6 @@ async function editData(connection, table, params) {
         }
 
         const result = await items.edit(connection, itemData);
-        await customUserData.edit(connection, itemData);
         return result;
     }
 
