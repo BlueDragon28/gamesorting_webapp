@@ -4,7 +4,7 @@ Required packages and js files
 const path = require("path");
 const express = require("express");
 const ejsMate = require("ejs-mate");
-const collectionsRoute = require("./routes/collections");
+const collectionsRouter = require("./routes/collections");
 const listsRoute = require("./routes/lists");
 const itemsRoute = require("./routes/items");
 const methodOverride = require("method-override");
@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 /*
 Adding the collections routes
 */
-collectionsRoute(app);
+app.use("/", collectionsRouter);
 
 /*
 Adding the lists routes
