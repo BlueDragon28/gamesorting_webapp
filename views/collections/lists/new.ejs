@@ -8,7 +8,7 @@
                 <h1 class="card-title fs-4">Add A New List Into <%= collection.data.Name %> Collection</h1>
 
                 <!-- The only information we need for the form is the name of the collection -->
-                <form action="/collections/<%= collection.data.CollectionID %>" method="post">
+                <form action="/collections/<%= collection.data.CollectionID %>/lists" method="post">
                     <section class="mb-3">
                         <label class="form-label" for="name">Name</label>
                         <input class="form-control" type="text" name="name" id="name">

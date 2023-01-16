@@ -53,7 +53,7 @@ router.get("/:collectionID/lists/:listID/edit", wrapAsync(async (req, res) => {
 /*
 Add a new list to a collection
 */
-router.post("/:collectionID/", wrapAsync(async (req, res) => {
+router.post("/:collectionID/lists", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
 
