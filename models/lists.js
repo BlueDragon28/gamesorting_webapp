@@ -1,4 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
+const items = require("./items");
 const customUserData = require("./customUserData");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 
@@ -253,7 +254,7 @@ module.exports = {
         }
 
         // Delete custom columns type informations
-        customUserData.deleteColumns(connection, listID);
+        await customUserData.deleteColumns(connection, listID);
 
         return true;
     }
