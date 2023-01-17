@@ -72,7 +72,7 @@ function paramsValidation(joiObject) {
 
 function bodyValidation(joiObject) {
     return {
-        [Segments.BODY]: joiObject
+        [Segments.BODY]: joiObject.unknown()
     };
 }
 

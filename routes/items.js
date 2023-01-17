@@ -94,7 +94,8 @@ router.get("/:collectionID/lists/:listID/items/:itemID/edit", validation.id.item
 /*
 Insert a new item into a list inside a collection
 */
-router.post("/:collectionID/lists/:listID/items", validation.id.list, parseCustomColumnsData, wrapAsync(async (req, res) => {
+router.post("/:collectionID/lists/:listID/items", validation.id.list, validation.item({ name: true }), 
+            parseCustomColumnsData, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name, url, customColumns } = req.body;
 
@@ -120,7 +121,8 @@ router.post("/:collectionID/lists/:listID/items", validation.id.list, parseCusto
 /*
 Edit An Item
 */
-router.put("/:collectionID/lists/:listID/items/:itemID", validation.id.item, parseCustomColumnsData, wrapAsync(async (req, res) => {
+router.put("/:collectionID/lists/:listID/items/:itemID", validation.id.item, validation.item({ name: true }), 
+            parseCustomColumnsData, wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
     const { name, url, customColumns } = req.body;
 
