@@ -40,8 +40,6 @@ function parseCustomColumnsData(req, res, next) {
         });
     }
 
-    console.log(customColumnsData)
-
     req.body.customColumns = customColumnsData;
     next();
 }
