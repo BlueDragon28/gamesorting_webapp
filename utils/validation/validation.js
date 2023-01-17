@@ -38,6 +38,16 @@ function idValidation(id) {
 String Validation
 */
 const nameValidation = Joi.string().trim().max(300, "utf8").required();
+const uriValidation = Joi.alternatives().try(
+    Joi.string().trim().max(10000, "utf8").uri({
+        scheme: [
+            "http",
+            "https"
+        ],
+        allowQuerySquareBrackets: true,
+    }),
+    Joi.string().trim().max(0).min(0)
+);
 
 function name(joiObject) {
     if (!joiObject) {
@@ -49,12 +59,24 @@ function name(joiObject) {
     });
 }
 
+function url(joiObject) {
+    if (!joiObject) {
+        joiObject = Joi.object().keys({});
+    }
+
+    return joiObject.keys({
+        url: uriValidation
+    });
+}
+
 function itemValidation(itemToValidate) {
     let joiObject = Joi.object().keys({});
 
     for (let key in itemToValidate) {
         if (key === "name") {
             joiObject = name(joiObject);
+        } else if (key === "url") {
+            joiObject = url(joiObject);
         }
     }
 
@@ -72,7 +94,7 @@ function paramsValidation(joiObject) {
 
 function bodyValidation(joiObject) {
     return {
-        [Segments.BODY]: joiObject.unknown()
+        [Segments.BODY]: joiObject.unknown().required()
     };
 }
 
