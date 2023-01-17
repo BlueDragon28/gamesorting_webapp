@@ -2,13 +2,14 @@ const express = require("express");
 const database = require("../models/gameSortingDB");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
+const validation = require("../utils/validation/validation");
 
 const router = express.Router();
 
 /*
 Form to create a new lists in a collection
 */
-router.get("/:collectionID/lists/new", wrapAsync(async (req, res) => {
+router.get("/:collectionID/lists/new", validation.id.collection, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await database.find(database.COLLECTIONS, collectionID);
@@ -23,7 +24,7 @@ router.get("/:collectionID/lists/new", wrapAsync(async (req, res) => {
 /*
 Entry point to list all items inside a list
 */
-router.get("/:collectionID/lists/:listID", wrapAsync(async (req, res) => {
+router.get("/:collectionID/lists/:listID", validation.id.list, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const lists = await database.find(database.ITEMS, collectionID, listID);
@@ -38,7 +39,7 @@ router.get("/:collectionID/lists/:listID", wrapAsync(async (req, res) => {
 /*
 Form to edit a list
 */
-router.get("/:collectionID/lists/:listID/edit", wrapAsync(async (req, res) => {
+router.get("/:collectionID/lists/:listID/edit", validation.id.list, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const list = await database.find(database.LISTS, collectionID, listID);
@@ -53,7 +54,7 @@ router.get("/:collectionID/lists/:listID/edit", wrapAsync(async (req, res) => {
 /*
 Add a new list to a collection
 */
-router.post("/:collectionID/lists", wrapAsync(async (req, res) => {
+router.post("/:collectionID/lists", validation.id.collection, validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
 
@@ -79,7 +80,7 @@ router.post("/:collectionID/lists", wrapAsync(async (req, res) => {
 /*
 Edit list
 */
-router.put("/:collectionID/lists/:listID", wrapAsync(async (req, res) => {
+router.put("/:collectionID/lists/:listID", validation.id.list, validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name } = req.body;
 
@@ -106,7 +107,7 @@ router.put("/:collectionID/lists/:listID", wrapAsync(async (req, res) => {
 /*
 Delete a list from a collection
 */
-router.delete("/:collectionID/lists/:listID", wrapAsync(async (req, res) => {
+router.delete("/:collectionID/lists/:listID", validation.id.list, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const result = await database.delete(database.LISTS, { collectionID, listID });
