@@ -48,6 +48,11 @@ const uriValidation = Joi.alternatives().try(
     }),
     Joi.string().trim().max(0).min(0)
 );
+const customColumnsValidation = Joi.array().items(Joi.object({
+    CustomRowItemsID: Joi.any().empty(),
+    ListColumnTypeID: Joi.any().empty(),
+    Value: nameValidation.min(0)
+}).unknown().or("CustomRowItemsID", "ListColumnTypeID"));
 
 function name(joiObject) {
     if (!joiObject) {
@@ -69,6 +74,16 @@ function url(joiObject) {
     });
 }
 
+function customData(joiObject) {
+    if (!joiObject) {
+        joiObject = Joi.object().keys({});
+    }
+
+    return joiObject.keys({
+        customColumns: customColumnsValidation
+    });
+}
+
 function itemValidation(itemToValidate) {
     let joiObject = Joi.object().keys({});
 
@@ -77,6 +92,8 @@ function itemValidation(itemToValidate) {
             joiObject = name(joiObject);
         } else if (key === "url") {
             joiObject = url(joiObject);
+        } else if (key === "customData") {
+            joiObject = customData(joiObject);
         }
     }
 
@@ -94,7 +111,7 @@ function paramsValidation(joiObject) {
 
 function bodyValidation(joiObject) {
     return {
-        [Segments.BODY]: joiObject.unknown().required()
+        [Segments.BODY]: joiObject.unknown()
     };
 }
 
