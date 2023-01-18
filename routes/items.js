@@ -6,7 +6,7 @@ const utilCustomData = require("../utils/data/customData");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 /*
 Parse the custom columns data.
@@ -47,7 +47,7 @@ function parseCustomColumnsData(req, res, next) {
 /*
 Form to create a new item in a list in a collection
 */
-router.get("/:collectionID/lists/:listID/items/new", validation.id.list, wrapAsync(async (req ,res) => {
+router.get("/items/new", validation.id.list, wrapAsync(async (req ,res) => {
     const { collectionID, listID } = req.params;
 
     const list = await database.find(database.LISTS, collectionID, listID);
@@ -62,7 +62,7 @@ router.get("/:collectionID/lists/:listID/items/new", validation.id.list, wrapAsy
 /*
 Display informations about an item
 */
-router.get("/:collectionID/lists/:listID/items/:itemID", validation.id.item, wrapAsync(async (req, res) => {
+router.get("/items/:itemID", validation.id.item, wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
     const item = await database.find(database.ITEMS, collectionID, listID, itemID);
@@ -77,7 +77,7 @@ router.get("/:collectionID/lists/:listID/items/:itemID", validation.id.item, wra
 /*
 Form to edit an item
 */
-router.get("/:collectionID/lists/:listID/items/:itemID/edit", validation.id.item, wrapAsync(async (req, res) => {
+router.get("/items/:itemID/edit", validation.id.item, wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
     let item = await database.find(database.ITEMS, collectionID, listID, itemID);
@@ -94,7 +94,7 @@ router.get("/:collectionID/lists/:listID/items/:itemID/edit", validation.id.item
 /*
 Insert a new item into a list inside a collection
 */
-router.post("/:collectionID/lists/:listID/items", validation.id.list, parseCustomColumnsData, 
+router.post("/items", validation.id.list, parseCustomColumnsData, 
             validation.item({ name: true, url: true, customData: true }), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name, url, customColumns } = req.body;
@@ -115,13 +115,13 @@ router.post("/:collectionID/lists/:listID/items", validation.id.list, parseCusto
         throw new InternalError(`Failed To Insert A New Item Into List ${listID}`);
     }
 
-    res.redirect(`${req.baseUrl}/${collectionID}/lists/${listID}`);
+    res.redirect(req.baseUrl);
 }));
 
 /*
 Edit An Item
 */
-router.put("/:collectionID/lists/:listID/items/:itemID", validation.id.item, parseCustomColumnsData, 
+router.put("/items/:itemID", validation.id.item, parseCustomColumnsData, 
             validation.item({ name: true, url: true, customData: true }), wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
     const { name, url, customColumns } = req.body;
@@ -143,13 +143,13 @@ router.put("/:collectionID/lists/:listID/items/:itemID", validation.id.item, par
         throw new InternalError(`Failed To Edit Item ${itemID}`)
     }
 
-    res.redirect(`${req.baseUrl}/${collectionID}/lists/${listID}/items/${itemID}`);
+    res.redirect(`${req.baseUrl}/items/${itemID}`);
 }));
 
 /*
 Delete an item from a list
 */
-router.delete("/:collectionID/lists/:listID/items/:itemID", validation.id.item, wrapAsync(async (req, res) => {
+router.delete("/items/:itemID", validation.id.item, wrapAsync(async (req, res) => {
 
     const { collectionID, listID, itemID } = req.params;
 
@@ -163,7 +163,7 @@ router.delete("/:collectionID/lists/:listID/items/:itemID", validation.id.item, 
         throw new InternalError(`Failed To Delete Item ${itemID}`);
     }
 
-    res.redirect(`${req.baseUrl}/${collectionID}/lists/${listID}`);
+    res.redirect(req.baseUrl);
 }));
 
 module.exports = router;
