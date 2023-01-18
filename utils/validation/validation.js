@@ -3,7 +3,10 @@ const { celebrate, Joi, Segments } = require("celebrate");
 /*
 Validation of ID
 */
-const IDValidation = Joi.string().min(1, "utf8").pattern(/^[0-9]+$/);
+const IDValidation = Joi.alternatives().try(
+    Joi.string().min(1, "utf8").pattern(/^[0-9]+$/),
+    Joi.string().pattern(/^new$/)
+);
 
 function idValidation() {
     return Joi.object().keys({

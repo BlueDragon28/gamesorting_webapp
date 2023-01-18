@@ -10,13 +10,6 @@ const validation = require("../utils/validation/validation");
 const router = express.Router();
 
 /*
-Form to create a new collection
-*/
-router.get("/new", (req, res) => {
-    res.render("collections/new");
-});
-
-/*
 Validate collectionID on each route asking for collection id
 */
 router.use("/:collectionID", validation.id);
@@ -33,6 +26,13 @@ router.get("/", wrapAsync(async (req, res) => {
 
     res.render("collections/collectionsIndex.ejs", { collections });
 }));
+
+/*
+Form to create a new collection
+*/
+router.get("/new", (req, res) => {
+    res.render("collections/new");
+});
 
 /*
 Entry to see the lists available inside a collection
