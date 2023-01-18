@@ -1,37 +1,16 @@
 const { celebrate, Joi, Segments } = require("celebrate");
+
 /*
 Validation of ID
 */
 const IDValidation = Joi.string().min(1, "utf8").pattern(/^[0-9]+$/);
 
-function collection() {
+function idValidation() {
     return Joi.object().keys({
-        collectionID: IDValidation
-    });
-}
-
-function list() {
-    return collection().keys({
-        listID: IDValidation
-    });
-}
-
-function item() {
-    return list().keys({
+        collectionID: IDValidation,
+        listID: IDValidation,
         itemID: IDValidation
-    });
-}
-
-function idValidation(id) {
-    if (id.item) {
-        return item();
-    } else if (id.list) {
-        return list();
-    } else if (id.collection) {
-        return collection();
-    } else {
-        Joi.object().keys({});
-    }
+    }).unknown();
 }
 
 /*
@@ -117,12 +96,8 @@ function bodyValidation(joiObject) {
     };
 }
 
-function validateID(whatToValidate) {
-    if (!whatToValidate) {
-        throw new Error("Invalid Validation Request");
-    }
-
-    return celebrate(paramsValidation(idValidation(whatToValidate)));
+function validateID() {
+    return celebrate(paramsValidation(idValidation()));
 }
 
 function validateItem(itemToValidate) {
@@ -134,11 +109,7 @@ function validateItem(itemToValidate) {
 }
 
 module.exports = {
-    id: {
-        collection: validateID({ collection: true }),
-        list: validateID({ list: true }),
-        item: validateID({ item: true })
-    },
+    id: validateID(),
     item: function(itemToValidate) {
         return validateItem(itemToValidate);
     }

@@ -19,7 +19,7 @@ router.get("/new", (req, res) => {
 /*
 Validate collectionID on each route asking for collection id
 */
-router.use("/:collectionID", validation.id.collection);
+router.use("/:collectionID", validation.id);
 
 /*
 Entry to see the collections list
