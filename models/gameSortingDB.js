@@ -156,11 +156,11 @@ async function retrieveAllData(connection, table, args) {
             customColumns = await customUserData.getListColumnsType(connection, listID);
         }
 
-        if (!collection) {
+        if (!collection || !collection.length) {
             throw new ValueError(400, `Collection ${collectionID} is not a valid collection`);
         }
 
-        if (!returnLists) {
+        if (!returnLists || (listID && !returnLists.ListID)) {
             throw new InternalError("Failed To Query Lists");
         }
 
@@ -180,11 +180,11 @@ async function retrieveAllData(connection, table, args) {
         const customColumnsType = await customUserData.getListColumnsType(connection, listID);
         const parsedItems = await retrieveCustomItemsData(connection, customColumnsType, returnItems);
 
-        if (!collection || !list) {
+        if (!collection || !collection.length || !list || !list.length) {
             throw new ValueError(400, "Invalid collection or list");
         }
 
-        if (!returnItems) {
+        if (!returnItems || (itemID && !returnItems.ItemID)) {
             throw new InternalError("Failed To Query Items");
         }
 
