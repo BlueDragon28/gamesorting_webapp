@@ -15,13 +15,6 @@ router.use([ "/items/:itemID", "/items" ], validation.id);
 
 /*
 Parse the custom columns data.
-The format used is :
-[
-    {
-        ListColumnTypeID: ID of the custom column type,
-        Value: The value of this column for a specific item
-    }
-]
 */
 function parseCustomColumnsData(req, res, next) {
     if (!req.body.customColumns) {
