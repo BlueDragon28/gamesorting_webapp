@@ -10,6 +10,18 @@ const validation = require("../utils/validation/validation");
 const router = express.Router();
 
 /*
+Form to create a new collection
+*/
+router.get("/new", (req, res) => {
+    res.render("collections/new");
+});
+
+/*
+Validate collectionID on each route asking for collection id
+*/
+router.use("/:collectionID", validation.id.collection);
+
+/*
 Entry to see the collections list
 */
 router.get("/", wrapAsync(async (req, res) => {
@@ -23,16 +35,9 @@ router.get("/", wrapAsync(async (req, res) => {
 }));
 
 /*
-Form to create a new collection
-*/
-router.get("/new", (req, res) => {
-    res.render("collections/new");
-});
-
-/*
 Entry to see the lists available inside a collection
 */
-router.get("/:collectionID", validation.id.collection, wrapAsync(async (req, res) => {
+router.get("/:collectionID", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const lists = await database.find(database.LISTS, collectionID);
@@ -47,7 +52,7 @@ router.get("/:collectionID", validation.id.collection, wrapAsync(async (req, res
 /*
 Form to edit a collection
 */
-router.get("/:collectionID/edit", validation.id.collection, wrapAsync(async (req, res) => {
+router.get("/:collectionID/edit", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await database.find(database.COLLECTIONS, collectionID);
@@ -81,7 +86,7 @@ router.post("/", validation.item({ name: true }), wrapAsync(async (req, res) => 
 /*
 Edit a collection
 */
-router.put("/:collectionID", validation.id.collection, validation.item({ name: true }), wrapAsync(async (req, res) => {
+router.put("/:collectionID", validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
 
@@ -102,7 +107,7 @@ router.put("/:collectionID", validation.id.collection, validation.item({ name: t
 /*
 Delete a collection
 */
-router.delete("/:collectionID", validation.id.collection, wrapAsync(async (req, res) => {
+router.delete("/:collectionID", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const result = await database.delete(database.COLLECTIONS, collectionID);
