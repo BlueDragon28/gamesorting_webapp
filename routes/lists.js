@@ -4,12 +4,12 @@ const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 /*
 Form to create a new lists in a collection
 */
-router.get("/:collectionID/lists/new", validation.id.collection, wrapAsync(async (req, res) => {
+router.get("/lists/new", validation.id.collection, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await database.find(database.COLLECTIONS, collectionID);
@@ -24,7 +24,7 @@ router.get("/:collectionID/lists/new", validation.id.collection, wrapAsync(async
 /*
 Entry point to list all items inside a list
 */
-router.get("/:collectionID/lists/:listID", validation.id.list, wrapAsync(async (req, res) => {
+router.get("/lists/:listID", validation.id.list, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const lists = await database.find(database.ITEMS, collectionID, listID);
@@ -39,7 +39,7 @@ router.get("/:collectionID/lists/:listID", validation.id.list, wrapAsync(async (
 /*
 Form to edit a list
 */
-router.get("/:collectionID/lists/:listID/edit", validation.id.list, wrapAsync(async (req, res) => {
+router.get("/lists/:listID/edit", validation.id.list, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const list = await database.find(database.LISTS, collectionID, listID);
@@ -54,7 +54,7 @@ router.get("/:collectionID/lists/:listID/edit", validation.id.list, wrapAsync(as
 /*
 Add a new list to a collection
 */
-router.post("/:collectionID/lists", validation.id.collection, validation.item({ name: true }), wrapAsync(async (req, res) => {
+router.post("/lists", validation.id.collection, validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
 
@@ -74,13 +74,13 @@ router.post("/:collectionID/lists", validation.id.collection, validation.item({ 
     }
 
     // res.redirect(`/collections/${collectionID}`);
-    res.redirect(`${req.baseUrl}/${collectionID}`);
+    res.redirect(`${req.baseUrl}`);
 }));
 
 /*
 Edit list
 */
-router.put("/:collectionID/lists/:listID", validation.id.list, validation.item({ name: true }), wrapAsync(async (req, res) => {
+router.put("/lists/:listID", validation.id.list, validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name } = req.body;
 
@@ -100,14 +100,13 @@ router.put("/:collectionID/lists/:listID", validation.id.list, validation.item({
         throw new InternalError(`Failed To Edit A List ${listID}`);
     }
 
-    // res.redirect(`/collections/${collectionID}/${listID}`);
-    res.redirect(`${req.baseUrl}/${collectionID}/lists/${listID}`);
+    res.redirect(`${req.baseUrl}/lists/${listID}`);
 }));
 
 /*
 Delete a list from a collection
 */
-router.delete("/:collectionID/lists/:listID", validation.id.list, wrapAsync(async (req, res) => {
+router.delete("/lists/:listID", validation.id.list, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const result = await database.delete(database.LISTS, { collectionID, listID });
@@ -116,8 +115,7 @@ router.delete("/:collectionID/lists/:listID", validation.id.list, wrapAsync(asyn
         throw new InternalError(`Failed To Delete List ${listID}`);
     }
 
-    // res.redirect(`/collections/${collectionID}`);
-    res.redirect(`${req.baseUrl}/${collectionID}`);
+    res.redirect(`${req.baseUrl}`);
 }));
 
 module.exports = router;

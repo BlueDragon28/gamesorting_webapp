@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/collections", collectionsRouter);
-app.use("/collections", listsRouter);
+app.use("/collections/:collectionID", listsRouter);
 app.use("/collections", itemsRouter);
 
 /*
