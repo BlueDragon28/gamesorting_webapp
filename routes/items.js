@@ -9,6 +9,11 @@ const validation = require("../utils/validation/validation");
 const router = express.Router({ mergeParams: true });
 
 /*
+Validate collectionID, listID and itemID on each route asking for for them
+*/
+router.use([ "/items/:itemID", "/items" ], validation.id);
+
+/*
 Parse the custom columns data.
 The format used is :
 [
