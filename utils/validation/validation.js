@@ -48,9 +48,11 @@ const uriValidation = Joi.alternatives().try(
     }),
     Joi.string().trim().max(0).min(0)
 );
+
+const customDataIDValidation = Joi.string().min(1, "utf8").regex(/^-?[0-9]+$/); // Validation of custom data ID
 const customColumnsValidation = Joi.array().items(Joi.object({
-    CustomRowItemsID: Joi.any().empty(),
-    ListColumnTypeID: Joi.any().empty(),
+    CustomRowItemsID: customDataIDValidation,
+    ListColumnTypeID: customDataIDValidation,
     Value: nameValidation.min(0)
 }).unknown().or("CustomRowItemsID", "ListColumnTypeID"));
 

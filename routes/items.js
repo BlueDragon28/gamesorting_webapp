@@ -35,7 +35,7 @@ function parseCustomColumnsData(req, res, next) {
         const columnIDName = req.method === "POST" ? "ListColumnTypeID" : "CustomRowItemsID";
 
         customColumnsData.push({
-            [columnIDName]: id,
+            [columnIDName]: id.toString(),
             Value: value
         });
     }
