@@ -8,10 +8,16 @@
                 <h1 class="card-title fs-4">Add A New List Into <%= collection.data.Name %> Collection</h1>
 
                 <!-- The only information we need for the form is the name of the collection -->
-                <form action="/collections/<%= collection.data.CollectionID %>/lists" method="post">
+                <form class="needs-validation" action="/collections/<%= collection.data.CollectionID %>/lists" method="post" novalidate>
                     <section class="mb-3">
                         <label class="form-label" for="name">Name</label>
-                        <input class="form-control" type="text" name="name" id="name">
+                        <input class="form-control" type="text" name="name" id="name" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            You need to set a name!
+                        </div>
                     </section>
                 
                     <button class="btn btn-primary d-inline">Add</button>
