@@ -14,6 +14,15 @@ Validate collectionID, listID and itemID on each route asking for for them
 router.use([ "/items/:itemID", "/items" ], validation.id);
 
 /*
+Setting javascript utils for the new and edit ejs template
+*/
+function customDataEjsHelper(req, res, next) {
+    const { getCustomControlType } = require("../utils/ejs/customControlData");
+    res.locals.getCustomControlType = getCustomControlType;
+    next();
+}
+
+/*
 Parse the custom columns data.
 */
 function parseCustomColumnsData(req, res, next) {
@@ -45,7 +54,7 @@ function parseCustomColumnsData(req, res, next) {
 /*
 Form to create a new item in a list in a collection
 */
-router.get("/items/new", validation.id, wrapAsync(async (req ,res) => {
+router.get("/items/new", validation.id, customDataEjsHelper, wrapAsync(async (req ,res) => {
     const { collectionID, listID } = req.params;
 
     const list = await database.find(database.LISTS, collectionID, listID);
