@@ -36,11 +36,13 @@ DELETE FROM listColumnsType;
 
 INSERT INTO listColumnsType(ListColumnTypeID, ListID, Name, Type)
 VALUES
-    (1, 1, "Categories", '{"Type": "@String"}'),
+    (1, 1, "Categories", '{"type": "@String"}'),
 
-    (2, 2, "Authors", '{"Type": "@String"}'),
+    (2, 2, "Authors", '{"type": "@String"}'),
 
-    (3, 3, "Productor", '{"Type": "@String"}');
+    (3, 3, "Productor", '{"type": "@String"}'),
+
+    (4, 1, "ReleaseYear", '{"type": "@Int","min":1900,"max":2600}');
 
 -- Insert data into customRowsItems
 DELETE FROM customRowsItems;
