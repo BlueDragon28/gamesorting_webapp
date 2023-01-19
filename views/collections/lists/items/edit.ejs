@@ -9,14 +9,27 @@ The form have two fields, Name and Url. -->
                 <h1 class="card-title fs-4">Edit <%= item.data.Name %> Item</h1>
 
                 <!-- The only information we need for the form is the name of the collection -->
-                <form action="/collections/<%= item.parent.collection.CollectionID %>/lists/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>?_method=PUT" method="post">
+                <form class="needs-validation" action="/collections/<%= item.parent.collection.CollectionID %>/lists/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>?_method=PUT" method="post" novalidate>
                     <section class="mb-3">
                         <label class="form-label" for="name">Name</label>
-                        <input class="form-control" type="text" name="name" id="name" value="<%= item.data.Name %>">
+                        <input class="form-control" type="text" name="name" id="name" value="<%= item.data.Name %>" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            You need to set a name!
+                        </div>
                     </section>
                     <section class="mb-3">
                         <label class="form-label" for="url">URL</label>
-                        <input class="form-control" type="text" name="url" id="url" value="<%= item.data.URL %>">
+                        <input class="form-control" type="text" name="url" id="url" value="<%= item.data.URL %>" 
+                            pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?">
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            You need to set a valid url!
+                        </div>
                     </section>
 
                     <!-- Inserting the control of the custom datas -->
