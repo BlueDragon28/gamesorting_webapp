@@ -8,6 +8,8 @@ const collectionsRouter = require("./routes/collections");
 const listsRouter = require("./routes/lists");
 const itemsRouter = require("./routes/items");
 const methodOverride = require("method-override");
+const { isCelebrateError } = require("celebrate");
+const { InternalError } = require("./utils/errors/exceptions");
 
 const app = express();
 
@@ -25,6 +27,23 @@ app.get("/", (req, res) => {
 app.use("/collections", collectionsRouter);
 app.use("/collections/:collectionID", listsRouter);
 app.use("/collections/:collectionID/lists/:listID", itemsRouter);
+
+/*
+Parsing celebrate errors
+*/
+app.use((err, req, res, next) => {
+    if (!isCelebrateError(err)) {
+        return next(err);
+    }
+
+    const [ firstError ] = err.details.values();
+
+    if (!firstError) {
+        next(new InternalError("Invalid Error"));
+    }
+
+    next(firstError);
+});
 
 /*
 Error handler. Every time an error is catch by express, this middleware is called.
