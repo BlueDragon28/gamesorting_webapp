@@ -20,6 +20,8 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
 
+app.use(express.static(path.join(__dirname, "public")));
+
 app.get("/", (req, res) => {
     res.render("index");
 });
