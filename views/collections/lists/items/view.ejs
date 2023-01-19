@@ -7,7 +7,7 @@
 
                 <!-- The information about the item -->
                 <li class="list-group-item">
-                    <section>
+                    <div>
                         <h1 class="card-title fs-3"><%= item.data.Name %></h1>
 
                         <% if (item.data.URL) { %> 
@@ -17,7 +17,7 @@
                         <% for(let customData of item.data.customData) { %>
                             <p class="text-muted"><%= customData.ColumnName %>: <%= customData.Value %></p>
                         <% } %>
-                    </section>
+                    </div>
                 </li>
 
                 <!-- The button to destroy the item or going back -->

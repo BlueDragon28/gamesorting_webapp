@@ -10,7 +10,7 @@ The form have two fields, Name and Url. -->
 
                 <!-- The only information we need for the form is the name of the collection -->
                 <form class="needs-validation" action="/collections/<%= list.parent.collection.CollectionID %>/lists/<%= list.data.ListID %>/items" method="post" novalidate>
-                    <section class="mb-3">
+                    <div class="mb-3">
                         <label class="form-label" for="name">Name</label>
                         <input class="form-control" type="text" name="name" id="name" required>
                         <div class="valid-feedback">
@@ -19,8 +19,8 @@ The form have two fields, Name and Url. -->
                         <div class="invalid-feedback">
                             You need to set a name!
                         </div>
-                    </section>
-                    <section class="mb-3">
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label" for="url">URL</label>
                         <input class="form-control" type="text" name="url" id="url" 
                             pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?">
@@ -30,23 +30,23 @@ The form have two fields, Name and Url. -->
                         <div class="invalid-feedback">
                             You need to set a valid url!
                         </div>
-                    </section>
+                    </div>
 
                     <!-- Inserting the control the custom columns -->
                     <% for(let customColumn of list.customColumns) { %>
                         <% let customColumnID = `customColumn_${customColumn.ListColumnTypeID}`; %> 
-                        <section class="mb-3">
+                        <div class="mb-3">
                             <label class="form-label" for="<%= customColumnID %>"><%= customColumn.Name %></label>
                             <input class="form-control" type="text" name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>">
-                        </section>
+                        </div>
                     <% } %>
                 
-                    <section class="mt-4">
+                    <div class="mt-4">
                         <button class="btn btn-primary d-inline">Add</button>
 
                         <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
                         <a class="btn btn-secondary" href="/collections/<%= list.parent.collection.CollectionID %>/lists/<%= list.data.ListID %>">Cancel</a>
-                    </section>
+                    </div>
                 </form>
             </div>
         </div>

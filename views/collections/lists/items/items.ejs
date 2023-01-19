@@ -2,7 +2,7 @@
 
 <h1 class="display-4"><%= lists.parent.list.Name %></h1>
 
-<section class="pb-4">
+<div class="pb-4">
     <a class="btn btn-primary" href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/items/new">New Item</a>
     <a class="btn btn-success" href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/edit">Edit List</a>
     <a class="btn btn-secondary" href="/collections/<%= lists.parent.collection.CollectionID %>">Go Back!</a>
@@ -10,7 +10,7 @@
     <form class="d-inline" action="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>?_method=DELETE" method="post">
         <button class="btn btn-danger">Delete List</button>
     </form>
-</section>
+</div>
 
 
 <% for(let item of lists.data) { %>
@@ -20,12 +20,12 @@
                 <div class="card-body">
                     <h2 class="fs-4 fw-normal"><%= item.Name %></h2>
 
-                    <section class="pb-2">
+                    <div class="pb-2">
                         <!-- Add the URL only if there is one -->
                         <% if (item.URL) { %> 
                             <a class="card-link" href="<%= item.URL %>">URL</a>
                         <% } %> 
-                    </section>
+                    </div>
 
                     <a href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/items/<%= item.ItemID %>" 
                         class="btn btn-info">View Details</a>

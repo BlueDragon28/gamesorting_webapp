@@ -2,7 +2,7 @@
 
 <h1 class="display-4"><%= lists.parent.collection.Name %></h1>
 
-<section class="mb-4">
+<div class="mb-4">
     <a class="btn btn-primary" href="/collections/<%= lists.parent.collection.CollectionID %>/lists/new">New List</a>
     <a class="btn btn-success" href="/collections/<%= lists.parent.collection.CollectionID %>/edit">Edit Collection</a>
     <a class="btn btn-secondary" href="/collections">Go Back</a>
@@ -10,7 +10,7 @@
     <form class="d-inline" action="/collections/<%= lists.parent.collection.CollectionID %>?_method=DELETE" method="post">
         <button class="btn btn-danger">Delete Collection</button>
     </form>
-</section>
+</div>
 
 <!-- Display the available lists in a list of cards -->
 <% for(let list of lists.data) { %>
