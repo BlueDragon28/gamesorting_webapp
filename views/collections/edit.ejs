@@ -8,10 +8,16 @@
                 <h1 class="card-title fs-4">Edit <%= collection.data.Name %> Collection</h1>
 
                 <!-- The only information we need for the form is the name of the collection -->
-                <form action="/collections/<%= collection.data.CollectionID %>?_method=PUT" method="post">
+                <form class="needs-validation" action="/collections/<%= collection.data.CollectionID %>?_method=PUT" method="post" novalidate>
                     <section class="mb-3">
                         <label class="form-label" for="name">Name</label>
-                        <input class="form-control" type="text" name="name" id="name" value="<%= collection.data.Name %>">
+                        <input class="form-control" type="text" name="name" id="name" value="<%= collection.data.Name %>" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            You need to set a name!
+                        </div>
                     </section>
                 
                     <button class="btn btn-primary d-inline">Edit</button>
