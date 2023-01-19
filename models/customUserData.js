@@ -8,7 +8,7 @@ function strGetListColumnsType(listID) {
         throw new ValueError(400, "Invalid ListID");
     }
 
-    return "SELECT c.ListColumnTypeID AS ListColumnTypeID, c.ListID AS ListID, c.Name AS Name, c.Type AS Type, c.Position AS Position " +
+    return "SELECT c.ListColumnTypeID AS ListColumnTypeID, c.ListID AS ListID, c.Name AS Name, c.Type AS Type " +
            "FROM listColumnsType c " +
            "INNER JOIN lists l USING (ListID) " +
            `WHERE c.ListID = ${listID}`;
@@ -23,7 +23,7 @@ async function getListColumnsType(connection, listID) {
 
     let queryResult;
     try {
-        queryResult = connection.query(strStatement);
+        queryResult = await connection.query(strStatement);
 
         if (!queryResult) {
             throw new Error("Return query result is invalid");
