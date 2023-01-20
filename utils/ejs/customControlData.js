@@ -17,9 +17,28 @@ function decryptType(type) {
     }
 }
 
-function getCustomControlType(customColumn) {
+function findCustomColumnFromItem(item, customData) {
+    if (!item || !item.customColumns || !item.customColumns.length ||
+        !customData || !customData.ListColumnTypeID || !customData.CustomRowItemsID) {
+        return null;
+    }
+
+    for (let customColumn of item.customColumns) {
+        if (customData.ListColumnTypeID === customColumn.ListColumnTypeID) {
+            return customColumn;
+        }
+    }
+
+    return null;
+}
+
+function getCustomControlType(customColumn, customData) {
+    if (customData && customData.ListColumnTypeID && customData.CustomRowItemsID) {
+        // customColumn is holding the item object
+        customColumn = findCustomColumnFromItem(customColumn, customData);
+    }
+
     if (!customColumn || !customColumn.Type || !customColumn.Type.type || !customColumn.Type.type.length) {
-        console.log(customColumn);
         return "type=\"text\"";
     }
 

@@ -84,7 +84,7 @@ router.get("/items/:itemID", wrapAsync(async (req, res) => {
 /*
 Form to edit an item
 */
-router.get("/items/:itemID/edit", wrapAsync(async (req, res) => {
+router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
     let item = await database.find(database.ITEMS, collectionID, listID, itemID);

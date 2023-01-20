@@ -37,7 +37,7 @@ The form have two fields, Name and Url. -->
                         <% let customColumnID = `customColumn_${customColumn.CustomRowItemsID}`; %> 
                         <div class="mb-3">
                             <label class="form-label" for="<%= customColumnID %>"><%= customColumn.ColumnName %></label>
-                            <input class="form-control" type="text" name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>" value="<%= customColumn.Value %>">
+                            <input class="form-control" <%- getCustomControlType(item, customColumn) %> name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>" value="<%= customColumn.Value %>">
                         </div>
                     <% } %>
                 
