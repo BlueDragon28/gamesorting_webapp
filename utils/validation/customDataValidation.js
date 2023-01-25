@@ -98,7 +98,6 @@ async function parseColumnsType(req, res, next) {
     }
 
     req.body.customColumn = customColumns;
-    console.log(req.body.customColumn)
 
     next();
 }
