@@ -1,0 +1,11 @@
+<% for (let flashMessage of flashMessages) { %>
+    <%
+    const messageType = flashMessage.type === "success" ? "success" : "danger";
+    const message = flashMessage.message;
+    %>
+
+    <div class="alert alert-<%= messageType %> alert-dismissible fade show" role="alert">
+        <%= message %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>

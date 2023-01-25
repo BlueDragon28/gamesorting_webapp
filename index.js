@@ -9,8 +9,10 @@ const listsRouter = require("./routes/lists");
 const itemsRouter = require("./routes/items");
 const methodOverride = require("method-override");
 const session = require("express-session");
+const flash = require("connect-flash");
 const { isCelebrateError } = require("celebrate");
 const { InternalError } = require("./utils/errors/exceptions");
+const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 
 const app = express();
 
@@ -30,6 +32,8 @@ app.use(session({
         maxAge: 1000 * 3600 * 24 * 7
     }
 }));
+app.use(flash());
+app.use(parseFlashMessage);
 
 app.use(express.static(path.join(__dirname, "public")));
 
