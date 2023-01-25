@@ -8,6 +8,7 @@ const collectionsRouter = require("./routes/collections");
 const listsRouter = require("./routes/lists");
 const itemsRouter = require("./routes/items");
 const methodOverride = require("method-override");
+const session = require("express-session");
 const { isCelebrateError } = require("celebrate");
 const { InternalError } = require("./utils/errors/exceptions");
 
@@ -19,6 +20,16 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
+
+app.use(session({
+    secret: "developmentonlysecret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        maxAge: 1000 * 3600 * 24 * 7
+    }
+}));
 
 app.use(express.static(path.join(__dirname, "public")));
 
