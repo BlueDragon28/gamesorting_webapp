@@ -5,6 +5,7 @@ const bigint = require("../utils/numbers/bigint");
 const utilCustomData = require("../utils/data/customData");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
+const customDataValidation = require("../utils/validation/customDataValidation");
 
 const router = express.Router({ mergeParams: true });
 
@@ -102,7 +103,8 @@ router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res
 Insert a new item into a list inside a collection
 */
 router.post("/items", parseCustomColumnsData, 
-            validation.item({ name: true, url: true, customData: true }), wrapAsync(async (req, res) => {
+            validation.item({ name: true, url: true, customData: true }),
+            customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name, url, customColumns } = req.body;
 
@@ -129,7 +131,8 @@ router.post("/items", parseCustomColumnsData,
 Edit An Item
 */
 router.put("/items/:itemID", parseCustomColumnsData, 
-            validation.item({ name: true, url: true, customData: true }), wrapAsync(async (req, res) => {
+            validation.item({ name: true, url: true, customData: true }),
+            customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
     const { name, url, customColumns } = req.body;
 
