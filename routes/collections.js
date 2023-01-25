@@ -80,6 +80,8 @@ router.post("/", validation.item({ name: true }), wrapAsync(async (req, res) => 
         throw new InternalError("Failed To Insert A New Collection");
     }
 
+    req.flash("success", "Successfully created a new collection");
+
     res.redirect(req.baseUrl);
 }));
 
@@ -101,6 +103,8 @@ router.put("/:collectionID", validation.item({ name: true }), wrapAsync(async (r
         throw new InternalError("Failed To Edit A Collection");
     }
 
+    req.flash("success", "Successfully updated a collection");
+
     res.redirect(`${req.baseUrl}/${collectionID}`);
 }));
 
@@ -115,6 +119,8 @@ router.delete("/:collectionID", wrapAsync(async (req, res) => {
     if (!result) {
         throw new InternalError(`Failed To Delete Collection ${collectionID}`);
     }
+
+    req.flash("success", "Successfully deleted a collection");
 
     res.redirect(req.baseUrl);
 }));

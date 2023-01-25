@@ -78,6 +78,8 @@ router.post("/lists", validation.item({ name: true }), wrapAsync(async (req, res
         throw new InternalError(`Failed To Insert A New List Into Collection ${collectionID}`);
     }
 
+    req.flash("success", "Successfully created a new list");
+
     // res.redirect(`/collections/${collectionID}`);
     res.redirect(`${req.baseUrl}`);
 }));
@@ -105,6 +107,8 @@ router.put("/lists/:listID", validation.item({ name: true }), wrapAsync(async (r
         throw new InternalError(`Failed To Edit A List ${listID}`);
     }
 
+    req.flash("success", "Successfully updated a list");
+
     res.redirect(`${req.baseUrl}/lists/${listID}`);
 }));
 
@@ -119,6 +123,8 @@ router.delete("/lists/:listID", wrapAsync(async (req, res) => {
     if (!result) {
         throw new InternalError(`Failed To Delete List ${listID}`);
     }
+
+    req.flash("success", "Successfully deleted a list");
 
     res.redirect(`${req.baseUrl}`);
 }));

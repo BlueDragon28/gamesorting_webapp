@@ -124,6 +124,8 @@ router.post("/items", parseCustomColumnsData,
         throw new InternalError(`Failed To Insert A New Item Into List ${listID}`);
     }
 
+    req.flash("success", "Successfully created a new item");
+
     res.redirect(req.baseUrl);
 }));
 
@@ -153,6 +155,8 @@ router.put("/items/:itemID", parseCustomColumnsData,
         throw new InternalError(`Failed To Edit Item ${itemID}`)
     }
 
+    req.flash("success", "Successfully updated an item");
+
     res.redirect(`${req.baseUrl}/items/${itemID}`);
 }));
 
@@ -172,6 +176,8 @@ router.delete("/items/:itemID", wrapAsync(async (req, res) => {
     if (!queryResult) {
         throw new InternalError(`Failed To Delete Item ${itemID}`);
     }
+
+    req.flash("success", "Successfully deleted an item");
 
     res.redirect(req.baseUrl);
 }));
