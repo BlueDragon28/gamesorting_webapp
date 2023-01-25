@@ -1,6 +1,11 @@
 const bigint = require("../utils/numbers/bigint");
 const { SqlError, ValueError, InternalError } = require("../utils/errors/exceptions");
 
+const dataType = {
+    string: "@String",
+    int: "@Int"
+};
+
 function strGetListColumnsType(listID) {
     listID = bigint.toBigInt(listID);
 
@@ -223,11 +228,94 @@ async function editCustomDatasFromItemID(connection, itemData) {
     return true;
 }
 
+function strGetColumnTypeFromID(id) {
+    id = bigint.toBigInt(id);
+
+    if (!bigint.isValid(id)) {
+        throw new ValueError(400, "Invalid Custom Column ID");
+    }
+
+    return "SELECT Type FROM listColumnsType " +
+           `WHERE ListColumnTypeID = ${id}`;
+}
+
+/*
+Retrieve the type of the column base on the column ID
+*/
+async function getColumnTypeFromID(connection, id) {
+    const strStatement = strGetColumnTypeFromID(id);   
+
+    if (!connection || !strStatement) {
+        throw new ValueError(400, "Invalid Connection");
+    }
+    
+    try {
+        const queryResult = await connection.query(strStatement);
+        
+        if (!queryResult || !queryResult.length || !queryResult[0].Type) {
+            return null;
+        }
+
+        return queryResult[0].Type;
+    } catch (error) {
+        throw new SqlError(`Failed to retrieve Type from column list ${id}: ${error.message}`);
+    }
+}
+
+function strGetColumnTypeFromRowID(id) {
+    id = bigint.toBigInt(id);
+
+    if (!bigint.isValid(id)) {
+        throw new ValueError(400, "Invalid Row ID");
+    }
+
+    return "SELECT Type FROM customRowsItems INNER JOIN listColumnsType USING (listColumnTypeID) " +
+           `WHERE CustomRowItemsID = ${id}`;
+}
+
+/*
+Retrieve the type of the column base on the row ID
+*/
+async function getColumnTypeFromRowID(connection, id) {
+    id = bigint.toBigInt(id);
+
+    if (!id) {
+        throw new ValueError(400, "Invalid Row ID");
+    }
+
+    // If id is less than 0, it mean that id link to a column id, not a row id
+    if (id < 0n) {
+        return await getColumnTypeFromID(connection, -id);
+    }
+
+    const strStatement = strGetColumnTypeFromRowID(id);
+
+    if (!connection || !strStatement) {
+        throw new ValueError(400, "Invalid Connection");
+    }
+
+    try  {
+        const queryResult = await connection.query(strStatement);
+       
+        if (!queryResult || !queryResult.length || !queryResult[0].Type) {
+            return null;
+        }
+
+        return queryResult[0].Type;
+    } catch (error) {
+        throw new SqlError(`Failed to retrieve column type from row ID ${id}: ${error.message}`)
+    }
+}
+
 module.exports = {
     getListColumnsType,
     deleteColumns: deleteListColumnsType,
     getCustomData,
     insert: insertCustomData,
     delete: deleteCustomDatasFromItemID,
-    edit: editCustomDatasFromItemID
+    edit: editCustomDatasFromItemID,
+
+    type: dataType,
+    getColumnTypeFromID,
+    getColumnTypeFromRowID
 };
