@@ -16,6 +16,7 @@
   "author": "Erwan Saclier de la Bâtie (BlueDragon28)",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.1",
     "connect-flash": "^0.1.1",
     "ejs": "^3.1.8",
