@@ -35,6 +35,10 @@ function errorsWithPossibleRedirect(customErrorMessage) {
                 flashJoiErrorMessage(error, req);
                 return res.redirect(`${req.originalUrl}/edit`);
             }
+        } else if (error.name === "InternalError" || error.name === "SqlError") {
+            req.flash("error", "Oups!!! Something went wrong!");
+            console.log(error);
+            return res.redirect("/collections");
         }
 
         next(error);
