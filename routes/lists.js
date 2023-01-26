@@ -3,6 +3,7 @@ const database = require("../models/gameSortingDB");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
+const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 
 const router = express.Router({ mergeParams: true });
 
@@ -128,5 +129,8 @@ router.delete("/lists/:listID", wrapAsync(async (req, res) => {
 
     res.redirect(`${req.baseUrl}`);
 }));
+
+router.use(parseCelebrateError);
+router.use(errorsWithPossibleRedirect("Cannot find this list"));
 
 module.exports = router;
