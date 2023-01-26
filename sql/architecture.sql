@@ -49,3 +49,14 @@ CREATE TABLE IF NOT EXISTS customRowsItems(
     ListColumnTypeID BIGINT UNSIGNED NOT NULL, -- To wich list custom rows this custom items in linked to.
     Value VARCHAR(300) NOT NULL -- The name of the custom item
 );
+
+-- This table hold the users of the app
+-- Each users is represented by its username, email and hashed password
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE IF NOT EXISTS users(
+    UserID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    Username VARCHAR(300) NOT NULL,
+    Email VARCHAR(300) NOT NULL,
+    Password VARCHAR(10000) NOT NULL
+);
