@@ -25,18 +25,20 @@ function flashJoiErrorMessage(error, req) {
     }
 }
 
-function errorsWithPossibleRedirect(error, req, res, next) {
-    if (error.name === "ValueError" || error.name === "ValidationError") {
-        if (req.method === "GET" && req.url.length > 1) {
-            req.flash("error", "Cannot find this collection");
-            return res.redirect(req.baseUrl);
-        } else if (req.method === "POST" || req.method === "PUT") {
-            flashJoiErrorMessage(error, req);
-            return res.redirect(`${req.originalUrl}/edit`);
+function errorsWithPossibleRedirect(customErrorMessage) {
+    return function(error, req, res, next) {
+        if (error.name === "ValueError" || error.name === "ValidationError") {
+            if (req.method === "GET" && req.url.length > 1) {
+                req.flash("error", customErrorMessage);
+                return res.redirect(req.baseUrl);
+            } else if (req.method === "POST" || req.method === "PUT") {
+                flashJoiErrorMessage(error, req);
+                return res.redirect(`${req.originalUrl}/edit`);
+            }
         }
-    }
 
-    next(error);
+        next(error);
+    }
 }
 
 module.exports = {
