@@ -79,7 +79,7 @@ function columnDataAndTypeValidation() {
 function validate() {
     const celebrateValidation = {
         [Segments.BODY]: Joi.object({
-            customColumn: Joi.array().items(columnDataAndTypeValidation()) 
+            customColumn: Joi.array().items(columnDataAndTypeValidation()).required()
         }).unknown().required()
     };
 
