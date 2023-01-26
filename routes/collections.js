@@ -6,6 +6,7 @@ const database = require("../models/gameSortingDB");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
+const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 
 const router = express.Router();
 
@@ -124,5 +125,12 @@ router.delete("/:collectionID", wrapAsync(async (req, res) => {
 
     res.redirect(req.baseUrl);
 }));
+
+/*
+Parsing celebrate errors
+*/
+router.use(parseCelebrateError);
+
+router.use(errorsWithPossibleRedirect);
 
 module.exports = router;

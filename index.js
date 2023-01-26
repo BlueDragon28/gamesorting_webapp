@@ -10,9 +10,8 @@ const itemsRouter = require("./routes/items");
 const methodOverride = require("method-override");
 const session = require("express-session");
 const flash = require("connect-flash");
-const { isCelebrateError } = require("celebrate");
-const { InternalError } = require("./utils/errors/exceptions");
 const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
+const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
 
 const app = express();
 
@@ -48,19 +47,7 @@ app.use("/collections/:collectionID/lists/:listID", itemsRouter);
 /*
 Parsing celebrate errors
 */
-app.use((err, req, res, next) => {
-    if (!isCelebrateError(err)) {
-        return next(err);
-    }
-
-    const [ firstError ] = err.details.values();
-
-    if (!firstError) {
-        next(new InternalError("Invalid Error"));
-    }
-
-    next(firstError);
-});
+app.use(parseCelebrateError);
 
 /*
 Error handler. Every time an error is catch by express, this middleware is called.
