@@ -6,6 +6,7 @@ const utilCustomData = require("../utils/data/customData");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const customDataValidation = require("../utils/validation/customDataValidation");
+const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 
 const router = express.Router({ mergeParams: true });
 
@@ -181,5 +182,8 @@ router.delete("/items/:itemID", wrapAsync(async (req, res) => {
 
     res.redirect(req.baseUrl);
 }));
+
+router.use(parseCelebrateError);
+router.use(errorsWithPossibleRedirect("Cannot thind this item"));
 
 module.exports = router;
