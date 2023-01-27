@@ -2,7 +2,7 @@
 The routes of the collections
 */
 const express = require("express");
-const database = require("../models/gameSortingDB");
+const { Collection } = require("../models/collections");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
@@ -19,9 +19,9 @@ router.use("/:collectionID", validation.id);
 Entry to see the collections list
 */
 router.get("/", wrapAsync(async (req, res) => {
-    const collections = await database.find(database.COLLECTIONS);
+    const collections = await Collection.findAll();
 
-    if (!collections) {
+    if (!collections || !Array.isArray(collections)) {
         throw new InternalError("Failed To Query Collections");
     }
 
@@ -38,17 +38,17 @@ router.get("/new", (req, res) => {
 /*
 Entry to see the lists available inside a collection
 */
-router.get("/:collectionID", wrapAsync(async (req, res) => {
-    const { collectionID } = req.params;
+//router.get("/:collectionID", wrapAsync(async (req, res) => {
+    //const { collectionID } = req.params;
 
-    const lists = await database.find(database.LISTS, collectionID);
+    //const lists = await database.find(database.LISTS, collectionID);
 
-    if (!lists) {
-        throw new InternalError(`Failed To Query Lists From Collection ${collectionID}`);
-    }
+    //if (!lists) {
+        //throw new InternalError(`Failed To Query Lists From Collection ${collectionID}`);
+    //}
 
-    res.render("collections/lists/lists.ejs", { lists });
-}));
+    //res.render("collections/lists/lists.ejs", { lists });
+//}));
 
 /*
 Form to edit a collection
@@ -56,7 +56,7 @@ Form to edit a collection
 router.get("/:collectionID/edit", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
-    const collection = await database.find(database.COLLECTIONS, collectionID);
+    const collection = await Collection.findByID(collectionID);
 
     if (!collection) {
         throw new InternalError(`Failed To Query Lists From Collection ${collectionID}`);
@@ -71,15 +71,19 @@ Create a new collection
 router.post("/", validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { name } = req.body;
 
-    const result = await database.new(database.COLLECTIONS, {
-        data: {
-            Name: name
-        }
-    });
+    //const result = await database.new(database.COLLECTIONS, {
+        //data: {
+            //Name: name
+        //}
+    //});
 
-    if (!result) {
+    const newCollection = new Collection(name);
+
+    if (!newCollection.isValid()) {
         throw new InternalError("Failed To Insert A New Collection");
     }
+
+    await newCollection.save();
 
     req.flash("success", "Successfully created a new collection");
 
@@ -93,16 +97,24 @@ router.put("/:collectionID", validation.item({ name: true }), wrapAsync(async (r
     const { collectionID } = req.params;
     const { name } = req.body;
 
-    const result = await database.edit(database.COLLECTIONS, {
-        data: {
-            CollectionID : collectionID,
-            Name: name
-        }
-    });
+    //const result = await database.edit(database.COLLECTIONS, {
+        //data: {
+            //CollectionID : collectionID,
+            //Name: name
+        //}
+    //});
 
-    if (!result) {
+    const foundCollection = await Collection.findByID(collectionID);
+    console.log(foundCollection);
+    if (foundCollection) {
+        foundCollection.name = name;
+    }
+
+    if (!foundCollection || !foundCollection.isValid()) {
         throw new InternalError("Failed To Edit A Collection");
     }
+
+    await foundCollection.save();
 
     req.flash("success", "Successfully updated a collection");
 
@@ -112,25 +124,25 @@ router.put("/:collectionID", validation.item({ name: true }), wrapAsync(async (r
 /*
 Delete a collection
 */
-router.delete("/:collectionID", wrapAsync(async (req, res) => {
-    const { collectionID } = req.params;
+//router.delete("/:collectionID", wrapAsync(async (req, res) => {
+    //const { collectionID } = req.params;
 
-    const result = await database.delete(database.COLLECTIONS, collectionID);
+    //const result = await database.delete(database.COLLECTIONS, collectionID);
 
-    if (!result) {
-        throw new InternalError(`Failed To Delete Collection ${collectionID}`);
-    }
+    //if (!result) {
+        //throw new InternalError(`Failed To Delete Collection ${collectionID}`);
+    //}
 
-    req.flash("success", "Successfully deleted a collection");
+    //req.flash("success", "Successfully deleted a collection");
 
-    res.redirect(req.baseUrl);
-}));
+    //res.redirect(req.baseUrl);
+//}));
 
 /*
 Parsing celebrate errors
 */
 router.use(parseCelebrateError);
 
-router.use(errorsWithPossibleRedirect("Cannot find this collection"));
+//router.use(errorsWithPossibleRedirect("Cannot find this collection"));
 
 module.exports = router;
