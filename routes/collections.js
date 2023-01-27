@@ -105,7 +105,6 @@ router.put("/:collectionID", validation.item({ name: true }), wrapAsync(async (r
     //});
 
     const foundCollection = await Collection.findByID(collectionID);
-    console.log(foundCollection);
     if (foundCollection) {
         foundCollection.name = name;
     }
