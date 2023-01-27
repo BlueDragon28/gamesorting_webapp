@@ -76,6 +76,14 @@ class User {
         return await existingOrNewConnection(connection, this.#_isDuplicate.bind(this));
     }
 
+    toBaseObject() {
+        return {
+            id: this.id.toString(),
+            username: this.username,
+            email: this.email
+        };
+    }
+
     async #_exists(connection) {
         const queryStatement = `SELECT COUNT(UserID) as count FROM users WHERE UserID = ${this.id}`;
         try {
