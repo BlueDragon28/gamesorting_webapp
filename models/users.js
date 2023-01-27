@@ -11,29 +11,31 @@ class User {
 
     constructor(username, email, password, hashPassword = true) {
         if (username && typeof username === "string") {
-            this.username = username;
+            this.username = username.trim();
         }
 
         if (email && typeof email === "string") {
-            this.email = email;
+            this.email = email.trim();
         }
 
         if (password && typeof password === "string") {
             this.#hashPassword = 
-                hashPassword ? bcrypt.hashSync(password, 12) : password;
+                hashPassword ? bcrypt.hashSync(password.trim(), 12) : password;
         }
     }
 
     compare(usernameOrEmail, password) {
-        if (!this.isValid() || usernameOrEmail !== this.username && usernameOrEmail !== this.email) {
+        if (!this.isValid() || usernameOrEmail.trim() !== this.username && usernameOrEmail !== this.email) {
             return false;
         }
 
-        return bcrypt.compareSync(password, this.#hashPassword);
+        return bcrypt.compareSync(password.trim(), this.#hashPassword);
     }
 
     isValid() {
         this.id = this.id ? bigint.toBigInt(this.id) : undefined;
+        this.username = this.username.trim();
+        this.email = this.email.trim();
 
         if (!this.username || typeof this.username !== "string" || !this.username.length ||
             !this.email || typeof this.email !== "string" || !this.email.length ||
