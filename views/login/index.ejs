@@ -1,0 +1,22 @@
+<%- layout("layouts/boilerplate") %>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <form action="/users/login" method="post">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title fs-4">Login</h5>
+                    <div class="mb-3">
+                        <label class="form-label" for="username">Username or email</label>
+                        <input class="form-control" type="text" name="user[username]" id="username">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="password">Password</label>
+                        <input class="form-control" type="password" name="user[password]" id="password">
+                    </div>
+                    <button class="btn btn-success">Login</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
