@@ -1,4 +1,3 @@
-const mariadb = require("../sql/connection");
 const bcrypt = require("bcryptjs");
 const bigint = require("../utils/numbers/bigint");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
