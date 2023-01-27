@@ -7,6 +7,7 @@ const ejsMate = require("ejs-mate");
 const collectionsRouter = require("./routes/collections");
 const listsRouter = require("./routes/lists");
 const itemsRouter = require("./routes/items");
+const usersRouter = require("./routes/users");
 const methodOverride = require("method-override");
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -43,6 +44,7 @@ app.get("/", (req, res) => {
 app.use("/collections", collectionsRouter);
 app.use("/collections/:collectionID", listsRouter);
 app.use("/collections/:collectionID/lists/:listID", itemsRouter);
+app.use("/users", usersRouter);
 
 /*
 Parsing celebrate errors
