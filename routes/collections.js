@@ -38,17 +38,18 @@ router.get("/new", (req, res) => {
 /*
 Entry to see the lists available inside a collection
 */
-//router.get("/:collectionID", wrapAsync(async (req, res) => {
-    //const { collectionID } = req.params;
+router.get("/:collectionID", wrapAsync(async (req, res) => {
+    const { collectionID } = req.params;
 
     //const lists = await database.find(database.LISTS, collectionID);
+    const collection = await Collection.findByID(collectionID);
 
-    //if (!lists) {
-        //throw new InternalError(`Failed To Query Lists From Collection ${collectionID}`);
-    //}
+    if (!collection) {
+        throw new InternalError(`Failed To Query Lists From Collection ${collectionID}`);
+    }
 
-    //res.render("collections/lists/lists.ejs", { lists });
-//}));
+    res.render("collections/lists/lists.ejs", { lists: collection });
+}));
 
 /*
 Form to edit a collection
