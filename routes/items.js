@@ -1,5 +1,7 @@
 const express = require("express");
-const database = require("../models/gameSortingDB");
+//const database = require("../models/gameSortingDB");
+const { List } = require("../models/lists");
+const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const bigint = require("../utils/numbers/bigint");
 const utilCustomData = require("../utils/data/customData");
@@ -56,134 +58,149 @@ function parseCustomColumnsData(req, res, next) {
 /*
 Form to create a new item in a list in a collection
 */
-router.get("/items/new", customDataEjsHelper, wrapAsync(async (req ,res) => {
+router.get("/items/new", wrapAsync(async (req ,res) => {
     const { collectionID, listID } = req.params;
 
-    const list = await database.find(database.LISTS, collectionID, listID);
+    //const list = await database.find(database.LISTS, collectionID, listID);
 
-    if (!list) {
-        throw new InternalError(`Failed To Query List ${listID}`);
+    //if (!list) {
+        //throw new InternalError(`Failed To Query List ${listID}`);
+    //}
+
+    const list = await List.findByID(listID);
+
+    if (!list || !list instanceof List || !list.isValid()) {
+        throw new InternalError("Failed To Find List");
     }
 
-    res.render("collections/lists/items/new", { list });
+    const listColumnsType = await ListColumnType.findFromList(list);
+
+    if (!listColumnsType || !Array.isArray(listColumnsType)) {
+        throw new InternalError("Failed To Retrieve List Columns Type");
+    }
+
+    console.log(listColumnsType);
+
+    //res.render("collections/lists/items/new", { list });
+    res.redirect(`${req.baseUrl}`);
 }));
 
 /*
 Display informations about an item
 */
-router.get("/items/:itemID", wrapAsync(async (req, res) => {
-    const { collectionID, listID, itemID } = req.params;
+//router.get("/items/:itemID", wrapAsync(async (req, res) => {
+    //const { collectionID, listID, itemID } = req.params;
 
-    const item = await database.find(database.ITEMS, collectionID, listID, itemID);
+    //const item = await database.find(database.ITEMS, collectionID, listID, itemID);
 
-    if (!item) {
-        throw new InternalError(`Failed To Query Item ${itemID}`);
-    }
+    //if (!item) {
+        //throw new InternalError(`Failed To Query Item ${itemID}`);
+    //}
 
-    res.render("collections/lists/items/view", { item });
-}));
+    //res.render("collections/lists/items/view", { item });
+//}));
 
 /*
 Form to edit an item
 */
-router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res) => {
-    const { collectionID, listID, itemID } = req.params;
+//router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res) => {
+    //const { collectionID, listID, itemID } = req.params;
 
-    let item = await database.find(database.ITEMS, collectionID, listID, itemID);
+    //let item = await database.find(database.ITEMS, collectionID, listID, itemID);
 
-    if (!item) {
-        throw new InternalError(`Failed To Query Item ${itemID}`);
-    }
+    //if (!item) {
+        //throw new InternalError(`Failed To Query Item ${itemID}`);
+    //}
 
-    utilCustomData.includeEmpty(item);
+    //utilCustomData.includeEmpty(item);
 
-    res.render("collections/lists/items/edit", { item });
-}));
+    //res.render("collections/lists/items/edit", { item });
+//}));
 
 /*
 Insert a new item into a list inside a collection
 */
-router.post("/items", parseCustomColumnsData, 
-            validation.item({ name: true, url: true, customData: true }),
-            customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
-    const { collectionID, listID } = req.params;
-    const { name, url, customColumns } = req.body;
+//router.post("/items", parseCustomColumnsData, 
+            //validation.item({ name: true, url: true, customData: true }),
+            //customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
+    //const { collectionID, listID } = req.params;
+    //const { name, url, customColumns } = req.body;
 
-    const queryResult = await database.new(database.ITEMS, {
-        parent: {
-            collection: { CollectionID: collectionID },
-            list: { ListID: listID }
-        },
-        data: {
-            name,
-            url,
-            customData: customColumns
-        }
-    });
+    //const queryResult = await database.new(database.ITEMS, {
+        //parent: {
+            //collection: { CollectionID: collectionID },
+            //list: { ListID: listID }
+        //},
+        //data: {
+            //name,
+            //url,
+            //customData: customColumns
+        //}
+    //});
 
-    if (!queryResult) {
-        throw new InternalError(`Failed To Insert A New Item Into List ${listID}`);
-    }
+    //if (!queryResult) {
+        //throw new InternalError(`Failed To Insert A New Item Into List ${listID}`);
+    //}
 
-    req.flash("success", "Successfully created a new item");
+    //req.flash("success", "Successfully created a new item");
 
-    res.redirect(req.baseUrl);
-}));
+    //res.redirect(req.baseUrl);
+//}));
 
 /*
 Edit An Item
 */
-router.put("/items/:itemID", parseCustomColumnsData, 
-            validation.item({ name: true, url: true, customData: true }),
-            customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
-    const { collectionID, listID, itemID } = req.params;
-    const { name, url, customColumns } = req.body;
+//router.put("/items/:itemID", parseCustomColumnsData, 
+            //validation.item({ name: true, url: true, customData: true }),
+            //customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
+    //const { collectionID, listID, itemID } = req.params;
+    //const { name, url, customColumns } = req.body;
 
-    const queryResult = await database.edit(database.ITEMS, {
-        parent: {
-            collection: { CollectionID: collectionID },
-            list: { ListID: listID }
-        },
-        data: {
-            ItemID: itemID,
-            Name: name,
-            URL: url,
-            customData: customColumns
-        }
-    });
+    //const queryResult = await database.edit(database.ITEMS, {
+        //parent: {
+            //collection: { CollectionID: collectionID },
+            //list: { ListID: listID }
+        //},
+        //data: {
+            //ItemID: itemID,
+            //Name: name,
+            //URL: url,
+            //customData: customColumns
+        //}
+    //});
 
-    if (!queryResult) {
-        throw new InternalError(`Failed To Edit Item ${itemID}`)
-    }
+    //if (!queryResult) {
+        //throw new InternalError(`Failed To Edit Item ${itemID}`)
+    //}
 
-    req.flash("success", "Successfully updated an item");
+    //req.flash("success", "Successfully updated an item");
 
-    res.redirect(`${req.baseUrl}/items/${itemID}`);
-}));
+    //res.redirect(`${req.baseUrl}/items/${itemID}`);
+//}));
 
 /*
 Delete an item from a list
 */
-router.delete("/items/:itemID", wrapAsync(async (req, res) => {
+//router.delete("/items/:itemID", wrapAsync(async (req, res) => {
 
-    const { collectionID, listID, itemID } = req.params;
+    //const { collectionID, listID, itemID } = req.params;
 
-    const queryResult = await database.delete(database.ITEMS, {
-        collectionID,
-        listID,
-        itemID
-    });
+    //const queryResult = await database.delete(database.ITEMS, {
+        //collectionID,
+        //listID,
+        //itemID
+    //});
 
-    if (!queryResult) {
-        throw new InternalError(`Failed To Delete Item ${itemID}`);
-    }
+    //if (!queryResult) {
+        //throw new InternalError(`Failed To Delete Item ${itemID}`);
+    //}
 
-    req.flash("success", "Successfully deleted an item");
+    //req.flash("success", "Successfully deleted an item");
 
-    res.redirect(req.baseUrl);
-}));
+    //res.redirect(req.baseUrl);
+//}));
 
 router.use(parseCelebrateError);
-router.use(errorsWithPossibleRedirect("Cannot thind this item"));
+//router.use(errorsWithPossibleRedirect("Cannot thind this item"));
 
 module.exports = router;

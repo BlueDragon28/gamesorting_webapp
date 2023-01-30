@@ -3,7 +3,7 @@
 <h1 class="display-4"><%= list.name %></h1>
 
 <div class="pb-4">
-    <a class="btn btn-primary" href="/collections/<%= //lists.parentCollection.id %>/lists/<%= //lists.id %>/items/new">New Item</a>
+    <a class="btn btn-primary" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/items/new">New Item</a>
     <a class="btn btn-success" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/edit">Edit List</a>
     <a class="btn btn-secondary" href="/collections/<%= //lists.parent.collection.CollectionID %>">Go Back!</a>
 
