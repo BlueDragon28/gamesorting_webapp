@@ -3,6 +3,7 @@ The routes of the collections
 */
 const express = require("express");
 const { Collection } = require("../models/collections");
+const { List } = require("../models/lists");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
@@ -43,12 +44,17 @@ router.get("/:collectionID", wrapAsync(async (req, res) => {
 
     //const lists = await database.find(database.LISTS, collectionID);
     const collection = await Collection.findByID(collectionID);
+    const lists = await List.findFromCollection(collection);
 
-    if (!collection) {
+    if (!collection || !collection.isValid()) {
+        throw new InternalError(`Failed To Query Collection ${collectionID}`);
+    }
+
+    if (!lists || !Array.isArray(lists)) {
         throw new InternalError(`Failed To Query Lists From Collection ${collectionID}`);
     }
 
-    res.render("collections/lists/lists.ejs", { lists: collection });
+    res.render("collections/lists/lists.ejs", { collection, lists });
 }));
 
 /*

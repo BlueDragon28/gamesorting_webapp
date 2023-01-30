@@ -1,6 +1,6 @@
 const mariadb = require("../sql/connection");
 const bigint = require("../utils/numbers/bigint");
-const lists = require("./lists");
+//const lists = require("./lists");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
 
