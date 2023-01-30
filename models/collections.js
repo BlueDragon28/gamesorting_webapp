@@ -283,7 +283,6 @@ class Collection {
 
     async #_createCollection(connection) {
         const queryStatement = `INSERT INTO collections(Name) VALUES ("${sqlString(this.name)}")`;
-        console.log(queryStatement);
 
         try {
             const queryResult = await connection.query(queryStatement);
@@ -321,7 +320,6 @@ class Collection {
 
         try {
             const queryResult = (await connection.query(queryStatement))[0];
-            console.log(queryResult);
 
             return queryResult.count > 0;
         } catch (error) {
@@ -389,7 +387,7 @@ class Collection {
 
             if (collection.isValid()) {
                 collectionsList.push(collection);
-            } else { console.log("no") }
+            } 
         }
         
         return collectionsList;
