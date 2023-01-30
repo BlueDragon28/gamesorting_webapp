@@ -378,6 +378,24 @@ class Collection {
         });
     }
 
+    static async deleteFromID(id, connection) {
+        id = bigint.toBigInt(id);
+        if (!bigint.isValid(id)) {
+            throw new ValueError(400, "Invalid Collection ID");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                `DELETE FROM collections WHERE CollectionID = ${id}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+            } catch (error) {
+                throw new SqlError(`Failed to delete collection ${id}: ${error.message}`);
+            }
+        });
+    }
+
     static #parseFoundCollections(collections) {
         const collectionsList = [];
 

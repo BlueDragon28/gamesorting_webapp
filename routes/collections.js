@@ -123,19 +123,20 @@ router.put("/:collectionID", validation.item({ name: true }), wrapAsync(async (r
 /*
 Delete a collection
 */
-//router.delete("/:collectionID", wrapAsync(async (req, res) => {
-    //const { collectionID } = req.params;
+router.delete("/:collectionID", wrapAsync(async (req, res) => {
+    const { collectionID } = req.params;
 
     //const result = await database.delete(database.COLLECTIONS, collectionID);
+    await Collection.deleteFromID(collectionID);
 
     //if (!result) {
         //throw new InternalError(`Failed To Delete Collection ${collectionID}`);
     //}
 
-    //req.flash("success", "Successfully deleted a collection");
+    req.flash("success", "Successfully deleted a collection");
 
-    //res.redirect(req.baseUrl);
-//}));
+    res.redirect(req.baseUrl);
+}));
 
 /*
 Parsing celebrate errors
