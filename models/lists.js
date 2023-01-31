@@ -1,7 +1,7 @@
 const bigint = require("../utils/numbers/bigint");
 const { Collection } = require("./collections");
-const items = require("./items");
-const customUserData = require("./customUserData");
+//const items = require("./items");
+//const customUserData = require("./customUserData");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
 
