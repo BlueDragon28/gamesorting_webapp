@@ -2,6 +2,7 @@ const express = require("express");
 //const database = require("../models/gameSortingDB");
 const { List } = require("../models/lists");
 const { ListColumnType } = require("../models/listColumnsType");
+const { Item } = require("../models/items");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const bigint = require("../utils/numbers/bigint");
 const utilCustomData = require("../utils/data/customData");
@@ -58,7 +59,7 @@ function parseCustomColumnsData(req, res, next) {
 /*
 Form to create a new item in a list in a collection
 */
-router.get("/items/new", wrapAsync(async (req ,res) => {
+router.get("/items/new", customDataEjsHelper, wrapAsync(async (req ,res) => {
     const { collectionID, listID } = req.params;
 
     //const list = await database.find(database.LISTS, collectionID, listID);
@@ -79,26 +80,36 @@ router.get("/items/new", wrapAsync(async (req ,res) => {
         throw new InternalError("Failed To Retrieve List Columns Type");
     }
 
-    console.log(listColumnsType);
-
-    //res.render("collections/lists/items/new", { list });
-    res.redirect(`${req.baseUrl}`);
+    res.render("collections/lists/items/new", { list, listColumnsType });
+    //res.redirect(`${req.baseUrl}`);
 }));
 
 /*
 Display informations about an item
 */
-//router.get("/items/:itemID", wrapAsync(async (req, res) => {
-    //const { collectionID, listID, itemID } = req.params;
+router.get("/items/:itemID", wrapAsync(async (req, res) => {
+    const { collectionID, listID, itemID } = req.params;
 
     //const item = await database.find(database.ITEMS, collectionID, listID, itemID);
 
     //if (!item) {
         //throw new InternalError(`Failed To Query Item ${itemID}`);
     //}
+    
+    const item = await Item.findByID(itemID);
 
-    //res.render("collections/lists/items/view", { item });
-//}));
+    if (!item || !item instanceof Item || !item.isValid()) {
+        throw new InternalError("Failed To Retrieve Item");
+    }
+
+    const listColumnsType = await ListColumnType.findFromList(item.parentList);
+
+    if (!listColumnsType || !Array.isArray(listColumnsType)) {
+        throw new InternalError("Failed To Retrieve List Columns Type");
+    }
+
+    res.render("collections/lists/items/view", { item, listColumnsType });
+}));
 
 /*
 Form to edit an item
@@ -106,13 +117,13 @@ Form to edit an item
 //router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res) => {
     //const { collectionID, listID, itemID } = req.params;
 
-    //let item = await database.find(database.ITEMS, collectionID, listID, itemID);
+    ////let item = await database.find(database.ITEMS, collectionID, listID, itemID);
 
-    //if (!item) {
-        //throw new InternalError(`Failed To Query Item ${itemID}`);
-    //}
+    ////if (!item) {
+        ////throw new InternalError(`Failed To Query Item ${itemID}`);
+    ////}
 
-    //utilCustomData.includeEmpty(item);
+    ////utilCustomData.includeEmpty(item);
 
     //res.render("collections/lists/items/edit", { item });
 //}));

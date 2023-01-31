@@ -12,13 +12,12 @@
     </form>
 </div>
 
-
-<% if(false) {// for(let item of lists.data) { %>
+<% for(let item of items) { %>
     <div class="row pb-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="fs-4 fw-normal"><%= item.Name %></h2>
+                    <h2 class="fs-4 fw-normal"><%= item.name %></h2>
 
                     <div class="pb-2">
                         <!-- Add the URL only if there is one -->
@@ -27,7 +26,7 @@
                         <% } %> 
                     </div>
 
-                    <a href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/items/<%= item.ItemID %>" 
+                    <a href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/items/<%= item.id %>" 
                         class="btn btn-info">View Details</a>
                 </div>
             </div>

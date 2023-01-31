@@ -1,5 +1,15 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
+<%
+function getColumnType(columnTypeID) {
+    for (let item of listColumnsType) {
+        if (item.id === columnTypeID) {
+            return item;
+        }
+    }
+}
+%>
+
 <div class="row pb-3">
     <div class="col-md-6 offset-md-3">
         <div class="card">
@@ -8,29 +18,30 @@
                 <!-- The information about the item -->
                 <li class="list-group-item">
                     <div>
-                        <h1 class="card-title fs-3"><%= item.data.Name %></h1>
+                        <h1 class="card-title fs-3"><%= item.name %></h1>
 
-                        <% if (item.data.URL) { %> 
-                            <p class="text-muted">URL: <a class="card-link" href="<%= item.data.URL %>"><%= item.data.URL %></a></p>
+                        <% if (item.URL) { %> 
+                            <p class="text-muted">URL: <a class="card-link" href="<%= item.URL %>"><%= item.URL %></a></p>
                         <% } %> 
 
-                        <% for(let customData of item.data.customData) { %>
-                            <p class="text-muted"><%= customData.ColumnName %>: <%= customData.Value %></p>
+                        <% for(let customData of item.customData) { %>
+                            <% const columnType = getColumnType(customData.columnTypeID); %>
+                            <p class="text-muted"><%= columnType.name %>: <%= customData.value %></p>
                         <% } %>
                     </div>
                 </li>
 
                 <!-- The button to destroy the item or going back -->
                 <li class="list-group-item pt-3">
-                    <a class="btn btn-success" href="/collections/<%= item.parent.collection.CollectionID %>/lists/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>/edit">Edit</a>
+                    <a class="btn btn-success" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>/edit">Edit</a>
 
                     <form class="d-inline"
-                            action="/collections/<%= item.parent.collection.CollectionID %>/lists/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>?_method=DELETE" 
+                            action="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>?_method=DELETE" 
                             method="post">
                         <button class="btn btn-danger">Delete</button>
                     </form>
 
-                    <a class="btn btn-secondary" href="/collections/<%= item.parent.collection.CollectionID %>/lists/<%= item.parent.list.ListID %>">Go Back!</a>
+                    <a class="btn btn-secondary" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>">Go Back!</a>
                 </li>
             </ul>
         </div>

@@ -2,6 +2,7 @@ const express = require("express");
 //const database = require("../models/gameSortingDB");
 const { Collection } = require("../models/collections");
 const { List } = require("../models/lists");
+const { Item } = require("../models/items");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
@@ -38,12 +39,17 @@ router.get("/lists/:listID", wrapAsync(async (req, res) => {
 
     //const lists = await database.find(database.ITEMS, collectionID, listID);
     const list = await List.findByID(listID);
+    const items = await Item.findFromList(list);
     
     if (!list) {
         throw new InternalError(`Failed To Query List From List ${listID}`);
     }
 
-    res.render("collections/lists/items/items", { list });
+    if (!items) {
+        throw new InternalError("Failed To Query Items From List");
+    }
+
+    res.render("collections/lists/items/items", { list, items });
 }));
 
 /*

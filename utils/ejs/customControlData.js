@@ -38,17 +38,17 @@ function getCustomControlType(customColumn, customData) {
         customColumn = findCustomColumnFromItem(customColumn, customData);
     }
 
-    if (!customColumn || !customColumn.Type || !customColumn.Type.type || !customColumn.Type.type.length) {
+    if (!customColumn || !customColumn.type || !customColumn.type.type || !customColumn.type.type.length) {
         return "type=\"text\"";
     }
 
-    const controlType = decryptType(customColumn.Type.type);
+    const controlType = decryptType(customColumn.type.type);
 
     let controlOptions = `type="${controlType}"`;
 
     switch (controlType) {
     case Types.INT: {
-        const { min, max } = customColumn.Type
+        const { min, max } = customColumn.type
         if (min && typeof min === "number") {
             controlOptions += ` min="${min}"`;
         }
