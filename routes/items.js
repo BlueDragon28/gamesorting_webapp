@@ -63,12 +63,6 @@ Form to create a new item in a list in a collection
 router.get("/items/new", customDataEjsHelper, wrapAsync(async (req ,res) => {
     const { collectionID, listID } = req.params;
 
-    //const list = await database.find(database.LISTS, collectionID, listID);
-
-    //if (!list) {
-        //throw new InternalError(`Failed To Query List ${listID}`);
-    //}
-
     const list = await List.findByID(listID);
 
     if (!list || !list instanceof List || !list.isValid()) {
@@ -82,7 +76,6 @@ router.get("/items/new", customDataEjsHelper, wrapAsync(async (req ,res) => {
     }
 
     res.render("collections/lists/items/new", { list, listColumnsType });
-    //res.redirect(`${req.baseUrl}`);
 }));
 
 /*
@@ -91,12 +84,6 @@ Display informations about an item
 router.get("/items/:itemID", wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
-    //const item = await database.find(database.ITEMS, collectionID, listID, itemID);
-
-    //if (!item) {
-        //throw new InternalError(`Failed To Query Item ${itemID}`);
-    //}
-    
     const item = await Item.findByID(itemID);
 
     if (!item || !item instanceof Item || !item.isValid()) {
@@ -117,14 +104,6 @@ Form to edit an item
 */
 router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
-
-    //let item = await database.find(database.ITEMS, collectionID, listID, itemID);
-
-    //if (!item) {
-        //throw new InternalError(`Failed To Query Item ${itemID}`);
-    //}
-
-    //utilCustomData.includeEmpty(item);
 
     const item = await Item.findByID(itemID);
 
@@ -149,27 +128,6 @@ router.post("/items", parseCustomColumnsData,
             customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name, url, customColumns } = req.body;
-
-    //const queryResult = await database.new(database.ITEMS, {
-        //parent: {
-            //collection: { CollectionID: collectionID },
-            //list: { ListID: listID }
-        //},
-        //data: {
-            //name,
-            //url,
-            //customData: customColumns
-        //}
-    //});
-
-    //if (!queryResult) {
-        //throw new InternalError(`Failed To Insert A New Item Into List ${listID}`);
-    //}
-
-    //req.flash("success", "Successfully created a new item");
-
-    //res.redirect(req.baseUrl);
-    //console.log(name, url, customColumns)
 
     const parentList = await List.findByID(listID);
 
@@ -208,25 +166,6 @@ router.put("/items/:itemID", parseCustomColumnsData,
     customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
     const { name, url, customColumns } = req.body;
-
-    //const queryResult = await database.edit(database.ITEMS, {
-        //parent: {
-            //collection: { CollectionID: collectionID },
-            //list: { ListID: listID }
-        //},
-        //data: {
-            //ItemID: itemID,
-            //Name: name,
-            //URL: url,
-            //customData: customColumns
-        //}
-    //});
-
-    //if (!queryResult) {
-        //throw new InternalError(`Failed To Edit Item ${itemID}`)
-    //}
-
-    //req.flash("success", "Successfully updated an item");
 
     // Find Item
     const foundItem = await Item.findByID(itemID);
@@ -288,18 +227,6 @@ Delete an item from a list
 */
 router.delete("/items/:itemID", wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
-
-    //const queryResult = await database.delete(database.ITEMS, {
-        //collectionID,
-        //listID,
-        //itemID
-    //});
-
-    //if (!queryResult) {
-        //throw new InternalError(`Failed To Delete Item ${itemID}`);
-    //}
-
-    //req.flash("success", "Successfully deleted an item");
 
     const foundItem = await Item.findByID(itemID);
 

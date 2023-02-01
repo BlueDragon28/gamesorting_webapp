@@ -42,7 +42,6 @@ Entry to see the lists available inside a collection
 router.get("/:collectionID", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
-    //const lists = await database.find(database.LISTS, collectionID);
     const collection = await Collection.findByID(collectionID);
     const lists = await List.findFromCollection(collection);
 
@@ -78,12 +77,6 @@ Create a new collection
 router.post("/", validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { name } = req.body;
 
-    //const result = await database.new(database.COLLECTIONS, {
-        //data: {
-            //Name: name
-        //}
-    //});
-
     const newCollection = new Collection(name);
 
     if (!newCollection.isValid()) {
@@ -103,13 +96,6 @@ Edit a collection
 router.put("/:collectionID", validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
-
-    //const result = await database.edit(database.COLLECTIONS, {
-        //data: {
-            //CollectionID : collectionID,
-            //Name: name
-        //}
-    //});
 
     const foundCollection = await Collection.findByID(collectionID);
     if (foundCollection) {
@@ -133,12 +119,7 @@ Delete a collection
 router.delete("/:collectionID", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
-    //const result = await database.delete(database.COLLECTIONS, collectionID);
     await Collection.deleteFromID(collectionID);
-
-    //if (!result) {
-        //throw new InternalError(`Failed To Delete Collection ${collectionID}`);
-    //}
 
     req.flash("success", "Successfully deleted a collection");
 
