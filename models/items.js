@@ -383,7 +383,7 @@ class Item {
 
     async #_updateItem(connection) {
         const queryStatement = 
-            `UPDATE items SET Name = "${sqlString(this.name)}" WHERE ListID = ${this.id} `;
+            `UPDATE items SET Name = "${sqlString(this.name)}" WHERE ItemID = ${this.id} `;
 
         if (this.url > 0) {
             queryStatement += `, URL = ${sqlString(this.url)}`;
