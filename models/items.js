@@ -385,7 +385,7 @@ class Item {
         let queryStatement = 
             `UPDATE items SET Name = "${sqlString(this.name)}"`;
 
-        if (this.url && typeof this.url === "string") {
+        if (typeof this.url === "string") {
             queryStatement += `, URL = \"${sqlString(this.url)}\" `;
         }
 
