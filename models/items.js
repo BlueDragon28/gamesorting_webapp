@@ -362,7 +362,7 @@ class Item {
     async #_createItem(connection) {
         const queryStatement = `INSERT INTO items(ListID, Name ${this.url.length > 0 ? ", URL" : ""}) ` +
             `VALUES (${this.parentList.id}, "${sqlString(this.name)}" ` +
-            ` ${this.url.length > 0 ? ", " + sqlString(this.url): ""})`;
+            ` ${this.url.length > 0 ? ", \"" + sqlString(this.url) + "\"": ""})`;
 
         try {
             const queryResult = await connection.query(queryStatement);
