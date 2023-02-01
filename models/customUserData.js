@@ -345,7 +345,9 @@ class CustomRowsItems {
         this.id = this.id ? bigint.toBigInt(this.id) : undefined;
         this.itemID = this.itemID ? bigint.toBigInt(this.itemID) : undefined;
         this.columnTypeID = this.columnTypeID ? bigint.toBigInt(this.columnTypeID) : undefined;
-        this.value = this.value.trim();
+        if (typeof this.value === "string") {
+            this.value = this.value.trim();
+        }
         
         if ((this.id && !bigint.isValid(this.id)) ||
             !this.itemID || (this.itemID && !bigint.isValid(this.itemID)) ||
@@ -409,7 +411,7 @@ class CustomRowsItems {
 
     async #_createCustomRowItem(connection) {
         const queryStatement = `INSERT INTO customRowsItems(ItemID, ListColumnTypeID, Value) ` +
-            `VALUES (${this.itemID}, ${this.columnTypeID}, "${sqlString(this.value)}"`;
+            `VALUES (${this.itemID}, ${this.columnTypeID}, "${sqlString(this.value)}")`;
 
         try {
             const queryResult = await connection.query(queryStatement);

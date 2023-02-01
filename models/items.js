@@ -283,7 +283,7 @@ class Item {
             this.parentList = parentList
         }
 
-        if (customData && customData instanceof CustomRowsItems) {
+        if (customData && Array.isArray(customData)) {
             this.customData = customData;
         }
     }

@@ -2,6 +2,7 @@ const express = require("express");
 //const database = require("../models/gameSortingDB");
 const { List } = require("../models/lists");
 const { ListColumnType } = require("../models/listColumnsType");
+const { CustomRowsItems } = require("../models/customUserData");
 const { Item } = require("../models/items");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const bigint = require("../utils/numbers/bigint");
@@ -143,11 +144,11 @@ router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res
 /*
 Insert a new item into a list inside a collection
 */
-//router.post("/items", parseCustomColumnsData, 
+router.post("/items", parseCustomColumnsData, 
             //validation.item({ name: true, url: true, customData: true }),
-            //customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
-    //const { collectionID, listID } = req.params;
-    //const { name, url, customColumns } = req.body;
+            /*customDataValidation.parseColumnsType, customDataValidation.validate(),*/ wrapAsync(async (req, res) => {
+    const { collectionID, listID } = req.params;
+    const { name, url, customColumns } = req.body;
 
     //const queryResult = await database.new(database.ITEMS, {
         //parent: {
@@ -168,7 +169,35 @@ Insert a new item into a list inside a collection
     //req.flash("success", "Successfully created a new item");
 
     //res.redirect(req.baseUrl);
-//}));
+    //console.log(name, url, customColumns)
+
+    const parentList = await List.findByID(listID);
+
+    if (!parentList || !parentList instanceof List || !parentList.isValid()) {
+        throw new InternalError("Invalid List");
+    }
+
+    const newItem = new Item(name, url, parentList);
+
+    if (!newItem) {
+        throw new ValueError(400, "Invalid Name or URL");
+    }
+
+    await newItem.save();
+ 
+    for (let customColumn of customColumns) {
+        const customUserData = new CustomRowsItems(
+            customColumn.Value, 
+            newItem.id, 
+            customColumn.ListColumnTypeID);
+        
+        if (customUserData.isValid()) {
+            await customUserData.save();
+        }
+    }
+
+    res.redirect(req.baseUrl);
+}));
 
 /*
 Edit An Item
