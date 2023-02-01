@@ -196,6 +196,7 @@ router.post("/items", parseCustomColumnsData,
         }
     }
 
+    req.flash("success", "Successfully created a new item");
     res.redirect(req.baseUrl);
 }));
 
@@ -278,6 +279,7 @@ router.put("/items/:itemID", parseCustomColumnsData,
 
     await foundItem.save();
 
+    req.flash("success", "Successfully updated an item");
     res.redirect(`${req.baseUrl}/items/${itemID}`);
 }));
 
@@ -315,6 +317,7 @@ router.delete("/items/:itemID", wrapAsync(async (req, res) => {
 
     await Item.deleteFromID(foundItem.id);
 
+    req.flash("success", "Successfully deleted an item");
     res.redirect(req.baseUrl);
 }));
 
