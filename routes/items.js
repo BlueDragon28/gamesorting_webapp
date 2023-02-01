@@ -5,7 +5,6 @@ const { CustomRowsItems } = require("../models/customUserData");
 const { Item } = require("../models/items");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const bigint = require("../utils/numbers/bigint");
-const utilCustomData = require("../utils/data/customData");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const customDataValidation = require("../utils/validation/customDataValidation");
