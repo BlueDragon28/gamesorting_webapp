@@ -382,12 +382,14 @@ class Item {
     }
 
     async #_updateItem(connection) {
-        const queryStatement = 
-            `UPDATE items SET Name = "${sqlString(this.name)}" WHERE ItemID = ${this.id} `;
+        let queryStatement = 
+            `UPDATE items SET Name = "${sqlString(this.name)}"`;
 
-        if (this.url > 0) {
-            queryStatement += `, URL = ${sqlString(this.url)}`;
+        if (this.url && typeof this.url === "string") {
+            queryStatement += `, URL = \"${sqlString(this.url)}\" `;
         }
+
+        queryStatement += `WHERE ItemID = ${this.id}`;
 
         try {
             const result = await connection.query(queryStatement);
