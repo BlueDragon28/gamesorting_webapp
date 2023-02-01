@@ -1,5 +1,4 @@
 const express = require("express");
-//const database = require("../models/gameSortingDB");
 const { Collection } = require("../models/collections");
 const { List } = require("../models/lists");
 const { Item } = require("../models/items");

@@ -1,5 +1,4 @@
 const express = require("express");
-//const database = require("../models/gameSortingDB");
 const { List } = require("../models/lists");
 const { ListColumnType } = require("../models/listColumnsType");
 const { CustomRowsItems } = require("../models/customUserData");
