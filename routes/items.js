@@ -202,11 +202,11 @@ router.post("/items", parseCustomColumnsData,
 /*
 Edit An Item
 */
-//router.put("/items/:itemID", parseCustomColumnsData, 
+router.put("/items/:itemID", parseCustomColumnsData, 
             //validation.item({ name: true, url: true, customData: true }),
-            //customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
-    //const { collectionID, listID, itemID } = req.params;
-    //const { name, url, customColumns } = req.body;
+    /*customDataValidation.parseColumnsType, customDataValidation.validate(),*/ wrapAsync(async (req, res) => {
+    const { collectionID, listID, itemID } = req.params;
+    const { name, url, customColumns } = req.body;
 
     //const queryResult = await database.edit(database.ITEMS, {
         //parent: {
@@ -227,8 +227,59 @@ Edit An Item
 
     //req.flash("success", "Successfully updated an item");
 
-    //res.redirect(`${req.baseUrl}/items/${itemID}`);
-//}));
+    // Find Item
+    const foundItem = await Item.findByID(itemID);
+
+    if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
+        throw new InternalError("Invalid Item");
+    }
+
+    // Find column type
+    const foundColumnsType = await ListColumnType.findFromList(foundItem.parentList);
+
+    // Update item
+    foundItem.name = name;
+    foundItem.url = url;
+
+    if (!foundItem.isValid()) {
+        throw new ValueError(400, "Invalid Name Or Url");
+    }
+
+    // Find existing custom data
+    const customData = [];
+    for (let columnType of foundColumnsType) {
+        const foundCustomRow = foundItem.customData.find(row => row.columnTypeID === columnType.id);
+        if (foundCustomRow) {
+            customData.push(foundCustomRow);
+        }
+    }
+
+    // Update/Create custom data or delete unused one
+    for (let userCustomColumn of customColumns) {
+        let foundCustomData;
+        if (userCustomColumn.CustomRowItemsID > 0) {
+            foundCustomData = customData.find(data => data.id == userCustomColumn.CustomRowItemsID);
+        } else {
+            foundCustomData = new CustomRowsItems(undefined, foundItem.id, -userCustomColumn.CustomRowItemsID);
+        }
+
+        if (!foundCustomData) {
+            continue;
+        }
+
+        foundCustomData.value = userCustomColumn.Value;
+
+        if (foundCustomData.isValid()) {
+            await foundCustomData.save();
+        } else {
+            await foundCustomData.delete();
+        }
+    }
+
+    await foundItem.save();
+
+    res.redirect(`${req.baseUrl}/items/${itemID}`);
+}));
 
 /*
 Delete an item from a list

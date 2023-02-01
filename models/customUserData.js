@@ -375,7 +375,7 @@ class CustomRowsItems {
 
     async delete(connection) {
         if (!bigint.isValid(this.id)) {
-            throw new ValueError(400, "Invalid Custom Data");
+            return;
         }
 
         await CustomRowsItems.deleteFromID(this.id, connection)
@@ -432,7 +432,7 @@ class CustomRowsItems {
 
     async #_updateCustomRowItem(connection) {
         const queryStatement = 
-            `UPDATE items SET Value = "${sqlString(this.name)}" WHERE CustomRowItemsID = ${this.id} `;
+            `UPDATE customRowsItems SET Value = "${sqlString(this.value)}" WHERE CustomRowItemsID = ${this.id} `;
 
         try {
             const result = await connection.query(queryStatement);
