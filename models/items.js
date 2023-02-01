@@ -485,7 +485,7 @@ class Item {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `DELETE FROM lists WHERE ItemID = ${id}`;
+                `DELETE FROM items WHERE ItemID = ${id}`;
 
             try {
                 const queryResult = await connection.query(queryStatement);

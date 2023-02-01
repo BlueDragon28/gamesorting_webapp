@@ -233,9 +233,8 @@ Edit An Item
 /*
 Delete an item from a list
 */
-//router.delete("/items/:itemID", wrapAsync(async (req, res) => {
-
-    //const { collectionID, listID, itemID } = req.params;
+router.delete("/items/:itemID", wrapAsync(async (req, res) => {
+    const { collectionID, listID, itemID } = req.params;
 
     //const queryResult = await database.delete(database.ITEMS, {
         //collectionID,
@@ -249,8 +248,24 @@ Delete an item from a list
 
     //req.flash("success", "Successfully deleted an item");
 
-    //res.redirect(req.baseUrl);
-//}));
+    const foundItem = await Item.findByID(itemID);
+
+    if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
+        throw new InternalError("Invalid List");
+    }
+
+    const foundCustomData = await CustomRowsItems.findFromItem(foundItem.id);
+
+    for (let customData of foundCustomData) {
+        if (customData && customData instanceof CustomRowsItems && customData.isValid()) {
+            await customData.delete();
+        }
+    }
+
+    await Item.deleteFromID(foundItem.id);
+
+    res.redirect(req.baseUrl);
+}));
 
 router.use(parseCelebrateError);
 //router.use(errorsWithPossibleRedirect("Cannot thind this item"));
