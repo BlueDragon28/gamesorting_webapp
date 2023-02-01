@@ -17,27 +17,7 @@ function decryptType(type) {
     }
 }
 
-function findCustomColumnFromItem(item, customData) {
-    if (!item || !item.customColumns || !item.customColumns.length ||
-        !customData || !customData.ListColumnTypeID || !customData.CustomRowItemsID) {
-        return null;
-    }
-
-    for (let customColumn of item.customColumns) {
-        if (customData.ListColumnTypeID === customColumn.ListColumnTypeID) {
-            return customColumn;
-        }
-    }
-
-    return null;
-}
-
-function getCustomControlType(customColumn, customData) {
-    if (customData && customData.ListColumnTypeID && customData.CustomRowItemsID) {
-        // customColumn is holding the item object
-        customColumn = findCustomColumnFromItem(customColumn, customData);
-    }
-
+function getCustomControlType(customColumn) {
     if (!customColumn || !customColumn.type || !customColumn.type.type || !customColumn.type.type.length) {
         return "type=\"text\"";
     }

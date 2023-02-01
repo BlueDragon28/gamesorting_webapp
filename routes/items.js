@@ -114,19 +114,31 @@ router.get("/items/:itemID", wrapAsync(async (req, res) => {
 /*
 Form to edit an item
 */
-//router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res) => {
-    //const { collectionID, listID, itemID } = req.params;
+router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res) => {
+    const { collectionID, listID, itemID } = req.params;
 
-    ////let item = await database.find(database.ITEMS, collectionID, listID, itemID);
+    //let item = await database.find(database.ITEMS, collectionID, listID, itemID);
 
-    ////if (!item) {
-        ////throw new InternalError(`Failed To Query Item ${itemID}`);
-    ////}
+    //if (!item) {
+        //throw new InternalError(`Failed To Query Item ${itemID}`);
+    //}
 
-    ////utilCustomData.includeEmpty(item);
+    //utilCustomData.includeEmpty(item);
 
-    //res.render("collections/lists/items/edit", { item });
-//}));
+    const item = await Item.findByID(itemID);
+
+    if (!item || !item instanceof Item || !item.isValid()) {
+        throw new InternalError("Failed To Query Item");
+    }
+
+    const listColumnsType = await ListColumnType.findFromList(item.parentList);
+
+    if (!listColumnsType || !Array.isArray(listColumnsType)) {
+        throw new InternalError("Failed To Retrieve List Columns Type");
+    }
+
+    res.render("collections/lists/items/edit", { item, listColumnsType });
+}));
 
 /*
 Insert a new item into a list inside a collection
