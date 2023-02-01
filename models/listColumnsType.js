@@ -1,6 +1,6 @@
 const bigint = require("../utils/numbers/bigint");
 const { List } = require("./lists");
-const { SqlError, ValueError } = require("../utils/errors/exceptions");
+const { SqlError, ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
 
 class ListColumnType {
@@ -82,12 +82,12 @@ class ListColumnType {
                     return null;
                 }
                 
-                const foundList = await Collection.findByID(queryResult[0].ListID, connection);
+                const foundList = await List.findByID(queryResult[0].ListID, connection);
                 if (!foundList.isValid()) {
                     throw new Error("Failed to retrieve parent list");
                 }
 
-                const foundColumnType = new List(queryResult[0].Name, queryResult[0].Type, foundList);
+                const foundColumnType = new ListColumnType(queryResult[0].Name, queryResult[0].Type, foundList);
                 foundColumnType.id = queryResult[0].ListID;
 
                 if (!foundColumnType.isValid()) {
@@ -120,6 +120,33 @@ class ListColumnType {
                 return ListColumnType.#parseFoundColumnsType(list, queryResult);
             } catch (error) {
                 throw new SqlError(`Failed to get all lists: ${error.message}`);
+            }
+        });
+    }
+
+    static async findFromUserData(userDataID, connection) {
+        userDataID = bigint.toBigInt(userDataID);
+        if (!bigint.isValid(userDataID)) {
+            throw new InternalError(400, "Invalid User Data ID");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                "SELECT l.ListColumnTypeID AS ListColumnTypeID, l.Name AS Name, l.Type AS Type " +
+                "FROM listColumnsType l " +
+                "INNER JOIN customRowsItems USING (ListColumnTypeID) " +
+                `WHERE CustomRowItemsID = ${userDataID}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+
+                if (!queryResult.length) {
+                    return [];
+                }
+
+                return queryResult[0];
+            } catch (error) {
+                throw new SqlError(`Failed to get column type from user data id: ${error.message}`);
             }
         });
     }
