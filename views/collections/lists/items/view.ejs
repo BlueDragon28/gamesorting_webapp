@@ -20,8 +20,8 @@ function getColumnType(columnTypeID) {
                     <div>
                         <h1 class="card-title fs-3"><%= item.name %></h1>
 
-                        <% if (item.URL) { %> 
-                            <p class="text-muted">URL: <a class="card-link" href="<%= item.URL %>"><%= item.URL %></a></p>
+                        <% if (item.url) { %> 
+                            <p class="text-muted">URL: <a class="card-link" href="<%= item.url %>"><%= item.url %></a></p>
                         <% } %> 
 
                         <% for(let customData of item.customData) { %>
