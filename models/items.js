@@ -145,6 +145,7 @@ class Item {
         const queryStatement = 
             "SELECT COUNT(1) as count FROM items " +
             `WHERE Name = "${sqlString(this.name)}" AND ItemID != ${this.id ? this.id : -1} ` +
+            `AND ListID = ${this.parentList.id} ` +
             "LIMIT 1";
 
         try {
