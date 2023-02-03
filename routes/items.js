@@ -240,7 +240,6 @@ router.delete("/items/:itemID", wrapAsync(async (req, res) => {
         }
     }
 
-    await CustomRowsItems.deleteFromID(itemID);
     await Item.deleteFromID(foundItem.id);
 
     req.flash("success", "Successfully deleted an item");
