@@ -5,13 +5,13 @@
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
-                <h1 class="card-title fs-4">Edit <%= collection.data.Name %> Collection</h1>
+                <h1 class="card-title fs-4">Edit <%= collection.name %> Collection</h1>
 
                 <!-- The only information we need for the form is the name of the collection -->
-                <form class="needs-validation" action="/collections/<%= collection.data.CollectionID %>?_method=PUT" method="post" novalidate>
+                <form class="needs-validation" action="/collections/<%= collection.id %>?_method=PUT" method="post" novalidate>
                     <div class="mb-3">
                         <label class="form-label" for="name">Name</label>
-                        <input class="form-control" type="text" name="name" id="name" value="<%= collection.data.Name %>" required>
+                        <input class="form-control" type="text" name="name" id="name" value="<%= collection.name %>" required>
                         <div class="valid-feedback">
                             Looks good!
                         </div>
@@ -23,7 +23,7 @@
                     <button class="btn btn-primary d-inline">Edit</button>
 
                     <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
-                    <a class="btn btn-secondary" href="/collections/<%= collection.data.CollectionID %>">Cancel</a>
+                    <a class="btn btn-secondary" href="/collections/<%= collection.id %>">Cancel</a>
                 </form>
             </div>
         </div>

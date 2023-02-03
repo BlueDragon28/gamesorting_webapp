@@ -1,18 +1,34 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
+<%
+function getCustomColumn(columnTypeID) {
+    for (let customRow of item.customData) {
+        if (customRow.columnTypeID === columnTypeID) {
+            return customRow;
+        }
+    }
+
+    return {
+        id: -columnTypeID,
+        value: ""
+    };
+}
+
+%>
+
 <!-- A form to edit an items
 The form have two fields, Name and Url. -->
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
-                <h1 class="card-title fs-4">Edit <%= item.data.Name %> Item</h1>
+                <h1 class="card-title fs-4">Edit <%= item.name %> Item</h1>
 
                 <!-- The only information we need for the form is the name of the collection -->
-                <form class="needs-validation" action="/collections/<%= item.parent.collection.CollectionID %>/lists/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>?_method=PUT" method="post" novalidate>
+                <form class="needs-validation" action="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>?_method=PUT" method="post" novalidate>
                     <div class="mb-3">
                         <label class="form-label" for="name">Name</label>
-                        <input class="form-control" type="text" name="name" id="name" value="<%= item.data.Name %>" required>
+                        <input class="form-control" type="text" name="name" id="name" value="<%= item.name %>" required>
                         <div class="valid-feedback">
                             Looks good!
                         </div>
@@ -22,7 +38,7 @@ The form have two fields, Name and Url. -->
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="url">URL</label>
-                        <input class="form-control" type="text" name="url" id="url" value="<%= item.data.URL %>" 
+                        <input class="form-control" type="text" name="url" id="url" value="<%= item.url %>" 
                             pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?">
                         <div class="valid-feedback">
                             Looks good!
@@ -33,11 +49,13 @@ The form have two fields, Name and Url. -->
                     </div>
 
                     <!-- Inserting the control of the custom datas -->
-                    <% for(let customData of item.data.customData) { %>
-                        <% let customColumnID = `customColumn_${customData.CustomRowItemsID}`; %> 
+                    <% for(let columnType of listColumnsType) { %>
+                        <% let customRowData = getCustomColumn(columnType.id) %>
+                        <% let customColumnID = `customColumn_${customRowData.id}`; %> 
+
                         <div class="mb-3">
-                            <label class="form-label" for="<%= customColumnID %>"><%= customData.ColumnName %></label>
-                            <input class="form-control" <%- getCustomControlType(item, customData) %> name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>" value="<%= customData.Value %>">
+                            <label class="form-label" for="<%= customColumnID %>"><%= columnType.name %></label>
+                            <input class="form-control" <%- getCustomControlType(columnType) %> name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>" value="<%= customRowData.value %>">
                         </div>
                     <% } %>
                 
@@ -45,7 +63,7 @@ The form have two fields, Name and Url. -->
                         <button class="btn btn-primary d-inline">Edit</button>
 
                         <!-- To allow the the button to appear next to the Create btn, the cancel link has been put there -->
-                        <a class="btn btn-secondary" href="/collections/<%= item.parent.collection.CollectionID %>/lists/<%= item.parent.list.ListID %>/items/<%= item.data.ItemID %>">Cancel</a>
+                        <a class="btn btn-secondary" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>">Cancel</a>
                     </div>
                 </form>
             </div>

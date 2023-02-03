@@ -3,7 +3,7 @@ This module is doing all the custom data validation
 */
 
 const { celebrate, Joi, Segments } = require("celebrate");
-const customDataModel = require("../../models/customUserData");
+const { ListColumnType } = require("../../models/listColumnsType");
 const mariadb = require("../../sql/connection");
 const { ValueError, InternalError } = require("../errors/exceptions");
 const wrapAsync = require("../errors/wrapAsync");
@@ -23,14 +23,16 @@ async function getType(customColumns) {
             let columnType = [];
 
             if (customColumn.ListColumnTypeID) {
-                columnType = await customDataModel.getColumnTypeFromID(connection, customColumn.ListColumnTypeID);
-            } else if (customColumn.CustomRowItemsID){
-                columnType = await customDataModel.getColumnTypeFromRowID(connection, customColumn.CustomRowItemsID);
+                columnType = await ListColumnType.findByID(customColumn.ListColumnTypeID, connection);
+            } else if (customColumn.CustomRowItemsID && customColumn.CustomRowItemsID >= 0) {
+                columnType = await ListColumnType.findFromUserData(customColumn.CustomRowItemsID, connection);
+            } else if (customColumn.CustomRowItemsID) {
+                columnType = await ListColumnType.findByID(-customColumn.CustomRowItemsID, connection);
             } else {
                 throw new ValueError(400, "Invalid Custom Data Value");
             }
 
-            customColumn.columnType = columnType;
+            customColumn.columnType = columnType.Type || columnType.type;
         }
 
         return customColumns;

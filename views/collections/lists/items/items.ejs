@@ -1,24 +1,23 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
-<h1 class="display-4"><%= lists.parent.list.Name %></h1>
+<h1 class="display-4"><%= list.name %></h1>
 
 <div class="pb-4">
-    <a class="btn btn-primary" href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/items/new">New Item</a>
-    <a class="btn btn-success" href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/edit">Edit List</a>
-    <a class="btn btn-secondary" href="/collections/<%= lists.parent.collection.CollectionID %>">Go Back!</a>
+    <a class="btn btn-primary" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/items/new">New Item</a>
+    <a class="btn btn-success" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/edit">Edit List</a>
+    <a class="btn btn-secondary" href="/collections/<%= list.parentCollection.id %>">Go Back!</a>
 
-    <form class="d-inline" action="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>?_method=DELETE" method="post">
+    <form class="d-inline" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?_method=DELETE" method="post">
         <button class="btn btn-danger">Delete List</button>
     </form>
 </div>
 
-
-<% for(let item of lists.data) { %>
+<% for(let item of items) { %>
     <div class="row pb-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="fs-4 fw-normal"><%= item.Name %></h2>
+                    <h2 class="fs-4 fw-normal"><%= item.name %></h2>
 
                     <div class="pb-2">
                         <!-- Add the URL only if there is one -->
@@ -27,7 +26,7 @@
                         <% } %> 
                     </div>
 
-                    <a href="/collections/<%= lists.parent.collection.CollectionID %>/lists/<%= lists.parent.list.ListID %>/items/<%= item.ItemID %>" 
+                    <a href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/items/<%= item.id %>" 
                         class="btn btn-info">View Details</a>
                 </div>
             </div>
