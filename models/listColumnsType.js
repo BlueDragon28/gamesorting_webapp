@@ -127,7 +127,7 @@ class ListColumnType {
     static async findFromUserData(userDataID, connection) {
         userDataID = bigint.toBigInt(userDataID);
         if (!bigint.isValid(userDataID)) {
-            throw new InternalError(400, "Invalid User Data ID");
+            throw new InternalError("Invalid User Data ID");
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
@@ -147,6 +147,24 @@ class ListColumnType {
                 return queryResult[0];
             } catch (error) {
                 throw new SqlError(`Failed to get column type from user data id: ${error.message}`);
+            }
+        });
+    }
+
+    static async deleteFromList(listID, connection) {
+        listID = bigint.toBigInt(listID);
+        if (!bigint.isValid(listID)) {
+            throw new InternalError("Invalid List ID");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                `DELETE FROM listColumnsType WHERE ListID = ${listID}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+            } catch (error) {
+                throw new SqlError(`Failed to delete columns type from list id: ${error.message}`);
             }
         });
     }

@@ -2,12 +2,40 @@ const express = require("express");
 const { Collection } = require("../models/collections");
 const { List } = require("../models/lists");
 const { Item } = require("../models/items");
+const { CustomRowsItems } = require("../models/customUserData");
+const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 
 const router = express.Router({ mergeParams: true });
+
+async function deleteItemsAndCustomData(item) {
+    if (!item || !item instanceof Item || !item.isValid()) {
+        return;
+    }
+
+    const customDatas = await CustomRowsItems.findFromItem(item.id);
+
+    for (let customData of customDatas) {
+        await customData.delete();
+    }
+
+    await Item.deleteFromID(item.id);
+}
+
+async function deleteItems(list) {
+    const items = await Item.findFromList(list);
+
+    if (!items) {
+        return;
+    }
+
+    for (let item of items) {
+        await deleteItemsAndCustomData(item);
+    }
+}
 
 /*
 Validate collectionID and listID on each route asking for for them
@@ -121,6 +149,14 @@ Delete a list from a collection
 router.delete("/lists/:listID", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
+    const list = await List.findByID(listID);
+    
+    if (!list || !list instanceof List || !list.isValid()) {
+        throw new ValueError("Invalid List");
+    }
+
+    await deleteItems(list);
+    await ListColumnType.deleteFromList(list.id);
     await List.deleteFromID(listID);
 
     req.flash("success", "Successfully deleted a list");
