@@ -159,6 +159,6 @@ router.delete("/lists/:listID", wrapAsync(async (req, res) => {
 }));
 
 router.use(parseCelebrateError);
-//router.use(errorsWithPossibleRedirect("Cannot find this list"));
+router.use(errorsWithPossibleRedirect("Cannot find this list"));
 
 module.exports = router;

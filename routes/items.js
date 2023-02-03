@@ -237,6 +237,6 @@ router.delete("/items/:itemID", wrapAsync(async (req, res) => {
 }));
 
 router.use(parseCelebrateError);
-//router.use(errorsWithPossibleRedirect("Cannot thind this item"));
+router.use(errorsWithPossibleRedirect("Cannot thind this item"));
 
 module.exports = router;

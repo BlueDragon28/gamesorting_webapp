@@ -135,6 +135,6 @@ Parsing celebrate errors
 */
 router.use(parseCelebrateError);
 
-//router.use(errorsWithPossibleRedirect("Cannot find this collection"));
+router.use(errorsWithPossibleRedirect("Cannot find this collection"));
 
 module.exports = router;
