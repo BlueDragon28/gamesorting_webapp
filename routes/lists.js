@@ -3,11 +3,12 @@ const { Collection } = require("../models/collections");
 const { List } = require("../models/lists");
 const { Item } = require("../models/items");
 const { CustomRowsItems } = require("../models/customUserData");
-const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
+const { deleteList } = require("../utils/data/deletionHelper");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 
 const router = express.Router({ mergeParams: true });
 
@@ -149,18 +150,11 @@ Delete a list from a collection
 router.delete("/lists/:listID", wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
-    const list = await List.findByID(listID);
-    
-    if (!list || !list instanceof List || !list.isValid()) {
-        throw new ValueError("Invalid List");
-    }
-
-    await deleteItems(list);
-    await ListColumnType.deleteFromList(list.id);
-    await List.deleteFromID(listID);
+    await existingOrNewConnection(undefined, async function(connection) {
+        await deleteList(listID, connection);
+    });
 
     req.flash("success", "Successfully deleted a list");
-
     res.redirect(`${req.baseUrl}`);
 }));
 

@@ -8,6 +8,8 @@ const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
+const { deleteCollection } = require("../utils/data/deletionHelper");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 
 const router = express.Router();
 
@@ -119,7 +121,9 @@ Delete a collection
 router.delete("/:collectionID", wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
-    await Collection.deleteFromID(collectionID);
+    await existingOrNewConnection(undefined, async function(connection) {
+        await deleteCollection(collectionID, connection);
+    });
 
     req.flash("success", "Successfully deleted a collection");
 

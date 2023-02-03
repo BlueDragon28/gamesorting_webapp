@@ -3,12 +3,14 @@ const { List } = require("../models/lists");
 const { ListColumnType } = require("../models/listColumnsType");
 const { CustomRowsItems } = require("../models/customUserData");
 const { Item } = require("../models/items");
+const { deleteItem } = require("../utils/data/deletionHelper");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const bigint = require("../utils/numbers/bigint");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const customDataValidation = require("../utils/validation/customDataValidation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 
 const router = express.Router({ mergeParams: true });
 
@@ -226,21 +228,9 @@ Delete an item from a list
 router.delete("/items/:itemID", wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
-    const foundItem = await Item.findByID(itemID);
-
-    if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
-        throw new InternalError("Invalid List");
-    }
-
-    const foundCustomData = await CustomRowsItems.findFromItem(foundItem.id);
-
-    for (let customData of foundCustomData) {
-        if (customData && customData instanceof CustomRowsItems && customData.isValid()) {
-            await customData.delete();
-        }
-    }
-
-    await Item.deleteFromID(foundItem.id);
+    await existingOrNewConnection(undefined, async function(connection) {
+        await deleteItem(itemID, connection);
+    });
 
     req.flash("success", "Successfully deleted an item");
     res.redirect(req.baseUrl);
