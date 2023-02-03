@@ -122,6 +122,7 @@ class List {
         const queryStatement = 
             "SELECT COUNT(1) as count FROM lists " +
             `WHERE Name = "${sqlString(this.name)}" AND ListID != ${this.id ? this.id : -1} ` +
+            `AND CollectionID = ${this.parentCollection.id} ` +
             "LIMIT 1";
 
         try {
