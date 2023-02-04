@@ -34,6 +34,10 @@ app.use(session({
 }));
 app.use(flash());
 app.use(parseFlashMessage);
+app.use(function(req, res, next) {
+    res.locals.currentUser = req.session.user;
+    next();
+});
 
 app.use(express.static(path.join(__dirname, "public")));
 
