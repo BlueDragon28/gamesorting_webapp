@@ -40,10 +40,10 @@ router.post("/login", wrapAsync(async function(req, res) {
     const { username, password } = req.body.user;
     const foundUser = await User.findByNameOrEmail(username);
 
-    if (foundUser && !foundUser.compare(username, password)) {
+    if (foundUser && !foundUser.compare(username, password) ||
+            !foundUser) {
         req.session.user = null;
         req.flash("error", "Invalid Credentials");
-        console.log("error");
         return res.redirect(`${req.baseUrl}/login`);
     }
 
