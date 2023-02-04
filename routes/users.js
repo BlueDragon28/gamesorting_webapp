@@ -1,15 +1,9 @@
 const express = require("express");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { User } = require("../models/users");
-const bigint = require("../utils/numbers/bigint");
+const { checkIfUserValid } = require("../utils/validation/users");
 
 const router = express.Router();
-
-function checkIfUserValid(user) {
-    return  user && bigint.isValid(user.id) && 
-            typeof user.username === "string" && user.username.length &&
-            typeof user.email === "string" && user.email.length;
-}
 
 router.get("/register", function(req, res) {
     res.render("login/register");
