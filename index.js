@@ -64,7 +64,7 @@ app.use((err, req, res, next) => {
         stack } = err;
     
     res.status(statusCode).send("<p>" + message + (stack ? ("<br>" + stack) : "") + "</p>");
-})
+});
 
 app.listen(8080, () => {
     console.log("Listing on port 8080");

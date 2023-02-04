@@ -10,6 +10,7 @@ const validation = require("../utils/validation/validation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const { deleteCollection } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
+const { isLoggedIn } = require("../utils/users/authentification");
 
 const router = express.Router();
 
@@ -17,6 +18,11 @@ const router = express.Router();
 Validate collectionID on each route asking for collection id
 */
 router.use("/:collectionID", validation.id);
+
+/*
+Check if the user is logged in
+*/
+router.use(isLoggedIn);
 
 /*
 Entry to see the collections list
