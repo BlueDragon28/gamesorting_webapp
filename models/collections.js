@@ -120,6 +120,7 @@ class Collection {
         const queryStatement = 
             "SELECT COUNT(1) as count FROM collections " +
             `WHERE Name = "${sqlString(this.name)}" AND CollectionID != ${this.id ? this.id : -1} ` +
+            `AND UserID = ${this.userID} ` +
             "LIMIT 1";
 
         try {
