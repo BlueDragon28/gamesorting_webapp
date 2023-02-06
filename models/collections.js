@@ -4,9 +4,14 @@ const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
 
 class Collection {
     id;
+    userID;
     name;
 
-    constructor(name) {
+    constructor(userID, name) {
+        if (bigint.isValid(userID)) {
+            this.userID = bigint.toBigInt(userID);
+        }
+
         if (name && typeof name === "string") {
             this.name = name;
         }
@@ -17,6 +22,7 @@ class Collection {
         this.name = this.name.trim();
         
         if ((this.id && !bigint.isValid(this.id)) ||
+            !bigint.isValid(this.userID) ||
             !this.name || typeof this.name !== "string" || !this.name.length) {
             return false;
         }
@@ -79,7 +85,8 @@ class Collection {
     }
 
     async #_createCollection(connection) {
-        const queryStatement = `INSERT INTO collections(Name) VALUES ("${sqlString(this.name)}")`;
+        const queryStatement = 
+            `INSERT INTO collections(UserID, Name) VALUES (${this.userID}, "${sqlString(this.name)}")`;
 
         try {
             const queryResult = await connection.query(queryStatement);
@@ -133,7 +140,8 @@ class Collection {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `SELECT CollectionID, Name FROM collections WHERE CollectionID = ${id}`;
+                "SELECT UserID, CollectionID, Name FROM collections " + 
+                `INNER JOIN users USING (UserID) WHERE CollectionID = ${id}`;
 
             try {
                 const queryResult = await connection.query(queryStatement);
@@ -142,7 +150,7 @@ class Collection {
                     return null;
                 }
 
-                const foundCollection = new Collection(queryResult[0].Name);
+                const foundCollection = new Collection(queryResult[0].UserID, queryResult[0].Name);
                 foundCollection.id = queryResult[0].CollectionID;
 
                 if (!foundCollection.isValid()) {
@@ -159,7 +167,7 @@ class Collection {
     static async findAll(connection) {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                "SELECT CollectionID, Name FROM collections;";
+                "SELECT UserID, CollectionID, Name FROM collections INNER JOIN users USING (UserID);";
 
             try {
                 const queryResult = await connection.query(queryStatement);
@@ -197,7 +205,7 @@ class Collection {
         const collectionsList = [];
 
         for (let item of collections) {
-            const collection = new Collection(item.Name);
+            const collection = new Collection(item.UserID, item.Name);
             collection.id = item.CollectionID;
 
             if (collection.isValid()) {
