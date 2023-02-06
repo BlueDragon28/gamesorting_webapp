@@ -1,4 +1,5 @@
 const { AuthorizationError } = require("../errors/exceptions");
+const wrapAsync = require("../errors/wrapAsync");
 const { Collection } = require("../../models/collections");
 const { List } = require("../../models/lists");
 const { Item } = require("../../models/items");
@@ -54,7 +55,7 @@ async function checkItemAuth(req, res, next) {
 }
 
 module.exports = {
-    checkCollectionAuth,
-    checkListAuth,
-    checkItemAuth
+    checkCollectionAuth: wrapAsync(checkCollectionAuth),
+    checkListAuth: wrapAsync(checkListAuth),
+    checkItemAuth: wrapAsync(checkItemAuth)
 };
