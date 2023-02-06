@@ -39,6 +39,9 @@ function errorsWithPossibleRedirect(customErrorMessage) {
             req.flash("error", "Oups!!! Something went wrong!");
             console.log(error);
             return res.redirect("/collections");
+        } else if (error.name === "AuthorizationError") {
+            req.flash("error", error.message);
+            return res.redirect("/collections");
         }
 
         next(error);
