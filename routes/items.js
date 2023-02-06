@@ -12,7 +12,7 @@ const customDataValidation = require("../utils/validation/customDataValidation")
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn } = require("../utils/users/authentification");
-const { checkItemAuth } = require("../utils/users/authorization");
+const { checkListAuth, checkItemAuth } = require("../utils/users/authorization");
 
 const router = express.Router({ mergeParams: true });
 
@@ -67,7 +67,7 @@ function parseCustomColumnsData(req, res, next) {
 /*
 Form to create a new item in a list in a collection
 */
-router.get("/items/new", customDataEjsHelper, wrapAsync(async (req ,res) => {
+router.get("/items/new", checkListAuth, customDataEjsHelper, wrapAsync(async (req ,res) => {
     const { collectionID, listID } = req.params;
 
     const list = await List.findByID(listID);
@@ -130,7 +130,7 @@ router.get("/items/:itemID/edit", checkItemAuth, customDataEjsHelper, wrapAsync(
 /*
 Insert a new item into a list inside a collection
 */
-router.post("/items", checkItemAuth, parseCustomColumnsData, 
+router.post("/items", checkListAuth, parseCustomColumnsData, 
             validation.item({ name: true, url: true, customData: true }),
             customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
