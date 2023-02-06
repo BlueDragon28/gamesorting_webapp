@@ -3,11 +3,11 @@ USE gamesorting_webapp;
 -- Insert data into collections table
 DELETE FROM collections;
 
-INSERT INTO collections(CollectionID, Name)
+INSERT INTO collections(CollectionID, UserID, Name)
 VALUES
-    (1, "Games"),
-    (2, "Books"),
-    (3, "Movies");
+    (1, 2, "Games"),
+    (2, 2, "Books"),
+    (3, 2, "Movies");
 
 -- Insert data into the lists table
 DELETE FROM lists;
@@ -58,3 +58,10 @@ VALUES
     (5, 5, 3, "Disney"),
     (6, 6, 3, "Disney"),
     (7, 7, 3, "Mel Gibson");
+
+DELETE FROM users;
+
+INSERT INTO users(UserID, Username, Email, Password)
+VALUES
+    (1, "Some user", "some@email.com", "$2a$12$bNG5j/sssJaBmlY21hpChOq.pc5q0A18Byj0jclPt4JgRDtdTWIf."),
+    (2, "BlueDragon28", "dragon@sisu.com", "$2a$12$dyYOCKe0BHbk4Xl/lGuztuthifqdPIMOX93P1wXOeO7hQ32/1eSTi");
