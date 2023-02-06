@@ -11,6 +11,7 @@ const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/er
 const { deleteCollection } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn } = require("../utils/users/authentification");
+const { checkCollectionAuth } = require("../utils/users/authorization");
 
 const router = express.Router();
 
@@ -23,22 +24,6 @@ router.use("/:collectionID", validation.id);
 Check if the user is logged in
 */
 router.use(isLoggedIn);
-
-/*
-Check if the user is allowed to access a collection
-*/
-async function checkCollectionAuth(req, res, next) {
-    const { collectionID } = req.params;
-    const userID = req.session.user.id;
-
-    const isAuthorized = await Collection.isUserAllowed(userID, collectionID);
-
-    if (!isAuthorized) {
-        return next(new AuthorizationError("You Don't Have The Right To Go There!!!"));
-    }
-
-    next();
-}
 
 /*
 Entry to see the collections list

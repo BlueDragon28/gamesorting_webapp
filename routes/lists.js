@@ -10,6 +10,7 @@ const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/er
 const { deleteList } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn } = require("../utils/users/authentification");
+const { checkListAuth } = require("../utils/users/authorization");
 
 const router = express.Router({ mergeParams: true });
 
@@ -17,22 +18,6 @@ const router = express.Router({ mergeParams: true });
 Check if the user is logged in
 */
 router.use(isLoggedIn);
-
-/*
-Check if the user is allowed to access a list
-*/
-async function checkListAuth(req, res, next) {
-    const { listID } = req.params;
-    const userID = req.session.user.id;
-
-    const isAuthorized = await List.isUserAllowed(userID, listID);
-
-    if (!isAuthorized) {
-        return next(new AuthorizationError("You Don't Have The Right To Go There!!!"));
-    }
-
-    next();
-}
 
 async function deleteItemsAndCustomData(item) {
     if (!item || !item instanceof Item || !item.isValid()) {

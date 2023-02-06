@@ -12,6 +12,7 @@ const customDataValidation = require("../utils/validation/customDataValidation")
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn } = require("../utils/users/authentification");
+const { checkItemAuth } = require("../utils/users/authorization");
 
 const router = express.Router({ mergeParams: true });
 
@@ -24,22 +25,6 @@ router.use([ "/items/:itemID", "/items" ], validation.id);
 Check if the user is logged in
 */
 router.use(isLoggedIn);
-
-/*
-Check if the user is allowed to access a item
-*/
-async function checkItemAuth(req, res, next) {
-    const { itemID } = req.params;
-    const userID = req.session.user.id;
-
-    const isAuthorized = await Item.isUserAllowed(userID, itemID);
-
-    if (!isAuthorized) {
-        return next(new AuthorizationError("You Don't Have The Right To Go There!!!"));
-    }
-
-    next();
-}
 
 /*
 Setting javascript utils for the new and edit ejs template
