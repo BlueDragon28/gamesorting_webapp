@@ -10,7 +10,7 @@ const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/er
 const { deleteList } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn } = require("../utils/users/authentification");
-const { checkListAuth } = require("../utils/users/authorization");
+const { checkCollectionAuth, checkListAuth } = require("../utils/users/authorization");
 
 const router = express.Router({ mergeParams: true });
 
@@ -53,7 +53,7 @@ router.use([ "/lists/:listID", "/lists" ], validation.id);
 /*
 Form to create a new lists in a collection
 */
-router.get("/lists/new", wrapAsync(async (req, res) => {
+router.get("/lists/new", checkCollectionAuth, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await Collection.findByID(collectionID);
@@ -103,7 +103,7 @@ router.get("/lists/:listID/edit", checkListAuth, wrapAsync(async (req, res) => {
 /*
 Add a new list to a collection
 */
-router.post("/lists", validation.item({ name: true }), wrapAsync(async (req, res) => {
+router.post("/lists", checkCollectionAuth, validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
 
