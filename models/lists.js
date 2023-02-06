@@ -214,6 +214,30 @@ class List {
         });
     }
 
+    static async isUserAllowed(userID, listID, connection) {
+        userID = bigint.toBigInt(userID);
+        listID = bigint.toBigInt(listID);
+
+        if (!bigint.isValid(userID) || !bigint.isValid(listID)) {
+            throw new ValueError(400, "Invalid UserID or ListID");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                "SELECT COUNT(*) AS count FROM lists INNER JOIN collections USING (CollectionID) " + 
+                `INNER JOIN users USING (UserID) WHERE UserID = ${userID} AND ListID = ${listID}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+
+                return queryResult[0].count > 0;
+            } catch (error) {
+                throw new SqlError(`Failed to check if user is allowed to view this list`);
+            }
+        });
+    }
+
+
     static #parseFoundLists(collection, lists) {
         const listsArray = [];
 

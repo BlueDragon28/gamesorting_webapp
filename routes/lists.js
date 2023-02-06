@@ -4,7 +4,7 @@ const { List } = require("../models/lists");
 const { Item } = require("../models/items");
 const { CustomRowsItems } = require("../models/customUserData");
 const wrapAsync = require("../utils/errors/wrapAsync");
-const { InternalError } = require("../utils/errors/exceptions");
+const { InternalError, AuthorizationError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const { deleteList } = require("../utils/data/deletionHelper");
@@ -17,6 +17,22 @@ const router = express.Router({ mergeParams: true });
 Check if the user is logged in
 */
 router.use(isLoggedIn);
+
+/*
+Check if the user is allowed to access a list
+*/
+async function checkListAuth(req, res, next) {
+    const { listID } = req.params;
+    const userID = req.session.user.id;
+
+    const isAuthorized = await List.isUserAllowed(userID, listID);
+
+    if (!isAuthorized) {
+        return next(new AuthorizationError("You Don't Have The Right To Go There!!!"));
+    }
+
+    next();
+}
 
 async function deleteItemsAndCustomData(item) {
     if (!item || !item instanceof Item || !item.isValid()) {
@@ -67,7 +83,7 @@ router.get("/lists/new", wrapAsync(async (req, res) => {
 /*
 Entry point to list all items inside a list
 */
-router.get("/lists/:listID", wrapAsync(async (req, res) => {
+router.get("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const list = await List.findByID(listID);
@@ -87,7 +103,7 @@ router.get("/lists/:listID", wrapAsync(async (req, res) => {
 /*
 Form to edit a list
 */
-router.get("/lists/:listID/edit", wrapAsync(async (req, res) => {
+router.get("/lists/:listID/edit", checkListAuth, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     const list = await List.findByID(listID);
@@ -128,7 +144,7 @@ router.post("/lists", validation.item({ name: true }), wrapAsync(async (req, res
 /*
 Edit list
 */
-router.put("/lists/:listID", validation.item({ name: true }), wrapAsync(async (req, res) => {
+router.put("/lists/:listID", checkListAuth, validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const { name } = req.body;
 
@@ -153,7 +169,7 @@ router.put("/lists/:listID", validation.item({ name: true }), wrapAsync(async (r
 /*
 Delete a list from a collection
 */
-router.delete("/lists/:listID", wrapAsync(async (req, res) => {
+router.delete("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
 
     await existingOrNewConnection(undefined, async function(connection) {
