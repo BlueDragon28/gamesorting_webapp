@@ -6,7 +6,7 @@ const { Item } = require("../models/items");
 const { deleteItem } = require("../utils/data/deletionHelper");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const bigint = require("../utils/numbers/bigint");
-const { InternalError, ValueError } = require("../utils/errors/exceptions");
+const { InternalError, ValueError, AuthorizationError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const customDataValidation = require("../utils/validation/customDataValidation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
@@ -24,6 +24,22 @@ router.use([ "/items/:itemID", "/items" ], validation.id);
 Check if the user is logged in
 */
 router.use(isLoggedIn);
+
+/*
+Check if the user is allowed to access a item
+*/
+async function checkItemAuth(req, res, next) {
+    const { itemID } = req.params;
+    const userID = req.session.user.id;
+
+    const isAuthorized = await Item.isUserAllowed(userID, itemID);
+
+    if (!isAuthorized) {
+        return next(new AuthorizationError("You Don't Have The Right To Go There!!!"));
+    }
+
+    next();
+}
 
 /*
 Setting javascript utils for the new and edit ejs template
@@ -87,7 +103,7 @@ router.get("/items/new", customDataEjsHelper, wrapAsync(async (req ,res) => {
 /*
 Display informations about an item
 */
-router.get("/items/:itemID", wrapAsync(async (req, res) => {
+router.get("/items/:itemID", checkItemAuth, wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
     const item = await Item.findByID(itemID);
@@ -108,7 +124,7 @@ router.get("/items/:itemID", wrapAsync(async (req, res) => {
 /*
 Form to edit an item
 */
-router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res) => {
+router.get("/items/:itemID/edit", checkItemAuth, customDataEjsHelper, wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
     const item = await Item.findByID(itemID);
@@ -129,7 +145,7 @@ router.get("/items/:itemID/edit", customDataEjsHelper, wrapAsync(async (req, res
 /*
 Insert a new item into a list inside a collection
 */
-router.post("/items", parseCustomColumnsData, 
+router.post("/items", checkItemAuth, parseCustomColumnsData, 
             validation.item({ name: true, url: true, customData: true }),
             customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
@@ -167,7 +183,7 @@ router.post("/items", parseCustomColumnsData,
 /*
 Edit An Item
 */
-router.put("/items/:itemID", parseCustomColumnsData, 
+router.put("/items/:itemID", checkItemAuth, parseCustomColumnsData, 
             validation.item({ name: true, url: true, customData: true }),
     customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
@@ -231,7 +247,7 @@ router.put("/items/:itemID", parseCustomColumnsData,
 /*
 Delete an item from a list
 */
-router.delete("/items/:itemID", wrapAsync(async (req, res) => {
+router.delete("/items/:itemID", checkItemAuth, wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
 
     await existingOrNewConnection(undefined, async function(connection) {

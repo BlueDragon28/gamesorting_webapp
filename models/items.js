@@ -241,6 +241,30 @@ class Item {
         });
     }
 
+    static async isUserAllowed(userID, itemID, connection) {
+        userID = bigint.toBigInt(userID);
+        itemID = bigint.toBigInt(itemID);
+
+        if (!bigint.isValid(userID) || !bigint.isValid(itemID)) {
+            throw new ValueError(400, "Invalid UserID or ItemID");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                "SELECT COUNT(*) AS count FROM items INNER JOIN lists USING (ListID) " + 
+                "INNER JOIN collections USING (CollectionID) " + 
+                `INNER JOIN users USING (UserID) WHERE UserID = ${userID} AND ItemID = ${itemID}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+
+                return queryResult[0].count > 0;
+            } catch (error) {
+                throw new SqlError(`Failed to check if user is allowed to view this item`);
+            }
+        });
+    }
+
     static #parseFoundItems(list, items) {
         const itemsArray = [];
 
