@@ -29,8 +29,17 @@ class InternalError extends Error {
     }
 }
 
+class AuthorizationError extends Error {
+    constructor(message) {
+        super(message);
+        this.statusCode = 403;
+        this.name = "AuthorizationError";
+    }
+}
+
 module.exports = {
     SqlError,
     ValueError,
-    InternalError
+    InternalError,
+    AuthorizationError
 }

@@ -5,7 +5,7 @@ const express = require("express");
 const { Collection } = require("../models/collections");
 const { List } = require("../models/lists");
 const wrapAsync = require("../utils/errors/wrapAsync");
-const { InternalError } = require("../utils/errors/exceptions");
+const { InternalError, AuthorizationError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const { deleteCollection } = require("../utils/data/deletionHelper");
@@ -23,6 +23,22 @@ router.use("/:collectionID", validation.id);
 Check if the user is logged in
 */
 router.use(isLoggedIn);
+
+/*
+Check if the user is allowed to access a collection
+*/
+async function checkCollectionAuth(req, res, next) {
+    const { collectionID } = req.params;
+    const userID = req.session.user.id;
+
+    const isAuthorized = await Collection.isUserAllowed(userID, collectionID);
+
+    if (!isAuthorized) {
+        return next(new AuthorizationError("You Don't Have The Right To Go There!!!"));
+    }
+
+    next();
+}
 
 /*
 Entry to see the collections list
@@ -47,7 +63,7 @@ router.get("/new", (req, res) => {
 /*
 Entry to see the lists available inside a collection
 */
-router.get("/:collectionID", wrapAsync(async (req, res) => {
+router.get("/:collectionID", checkCollectionAuth, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await Collection.findByID(collectionID);
@@ -67,7 +83,7 @@ router.get("/:collectionID", wrapAsync(async (req, res) => {
 /*
 Form to edit a collection
 */
-router.get("/:collectionID/edit", wrapAsync(async (req, res) => {
+router.get("/:collectionID/edit", checkCollectionAuth, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     const collection = await Collection.findByID(collectionID);
@@ -101,7 +117,7 @@ router.post("/", validation.item({ name: true }), wrapAsync(async (req, res) => 
 /*
 Edit a collection
 */
-router.put("/:collectionID", validation.item({ name: true }), wrapAsync(async (req, res) => {
+router.put("/:collectionID", checkCollectionAuth, validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
     const { name } = req.body;
 
@@ -124,7 +140,7 @@ router.put("/:collectionID", validation.item({ name: true }), wrapAsync(async (r
 /*
 Delete a collection
 */
-router.delete("/:collectionID", wrapAsync(async (req, res) => {
+router.delete("/:collectionID", checkCollectionAuth, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
 
     await existingOrNewConnection(undefined, async function(connection) {

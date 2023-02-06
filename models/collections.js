@@ -202,6 +202,29 @@ class Collection {
         });
     }
 
+    static async isUserAllowed(userID, collectionID, connection) {
+        userID = bigint.toBigInt(userID);
+        collectionID = bigint.toBigInt(collectionID);
+
+        if (!bigint.isValid(userID) || !bigint.isValid(collectionID)) {
+            throw new ValueError(400, "Invalid UserID or CollectionID");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                "SELECT COUNT(*) AS count FROM collections INNER JOIN users USING (UserID) " +
+                `WHERE UserID = ${userID} AND CollectionID = ${collectionID}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+
+                return queryResult[0].count > 0;
+            } catch (error) {
+                throw new SqlError(`Failed to check if user is allowed to view this collection`);
+            }
+        });
+    }
+
     static #parseFoundCollections(collections) {
         const collectionsList = [];
 
