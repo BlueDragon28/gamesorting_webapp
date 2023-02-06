@@ -85,7 +85,7 @@ Create a new collection
 router.post("/", validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { name } = req.body;
 
-    const newCollection = new Collection(name);
+    const newCollection = new Collection(req.session.user.id, name);
 
     if (!newCollection.isValid()) {
         throw new InternalError("Failed To Insert A New Collection");
