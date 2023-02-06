@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS collections;
 
 CREATE TABLE IF NOT EXISTS collections(
     CollectionID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    UserID BIGINT NOT NULL, -- A pointer to the user
     Name VARCHAR(300) NOT NULL -- The name of the collection
 );
 
