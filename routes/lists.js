@@ -9,15 +9,9 @@ const validation = require("../utils/validation/validation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const { deleteList } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
-const { isLoggedIn } = require("../utils/users/authentification");
 const { checkCollectionAuth, checkListAuth } = require("../utils/users/authorization");
 
 const router = express.Router({ mergeParams: true });
-
-/*
-Check if the user is logged in
-*/
-router.use(isLoggedIn);
 
 async function deleteItemsAndCustomData(item) {
     if (!item || !item instanceof Item || !item.isValid()) {

@@ -11,7 +11,6 @@ const validation = require("../utils/validation/validation");
 const customDataValidation = require("../utils/validation/customDataValidation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const { existingOrNewConnection } = require("../utils/sql/sql");
-const { isLoggedIn } = require("../utils/users/authentification");
 const { checkListAuth, checkItemAuth } = require("../utils/users/authorization");
 
 const router = express.Router({ mergeParams: true });
@@ -20,11 +19,6 @@ const router = express.Router({ mergeParams: true });
 Validate collectionID, listID and itemID on each route asking for for them
 */
 router.use([ "/items/:itemID", "/items" ], validation.id);
-
-/*
-Check if the user is logged in
-*/
-router.use(isLoggedIn);
 
 /*
 Setting javascript utils for the new and edit ejs template
