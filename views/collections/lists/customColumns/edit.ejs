@@ -1,0 +1,53 @@
+<% layout("layouts/boilerplate.ejs") -%>
+
+<% 
+function exportList() {
+    return {
+        id: list.id,
+        name: list.name,
+        parentCollection: {
+            id: list.parentCollection.id
+        }
+    }
+}
+
+function jsonReplacer(key, value) {
+    if (typeof value === "bigint") {
+        return value.toString();
+    }
+
+    return value;
+}
+
+function exportListCustomColumns() {
+    return listCustomColumns.map(customColumn => (
+        JSON.stringify({
+            id: customColumn.id,
+            name: customColumn.name,
+            type: customColumn.type
+        }, jsonReplacer)
+    ));
+}
+%>
+<script>
+    const list = <%- JSON.stringify(exportList(), jsonReplacer) %>;
+    const listCustomColumns = <%- `[ ${exportListCustomColumns()} ]` %>
+
+</script>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Edit <%= list.name %> Custom Columns</h4>
+
+                <div id="columnsList">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<script src="/javascripts/customColumnsList.js"></script>-->
+<script src="/javascript/customColumnsList.js"></script>
