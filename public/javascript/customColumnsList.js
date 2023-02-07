@@ -20,7 +20,7 @@ function parseTypeToHtml(columnType) {
     return "";
 }
 
-for (let customColumn of listCustomColumns) {
+function createHtmlCustomColumn(customColumn) {
     const divContainer = document.createElement("div");
     divContainer.classList.add("card");
     divContainer.innerHTML = `
@@ -33,4 +33,8 @@ for (let customColumn of listCustomColumns) {
         </div>
     `;
     columnsListDiv.append(divContainer);
+}
+
+for (let customColumn of listCustomColumns) {
+    createHtmlCustomColumn(customColumn);
 }
