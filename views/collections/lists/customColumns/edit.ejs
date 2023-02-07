@@ -41,9 +41,24 @@ function exportListCustomColumns() {
             <div class="card-body">
                 <h4 class="card-title">Edit <%= list.name %> Custom Columns</h4>
 
-                <div id="columnsList">
+                <div class="mb-3" id="columnsList">
 
                 </div>
+
+                <form action="#" id="customColumnSubmitter">
+                    <div class="mb-3">
+                        <label class="form-label" for="column-name">Column Name</label>
+                        <input class="form-control" type="text" name="columnName" id="column-name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="column-type">Column Type</label>
+                        <select class="form-control" name="columnType" id="column-type">
+                            <option value="@String" active>String</option>
+                            <option value="@Int">Int</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success w-100">Add</button>
+                </form>
             </div>
         </div>
     </div>
