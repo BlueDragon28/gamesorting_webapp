@@ -27,18 +27,6 @@ async function deleteItemsAndCustomData(item) {
     await Item.deleteFromID(item.id);
 }
 
-async function deleteItems(list) {
-    const items = await Item.findFromList(list);
-
-    if (!items) {
-        return;
-    }
-
-    for (let item of items) {
-        await deleteItemsAndCustomData(item);
-    }
-}
-
 /*
 Validate collectionID and listID on each route asking for for them
 */
