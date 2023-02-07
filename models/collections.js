@@ -165,10 +165,16 @@ class Collection {
         });
     }
 
-    static async findAll(connection) {
+    static async findAllFromUserID(userID, connection) {
+        userID = bigint.toBigInt(userID);
+        if (!bigint.isValid(userID)) {
+            throw new ValueError(400, "Invalid User");
+        }
+
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                "SELECT UserID, CollectionID, Name FROM collections INNER JOIN users USING (UserID);";
+                "SELECT UserID, CollectionID, Name FROM collections INNER JOIN users USING (UserID) " +
+                `WHERE UserID = ${userID};`;
 
             try {
                 const queryResult = await connection.query(queryStatement);

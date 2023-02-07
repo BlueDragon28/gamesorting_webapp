@@ -29,7 +29,7 @@ router.use(isLoggedIn);
 Entry to see the collections list
 */
 router.get("/", wrapAsync(async (req, res) => {
-    const collections = await Collection.findAll();
+    const collections = await Collection.findAllFromUserID(req.session.user.id);
 
     if (!collections || !Array.isArray(collections)) {
         throw new InternalError("Failed To Query Collections");
