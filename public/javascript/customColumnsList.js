@@ -1,10 +1,12 @@
 const columnsListDiv = document.querySelector("#columnsList");
+const customColumnForm = document.querySelector("#customColumnSubmitter");
+const columnNameInput = document.querySelector("#column-name");
+const columnTypeInput = document.querySelector("#column-type");
 
 function parseIntTypeToHtml(columnType) {
     if (!columnType.type || !columnType.min || !columnType.max) {
         return "";
     }
-    console.log(columnType)
 
     return `Min: <b class="column-int-min">${columnType.min}</b>
         Max: <b class="column-max-int">${columnType.max}</b>`;
@@ -38,3 +40,25 @@ function createHtmlCustomColumn(customColumn) {
 for (let customColumn of listCustomColumns) {
     createHtmlCustomColumn(customColumn);
 }
+
+/*
+Catch the form submition and add the new column to the data list
+*/
+function onNewColumn(event) {
+    event.preventDefault();
+
+    const name = columnNameInput.value;
+    const type = columnTypeInput.value;
+
+    const newCustomColumn = {
+        id: "-1",
+        name,
+        type: {
+            type: type
+        }
+    };
+    listCustomColumns.push(newCustomColumn);
+
+    createHtmlCustomColumn(newCustomColumn);
+}
+customColumnForm.addEventListener("submit", onNewColumn);
