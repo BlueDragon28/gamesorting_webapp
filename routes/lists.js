@@ -3,6 +3,7 @@ const { Collection } = require("../models/collections");
 const { List } = require("../models/lists");
 const { Item } = require("../models/items");
 const { CustomRowsItems } = require("../models/customUserData");
+const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, AuthorizationError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
@@ -65,6 +66,22 @@ router.get("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
     }
 
     res.render("collections/lists/items/items", { list, items });
+}));
+
+/*
+Add or remove custom columns to the list
+*/
+router.get("/lists/:listID/custom-columns", checkListAuth, wrapAsync(async (req, res) => {
+    const { listID } = req.params;
+
+    const [list, listCustomColumns] = await existingOrNewConnection(null, async connection => {
+        const list = await List.findByID(listID, connection);
+        const listCustomColumns = await ListColumnType.findFromList(list, connection);
+
+        return [list, listCustomColumns];
+    });
+
+    res.render("collections/lists/customColumns/edit", { list, listCustomColumns });
 }));
 
 /*
