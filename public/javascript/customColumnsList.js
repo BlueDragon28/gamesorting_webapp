@@ -4,7 +4,8 @@ const columnNameInput = document.querySelector("#column-name");
 const columnTypeInput = document.querySelector("#column-type");
 
 let count = 0;
-const newColumnsList = [];
+let newColumnsList = [];
+const removedColumn = [];
 
 function parseIntTypeToHtml(columnType) {
     if (!columnType.type || isNaN(columnType.min) || isNaN(columnType.max)) {
@@ -40,6 +41,14 @@ function createHtmlCustomColumn(customColumn) {
         Type: <b class="column-type">${customColumn.type.type}</b>
         ${parseTypeToHtml(customColumn.type)}`;
     divCardBoby.append(pCardTitle);
+
+    const buttonDeleteColumn = document.createElement("button");
+    buttonDeleteColumn.type = "button";
+    buttonDeleteColumn.classList.add("btn", "btn-danger", "btn-sm");
+    buttonDeleteColumn.innerText = "Delete";
+    buttonDeleteColumn.addEventListener("click", 
+        () => onColumnDeletion(divContainer, customColumn.fromList, customColumn.index));
+    divCardBoby.append(buttonDeleteColumn);
 
     columnsListDiv.append(divContainer);
 }
@@ -101,3 +110,19 @@ function onNewColumn(event) {
 }
 
 customColumnForm.addEventListener("submit", onNewColumn);
+
+/*
+Remove a column the user selected
+*/
+function onColumnDeletion(divContainer, fromList, index) {
+    if (fromList === "original") {
+        const originalColumn = listCustomColumns[index];
+        delete originalColumn.fromList;
+        delete originalColumn.index;
+        removedColumn.push(originalColumn);
+    } else if (fromList === "new") {
+        newColumnsList = newColumnsList.filter(column => column.index !== index);
+    }
+
+    divContainer.remove();
+}
