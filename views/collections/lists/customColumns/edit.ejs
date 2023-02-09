@@ -29,6 +29,7 @@ function exportListCustomColumns() {
     ));
 }
 %>
+
 <script>
     const list = <%- JSON.stringify(exportList(), jsonReplacer) %>;
     const listCustomColumns = <%- `[ ${exportListCustomColumns()} ]` %>
@@ -63,6 +64,9 @@ function exportListCustomColumns() {
         </div>
     </div>
 </div>
+
+<!--Including axios-->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 <!--<script src="/javascripts/customColumnsList.js"></script>-->
 <script src="/javascript/customColumnsList.js"></script>
