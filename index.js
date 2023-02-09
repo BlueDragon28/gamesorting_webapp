@@ -20,6 +20,7 @@ app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
 
