@@ -85,6 +85,15 @@ router.get("/lists/:listID/custom-columns", checkListAuth, wrapAsync(async (req,
 }));
 
 /*
+Post route to add a new custom column
+*/
+router.post("/lists/:listID/custom-columns", checkListAuth, wrapAsync(async (req, res) => {
+    console.log("axios request received");
+    console.log(req.body);
+    res.send("Data received");
+}));
+
+/*
 Form to edit a list
 */
 router.get("/lists/:listID/edit", checkListAuth, wrapAsync(async (req, res) => {
