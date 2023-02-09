@@ -32,7 +32,7 @@ function exportListCustomColumns() {
 <script>
     const list = <%- JSON.stringify(exportList(), jsonReplacer) %>;
     const listCustomColumns = <%- `[ ${exportListCustomColumns()} ]` %>
-
+        .map(function(column, index) { return { ...column, index, fromList: "original" } });
 </script>
 
 <div class="row">
