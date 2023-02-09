@@ -28,15 +28,19 @@ function parseTypeToHtml(columnType) {
 function createHtmlCustomColumn(customColumn) {
     const divContainer = document.createElement("div");
     divContainer.classList.add("card");
-    divContainer.innerHTML = `
-        <div class="card-body">
-        <p class="card-title">
-            Name: <b class="column-name">${customColumn.name}</b>
-            Type: <b class="column-type">${customColumn.type.type}</b>
-            ${parseTypeToHtml(customColumn.type)}
-        </p>
-        </div>
-    `;
+
+    const divCardBoby = document.createElement("div");
+    divCardBoby.classList.add("card-body");
+    divContainer.append(divCardBoby);
+
+    const pCardTitle = document.createElement("p");
+    pCardTitle.classList.add("card-title");
+    pCardTitle.innerHTML = 
+        `Name: <b class="column-name">${customColumn.name}</b>
+        Type: <b class="column-type">${customColumn.type.type}</b>
+        ${parseTypeToHtml(customColumn.type)}`;
+    divCardBoby.append(pCardTitle);
+
     columnsListDiv.append(divContainer);
 }
 
