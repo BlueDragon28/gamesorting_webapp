@@ -4,7 +4,7 @@ const columnNameInput = document.querySelector("#column-name");
 const columnTypeInput = document.querySelector("#column-type");
 
 function parseIntTypeToHtml(columnType) {
-    if (!columnType.type || !columnType.min || !columnType.max) {
+    if (!columnType.type || isNaN(columnType.min) || isNaN(columnType.max)) {
         return "";
     }
 
@@ -47,25 +47,48 @@ function resetInputs() {
 }
 
 /*
+Generate the type object of the newly created element
+*/
+function parseType() {
+    const type = columnTypeInput.value;
+
+    switch (type) {
+    case "@String":
+    {
+        return {
+            type
+        };
+    }
+    case "@Int":
+    {
+        return {
+            type,
+            min: 0,
+            max: 200000
+        };
+    }
+    }
+}
+
+/*
 Catch the form submition and add the new column to the data list
 */
 function onNewColumn(event) {
     event.preventDefault();
 
     const name = columnNameInput.value;
-    const type = columnTypeInput.value;
 
-    resetInputs();
 
     const newCustomColumn = {
         id: "-1",
         name,
-        type: {
-            type: type
-        }
+        type: parseType()
     };
     listCustomColumns.push(newCustomColumn);
 
+    resetInputs();
+
     createHtmlCustomColumn(newCustomColumn);
 }
+
 customColumnForm.addEventListener("submit", onNewColumn);
