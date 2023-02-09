@@ -41,6 +41,11 @@ for (let customColumn of listCustomColumns) {
     createHtmlCustomColumn(customColumn);
 }
 
+function resetInputs() {
+    columnNameInput.value = "";
+    columnTypeInput.value = "@String";
+}
+
 /*
 Catch the form submition and add the new column to the data list
 */
@@ -49,6 +54,8 @@ function onNewColumn(event) {
 
     const name = columnNameInput.value;
     const type = columnTypeInput.value;
+
+    resetInputs();
 
     const newCustomColumn = {
         id: "-1",
