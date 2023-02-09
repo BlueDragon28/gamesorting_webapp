@@ -3,6 +3,9 @@ const customColumnForm = document.querySelector("#customColumnSubmitter");
 const columnNameInput = document.querySelector("#column-name");
 const columnTypeInput = document.querySelector("#column-type");
 
+let count = 0;
+const newColumnsList = [];
+
 function parseIntTypeToHtml(columnType) {
     if (!columnType.type || isNaN(columnType.min) || isNaN(columnType.max)) {
         return "";
@@ -82,9 +85,11 @@ function onNewColumn(event) {
     const newCustomColumn = {
         id: "-1",
         name,
-        type: parseType()
+        type: parseType(),
+        index: count++,
+        fromList: "new"
     };
-    listCustomColumns.push(newCustomColumn);
+    newColumnsList.push(newCustomColumn);
 
     resetInputs();
 
