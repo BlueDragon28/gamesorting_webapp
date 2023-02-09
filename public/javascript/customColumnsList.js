@@ -12,7 +12,7 @@ function parseIntTypeToHtml(columnType) {
         return "";
     }
 
-    return `Min: <b class="column-int-min">${columnType.min}</b>
+    return `<br>Min: <b class="column-int-min">${columnType.min}</b>
         Max: <b class="column-max-int">${columnType.max}</b>`;
 }
 
