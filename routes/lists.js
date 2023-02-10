@@ -99,6 +99,10 @@ router.post("/lists/:listID/custom-columns", checkListAuth, wrapAsync(async (req
             const newColumn = new ListColumnType(column.name, column.type, parentList);
             await newColumn.save(connection);
         }
+
+        for (let column of columnsToDelete) {
+            await ListColumnType.deleteFromID(column.id, connection);
+        }
     });
 
     res.send("Data received");

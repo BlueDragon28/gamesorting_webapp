@@ -240,6 +240,24 @@ class ListColumnType {
         });
     }
 
+    static async deleteFromID(customListID, connection) {
+        customListID = bigint.toBigInt(customListID);
+        if (!bigint.isValid(customListID)) {
+            throw new InternalError("Invalid List Columns Type ID");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                `DELETE FROM listColumnsType WHERE ListColumnTypeID = ${customListID}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+            } catch (error) {
+                throw new SqlError(`Failed to delete custom column ${customListID}: ${error.message}`);
+            }
+        });
+    }
+
     static #parseFoundColumnsType(list, columnsType) {
         const columnTypeArray = [];
 
