@@ -1,5 +1,3 @@
-console.log(newColumnsList);
-
 const submitButton = document.querySelector("#submit_button");
 
 submitButton.addEventListener("click", function() {
