@@ -3,6 +3,15 @@ const { List } = require("./lists");
 const { SqlError, ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
 
+function toJSON(json) {
+    return JSON.stringify(json, function(key, value) {
+        if (typeof value === "bigint") {
+            return value.toString();
+        }
+        return value;
+    });
+}
+
 class ListColumnType {
     id;
     name;
@@ -38,12 +47,38 @@ class ListColumnType {
         return true;
     }
 
+    async save(connection) {
+        const isListColumnTypeExisting = await this.exists(connection);
+
+        if (!this.isValid(connection)) {
+            throw new ValueError(400, "Invalid List Column Type Name");
+        }
+
+        if (await this.isDuplicate(connection)) {
+            throw new ValueError(400, "List Column Type Name Is Already Used");
+        }
+
+        if (!isListColumnTypeExisting) {
+            await this.#createListColumnType(connection);
+        } else {
+            throw new InternalError("Cannot add this custom column: custom column already exists");
+        }
+    }
+
     async exists(connection) {
         if (!this.id) {
             return false;
         }
 
         return existingOrNewConnection(connection, this.#_exists.bind(this));
+    }
+
+    async isDuplicate(connection) {
+        if (!this.isValid()) {
+            return false;
+        }
+
+        return await existingOrNewConnection(connection, this.#_isDuplicate.bind(this));
     }
 
     async #_exists(connection) {
@@ -59,6 +94,42 @@ class ListColumnType {
             return queryResult.count > 0;
         } catch (error) {
             throw new SqlError(`Failed to check if column type item exists: ${error.message}`);
+        }
+    }
+
+    async #_isDuplicate(connection) {
+        const queryStatement = 
+            "SELECT COUNT(1) as count FROM listColumnsType " +
+            `WHERE Name = "${sqlString(this.name)}" AND ListID != ${this.parentList.id ? this.parentList.id : -1} ` +
+            "LIMIT 1";
+
+        try {
+            const queryResult = (await connection.query(queryStatement))[0];
+
+            return queryResult.count > 0;
+        } catch (error) {
+            throw new SqlError(`Failed to check for listColumnType duplicate: ${error.message}`);
+        }
+    }
+
+    async #createListColumnType(connection) {
+        return await existingOrNewConnection(connection, this.#_createListColumnType.bind(this));
+    }
+
+    async #_createListColumnType(connection) {
+        const queryStatement = "INSERT INTO listColumnsType(ListID, Name, Type) VALUES " + 
+            `(${this.parentList.id}, "${sqlString(this.name)}", "${sqlString(toJSON(this.type))}")`;
+
+        try {
+            const queryResult = await connection.query(queryStatement);
+
+            this.id = queryResult.insertId;
+
+            if (!this.id || !bigint.isValid(this.id)) {
+                throw new Error("Invalid ID");
+            }
+        } catch (error) {
+            throw new SqlError(`Failed to insert a listColumnsType: ${error.message}`);
         }
     }
 

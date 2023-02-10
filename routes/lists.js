@@ -85,11 +85,22 @@ router.get("/lists/:listID/custom-columns", checkListAuth, wrapAsync(async (req,
 }));
 
 /*
-Post route to add a new custom column
+Post route to add and delete custom columns
 */
 router.post("/lists/:listID/custom-columns", checkListAuth, wrapAsync(async (req, res) => {
-    console.log("axios request received");
-    console.log(req.body);
+    const { listID } = req.params;
+    const { newColumns, columnsToDelete } = req.body;
+
+    await existingOrNewConnection(null, async function(connection) {
+        const parentList = 
+            newColumns.length ? await List.findByID(listID, connection) : null;
+
+        for (let column of newColumns) {
+            const newColumn = new ListColumnType(column.name, column.type, parentList);
+            await newColumn.save(connection);
+        }
+    });
+
     res.send("Data received");
 }));
 
