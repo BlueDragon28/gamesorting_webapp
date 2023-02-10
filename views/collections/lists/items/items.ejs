@@ -5,6 +5,7 @@
 <div class="pb-4">
     <a class="btn btn-primary" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/items/new">New Item</a>
     <a class="btn btn-success" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/edit">Edit List</a>
+    <a class="btn btn-info" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/custom-columns">Update Custom Columns</a>
     <a class="btn btn-secondary" href="/collections/<%= list.parentCollection.id %>">Go Back!</a>
 
     <form class="d-inline" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?_method=DELETE" method="post">
