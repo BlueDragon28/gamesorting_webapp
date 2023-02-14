@@ -135,7 +135,7 @@ function onNewColumn(event) {
 
     const isColumnNotExist = checkIfColumnDoNotExists(name);
 
-    if (!isColumnNotExist) {
+    if (!isColumnNotExist || name.length === 0) {
         return;
     }
 
