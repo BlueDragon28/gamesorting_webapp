@@ -5,7 +5,7 @@ const { Item } = require("../models/items");
 const { CustomRowsItems } = require("../models/customUserData");
 const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
-const { InternalError, AuthorizationError } = require("../utils/errors/exceptions");
+const { InternalError, AuthorizationError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const { deleteList } = require("../utils/data/deletionHelper");
@@ -84,28 +84,98 @@ router.get("/lists/:listID/custom-columns", checkListAuth, wrapAsync(async (req,
     res.render("collections/lists/customColumns/edit", { list, listCustomColumns });
 }));
 
+function isUserEnteredTwoColumnWithSameName(newColumns) {
+    for (let i = 0; i < newColumns.length; i++) {
+        const copyWithouCurrentIndex = newColumns.filter((column, index) => index !== i);
+
+        const filteredList = copyWithouCurrentIndex.filter(column => newColumns[i].name === column.name);
+        if (filteredList.length > 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+async function checkForDuplicate(req, res, next) {
+    const { newColumns } = req.body;
+
+    if (isUserEnteredTwoColumnWithSameName(newColumns)) {
+        req.flash("error", "Two Columns Cannot Have The Same Name");
+        return res.status(400).send("Two Column Cannot Have The Same Name");
+    }
+
+    next();
+}
+
+function trimColumns(req, res, next) {
+    req.body.columnsToDelete = req.body.columnsToDelete.map(column => ({...column, name: column.name.trim()}));
+    req.body.newColumns = req.body.newColumns.map(column => ({...column, name: column.name.trim()}));
+    next();
+}
+
+async function retrievePreviousColumns(req, res, next) {
+    const { listID } = req.params;
+
+    const listCustomColumns = await existingOrNewConnection(null, async connection => {
+        const list = await List.findByID(listID, connection);
+        const listCustomColumns = await ListColumnType.findFromList(list, connection);
+
+        return listCustomColumns;
+    });
+
+    req.body.listCustomColumns = listCustomColumns;
+    next();
+}
+
+async function checkForDuplicateWithCurrentColumns(req, res, next) {
+    const { newColumns, columnsToDelete, listCustomColumns } = req.body;
+
+    for (let column of newColumns) {
+        const filteredCustomColumns = 
+            listCustomColumns.filter(customColumn => column.name === customColumn.name);
+        const filteredColumnsToDelete = 
+            columnsToDelete.filter(columnToDelete => column.name === columnToDelete.name);
+        
+        if (filteredCustomColumns.length > 0 && filteredColumnsToDelete.length === 0) {
+            req.flash("error", "Two Column Cannot Have The Same Name");
+            return res.status(400).send("Two Column Cannot Have The Same Name");
+        }
+    }
+
+    next();
+}
+
 /*
 Post route to add and delete custom columns
 */
-router.post("/lists/:listID/custom-columns", checkListAuth, wrapAsync(async (req, res) => {
-    const { listID } = req.params;
-    const { newColumns, columnsToDelete } = req.body;
+router.post("/lists/:listID/custom-columns", 
+    checkListAuth, 
+    trimColumns,
+    checkForDuplicate, 
+    retrievePreviousColumns,
+    checkForDuplicateWithCurrentColumns,
+    wrapAsync(async (req, res) => {
 
-    await existingOrNewConnection(null, async function(connection) {
-        const parentList = 
-            newColumns.length ? await List.findByID(listID, connection) : null;
+        const { listID } = req.params;
+        const { columnsToDelete } = req.body;
+        let { newColumns } = req.body;
 
-        for (let column of newColumns) {
-            const newColumn = new ListColumnType(column.name, column.type, parentList);
-            await newColumn.save(connection);
-        }
+        await existingOrNewConnection(null, async function(connection) {
+            const parentList = 
+                newColumns.length ? await List.findByID(listID, connection) : null;
 
-        for (let column of columnsToDelete) {
-            await ListColumnType.deleteFromID(column.id, connection);
-        }
-    });
+            for (let column of columnsToDelete) {
+                await ListColumnType.deleteFromID(column.id, connection);
+            }
 
-    res.send("Data received");
+            for (let column of newColumns) {
+                const newColumn = new ListColumnType(column.name, column.type, parentList);
+                await newColumn.save(connection);
+            }
+        });
+
+        res.send("Data received");
 }));
 
 /*
