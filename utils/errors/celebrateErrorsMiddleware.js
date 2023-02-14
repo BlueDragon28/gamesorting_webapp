@@ -12,6 +12,8 @@ function parseCelebrateError(err, req, res, next) {
         next(new InternalError("Invalid Error"));
     }
 
+    console.log(firstError);
+
     next(firstError);
 }
 

@@ -7,6 +7,7 @@ const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, AuthorizationError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
+const { listColumnsValidation } = require("../utils/validation/listColumnsValidation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const { deleteList } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
@@ -95,11 +96,15 @@ router.post("/lists/:listID/custom-columns",
     checkForDuplicate, 
     retrievePreviousColumns,
     checkForDuplicateWithCurrentColumns,
+    listColumnsValidation(),
     wrapAsync(async (req, res) => {
-
         const { listID } = req.params;
         const { columnsToDelete } = req.body;
         let { newColumns } = req.body;
+
+        if (newColumns === undefined) {
+            newColumns = [];
+        }
 
         await existingOrNewConnection(null, async function(connection) {
             const parentList = 
