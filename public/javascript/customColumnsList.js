@@ -88,7 +88,7 @@ function parseType() {
 
 function checkIfColumnNotRemoved(columnName) {
     for (let columnRemoved of removedColumn) {
-        if (columnName === columnRemoved) {
+        if (columnName === columnRemoved.name) {
             return false;
         }
     } 

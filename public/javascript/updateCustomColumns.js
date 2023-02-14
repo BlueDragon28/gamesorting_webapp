@@ -1,6 +1,7 @@
 const submitButton = document.querySelector("#submit_button");
 
-function onRequestFinish() {
+function onRequestFinish(event) {
+    console.log(event.target.response);
     window.location = `/collections/${list.parentCollection.id}/lists/${list.id}`;
 }
 
