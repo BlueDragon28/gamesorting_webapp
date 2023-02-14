@@ -44,6 +44,14 @@ class ListColumnType {
             return false;
         }
 
+        if (this.type.min !== undefined) {
+            this.type.min = parseInt(this.type.min);
+        }
+
+        if (this.type.max !== undefined) {
+            this.type.max = parseInt(this.type.max);
+        }
+
         return true;
     }
 
