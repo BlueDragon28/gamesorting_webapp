@@ -86,14 +86,45 @@ function parseType() {
     }
 }
 
+function checkIfColumnNotRemoved(columnName) {
+    for (let columnRemoved of removedColumn) {
+        if (columnName === columnRemoved) {
+            return false;
+        }
+    } 
+
+    return true;
+}
+
+function checkIfColumnDoNotExists(columnName) {
+    for (let newColumn of newColumnsList) {
+        if (columnName === newColumn.name) {
+            return false;
+        }
+    }
+
+    for (let originalColumn of listCustomColumns) {
+        if (columnName === originalColumn.name) {
+            if (checkIfColumnNotRemoved(columnName)) return false;
+        }
+    }
+
+    return true;
+}
+
 /*
 Catch the form submition and add the new column to the data list
 */
 function onNewColumn(event) {
     event.preventDefault();
 
-    const name = columnNameInput.value;
+    const name = columnNameInput.value.trim(); 
 
+    const isColumnNotExist = checkIfColumnDoNotExists(name);
+
+    if (!isColumnNotExist) {
+        return;
+    }
 
     const newCustomColumn = {
         id: "-1",
