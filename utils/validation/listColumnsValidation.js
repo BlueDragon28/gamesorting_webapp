@@ -22,7 +22,7 @@ function makeListColumnValidation() {
                 otherwise: Joi.valid(null)
             })
         }).required()
-    }).required();
+    });
 }
 
 function makeListColumnToDeleteValidation() {
@@ -34,7 +34,7 @@ function makeListColumnToDeleteValidation() {
 function validate() {
     const celebrateValidation = {
         [Segments.BODY]: Joi.object({
-            newColumns: Joi.array().items(makeListColumnValidation()).empty(Joi.array().length(0)),
+            newColumns: Joi.array().items(makeListColumnValidation()),
             columnsToDelete: Joi.array().items(makeListColumnToDeleteValidation())
         }).unknown().required()
     };

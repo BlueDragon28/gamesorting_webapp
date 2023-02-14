@@ -102,10 +102,6 @@ router.post("/lists/:listID/custom-columns",
         const { columnsToDelete } = req.body;
         let { newColumns } = req.body;
 
-        if (newColumns === undefined) {
-            newColumns = [];
-        }
-
         await existingOrNewConnection(null, async function(connection) {
             const parentList = 
                 newColumns.length ? await List.findByID(listID, connection) : null;
