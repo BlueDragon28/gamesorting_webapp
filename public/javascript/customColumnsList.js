@@ -2,6 +2,17 @@ const columnsListDiv = document.querySelector("#columnsList");
 const customColumnForm = document.querySelector("#customColumnSubmitter");
 const columnNameInput = document.querySelector("#column-name");
 const columnTypeInput = document.querySelector("#column-type");
+const columnNumberBlock = document.querySelector("#column-number-block");
+const columnNumberMinInput = document.querySelector("#column-number-min");
+const columnNumberMaxInput = document.querySelector("#column-number-max");
+
+columnTypeInput.addEventListener("change", function(event) {
+    if (columnTypeInput.value === "@Int") {
+        columnNumberBlock.classList.remove("d-none");
+    } else {
+        columnNumberBlock.classList.add("d-none");
+    }
+})
 
 let count = 0;
 let newColumnsList = [];
@@ -77,10 +88,12 @@ function parseType() {
     }
     case "@Int":
     {
+        const inputMin = columnNumberMinInput.value;
+        const inputMax = columnNumberMaxInput.value;
         return {
             type,
-            min: 0,
-            max: 200000
+            min: inputMin.length > 0 ? inputMin : 0,
+            max: inputMax.length > 0 ? inputMax : 20000
         };
     }
     }
