@@ -97,11 +97,11 @@ class User {
     async #_exists(connection) {
         const queryStatement = `SELECT COUNT(UserID) as count FROM users WHERE UserID = ${this.id}`;
         try {
-            const foundUser = await connection.query(queryStatement)[0];
+            const foundUser = (await connection.query(queryStatement))[0];
 
             return foundUser.count > 0;
         } catch (error) {
-            throw SqlError(`Failed to check if user exists: ${error.message}`);
+            throw new SqlError(`Failed to check if user exists: ${error.message}`);
         }
         
     }
@@ -154,7 +154,8 @@ class User {
 
         const queryStatement = 
             "SELECT COUNT(1) AS count FROM users WHERE " +
-            `Username = "${this.username}" OR Email = "${sqlString(this.email)}" ` +
+            `(Username = "${this.username}" OR Email = "${sqlString(this.email)}") ` +
+            `AND UserID != ${this.id ? this.id : -1} ` + 
             "LIMIT 1";
 
         try {
