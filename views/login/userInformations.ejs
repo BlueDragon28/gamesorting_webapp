@@ -1,0 +1,34 @@
+<%- layout("layouts/boilerplate") %>
+
+<style>
+    .display-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title"><%= user.username %></h4>
+                <div class="display-row">
+                    <p class="text-muted">Email: <%= user.email %></p>
+                    <a class="btn btn-info btn-sm" href="#">Change</a>
+                </div>
+                <div class="display-row">
+                    <p class="text-muted">Password: ****</p>
+                    <a class="btn btn-info btn-sm" href="#">Change</a>
+                </div>
+
+                <div>
+                    <form action="/users?_method=DELETE" method="post">
+                        <button class="btn btn-danger">Delete User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

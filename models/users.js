@@ -187,6 +187,34 @@ class User {
             }
         });
     }
+
+    static async findByID(userID, connection) {
+        if (!bigint.isValid(userID)) {
+            throw new ValueError(400, "Invalid User");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                `SELECT UserID, Username, Email, Password FROM users WHERE UserID = ${userID}`;
+            
+            try {
+                const queryResult = await connection.query(queryStatement);
+
+                if (!queryResult.length) {
+                    return null;
+                }
+
+                const { UserID, Username, Email, Password } = queryResult[0];
+
+                const foundUser = new User(Username, Email, Password, false);
+                foundUser.id = UserID;
+
+                return foundUser;
+            } catch (error) {
+                throw new SqlError(`Failed to retrieve user: ${error.message}`);
+            }
+        });
+    }
 }
 
 module.exports = {

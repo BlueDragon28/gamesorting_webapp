@@ -2,6 +2,7 @@ const express = require("express");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { User } = require("../models/users");
 const { checkIfUserValid } = require("../utils/validation/users");
+const { isLoggedIn } = require("../utils/users/authentification");
 
 const router = express.Router();
 
@@ -51,6 +52,14 @@ router.post("/login", wrapAsync(async function(req, res) {
 
     req.flash("success", "Welcome Back!");
     res.redirect("/collections");
+}));
+
+router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
+    const userID = req.session.user.id;
+
+    const foundUser = await User.findByID(userID);
+
+    res.render("login/userInformations", { user: foundUser });
 }));
 
 module.exports = router;
