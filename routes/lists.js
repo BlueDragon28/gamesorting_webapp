@@ -17,20 +17,6 @@ const { trimColumns, checkForDuplicate, checkForDuplicateWithCurrentColumns, ret
 
 const router = express.Router({ mergeParams: true });
 
-async function deleteItemsAndCustomData(item) {
-    if (!item || !item instanceof Item || !item.isValid()) {
-        return;
-    }
-
-    const customDatas = await CustomRowsItems.findFromItem(item.id);
-
-    for (let customData of customDatas) {
-        await customData.delete();
-    }
-
-    await Item.deleteFromID(item.id);
-}
-
 /*
 Validate collectionID and listID on each route asking for for them
 */
