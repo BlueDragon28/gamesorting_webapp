@@ -76,9 +76,38 @@ router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
     res.redirect("/");
 }));
 
-router.put("/email", isLoggedIn, wrapAsync(async function(req, res) {
-    console.log("Hello: put request received");
-    console.log(req.body);
+router.put("/email", isLoggedIn, wrapAsync(async function(req, res, next) {
+    const { email } = req.body;
+
+    const [success, error] = await existingOrNewConnection(null, async function(connection) {
+        try {
+            const foundUser = await User.findByID(req.session.user.id, connection);
+
+            if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
+                return [false, { statusCode: 404, message: "User Not Found!" }];
+            }
+
+            foundUser.email = email;
+
+            await foundUser.save(connection);
+
+            return [true, null];
+        } catch (error) {
+            return [false, {statusCode: 500, message: error.message}];
+        }
+    })
+
+    if (!success) {
+        return res.status(error.statusCode).send({
+            type: "ERROR",
+            message: error.message
+        });
+    }
+
+    res.send({
+        type: "SUCCESS",
+        message: "Email updated successfully"
+    });
 }));
 
 module.exports = router;
