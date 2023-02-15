@@ -136,7 +136,7 @@ class User {
     async #_updateUser(connection) {
         const queryStatement = 
             "UPDATE users SET " +
-            `Username = "${sqlString(this.username)}", Email = "${sqlString(this.email)}" ` +
+            `Username = "${sqlString(this.username)}", Email = "${sqlString(this.email)}", ` +
             `Password = "${sqlString(this.#hashPassword)}" ` +
             `WHERE UserID = ${this.id}`;
 
