@@ -65,6 +65,14 @@ class User {
         }
     }
 
+    async delete(connection) {
+        if (!this.isValid()) {
+            return;
+        }
+
+        await User.deleteFromID(this.id, connection);
+    }
+
     async exists(connection) {
         if (!this.id) {
             return false;
@@ -210,6 +218,23 @@ class User {
                 foundUser.id = UserID;
 
                 return foundUser;
+            } catch (error) {
+                throw new SqlError(`Failed to retrieve user: ${error.message}`);
+            }
+        });
+    }
+
+    static async deleteFromID(userID, connection) {
+        if (!bigint.isValid(userID)) {
+            throw new ValueError(400, "Invalid User");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                `DELETE FROM users WHERE UserID = ${userID}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
             } catch (error) {
                 throw new SqlError(`Failed to retrieve user: ${error.message}`);
             }

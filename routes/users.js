@@ -62,4 +62,14 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
     res.render("login/userInformations", { user: foundUser });
 }));
 
+router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
+    const userID = req.session.user.id;
+
+    User.deleteFromID(userID);
+
+    req.session.user = null;
+
+    res.redirect("/");
+}));
+
 module.exports = router;
