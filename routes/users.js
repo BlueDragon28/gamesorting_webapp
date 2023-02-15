@@ -3,6 +3,8 @@ const wrapAsync = require("../utils/errors/wrapAsync");
 const { User } = require("../models/users");
 const { checkIfUserValid } = require("../utils/validation/users");
 const { isLoggedIn } = require("../utils/users/authentification");
+const { deleteUser } = require("../utils/data/deletionHelper");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 
 const router = express.Router();
 
@@ -65,7 +67,9 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
 router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
 
-    User.deleteFromID(userID);
+    await existingOrNewConnection(null, async function(connection) {
+        await deleteUser(userID, connection);
+    });
 
     req.session.user = null;
 

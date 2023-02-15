@@ -3,6 +3,7 @@ const { Item } = require("../../models/items");
 const { ListColumnType } = require("../../models/listColumnsType");
 const { List } = require("../../models/lists");
 const { Collection } = require("../../models/collections");
+const { User } = require("../../models/users");
 const bigint = require("../numbers/bigint");
 
 async function deleteCustomDatas(customDatas, connection) {
@@ -114,10 +115,26 @@ async function deleteCollection(collectionID, connection) {
     await Collection.deleteFromID(foundCollection.id, connection);
 }
 
+async function deleteUser(userID, connection) {
+    if (!bigint.isValid(userID)) {
+        return;
+    }
+
+    const foundUser = await User.findByID(userID, connection);
+    const foundCollections = await Collection.findAllFromUserID(userID, connection);
+
+    for (let collection of foundCollections) {
+        await deleteCollection(collection.id, connection);
+    }
+
+    await foundUser.delete(connection);
+}
+
 module.exports = {
     deleteCustomDatasFromListColumnType,
     deleteCustomDatasFromItemID,
     deleteItem,
     deleteList,
-    deleteCollection
+    deleteCollection,
+    deleteUser
 };
