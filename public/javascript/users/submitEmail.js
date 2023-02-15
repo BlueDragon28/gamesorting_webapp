@@ -1,5 +1,13 @@
+const emailContentTextSpan = document.querySelector("#email-content-text");
+
 function whenProcessed(event) {
-    console.log(event.target.response);
+    const response = JSON.parse(event.target.response);
+
+    if (response.type === "SUCCESS") {
+        emailContentTextSpan.innerText = response.email;
+    } else {
+        console.error(response);
+    }
 }
 
 export default function(email) {

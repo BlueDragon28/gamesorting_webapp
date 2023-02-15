@@ -15,7 +15,7 @@
             <div class="card-body">
                 <h4 class="card-title"><%= user.username %></h4>
                 <div class="display-row">
-                    <p class="text-muted">Email: <%= user.email %></p>
+                    <p class="text-muted">Email: <span id="email-content-text"><%= user.email %></span></p>
                     <button class="btn btn-info btn-sm" id="open-email-change-modal">Change</button>
                 </div>
                 <div class="display-row">

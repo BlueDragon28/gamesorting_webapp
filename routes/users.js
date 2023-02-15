@@ -106,7 +106,8 @@ router.put("/email", isLoggedIn, wrapAsync(async function(req, res, next) {
 
     res.send({
         type: "SUCCESS",
-        message: "Email updated successfully"
+        message: "Email updated successfully",
+        email
     });
 }));
 
