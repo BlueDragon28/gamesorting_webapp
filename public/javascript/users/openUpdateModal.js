@@ -1,3 +1,5 @@
+import submitEmail from "./submitEmail.js";
+
 (function openUpdateModelOnUserRequest() {
     const modalTitle = document.querySelector("#modal-title");
     const emailUpdateDiv = document.querySelector("#email-update-input");
@@ -12,6 +14,8 @@
     const inputNewPassword = document.querySelector("#new-password");
     const inputRetypeNewPassword = document.querySelector("#retype-new-password");
 
+    let modal;
+
     function resetInputs() {
         inputEmail.value = "";
         inputCurrentPassword.value = "";
@@ -22,8 +26,8 @@
     function openModal() {
         resetInputs();
 
-        const myModal = new bootstrap.Modal(document.querySelector("#updateContentModal"));
-        myModal.show();
+        modal = new bootstrap.Modal(document.querySelector("#updateContentModal"));
+        modal.show();
     }
 
     function openEmailModal() {
@@ -46,11 +50,31 @@
         openModal();
     }
 
+    function sendEmail() {
+        if (!modal) {
+            return;
+        }
+
+        const emailValue = inputEmail.value.trim();
+
+        if (!emailValue.length) {
+            return;
+        }
+
+        submitEmail(emailValue);
+
+        modal.hide();
+    }
+
     emailChangeButton.addEventListener("click", function() {
         openEmailModal();
     })
 
     passwordChangeButton.addEventListener("click", function() {
         openPasswordModal();
+    });
+
+    emailSubmitButton.addEventListener("click", function() {
+        sendEmail();
     });
 })();

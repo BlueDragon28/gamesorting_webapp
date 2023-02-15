@@ -76,4 +76,9 @@ router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
     res.redirect("/");
 }));
 
+router.put("/email", wrapAsync(async function(req, res) {
+    console.log("Hello: put request received");
+    console.log(req.body);
+}));
+
 module.exports = router;
