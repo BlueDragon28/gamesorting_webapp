@@ -181,6 +181,30 @@ class CustomRowsItems {
         });
     }
 
+    static async findFromListColumn(listColumnID, connection) {
+        if (!bigint.isValid(listColumnID)) {
+            throw new ValueError(400, "Invalid Custom List");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                "SELECT CustomRowItemsID, ItemID, ListColumnTypeID, Value FROM customRowsItems " +
+                `WHERE ListColumnTypeID = ${listColumnID}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+
+                if (!queryResult.length) {
+                    return [];
+                }
+
+                return CustomRowsItems.#parseFoundCustomRowData(queryResult);
+            } catch (error) {
+                throw new SqlError(`Failed to get all custom data: ${error.message}`)
+            }
+        });
+    }
+
     static async deleteFromID(id, connection) {
         id = bigint.toBigInt(id);
         if (!bigint.isValid(id)) {

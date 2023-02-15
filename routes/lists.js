@@ -9,7 +9,7 @@ const { InternalError, AuthorizationError, ValueError } = require("../utils/erro
 const validation = require("../utils/validation/validation");
 const { listColumnsValidation } = require("../utils/validation/listColumnsValidation");
 const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
-const { deleteList } = require("../utils/data/deletionHelper");
+const { deleteList, deleteCustomDatasFromListColumnType } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkCollectionAuth, checkListAuth } = require("../utils/users/authorization");
 const { trimColumns, checkForDuplicate, checkForDuplicateWithCurrentColumns, retrievePreviousColumns } = 
@@ -93,6 +93,7 @@ router.post("/lists/:listID/custom-columns",
                 newColumns.length ? await List.findByID(listID, connection) : null;
 
             for (let column of columnsToDelete) {
+                await deleteCustomDatasFromListColumnType(column.id, connection);
                 await ListColumnType.deleteFromID(column.id, connection);
             }
 

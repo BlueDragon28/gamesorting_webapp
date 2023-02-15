@@ -5,6 +5,30 @@ const { List } = require("../../models/lists");
 const { Collection } = require("../../models/collections");
 const bigint = require("../numbers/bigint");
 
+async function deleteCustomDatas(customDatas, connection) {
+    if (!Array.isArray(customDatas)) {
+        return;
+    }
+
+    for (let customData of customDatas) {
+        if (!customData | !customData instanceof CustomRowsItems || !customData.isValid()) {
+            continue;
+        }
+
+        await customData.delete(connection);
+    }
+}
+
+async function deleteCustomDatasFromListColumnType(listColumnID, connection) {
+    if (!bigint.isValid(listColumnID)) {
+        return;
+    }
+
+    const customDatas = await CustomRowsItems.findFromListColumn(listColumnID, connection);
+
+    deleteCustomDatas(customDatas, connection);
+}
+
 async function deleteCustomDatasFromItemID(itemID, connection) {
     if (!bigint.isValid(itemID)) {
         return;
@@ -12,13 +36,7 @@ async function deleteCustomDatasFromItemID(itemID, connection) {
 
     const customDatas = await CustomRowsItems.findFromItem(itemID, connection);
 
-    for (let customData of customDatas) {
-        if (!customData || !customData instanceof CustomRowsItems || !customData.isValid()) {
-            continue;
-        }
-
-        await customData.delete(connection);
-    }
+    deleteCustomDatas(customDatas, connection);
 }
 
 async function deleteItem(itemID, connection) {
@@ -97,6 +115,7 @@ async function deleteCollection(collectionID, connection) {
 }
 
 module.exports = {
+    deleteCustomDatasFromListColumnType,
     deleteCustomDatasFromItemID,
     deleteItem,
     deleteList,
