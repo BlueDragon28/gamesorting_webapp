@@ -6,8 +6,22 @@
     const passwordChangeButton = document.querySelector("#open-password-change-modal");
     const emailSubmitButton = document.querySelector("#button-submit-new-email");
     const passwordSubmitButton = document.querySelector("#button-submit-new-password");
+    
+    const inputEmail = document.querySelector("#input-email");
+    const inputCurrentPassword = document.querySelector("#current-password");
+    const inputNewPassword = document.querySelector("#new-password");
+    const inputRetypeNewPassword = document.querySelector("#retype-new-password");
+
+    function resetInputs() {
+        inputEmail.value = "";
+        inputCurrentPassword.value = "";
+        inputNewPassword.value = "";
+        inputRetypeNewPassword.value = "";
+    }
 
     function openModal() {
+        resetInputs();
+
         const myModal = new bootstrap.Modal(document.querySelector("#updateContentModal"));
         myModal.show();
     }
