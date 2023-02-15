@@ -16,13 +16,11 @@
                 <h4 class="card-title"><%= user.username %></h4>
                 <div class="display-row">
                     <p class="text-muted">Email: <%= user.email %></p>
-                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#updateContentModal"
-                        >Change</button>
+                    <button class="btn btn-info btn-sm" id="open-email-change-modal">Change</button>
                 </div>
                 <div class="display-row">
                     <p class="text-muted">Password: ****</p>
-                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#updateContentModal"
-                        >Change</button>
+                    <button class="btn btn-info btn-sm" id="open-password-change-modal">Change</button>
                 </div>
 
                 <div>
@@ -50,23 +48,26 @@
                 </div>
                 <div id="password-update-input" class="">
                     <div class="mb-3">
-                        <label class="form-label" for="current-password">Current password</label>
+                        <label class="form-label" for="current-password">Current Password</label>
                         <input class="form-control" type="password" id="current-password">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="new-password">New password</label>
+                        <label class="form-label" for="new-password">New Password</label>
                         <input class="form-control" type="password" id="new-password">
                     </div>
                     <div>
-                        <label class="form-label" for="retype-new-password">Retape new password</label>
+                        <label class="form-label" for="retype-new-password">Retape New Password</label>
                         <input class="form-control" type="password" id="retype-new-password">
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary">Update</button>
+                <button class="btn btn-primary" id="button-submit-new-email">Update Email</button>
+                <button class="btn btn-primary" id="button-submit-new-password">Update Password</button>
             </div>
         </div>
     </div>
 </div>
+
+<script src="/javascript/users/openUpdateModal.js"></script>
