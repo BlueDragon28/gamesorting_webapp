@@ -95,7 +95,7 @@ class User {
     }
 
     async #_exists(connection) {
-        const queryStatement = `SELECT COUNT(UserID) as count FROM users WHERE UserID = ${this.id}`;
+        const queryStatement = `SELECT COUNT(UserID) as count FROM users WHERE UserID = ${this.id ? this.id : -1}`;
         try {
             const foundUser = (await connection.query(queryStatement))[0];
 
