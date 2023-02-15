@@ -16,11 +16,13 @@
                 <h4 class="card-title"><%= user.username %></h4>
                 <div class="display-row">
                     <p class="text-muted">Email: <%= user.email %></p>
-                    <a class="btn btn-info btn-sm" href="#">Change</a>
+                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#updateContentModal"
+                        >Change</button>
                 </div>
                 <div class="display-row">
                     <p class="text-muted">Password: ****</p>
-                    <a class="btn btn-info btn-sm" href="#">Change</a>
+                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#updateContentModal"
+                        >Change</button>
                 </div>
 
                 <div>
@@ -28,6 +30,42 @@
                         <button class="btn btn-danger">Delete User</button>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--The update modal-->
+<div class="modal fade" tabindex="-1" id="updateContentModal" aria-labelledby="updateContentModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modal-title">Modal Title</h5>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="email-update-input" class="">
+                    <label class="form-label" for="input-email">New Email</label>
+                    <input class="form-control" type="email" id="input-email">
+                </div>
+                <div id="password-update-input" class="">
+                    <div class="mb-3">
+                        <label class="form-label" for="current-password">Current password</label>
+                        <input class="form-control" type="password" id="current-password">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="new-password">New password</label>
+                        <input class="form-control" type="password" id="new-password">
+                    </div>
+                    <div>
+                        <label class="form-label" for="retype-new-password">Retape new password</label>
+                        <input class="form-control" type="password" id="retype-new-password">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary">Update</button>
             </div>
         </div>
     </div>
