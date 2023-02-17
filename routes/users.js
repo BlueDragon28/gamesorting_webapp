@@ -90,7 +90,7 @@ router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
 router.put("/email", 
         isLoggedIn, 
         validateEmailUpdate(), 
-        wrapAsync(async function(req, res) {
+        wrapAsync(async function(req, res, next) {
     const { email } = req.body;
 
     const [success, error] = 
@@ -126,7 +126,7 @@ router.put("/email",
 router.put("/password", 
         isLoggedIn, 
         validatePasswordUpdate(), 
-        wrapAsync(async function(req, res) {
+        wrapAsync(async function(req, res, next) {
     const { currentPassword, newPassword, retypedPassword } = req.body;
 
     const [success, error] = await existingOrNewConnection(null, async function(connection) {

@@ -9,7 +9,7 @@ function parseCelebrateError(err, req, res, next) {
     const [ firstError ] = err.details.values();
 
     if (!firstError) {
-        next(new InternalError("Invalid Error"));
+        return next(new InternalError("Invalid Error"));
     }
 
     console.log(firstError);
@@ -28,6 +28,10 @@ function flashJoiErrorMessage(error, req) {
 }
 
 function checkIfJSON(acceptHeader) {
+    if (!acceptHeader || typeof acceptHeader !== "string" || !acceptHeader.length) {
+        return false;
+    }
+
     const firstAccept = acceptHeader.split(";")[0].trim();
 
     if (!firstAccept || firstAccept !== "application/json") {
@@ -38,8 +42,8 @@ function checkIfJSON(acceptHeader) {
 }
 
 function returnHasJSONIfNeeded(err, req, res, next) {
-    if (!checkIfJSON(req.headers)) {
-        next(err);
+    if (!checkIfJSON(req.headers.accept)) {
+        return next(err);
     }
 
     const { statusCode = 500, message = "OUPS!!! Something Went Wrong!" } = err;
@@ -48,7 +52,7 @@ function returnHasJSONIfNeeded(err, req, res, next) {
         .status(statusCode)
         .send({
             type: "ERROR",
-            message: message.message
+            message: message
         });
 }
 
