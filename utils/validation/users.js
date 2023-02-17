@@ -75,7 +75,7 @@ function validateEmailUpdate() {
 
 function validatePasswordUpdate() {
     const celebrateValidation = {
-        [Segments.BODY]: makeEmailUpdateValidation()
+        [Segments.BODY]: makePasswordUpdateValidation()
     };
 
     return celebrate(celebrateValidation);
