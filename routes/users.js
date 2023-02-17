@@ -113,10 +113,7 @@ router.put("/email",
     })
 
     if (!success) {
-        return res.status(error.statusCode).send({
-            type: "ERROR",
-            message: error.message
-        });
+        return next(error);
     }
 
     res.send({
@@ -170,10 +167,7 @@ router.put("/password",
     });
 
     if (!success) {
-        return res.status(error.statusCode).send({
-            type: "ERROR",
-            message: error.message
-        });
+        return next(error);
     }
 
     res.send({
