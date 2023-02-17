@@ -72,9 +72,9 @@ import submitPassword from "./submitPassword.js";
             return;
         }
 
-        const currentPasswordValue = inputCurrentPassword.value;
-        const newPasswordValue = inputNewPassword.value;
-        const retypedPasswordValue = inputRetypeNewPassword.value;
+        const currentPasswordValue = inputCurrentPassword.value.trim();
+        const newPasswordValue = inputNewPassword.value.trim();
+        const retypedPasswordValue = inputRetypeNewPassword.value.trim();
 
         if (!currentPasswordValue.length ||
             !newPasswordValue.length ||
