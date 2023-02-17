@@ -25,6 +25,7 @@ export default function(email) {
     xhrRequest.addEventListener("error", whenProcessed);
     xhrRequest.open("POST", `/users/email?_method=PUT`);
     xhrRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
+    xhrRequest.setRequestHeader("Accept", "application/json");
     xhrRequest.send(JSON.stringify({
         email
     }));

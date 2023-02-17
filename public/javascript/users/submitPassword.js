@@ -43,6 +43,7 @@ export default function(currentPassword, newPassword, retypedPassword) {
     xhrRequest.addEventListener("error", whenProcessed);
     xhrRequest.open("POST", "/users/password?_method=PUT");
     xhrRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
+    xhrRequest.setRequestHeader("Accept", "application/json");
     xhrRequest.send(JSON.stringify({
         currentPassword,
         newPassword,
