@@ -1,4 +1,5 @@
 import submitEmail from "./submitEmail.js";
+import submitPassword from "./submitPassword.js";
 
 (function openUpdateModelOnUserRequest() {
     const modalTitle = document.querySelector("#modal-title");
@@ -66,6 +67,28 @@ import submitEmail from "./submitEmail.js";
         modal.hide();
     }
 
+    function sendPassword() {
+        if (!modal) {
+            return;
+        }
+
+        const currentPasswordValue = inputCurrentPassword.value;
+        const newPasswordValue = inputNewPassword.value;
+        const retypedPasswordValue = inputRetypeNewPassword.value;
+
+        if (!currentPasswordValue.length ||
+            !newPasswordValue.length ||
+            !retypedPasswordValue.length) {
+            return;
+        }
+
+        if (!submitPassword(currentPasswordValue, newPasswordValue, retypedPasswordValue)) {
+            return;
+        }
+
+        modal.hide();
+    }
+
     emailChangeButton.addEventListener("click", function() {
         openEmailModal();
     })
@@ -76,5 +99,9 @@ import submitEmail from "./submitEmail.js";
 
     emailSubmitButton.addEventListener("click", function() {
         sendEmail();
+    });
+
+    passwordSubmitButton.addEventListener("click", function() {
+        sendPassword();
     });
 })();
