@@ -111,4 +111,57 @@ router.put("/email", isLoggedIn, wrapAsync(async function(req, res, next) {
     });
 }));
 
+router.put("/password", isLoggedIn, wrapAsync(async function(req, res) {
+    const { currentPassword, newPassword, retypedPassword } = req.body;
+
+    const [success, error] = await existingOrNewConnection(null, async function(connection) {
+        if (!currentPassword.length) {
+            return [false, { statusCode: 400, message: "Invalid Current Password" }];
+        }
+
+        if (!newPassword.length) {
+            return [false, { statusCode: 400, message: "Invalid New Password" }];
+        }
+
+        if (newPassword !== retypedPassword) {
+            return [false, { statusCode: 400, message: "The Passwords Are Not The Same" }];
+        }
+
+        try {
+            const foundUser = await User.findByID(req.session.user.id, connection);
+
+            if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
+                return [false, { statusCode: 404, message: "User Not Found!" }];
+            }
+
+            if (!foundUser.compare(foundUser.username, currentPassword)) {
+                return [false, { statusCode: 400, message: "Invalid Current Password" }];
+            }
+
+            foundUser.setPassword(newPassword);
+
+            await foundUser.save(connection);
+
+            return [true, null];
+        } catch (error) {
+            return [false, { 
+                statusCode: 500, 
+                message: `Oups!!! An Error Occured: ${error.message}` 
+            }];
+        }
+    });
+
+    if (!success) {
+        return res.status(error.statusCode).send({
+            type: "ERROR",
+            message: error.message
+        });
+    }
+
+    res.send({
+        type: "SUCCESS",
+        message: "Password updated successfully"
+    });
+}));
+
 module.exports = router;

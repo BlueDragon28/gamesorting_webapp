@@ -18,10 +18,7 @@ class User {
             this.email = email.trim();
         }
 
-        if (password && typeof password === "string") {
-            this.#hashPassword = 
-                hashPassword ? bcrypt.hashSync(password.trim(), 12) : password;
-        }
+        this.setPassword(password, hashPassword);
     }
 
     compare(usernameOrEmail, password) {
@@ -92,6 +89,13 @@ class User {
             username: this.username,
             email: this.email
         };
+    }
+
+    setPassword(password, hashPassword = true) {
+        if (password && typeof password === "string") {
+            this.#hashPassword = 
+                hashPassword ? bcrypt.hashSync(password.trim(), 12) : password;
+        }
     }
 
     async #_exists(connection) {
