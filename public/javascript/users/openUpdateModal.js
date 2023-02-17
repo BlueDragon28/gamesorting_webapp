@@ -1,5 +1,6 @@
 import submitEmail from "./submitEmail.js";
 import submitPassword from "./submitPassword.js";
+import { hideError, setError } from "./userModalErrorCard.js";
 
 (function openUpdateModelOnUserRequest() {
     const modalTitle = document.querySelector("#modal-title");
@@ -26,6 +27,7 @@ import submitPassword from "./submitPassword.js";
 
     function openModal() {
         resetInputs();
+        hideError();
 
         modal = new bootstrap.Modal(document.querySelector("#updateContentModal"));
         modal.show();
@@ -58,11 +60,9 @@ import submitPassword from "./submitPassword.js";
 
         const emailValue = inputEmail.value.trim();
 
-        if (!emailValue.length) {
+        if (!submitEmail(emailValue)) {
             return;
         }
-
-        submitEmail(emailValue);
 
         modal.hide();
     }
@@ -79,6 +79,7 @@ import submitPassword from "./submitPassword.js";
         if (!currentPasswordValue.length ||
             !newPasswordValue.length ||
             !retypedPasswordValue.length) {
+            setError("Password Cannot Be Empty");
             return;
         }
 
