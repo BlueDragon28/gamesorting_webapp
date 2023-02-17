@@ -1,4 +1,5 @@
 import { setError, hideError } from "./userModalErrorCard.js";
+import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 
 const emailContentTextSpan = document.querySelector("#email-content-text");
 
@@ -7,8 +8,9 @@ function whenProcessed(event) {
 
     if (response.type === "SUCCESS") {
         emailContentTextSpan.innerText = response.email;
+        makeAlertCard("success", response.message);
     } else {
-        console.log("ERROR:", response.message);
+        makeAlertCard("error", response.message);
     }
 }
 

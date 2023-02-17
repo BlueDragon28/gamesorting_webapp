@@ -1,4 +1,5 @@
 import { hideError, setError } from "./userModalErrorCard.js";
+import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 
 function checkPassword(...passwords) {
     for (const password of passwords) {
@@ -14,9 +15,9 @@ function whenProcessed(event) {
     const response = JSON.parse(event.target.response);
 
     if (response.type === "SUCCESS") {
-        console.log("SUCCESS:", response.message);
+        makeAlertCard("success", response.message);
     } else {
-        console.error("ERROR:", response.message);
+        makeAlertCard("error", "ERROR: " + response.message);
     }
 } 
 
