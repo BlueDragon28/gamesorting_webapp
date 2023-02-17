@@ -27,6 +27,31 @@ function flashJoiErrorMessage(error, req) {
     }
 }
 
+function checkIfJSON(acceptHeader) {
+    const firstAccept = acceptHeader.split(";")[0].trim();
+
+    if (!firstAccept || firstAccept !== "application/json") {
+        return false;
+    }
+
+    return true;
+}
+
+function returnHasJSONIfNeeded(err, req, res, next) {
+    if (!checkIfJSON(req.headers)) {
+        next(err);
+    }
+
+    const { statusCode = 500, message = "OUPS!!! Something Went Wrong!" } = err;
+
+    res.set("Content-Type", "application/json")
+        .status(statusCode)
+        .send({
+            type: "ERROR",
+            message: message.message
+        });
+}
+
 function errorsWithPossibleRedirect(customErrorMessage) {
     return function(error, req, res, next) {
         if (error.name === "ValueError" || error.name === "ValidationError") {
@@ -52,5 +77,6 @@ function errorsWithPossibleRedirect(customErrorMessage) {
 
 module.exports = {
     parseCelebrateError,
-    errorsWithPossibleRedirect
+    errorsWithPossibleRedirect,
+    returnHasJSONIfNeeded
 }

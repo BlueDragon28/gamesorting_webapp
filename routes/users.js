@@ -5,6 +5,11 @@ const { checkIfUserValid } = require("../utils/validation/users");
 const { isLoggedIn } = require("../utils/users/authentification");
 const { deleteUser } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
+const { 
+    parseCelebrateError, 
+    errorsWithPossibleRedirect, 
+    returnHasJSONIfNeeded 
+} = require("../utils/errors/celebrateErrorsMiddleware");
 const {
     validateRegisteringUser,
     validateLoginUser,
@@ -176,5 +181,9 @@ router.put("/password",
         message: "Password updated successfully"
     });
 }));
+
+router.use(parseCelebrateError);
+router.use(returnHasJSONIfNeeded);
+router.use(errorsWithPossibleRedirect("Invalid User"));
 
 module.exports = router;
