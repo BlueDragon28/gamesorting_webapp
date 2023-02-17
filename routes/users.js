@@ -5,6 +5,12 @@ const { checkIfUserValid } = require("../utils/validation/users");
 const { isLoggedIn } = require("../utils/users/authentification");
 const { deleteUser } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
+const {
+    validateRegisteringUser,
+    validateLoginUser,
+    validateEmailUpdate,
+    validatePasswordUpdate
+} = require("../utils/validation/users");
 
 const router = express.Router();
 
@@ -32,14 +38,14 @@ router.get("/logout", function(req, res) {
     res.redirect("/");
 });
 
-router.post("/register", wrapAsync(async function(req, res) {
+router.post("/register", validateRegisteringUser(), wrapAsync(async function(req, res) {
     const { username, email, password } = req.body.user;
     const user = new User(username, email, password);
     await user.save();
     res.redirect("/");
 }));
 
-router.post("/login", wrapAsync(async function(req, res) {
+router.post("/login", validateLoginUser(), wrapAsync(async function(req, res) {
     const { username, password } = req.body.user;
     const foundUser = await User.findByNameOrEmail(username);
 
@@ -76,10 +82,14 @@ router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
     res.redirect("/");
 }));
 
-router.put("/email", isLoggedIn, wrapAsync(async function(req, res, next) {
+router.put("/email", 
+        isLoggedIn, 
+        validateEmailUpdate(), 
+        wrapAsync(async function(req, res) {
     const { email } = req.body;
 
-    const [success, error] = await existingOrNewConnection(null, async function(connection) {
+    const [success, error] = 
+            await existingOrNewConnection(null, async function(connection) {
         try {
             const foundUser = await User.findByID(req.session.user.id, connection);
 
@@ -111,7 +121,10 @@ router.put("/email", isLoggedIn, wrapAsync(async function(req, res, next) {
     });
 }));
 
-router.put("/password", isLoggedIn, wrapAsync(async function(req, res) {
+router.put("/password", 
+        isLoggedIn, 
+        validatePasswordUpdate(), 
+        wrapAsync(async function(req, res) {
     const { currentPassword, newPassword, retypedPassword } = req.body;
 
     const [success, error] = await existingOrNewConnection(null, async function(connection) {
