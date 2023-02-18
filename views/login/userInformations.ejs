@@ -24,9 +24,7 @@
                 </div>
 
                 <div>
-                    <form action="/users?_method=DELETE" method="post">
-                        <button class="btn btn-danger">Delete User</button>
-                    </form>
+                    <button class="btn btn-danger" id="open-delete-user-modal-button">Delete User</button>
                 </div>
             </div>
         </div>
@@ -75,5 +73,24 @@
     </div>
 </div>
 
-<script type="module" src="/javascript/users/submitEmail.js"></script>
+<!--Modal to ask user to confirm deletion-->
+<div class="modal fade" tabindex="-1" id="ask-for-user-deletion" aria-labelledby="confirmDeletion" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Delete User</h1>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you realy want to delete this user? There is no going back!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger" id="button-delete-user">Delete User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="module" src="/javascript/users/openUpdateModal.js"></script>
+<script type="module" src="/javascript/users/deleteUserModal.js"></script>

@@ -16,6 +16,7 @@ const {
     validateEmailUpdate,
     validatePasswordUpdate
 } = require("../utils/validation/users");
+const {ValueError} = require("../utils/errors/exceptions");
 
 const router = express.Router();
 
@@ -76,7 +77,13 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
 }));
 
 router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
+    const { deleteUser: removeUser } = req.body;
     const userID = req.session.user.id;
+    const username = req.session.user.username;
+
+    if (removeUser !== true) {
+        throw new ValueError(400, "Invalid User Deletion Request");
+    }
 
     await existingOrNewConnection(null, async function(connection) {
         await deleteUser(userID, connection);
@@ -84,7 +91,12 @@ router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
 
     req.session.user = null;
 
-    res.redirect("/");
+    req.flash("success", `Successfully delete user ${username}!`);
+    res.set("Content-type", "application/json")
+        .send({
+            type: "SUCCESS",
+            message: `Successfully delete user ${username}!`
+        });
 }));
 
 router.put("/email", 
