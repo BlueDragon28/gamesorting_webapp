@@ -6,8 +6,7 @@ function onRequestFinish(event) {
 
 submitButton.addEventListener("click", function() {
     const columnsToAddAndDelete = {
-        newColumns: newColumnsList.map(column => ({ id: column.id, name: column.name, type: column.type})),
-        columnsToDelete: removedColumn
+        newColumns: newColumnsList.map(column => ({ id: column.id, name: column.name, type: column.type}))
     };
 
     const xhrRequest = new XMLHttpRequest();

@@ -25,17 +25,10 @@ function makeListColumnValidation() {
     });
 }
 
-function makeListColumnToDeleteValidation() {
-    return Joi.object({
-        id: Joi.number().greater(0).required()
-    }).unknown()
-}
-
 function validate() {
     const celebrateValidation = {
         [Segments.BODY]: Joi.object({
-            newColumns: Joi.array().items(makeListColumnValidation()),
-            columnsToDelete: Joi.array().items(makeListColumnToDeleteValidation())
+            newColumns: Joi.array().items(makeListColumnValidation())
         }).unknown().required()
     };
 

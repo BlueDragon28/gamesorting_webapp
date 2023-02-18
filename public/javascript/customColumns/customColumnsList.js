@@ -17,7 +17,6 @@ columnTypeInput.addEventListener("change", function(event) {
 
 let count = 0;
 let newColumnsList = [];
-const removedColumn = [];
 
 function parseIntTypeToHtml(columnType) {
     if (!columnType.type || isNaN(columnType.min) || isNaN(columnType.max)) {
@@ -100,16 +99,6 @@ function parseType() {
     }
 }
 
-function checkIfColumnNotRemoved(columnName) {
-    for (let columnRemoved of removedColumn) {
-        if (columnName === columnRemoved.name) {
-            return false;
-        }
-    } 
-
-    return true;
-}
-
 function checkIfColumnDoNotExists(columnName) {
     for (let newColumn of newColumnsList) {
         if (columnName === newColumn.name) {
@@ -119,7 +108,7 @@ function checkIfColumnDoNotExists(columnName) {
 
     for (let originalColumn of listCustomColumns) {
         if (columnName === originalColumn.name) {
-            if (checkIfColumnNotRemoved(columnName)) return false;
+            return false;
         }
     }
 
