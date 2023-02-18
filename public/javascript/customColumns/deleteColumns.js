@@ -15,11 +15,9 @@ export function openDeleteModal(divContainer, customColumn) {
         const response = JSON.parse(event.target.response);
 
         if (response.type === "SUCCESS") {
-            console.log("SUCCESS:", response.message);
             makeAlertCard("success", "SUCCESS: " + response.message)
             divContainer.remove();
         } else {
-            console.error("ERROR:", response.message);
             makeAlertCard("errror", "ERROR: " + response.message);
         }
 
