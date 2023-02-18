@@ -107,7 +107,7 @@ function checkIfColumnDoNotExists(columnName) {
     }
 
     for (let originalColumn of listCustomColumns) {
-        if (columnName === originalColumn.name) {
+        if (columnName === originalColumn.name && !originalColumn.invalid) {
             return false;
         }
     }
