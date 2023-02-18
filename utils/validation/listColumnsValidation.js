@@ -42,6 +42,17 @@ function validate() {
     return celebrate(celebrateValidation);
 }
 
+function validateDeleteColumn() {
+    const celebrateValidation = {
+        [Segments.BODY]: Joi.object({
+            customColumn: makeListColumnValidation()
+        }).required()
+    }
+
+    return celebrate(celebrateValidation);
+}
+
 module.exports = {
-    listColumnsValidation: validate
+    listColumnsValidation: validate,
+    validateDeleteColumn
 }

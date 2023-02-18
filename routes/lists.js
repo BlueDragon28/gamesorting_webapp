@@ -7,8 +7,11 @@ const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, AuthorizationError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
-const { listColumnsValidation } = require("../utils/validation/listColumnsValidation");
-const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
+const { listColumnsValidation, validateDeleteColumn } = require("../utils/validation/listColumnsValidation");
+const { 
+    parseCelebrateError, 
+    errorsWithPossibleRedirect,
+    returnHasJSONIfNeeded } = require("../utils/errors/celebrateErrorsMiddleware");
 const { deleteList, deleteCustomDatasFromListColumnType } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkCollectionAuth, checkListAuth } = require("../utils/users/authorization");
@@ -108,6 +111,7 @@ router.post("/lists/:listID/custom-columns",
 
 router.delete("/lists/:listID/custom-column",
         checkListAuth,
+        validateDeleteColumn(),
         wrapAsync(async function(req, res) {
     
     const { listID } = req.params;
@@ -203,6 +207,7 @@ router.delete("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
 }));
 
 router.use(parseCelebrateError);
+router.use(returnHasJSONIfNeeded);
 router.use(errorsWithPossibleRedirect("Cannot find this list"));
 
 module.exports = router;
