@@ -20,10 +20,8 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 
         if (response.type === "SUCCESS") {
             makeAlertCard("success", response.message);
-            console.log(response);
         } else {
             makeAlertCard("error", response.message);
-            console.log(response);
         }
 
         window.location = "/";
