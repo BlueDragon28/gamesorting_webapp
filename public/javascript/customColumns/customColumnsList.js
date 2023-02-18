@@ -45,21 +45,24 @@ function createHtmlCustomColumn(customColumn) {
     divCardBoby.classList.add("card-body");
     divContainer.append(divCardBoby);
 
+    const flexContainer = document.createElement("div");
+    flexContainer.classList.add("d-flex", "flex-row", "justify-content-between", "align-items-center");
+    divCardBoby.append(flexContainer);
+
     const pCardTitle = document.createElement("p");
     pCardTitle.classList.add("card-title");
     pCardTitle.innerHTML = 
         `Name: <b class="column-name">${customColumn.name}</b>
         Type: <b class="column-type">${customColumn.type.type}</b>
         ${parseTypeToHtml(customColumn.type)}`;
-    divCardBoby.append(pCardTitle);
+    flexContainer.append(pCardTitle);
 
     const buttonDeleteColumn = document.createElement("button");
     buttonDeleteColumn.type = "button";
-    buttonDeleteColumn.classList.add("btn", "btn-danger", "btn-sm");
-    buttonDeleteColumn.innerText = "Delete";
+    buttonDeleteColumn.classList.add("btn-close");
     buttonDeleteColumn.addEventListener("click", 
         () => onColumnDeletion(divContainer, customColumn.fromList, customColumn.index));
-    divCardBoby.append(buttonDeleteColumn);
+    flexContainer.append(buttonDeleteColumn);
 
     columnsListDiv.append(divContainer);
 }
