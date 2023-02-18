@@ -78,5 +78,24 @@ function exportListCustomColumns() {
     </div>
 </div>
 
-<script type="module" src="/javascript/customColumnsList.js"></script>
-<script type="module" src="/javascript/updateCustomColumns.js"></script>
+<!--Ask user to confirm deletion of currently available columns-->
+<div class="modal fade" id="ask-for-delete-current-col" aria-labelledby="confirmDeleteCol" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Delete Column</h1>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you realy want really want to delete <span id="modal-col-name-title"></span> column?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger" id="modal-button-delete-custom-column">Delete Column</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/javascript/customColumns/customColumnsList.js"></script>
+<script src="/javascript/customColumns/updateCustomColumns.js"></script>

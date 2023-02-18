@@ -1,3 +1,4 @@
+
 const columnsListDiv = document.querySelector("#columnsList");
 const customColumnForm = document.querySelector("#customColumnSubmitter");
 const columnNameInput = document.querySelector("#column-name");
@@ -158,15 +159,12 @@ customColumnForm.addEventListener("submit", onNewColumn);
 /*
 Remove a column the user selected
 */
-function onColumnDeletion(divContainer, fromList, index) {
+async function onColumnDeletion(divContainer, fromList, index) {
     if (fromList === "original") {
         const originalColumn = listCustomColumns[index];
-        delete originalColumn.fromList;
-        delete originalColumn.index;
-        removedColumn.push(originalColumn);
+        const { openDeleteModal } = await import("./deleteColumns.js");
+        openDeleteModal(divContainer, originalColumn);
     } else if (fromList === "new") {
         newColumnsList = newColumnsList.filter(column => column.index !== index);
     }
-
-    divContainer.remove();
 }

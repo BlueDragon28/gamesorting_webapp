@@ -106,6 +106,22 @@ router.post("/lists/:listID/custom-columns",
         res.send("Data received");
 }));
 
+router.delete("/lists/:listID/custom-column",
+        checkListAuth,
+        wrapAsync(async function(req, res) {
+    
+    const { listID } = req.params;
+    const { customColumn } = req.body;
+
+    await existingOrNewConnection(null, async function(connection) {
+        await deleteCustomDatasFromListColumnType(customColumn.id, connection);
+        await ListColumnType.deleteFromID(customColumn.id, connection);
+    });
+
+    res.set("Content-type", "application/json")
+        .send({ type: "SUCCESS", message: "Successfully delete column!" })
+}));
+
 /*
 Form to edit a list
 */
