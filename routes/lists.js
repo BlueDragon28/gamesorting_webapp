@@ -114,7 +114,6 @@ router.delete("/lists/:listID/custom-column",
         validateDeleteColumn(),
         wrapAsync(async function(req, res) {
     
-    const { listID } = req.params;
     const { customColumn } = req.body;
 
     await existingOrNewConnection(null, async function(connection) {
