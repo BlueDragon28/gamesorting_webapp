@@ -166,5 +166,6 @@ async function onColumnDeletion(divContainer, fromList, index) {
         openDeleteModal(divContainer, originalColumn);
     } else if (fromList === "new") {
         newColumnsList = newColumnsList.filter(column => column.index !== index);
+        divContainer.remove();
     }
 }
