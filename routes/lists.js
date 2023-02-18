@@ -116,7 +116,7 @@ router.delete("/lists/:listID/custom-column",
     });
 
     res.set("Content-type", "application/json")
-        .send({ type: "SUCCESS", message: "Successfully delete column!" })
+        .send({ type: "SUCCESS", message: `Successfully delete column ${customColumn.name}!` })
 }));
 
 /*
