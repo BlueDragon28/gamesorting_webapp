@@ -39,18 +39,14 @@ function parseTypeToHtml(columnType) {
 
 function createHtmlCustomColumn(customColumn) {
     const divContainer = document.createElement("div");
-    divContainer.classList.add("card");
-
-    const divCardBoby = document.createElement("div");
-    divCardBoby.classList.add("card-body");
-    divContainer.append(divCardBoby);
+    divContainer.classList.add("list-group-item");
 
     const flexContainer = document.createElement("div");
     flexContainer.classList.add("d-flex", "flex-row", "justify-content-between", "align-items-center");
-    divCardBoby.append(flexContainer);
+    divContainer.append(flexContainer);
 
     const pCardTitle = document.createElement("p");
-    pCardTitle.classList.add("card-title");
+    pCardTitle.classList.add("mb-1", "mt-1");
     pCardTitle.innerHTML = 
         `Name: <b class="column-name">${customColumn.name}</b>
         Type: <b class="column-type">${customColumn.type.type}</b>
