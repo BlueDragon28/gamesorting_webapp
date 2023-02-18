@@ -90,6 +90,13 @@ router.post("/lists/:listID/custom-columns",
         const { listID } = req.params;
         let { newColumns } = req.body;
 
+        if (!newColumns || !newColumns.length) {
+            const message = "No column(s) to add";
+            req.flash("success", message);
+            return res.set("Content-type", "application/json")
+                .send({ type: "SUCCESS", message })
+        }
+
         await existingOrNewConnection(null, async function(connection) {
             const parentList = 
                 newColumns.length ? await List.findByID(listID, connection) : null;
@@ -100,7 +107,10 @@ router.post("/lists/:listID/custom-columns",
             }
         });
 
-        res.send("Data received");
+        const message = "Successfully added new columns!";
+        req.flash("success", message);
+        res.set("Content-type", "application/json")
+            .send({ type: "SUCCESS", message});
 }));
 
 router.delete("/lists/:listID/custom-column",
