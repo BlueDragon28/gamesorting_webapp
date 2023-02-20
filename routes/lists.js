@@ -204,7 +204,7 @@ router.delete("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
     const listID = bigint.toBigInt(req.body.listID);
 
     if (!bigint.isValid(listID) || listID <= 0 ||
-        !bigint.isValid(paramListID) || listID != paramListID) {
+        !bigint.isValid(paramListID) || listID !== paramListID) {
         return res.set("Content-type", "application/json")
             .status(400)
             .send({
