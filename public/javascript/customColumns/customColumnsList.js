@@ -70,6 +70,9 @@ for (let customColumn of listCustomColumns) {
 function resetInputs() {
     columnNameInput.value = "";
     columnTypeInput.value = "@String";
+    columnNumberMinInput.value = "";
+    columnNumberMaxInput.value = "";
+    columnNumberBlock.classList.add("d-none");
 }
 
 /*
