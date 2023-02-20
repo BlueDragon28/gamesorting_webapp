@@ -8,9 +8,9 @@
     <a class="btn btn-info" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/custom-columns">Update Custom Columns</a>
     <a class="btn btn-secondary" href="/collections/<%= list.parentCollection.id %>">Go Back!</a>
 
-    <form class="d-inline" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?_method=DELETE" method="post">
-        <button class="btn btn-danger">Delete List</button>
-    </form>
+    <!--<form class="d-inline" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?_method=DELETE" method="post">-->
+    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteListModal">Delete List</button>
+    <!--</form>-->
 </div>
 
 <% for(let item of items) { %>
@@ -34,3 +34,34 @@
         </div>
     </div>
 <% } %>
+
+<div class="modal fade" id="deleteListModal" tabindex="-1" aria-labelledby="deleteListModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Delete List</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you really want to delete this list? There is no going back!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="deleteListButton">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="/javascript/collections/lists/deleteList.js"></script>
+
+<script>
+    const list = <%- JSON.stringify(list, 
+        function(key, value) {
+            if (typeof value === "bigint") {
+                return value.toString();
+            }
+
+            return value;
+        }) %>
+</script>

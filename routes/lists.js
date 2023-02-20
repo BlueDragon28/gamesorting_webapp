@@ -17,6 +17,7 @@ const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkCollectionAuth, checkListAuth } = require("../utils/users/authorization");
 const { trimColumns, checkForDuplicate, checkForDuplicateWithCurrentColumns, retrievePreviousColumns } = 
     require("../utils/data/listCustomColumnsMiddlewares");
+const bigint = require("../utils/numbers/bigint");
 
 const router = express.Router({ mergeParams: true });
 
@@ -199,14 +200,31 @@ router.put("/lists/:listID", checkListAuth, validation.item({ name: true }), wra
 Delete a list from a collection
 */
 router.delete("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
-    const { collectionID, listID } = req.params;
+    const paramListID = bigint.toBigInt(req.params.listID);
+    const listID = bigint.toBigInt(req.body.listID);
+
+    if (!bigint.isValid(listID) || listID <= 0 ||
+        !bigint.isValid(paramListID) || listID != paramListID) {
+        return res.set("Content-type", "application/json")
+            .status(400)
+            .send({
+                type: "ERROR",
+                message: "Invalid list id!"
+            });
+    }
 
     await existingOrNewConnection(undefined, async function(connection) {
         await deleteList(listID, connection);
     });
 
-    req.flash("success", "Successfully deleted a list");
-    res.redirect(`${req.baseUrl}`);
+    const successMessage = "Succesfully deleted this list!";
+
+    req.flash("success", successMessage);
+    res.set("Content-type", "application/json")
+        .send({
+            type: "SUCCESS",
+            message: successMessage        
+        });
 }));
 
 router.use(parseCelebrateError);
