@@ -29,11 +29,11 @@ function getCustomControlType(customColumn) {
     switch (controlType) {
     case Types.INT: {
         const { min, max } = customColumn.type
-        if (min && typeof min === "number") {
+        if (typeof min === "number") {
             controlOptions += ` min="${min}"`;
         }
 
-        if (max && typeof max === "number") {
+        if (typeof max === "number") {
             controlOptions += ` max="${max}"`;
         }
     } break;
