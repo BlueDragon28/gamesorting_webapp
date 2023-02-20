@@ -13,7 +13,6 @@
     </header>
 
     <div class="container mb-3">
-        <%- include("../partials/flash") %>
         <%- include("../partials/runtimeFlashMessage") %>
 
         <!-- Main content of the page is placed there. -->
@@ -24,5 +23,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
     <script src="/javascript/checkFormValidation.js"></script>
+    <script type="module" src="/javascript/runtimeFlash/serverFlashes.js"></script>
+
+    <script>
+        const serverFlashMessages = 
+            <%- JSON.stringify(flashMessages) %>
+    </script>
 </body>
 </html>
