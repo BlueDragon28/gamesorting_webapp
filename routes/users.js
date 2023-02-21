@@ -21,6 +21,7 @@ const {ValueError} = require("../utils/errors/exceptions");
 const router = express.Router();
 
 router.get("/register", function(req, res) {
+    res.locals.activeLink = "UserRegister";
     res.render("login/register");
 });
 
