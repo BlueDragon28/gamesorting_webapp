@@ -35,11 +35,7 @@ function getColumnType(columnTypeID) {
                 <li class="list-group-item pt-3">
                     <a class="btn btn-success" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>/edit">Edit</a>
 
-                    <form class="d-inline"
-                            action="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>?_method=DELETE" 
-                            method="post">
-                        <button class="btn btn-danger">Delete</button>
-                    </form>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteItemModal">Delete</button>
 
                     <a class="btn btn-secondary" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>">Go Back!</a>
                 </li>
@@ -47,3 +43,34 @@ function getColumnType(columnTypeID) {
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Delete Item</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you really want to delete this item? There is no going back!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="deleteItemButton">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="/javascript/collections/lists/items/deleteItem.js"></script>
+
+<script>
+    const item = <%- JSON.stringify(item,
+        function(key, value) {
+            if (typeof value === "bigint") {
+                return value.toString();
+            }
+
+            return value;
+    }) %>
+</script>

@@ -9,7 +9,11 @@ const bigint = require("../utils/numbers/bigint");
 const { InternalError, ValueError, AuthorizationError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const customDataValidation = require("../utils/validation/customDataValidation");
-const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
+const { 
+    parseCelebrateError, 
+    errorsWithPossibleRedirect, 
+    returnHasJSONIfNeeded 
+} = require("../utils/errors/celebrateErrorsMiddleware");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkListAuth, checkItemAuth } = require("../utils/users/authorization");
 
@@ -227,17 +231,34 @@ router.put("/items/:itemID", checkItemAuth, parseCustomColumnsData,
 Delete an item from a list
 */
 router.delete("/items/:itemID", checkItemAuth, wrapAsync(async (req, res) => {
-    const { collectionID, listID, itemID } = req.params;
+    const paramsListID = bigint.toBigInt(req.params.itemID);
+    const itemID = bigint.toBigInt(req.body.itemID);
+
+    if (!bigint.isValid(itemID) || itemID <= 0 ||
+        !bigint.isValid(paramsListID) || itemID !== paramsListID) {
+        return res.set("Content-type", "application/json")
+            .status(400)
+            .send({
+                type: "ERROR",
+                message: "Invalid item id!"
+            });
+    }
 
     await existingOrNewConnection(undefined, async function(connection) {
         await deleteItem(itemID, connection);
     });
 
-    req.flash("success", "Successfully deleted an item");
-    res.redirect(req.baseUrl);
+    const successMessage = "Successfully deleted an item";
+    req.flash("success", successMessage);
+    res.set("Content-type", "application/json")
+        .send({
+            type: "SUCCESS",
+            message: successMessage
+        });
 }));
 
 router.use(parseCelebrateError);
+router.use(returnHasJSONIfNeeded);
 router.use(errorsWithPossibleRedirect("Cannot thind this item"));
 
 module.exports = router;

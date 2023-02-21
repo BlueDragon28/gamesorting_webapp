@@ -7,9 +7,7 @@
     <a class="btn btn-success" href="/collections/<%= collection.id %>/edit">Edit Collection</a>
     <a class="btn btn-secondary" href="/collections">Go Back</a>
 
-    <form class="d-inline" action="/collections/<%= collection.id %>?_method=DELETE" method="post">
-        <button class="btn btn-danger">Delete Collection</button>
-    </form>
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCollectionModal">Delete Collection</button>
 </div>
 
 <!-- Display the available lists in a list of cards -->
@@ -26,3 +24,32 @@
         </div>
     </div>
 <% } %>
+
+<div class="modal fade" id="deleteCollectionModal" tabindex="-1" aria-labelledby="deleteCollectionModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Delete Collection</h1>
+            </div>
+            <div class="modal-body">
+                <p>Do you really want to delete this collection? There is no going back!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="deleteCollectionButton">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const collection = <%- JSON.stringify(collection, function(key, value) {
+        if (typeof value === "bigint") {
+            return value.toString();
+        }
+
+        return value;
+    }) %>
+</script>
+
+<script type="module" src="/javascript/collections/deleteCollection.js"></script>

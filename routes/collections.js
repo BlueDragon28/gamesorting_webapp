@@ -7,11 +7,16 @@ const { List } = require("../models/lists");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, AuthorizationError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
-const { parseCelebrateError, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
+const { 
+    parseCelebrateError, 
+    errorsWithPossibleRedirect, 
+    returnHasJSONIfNeeded 
+} = require("../utils/errors/celebrateErrorsMiddleware");
 const { deleteCollection } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn } = require("../utils/users/authentification");
 const { checkCollectionAuth } = require("../utils/users/authorization");
+const bigint = require("../utils/numbers/bigint");
 
 const router = express.Router();
 
@@ -126,22 +131,37 @@ router.put("/:collectionID", checkCollectionAuth, validation.item({ name: true }
 Delete a collection
 */
 router.delete("/:collectionID", checkCollectionAuth, wrapAsync(async (req, res) => {
-    const { collectionID } = req.params;
+    const paramsCollectionID = bigint.toBigInt(req.params.collectionID);
+    const collectionID = bigint.toBigInt(req.body.collectionID);
+
+    if (!bigint.isValid(collectionID) || collectionID <= 0 ||
+        !bigint.isValid(paramsCollectionID) || collectionID !== paramsCollectionID) {
+        return res.set("Content-type", "application/json")
+            .status(400)
+            .send({
+                type: "ERROR",
+                message: "Invalid Item ID"
+            });
+    }
 
     await existingOrNewConnection(undefined, async function(connection) {
         await deleteCollection(collectionID, connection);
     });
 
-    req.flash("success", "Successfully deleted a collection");
-
-    res.redirect(req.baseUrl);
+    const successMessage = "Successfully deleted a collection"
+    req.flash("success", successMessage);
+    res.set("Content-type", "application/json")
+        .send({
+            type: "SUCCESS",
+            message: successMessage
+        });
 }));
 
 /*
 Parsing celebrate errors
 */
 router.use(parseCelebrateError);
-
+router.use(returnHasJSONIfNeeded);
 router.use(errorsWithPossibleRedirect("Cannot find this collection"));
 
 module.exports = router;

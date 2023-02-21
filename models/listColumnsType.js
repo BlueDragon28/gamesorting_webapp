@@ -108,7 +108,7 @@ class ListColumnType {
     async #_isDuplicate(connection) {
         const queryStatement = 
             "SELECT COUNT(1) as count FROM listColumnsType " +
-            `WHERE Name = "${sqlString(this.name)}" AND ListID != ${this.parentList.id ? this.parentList.id : -1} ` +
+            `WHERE Name = "${sqlString(this.name)}" AND ListID = ${this.parentList.id ? this.parentList.id : -1} ` +
             "LIMIT 1";
 
         try {
