@@ -37,6 +37,7 @@ app.use(flash());
 app.use(parseFlashMessage);
 app.use(function(req, res, next) {
     res.locals.currentUser = req.session.user;
+    res.locals.activeLink = "";
     next();
 });
 
