@@ -30,6 +30,8 @@ router.get("/login", function(req, res) {
         return res.redirect("/collections");
     }
 
+    res.locals.activeLink = "UserLogin";
+
     res.render("login/index");
 });
 
