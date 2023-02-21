@@ -31,6 +31,14 @@ Check if the user is logged in
 router.use(isLoggedIn);
 
 /*
+Activate the Collections navlink
+*/
+router.use(function(req, res, next) {
+    res.locals.activeLink = "Collections";
+    next();
+});
+
+/*
 Entry to see the collections list
 */
 router.get("/", wrapAsync(async (req, res) => {
