@@ -73,6 +73,8 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
 
     const foundUser = await User.findByID(userID);
 
+    res.locals.activeLink = "UserInformations"; // Activate user information navlink
+
     res.render("login/userInformations", { user: foundUser });
 }));
 
