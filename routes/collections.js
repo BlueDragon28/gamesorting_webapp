@@ -20,6 +20,16 @@ const bigint = require("../utils/numbers/bigint");
 
 const router = express.Router();
 
+async function parsePageNumber(req, res, next) {
+    const pageNumber = parseInt(req.params.pn);
+
+    if (!pageNumber || pageNumber < 1) {
+        req.params.pn = 1;
+    }
+
+    next();
+}
+
 /*
 Validate collectionID on each route asking for collection id
 */
@@ -41,14 +51,17 @@ router.use(function(req, res, next) {
 /*
 Entry to see the collections list
 */
-router.get("/", wrapAsync(async (req, res) => {
-    const collections = await Collection.findAllFromUserID(req.session.user.id);
+router.get("/", wrapAsync(parsePageNumber), wrapAsync(async (req, res) => {
+    const userID = req.session.user.id;
+    const pageNumber = req.params.pn;
+
+    const [collections, pagination] = await Collection.findFromUserID(userID, pageNumber);
 
     if (!collections || !Array.isArray(collections)) {
         throw new InternalError("Failed To Query Collections");
     }
 
-    res.render("collections/collectionsIndex.ejs", { collections });
+    res.render("collections/collectionsIndex.ejs", { collections, pagination });
 }));
 
 /*

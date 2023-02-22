@@ -1,6 +1,7 @@
 const bigint = require("../utils/numbers/bigint");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const Pagination = require("../utils/sql/pagination");
 
 class Collection {
     id;
@@ -165,16 +166,24 @@ class Collection {
         });
     }
 
-    static async findAllFromUserID(userID, connection) {
+    static async findFromUserID(userID, pageNumber = 0, connection) {
         userID = bigint.toBigInt(userID);
-        if (!bigint.isValid(userID)) {
+        if (!bigint.isValid(userID) || typeof pageNumber !== "number" || pageNumber < 1) {
             throw new ValueError(400, "Invalid User");
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
+            const numberOfItems = await Collection.getCount(userID, connection);
+
+            const pagination = new Pagination(pageNumber, numberOfItems);
+            if (!pagination.isValid) {
+                throw new ValueError(400, "Invalid page number");
+            }
+
             const queryStatement = 
                 "SELECT UserID, CollectionID, Name FROM collections INNER JOIN users USING (UserID) " +
-                `WHERE UserID = ${userID};`;
+                `WHERE UserID = ${userID} ` +
+                `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
 
             try {
                 const queryResult = await connection.query(queryStatement);
@@ -183,7 +192,7 @@ class Collection {
                     return [];
                 }
 
-                return Collection.#parseFoundCollections(queryResult);
+                return [Collection.#parseFoundCollections(queryResult), pagination];
             } catch (error) {
                 throw new SqlError(`Failed to get all collections: ${error.message}`);
             }
@@ -227,6 +236,27 @@ class Collection {
                 return queryResult[0].count > 0;
             } catch (error) {
                 throw new SqlError(`Failed to check if user is allowed to view this collection`);
+            }
+        });
+    }
+
+    static async getCount(userID, connection) {
+        userID = bigint.toBigInt(userID);
+
+        if (!bigint.isValid(userID) || !connection) {
+            throw new ValueError(400, "Invalid UserID");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                `SELECT COUNT(*) as count FROM collections WHERE UserID = ${userID}`;
+
+            try {
+                const queryResult = (await connection.query(queryStatement))[0];
+
+                return queryResult.count;
+            } catch (error) {
+                throw new SqlError(`Failed to query number of items in collections! ${error.message}`);
             }
         });
     }
