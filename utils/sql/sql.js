@@ -1,7 +1,7 @@
 const mariadb = require("../../sql/connection");
 
 function sqlString(str) {
-    return str.replaceAll('"', '\\"');
+    return str.replaceAll('"', '\\"').replaceAll("\\", "\\\\");
 }
 
 async function existingOrNewConnection(connection, callback, ...args) {
