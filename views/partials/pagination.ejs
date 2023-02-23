@@ -1,7 +1,29 @@
-<% for (let i = 1; i <= pagination.numberOfPages; i++) { %>
-    <% if (i !== pagination.currentPage) { %>
-        <a href="<%= baseRoute %>?pn=<%= i %>"><%= i %></a>
-    <% } else { %>
-        <span><%= i %></span>
-    <% } %>
-<% } %>
+<% 
+const numberBtnButtonClass = "btn btn-outline-primary";
+const selectedBtnButtonClass = "btn btn-primary";
+const prevNextButtonClass = "btn btn-outline-primary";
+%>
+
+<div class="d-flex justify-content-center">
+    <div class="btn-toolbar" role="toolbar" aria-label="Pages numbers">
+        <div class="btn-group m2" role="group" aria-label="Pages numbers group">
+            <% if (pagination.currentPage > 1) { 
+                const prevPage = pagination.currentPage - 1;%>
+                <a class="<%= prevNextButtonClass %>" href="<%= baseRoute %>?pn=<%= prevPage %>">&lt;</a>
+            <% } %>
+
+            <% for (let i = 1; i <= pagination.numberOfPages; i++) { %>
+                <% if (i !== pagination.currentPage) { %>
+                    <a class="<%= numberBtnButtonClass %>" href="<%= baseRoute %>?pn=<%= i %>"><%= i %></a>
+                <% } else { %>
+                    <span class="<%= selectedBtnButtonClass %>"><%= i %></span>
+                <% } %>
+            <% } %>
+
+            <% if (pagination.currentPage < pagination.numberOfPages) {
+                const nextPage = pagination.currentPage + 1; %>
+                <a class="btn btn-outline-primary" href="<%= baseRoute %>?pn=<%= nextPage %>">&gt;</a>
+            <% } %>
+        </div>
+    </div>
+</div>
