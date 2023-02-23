@@ -21,11 +21,13 @@ const bigint = require("../utils/numbers/bigint");
 const router = express.Router();
 
 async function parsePageNumber(req, res, next) {
-    const pageNumber = parseInt(req.params.pn);
+    let pageNumber = parseInt(req.query.pn);
 
     if (!pageNumber || pageNumber < 1) {
-        req.params.pn = 1;
+        pageNumber = 1;
     }
+
+    req.query.pn = pageNumber;
 
     next();
 }
@@ -53,7 +55,7 @@ Entry to see the collections list
 */
 router.get("/", wrapAsync(parsePageNumber), wrapAsync(async (req, res) => {
     const userID = req.session.user.id;
-    const pageNumber = req.params.pn;
+    const pageNumber = req.query.pn;
 
     const [collections, pagination] = await Collection.findFromUserID(userID, pageNumber);
 
