@@ -176,7 +176,6 @@ class Collection {
             const numberOfItems = await Collection.getCount(userID, connection);
 
             const pagination = new Pagination(pageNumber, numberOfItems);
-            console.log(pagination);
             if (!pagination.isValid) {
                 throw new ValueError(400, "Invalid page number");
             }
@@ -190,7 +189,7 @@ class Collection {
                 const queryResult = await connection.query(queryStatement);
 
                 if (!queryResult.length) {
-                    return [];
+                    return [[], pagination];
                 }
 
                 return [Collection.#parseFoundCollections(queryResult), pagination];
