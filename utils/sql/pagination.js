@@ -15,9 +15,13 @@ class Pagination {
             this.currentPage = currentPage;
         }
 
-        if (isNumber(numberOfItems) && numberOfItems >= 1) {
+        if (isNumber(numberOfItems) && numberOfItems >= 0) {
             this.numberOfPages = 
                 Math.ceil(numberOfItems / Pagination.ITEM_PER_PAGES);
+
+            if (!this.numberOfPages || this.numberOfPages === 0) {
+                this.numberOfPages = 1;
+            }
         }
 
         this.isValid = typeof this.currentPage === "number" && this.currentPage >= 1 &&
