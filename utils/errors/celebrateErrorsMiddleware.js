@@ -68,10 +68,10 @@ function errorsWithPossibleRedirect(customErrorMessage) {
             }
         } else if (error.name === "InternalError" || error.name === "SqlError") {
             req.flash("error", "Oups!!! Something went wrong!");
-            return res.redirect("/collections");
+            return res.redirect(process.env.NODE_ENV ==="production" ? "/collections" : "/");
         } else if (error.name === "AuthorizationError") {
             req.flash("error", error.message);
-            return res.redirect("/collections");
+            return res.redirect(process.env.NODE_ENV ==="production" ? "/collections" : "/");
         }
 
         next(error);
