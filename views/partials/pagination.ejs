@@ -1,0 +1,7 @@
+<% for (let i = 1; i <= pagination.numberOfPages; i++) { %>
+    <% if (i !== pagination.currentPage) { %>
+        <a href="<%= baseRoute %>?pn=<%= i %>"><%= i %></a>
+    <% } else { %>
+        <span><%= i %></span>
+    <% } %>
+<% } %>
