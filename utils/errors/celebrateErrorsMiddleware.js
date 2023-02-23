@@ -64,11 +64,10 @@ function errorsWithPossibleRedirect(customErrorMessage) {
                 return res.redirect(req.baseUrl);
             } else if (req.method === "POST" || req.method === "PUT") {
                 flashJoiErrorMessage(error, req);
-                return res.redirect(`${req.originalUrl}/edit`);
+                return res.redirect(`${req.originalUrl}`);
             }
         } else if (error.name === "InternalError" || error.name === "SqlError") {
             req.flash("error", "Oups!!! Something went wrong!");
-            console.log(error);
             return res.redirect("/collections");
         } else if (error.name === "AuthorizationError") {
             req.flash("error", error.message);
