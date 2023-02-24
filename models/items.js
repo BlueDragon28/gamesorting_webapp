@@ -208,7 +208,7 @@ class Item {
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
-            const numberOfItems = await Items.getCount(list, connection);
+            const numberOfItems = await Item.getCount(list, connection);
 
             const pagination = new Pagination(pageNumber, numberOfItems);
             if (!pagination.isValid) {
