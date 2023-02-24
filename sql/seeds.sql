@@ -65,3 +65,28 @@ INSERT INTO users(UserID, Username, Email, Password)
 VALUES
     (1, "Some user", "some@email.com", "$2a$12$bNG5j/sssJaBmlY21hpChOq.pc5q0A18Byj0jclPt4JgRDtdTWIf."),
     (2, "BlueDragon28", "dragon@sisu.com", "$2a$12$dyYOCKe0BHbk4Xl/lGuztuthifqdPIMOX93P1wXOeO7hQ32/1eSTi");
+
+DELIMITER //
+
+FOR i IN 1..20
+DO
+    INSERT INTO collections(UserID, Name)
+    VALUES (2, CONCAT("Collection_", i));
+
+    FOR j IN 1..20
+    DO
+        INSERT INTO lists(CollectionID, Name)
+        VALUES ((SELECT MAX(CollectionID) FROM collections), CONCAT("List_", j));
+
+        FOR k IN 1..20
+        DO
+            INSERT INTO items(ListID, Name)
+            VALUES ((SELECT MAX(ListID) FROM lists), CONCAT("Item_", k));
+        END FOR;
+    END FOR;
+END FOR;
+
+//
+
+DELIMITER ;
+
