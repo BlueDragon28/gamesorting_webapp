@@ -196,7 +196,7 @@ class List {
                 const queryResult = await connection.query(queryStatement);
 
                 if (!queryResult.length) {
-                    return [];
+                    return [[], pagination];
                 }
 
                 return [List.#parseFoundLists(collection, queryResult), pagination];
