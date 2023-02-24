@@ -61,7 +61,7 @@ async function deleteItemsFromList(list, connection) {
         return;
     }
 
-    const items = await Item.findFromList(list, connection);
+    const [items] = await Item.findFromList(list, 0, connection);
     for (let item of items) {
         await deleteItem(item.id, connection);
     }
@@ -96,7 +96,7 @@ async function deleteLists(collection, connection) {
         return;
     }
 
-    const lists = await List.findFromCollection(collection, connection);
+    const [lists] = await List.findFromCollection(collection, 0, connection);
 
     for (let list of lists) {
         await deleteList(list.id, connection);
@@ -121,7 +121,7 @@ async function deleteUser(userID, connection) {
     }
 
     const foundUser = await User.findByID(userID, connection);
-    const foundCollections = await Collection.findAllFromUserID(userID, connection);
+    const [foundCollections] = await Collection.findAllFromUserID(userID, 0, connection);
 
     for (let collection of foundCollections) {
         await deleteCollection(collection.id, connection);

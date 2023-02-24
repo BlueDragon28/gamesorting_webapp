@@ -176,7 +176,7 @@ class List {
 
     static async findFromCollection(collection, pageNumber = 0, connection) {
         if (!collection || !collection instanceof Collection || !collection.isValid() ||
-                typeof pageNumber !== "number" || pageNumber < 1) {
+                typeof pageNumber !== "number" || pageNumber < 0) {
             throw new ValueError(400, "Invalid Collection");
         }
 
@@ -188,9 +188,13 @@ class List {
                 throw new ValueError(400, "Invalid page number");
             }
 
-            const queryStatement = 
-                `SELECT ListID, Name FROM lists WHERE CollectionID = ${collection.id} ` +
-                `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`
+            let queryStatement = 
+                `SELECT ListID, Name FROM lists WHERE CollectionID = ${collection.id} `;
+
+            if (pageNumber !== 0) {
+                queryStatement += 
+                    `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`
+            }
 
             try {
                 const queryResult = await connection.query(queryStatement);

@@ -203,7 +203,7 @@ class Item {
 
     static async findFromList(list, pageNumber = 0, connection) {
         if (!list || !list instanceof List || !list.isValid() ||
-                typeof pageNumber !== "number" || pageNumber < 1) {
+                typeof pageNumber !== "number" || pageNumber < 0) {
             throw new ValueError(400, "Invalid List");
         }
 
@@ -215,9 +215,12 @@ class Item {
                 throw new ValueError(400, "Invalid page number");
             }
 
-            const queryStatement = 
-                `SELECT ItemID, Name, URL FROM items WHERE ListID = ${list.id} ` +
-                `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
+            let queryStatement = 
+                `SELECT ItemID, Name, URL FROM items WHERE ListID = ${list.id} `;
+
+            if (pageNumber !== 0) {
+                queryStatement += `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
+            }
 
             try {
                 const queryResult = await connection.query(queryStatement);

@@ -168,7 +168,7 @@ class Collection {
 
     static async findFromUserID(userID, pageNumber = 0, connection) {
         userID = bigint.toBigInt(userID);
-        if (!bigint.isValid(userID) || typeof pageNumber !== "number" || pageNumber < 1) {
+        if (!bigint.isValid(userID) || typeof pageNumber !== "number" || pageNumber < 0) {
             throw new ValueError(400, "Invalid User");
         }
 
@@ -180,10 +180,14 @@ class Collection {
                 throw new ValueError(400, "Invalid page number");
             }
 
-            const queryStatement = 
+            let queryStatement = 
                 "SELECT UserID, CollectionID, Name FROM collections INNER JOIN users USING (UserID) " +
-                `WHERE UserID = ${userID} ` +
-                `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
+                `WHERE UserID = ${userID} `;
+
+            if (pageNumber !== 0) {
+                queryStatement += 
+                    `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
+            }
 
             try {
                 const queryResult = await connection.query(queryStatement);

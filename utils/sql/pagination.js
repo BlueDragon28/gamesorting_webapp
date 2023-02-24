@@ -12,7 +12,7 @@ class Pagination {
         currentPage = Number(currentPage);
         numberOfItems = Number(numberOfItems);
 
-        if (isNumber(currentPage) && currentPage >= 1) {
+        if (isNumber(currentPage) && currentPage >= 0) {
             this.currentPage = currentPage;
         }
 
@@ -25,7 +25,7 @@ class Pagination {
             }
         }
 
-        this.isValid = typeof this.currentPage === "number" && this.currentPage >= 1 &&
+        this.isValid = typeof this.currentPage === "number" && this.currentPage >= 0 &&
                 typeof this.numberOfPages === "number" && this.numberOfPages >= 1 &&
                 this.currentPage <= this.numberOfPages;
     }
