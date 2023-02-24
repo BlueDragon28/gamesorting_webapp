@@ -65,11 +65,12 @@ router.get("/new", (req, res) => {
 /*
 Entry to see the lists available inside a collection
 */
-router.get("/:collectionID", checkCollectionAuth, wrapAsync(async (req, res) => {
+router.get("/:collectionID", checkCollectionAuth, Pagination.parsePageNumberMiddleware, wrapAsync(async (req, res) => {
     const { collectionID } = req.params;
+    const pageNumber = req.query.pn;
 
     const collection = await Collection.findByID(collectionID);
-    const lists = await List.findFromCollection(collection);
+    const [lists, pagination] = await List.findFromCollection(collection, pageNumber);
 
     if (!collection || !collection.isValid()) {
         throw new InternalError(`Failed To Query Collection ${collectionID}`);
@@ -79,7 +80,7 @@ router.get("/:collectionID", checkCollectionAuth, wrapAsync(async (req, res) => 
         throw new InternalError(`Failed To Query Lists From Collection ${collectionID}`);
     }
 
-    res.render("collections/lists/lists.ejs", { collection, lists });
+    res.render("collections/lists/lists.ejs", { collection, lists, pagination });
 }));
 
 /*

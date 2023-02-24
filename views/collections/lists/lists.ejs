@@ -42,6 +42,10 @@
     </div>
 </div>
 
+<%- include("../../partials/pagination.ejs", {
+    baseRoute: `/collections/${collection.id}`
+}) %>
+
 <script>
     const collection = <%- JSON.stringify(collection, function(key, value) {
         if (typeof value === "bigint") {

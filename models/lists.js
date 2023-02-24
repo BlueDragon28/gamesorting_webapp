@@ -2,6 +2,7 @@ const bigint = require("../utils/numbers/bigint");
 const { Collection } = require("./collections");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const Pagination = require("../utils/sql/pagination");
 
 class List {
     id;
@@ -173,14 +174,23 @@ class List {
         });
     }
 
-    static async findFromCollection(collection, connection) {
-        if (!collection || !collection instanceof Collection || !collection.isValid()) {
+    static async findFromCollection(collection, pageNumber = 0, connection) {
+        if (!collection || !collection instanceof Collection || !collection.isValid() ||
+                typeof pageNumber !== "number" || pageNumber < 1) {
             throw new ValueError(400, "Invalid Collection");
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
+            const numberOfItems = await List.getCount(collection, connection);
+
+            const pagination = new Pagination(pageNumber, numberOfItems);
+            if (!pagination.isValid) {
+                throw new ValueError(400, "Invalid page number");
+            }
+
             const queryStatement = 
-                `SELECT ListID, Name FROM lists WHERE CollectionID = ${collection.id};`;
+                `SELECT ListID, Name FROM lists WHERE CollectionID = ${collection.id} ` +
+                `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`
 
             try {
                 const queryResult = await connection.query(queryStatement);
@@ -189,7 +199,7 @@ class List {
                     return [];
                 }
 
-                return List.#parseFoundLists(collection, queryResult);
+                return [List.#parseFoundLists(collection, queryResult), pagination];
             } catch (error) {
                 throw new SqlError(`Failed to get all lists: ${error.message}`);
             }
@@ -237,6 +247,25 @@ class List {
         });
     }
 
+    static async getCount(collection, connection) {
+        if (!collection.isValid()) {
+            throw new ValueError(400, "Invalid collection");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                "SELECT COUNT(*) AS count FROM lists " + 
+                `WHERE CollectionID = ${collection.id}`;
+                
+            try {
+                const queryResult = (await connection.query(queryStatement))[0];
+
+                return queryResult.count;
+            } catch (error) {
+                throw new SqlError(`Failed to query number of items in lists: ${error.message}`);
+            }
+        });
+    }
 
     static #parseFoundLists(collection, lists) {
         const listsArray = [];
