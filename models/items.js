@@ -3,6 +3,7 @@ const { List } = require("./lists");
 const { CustomRowsItems } = require("./customUserData");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const Pagination = require("../utils/sql/pagination");
 
 class Item {
     id;
@@ -200,14 +201,23 @@ class Item {
         });
     }
 
-    static async findFromList(list, connection) {
-        if (!list || !list instanceof List || !list.isValid()) {
+    static async findFromList(list, pageNumber = 0, connection) {
+        if (!list || !list instanceof List || !list.isValid() ||
+                typeof pageNumber !== "number" || pageNumber < 1) {
             throw new ValueError(400, "Invalid List");
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
+            const numberOfItems = await Items.getCount(list, connection);
+
+            const pagination = new Pagination(pageNumber, numberOfItems);
+            if (!pagination.isValid) {
+                throw new ValueError(400, "Invalid page number");
+            }
+
             const queryStatement = 
-                `SELECT ItemID, Name, URL FROM items WHERE ListID = ${list.id};`;
+                `SELECT ItemID, Name, URL FROM items WHERE ListID = ${list.id} ` +
+                `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
 
             try {
                 const queryResult = await connection.query(queryStatement);
@@ -216,7 +226,7 @@ class Item {
                     return [];
                 }
 
-                return Item.#parseFoundItems(list, queryResult);
+                return [Item.#parseFoundItems(list, queryResult), pagination];
             } catch (error) {
                 throw new SqlError(`Failed to get all lists: ${error.message}`);
             }
@@ -261,6 +271,26 @@ class Item {
                 return queryResult[0].count > 0;
             } catch (error) {
                 throw new SqlError(`Failed to check if user is allowed to view this item`);
+            }
+        });
+    }
+
+    static async getCount(list, connection) {
+        if (!list.isValid()) {
+            throw new ValueError(400, "Invalid list");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                "SELECT COUNT(*) AS count FROM items " +
+                `WHERE ListID = ${list.id}`;
+            
+            try {
+                const queryResult = (await connection.query(queryStatement))[0];
+
+                return queryResult.count;
+            } catch (error) {
+                throw new SqlError(`Failed to query number of items in lists: ${error.message}`);
             }
         });
     }

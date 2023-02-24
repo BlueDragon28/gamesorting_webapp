@@ -53,6 +53,10 @@
     </div>
 </div>
 
+<%- include("../../../partials/pagination.ejs", {
+                                                             baseRoute: `/collections/${list.parentCollection.id}/lists/${list.id}`
+}) %>
+
 <script type="module" src="/javascript/collections/lists/deleteList.js"></script>
 
 <script>

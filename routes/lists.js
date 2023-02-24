@@ -17,6 +17,7 @@ const { checkCollectionAuth, checkListAuth } = require("../utils/users/authoriza
 const { trimColumns, checkForDuplicate, checkForDuplicateWithCurrentColumns, retrievePreviousColumns } = 
     require("../utils/data/listCustomColumnsMiddlewares");
 const bigint = require("../utils/numbers/bigint");
+const Pagination = require("../utils/sql/pagination");
 
 const router = express.Router({ mergeParams: true });
 
@@ -43,11 +44,12 @@ router.get("/lists/new", checkCollectionAuth, wrapAsync(async (req, res) => {
 /*
 Entry point to list all items inside a list
 */
-router.get("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
+router.get("/lists/:listID", checkListAuth, Pagination.parsePageNumberMiddleware, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
+    const pageNumber = req.query.pn;
 
     const list = await List.findByID(listID);
-    const items = await Item.findFromList(list);
+    const [items, pagination] = await Item.findFromList(list, pageNumber);
     
     if (!list) {
         throw new InternalError(`Failed To Query List From List ${listID}`);
@@ -57,7 +59,7 @@ router.get("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
         throw new InternalError("Failed To Query Items From List");
     }
 
-    res.render("collections/lists/items/items", { list, items });
+    res.render("collections/lists/items/items", { list, items, pagination });
 }));
 
 /*
