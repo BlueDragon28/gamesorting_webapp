@@ -223,7 +223,7 @@ class Item {
                 const queryResult = await connection.query(queryStatement);
 
                 if (!queryResult.length) {
-                    return [];
+                    return [[], pagination];
                 }
 
                 return [Item.#parseFoundItems(list, queryResult), pagination];
