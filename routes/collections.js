@@ -17,20 +17,9 @@ const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn } = require("../utils/users/authentification");
 const { checkCollectionAuth } = require("../utils/users/authorization");
 const bigint = require("../utils/numbers/bigint");
+const Pagination = require("../utils/sql/pagination");
 
 const router = express.Router();
-
-async function parsePageNumber(req, res, next) {
-    let pageNumber = parseInt(req.query.pn);
-
-    if (!pageNumber || pageNumber < 1) {
-        pageNumber = 1;
-    }
-
-    req.query.pn = pageNumber;
-
-    next();
-}
 
 /*
 Validate collectionID on each route asking for collection id
@@ -53,7 +42,7 @@ router.use(function(req, res, next) {
 /*
 Entry to see the collections list
 */
-router.get("/", wrapAsync(parsePageNumber), wrapAsync(async (req, res) => {
+router.get("/", Pagination.parsePageNumberMiddleware, wrapAsync(async (req, res) => {
     const userID = req.session.user.id;
     const pageNumber = req.query.pn;
 

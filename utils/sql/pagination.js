@@ -1,4 +1,5 @@
 const { isNumber } = require("../numbers/number");
+const wrapAsync = require("../errors/wrapAsync");
 
 class Pagination {
     static ITEM_PER_PAGES = 15;
@@ -35,6 +36,18 @@ class Pagination {
         }
 
         return (pageNumber-1) * Pagination.ITEM_PER_PAGES;
+    }
+
+    static parsePageNumberMiddleware(req, res, next) {
+        let pageNumber = parseInt(req.query.pn);
+
+        if (!pageNumber || pageNumber < 1) {
+            pageNumber = 1;
+        }
+
+        req.query.pn = pageNumber;
+
+        next();
     }
 }
 
