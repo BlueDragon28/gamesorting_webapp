@@ -1,10 +1,24 @@
-<% if (pagination.numberOfPages > 1) { %>
-    <% 
+<% 
     const numberBtnButtonClass = "btn btn-outline-primary";
     const selectedBtnButtonClass = "btn btn-primary";
     const prevNextButtonClass = "btn btn-outline-primary";
-    %>
+%>
 
+<%
+function makePaginationLink(pageNumber) {
+    if (typeof pageNumber !== "number") {
+        return "";
+    }
+
+    if (pageNumber !== pagination.currentPage) {
+        return `<a class="${numberBtnButtonClass}" href="pagination_${pageNumber}">${pageNumber}</a>`;
+    } else {
+        return `<span class="${selectedBtnButtonClass}">${pageNumber}</span>`;
+    }
+}
+%>
+
+<% if (pagination.numberOfPages > 1) { %>
     <div class="d-flex justify-content-center">
         <div class="btn-toolbar" role="toolbar" aria-label="Pages numbers">
             <div class="btn-group m2" role="group" aria-label="Pages numbers group">
@@ -13,12 +27,32 @@
                     <a class="<%= prevNextButtonClass %>" href="pagination_prevPage">&lt;</a>
                 <% } %>
 
-                <% for (let i = 1; i <= pagination.numberOfPages; i++) { %>
-                    <% if (i !== pagination.currentPage) { %>
-                        <a class="<%= numberBtnButtonClass %>" href="pagination_<%= i %>"><%= i %></a>
-                    <% } else { %>
-                        <span class="<%= selectedBtnButtonClass %>"><%= i %></span>
-                    <% } %>
+                <% for (let i = 1; i <= Math.min(7, pagination.numberOfPages); i++) { %>
+                    <%- makePaginationLink(i) %>
+                <% } %>
+
+                <% if (pagination.numberOfPages > 8) { %>
+                <div class="btn-group" role="group">
+                    <button type="button" class="<%= numberBtnButtonClass %>" data-bs-toggle="dropdown" aria-expanded="false">...</button>
+                        <ul class="dropdown-menu border border-primary" style="overflow: auto; height: 30rem">
+                            <% for (let i = 8; i < pagination.numberOfPages; i++) { %>
+                                <li><a 
+                                    href="pagination_<%= i %>" 
+                                <% if (i !== pagination.currentPage) { %>
+                                    class="dropdown-item border-bottom border-primary text-primary"
+                                <% } else { %>
+                                    class="dropdown-item bg-primary text-light"
+                                <% } %>
+                                >
+                                    <%= i %>
+                                </a></li>
+                            <% } %>
+                        </ul>
+                </div>
+                <% } %>
+
+                <% if (pagination.numberOfPages > 7) { %>
+                    <%- makePaginationLink(pagination.numberOfPages) %>
                 <% } %>
 
                 <% if (pagination.currentPage < pagination.numberOfPages) {
