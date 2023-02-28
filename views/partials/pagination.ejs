@@ -10,12 +10,12 @@
             <div class="btn-group m2" role="group" aria-label="Pages numbers group">
                 <% if (pagination.currentPage > 1) { 
                     const prevPage = pagination.currentPage - 1;%>
-                    <a class="<%= prevNextButtonClass %>" href="<%= baseRoute %>?pn=<%= prevPage %>">&lt;</a>
+                    <a class="<%= prevNextButtonClass %>" href="pagination_prevPage">&lt;</a>
                 <% } %>
 
                 <% for (let i = 1; i <= pagination.numberOfPages; i++) { %>
                     <% if (i !== pagination.currentPage) { %>
-                        <a class="<%= numberBtnButtonClass %>" href="<%= baseRoute %>?pn=<%= i %>"><%= i %></a>
+                        <a class="<%= numberBtnButtonClass %>" href="pagination_<%= i %>"><%= i %></a>
                     <% } else { %>
                         <span class="<%= selectedBtnButtonClass %>"><%= i %></span>
                     <% } %>
@@ -23,9 +23,18 @@
 
                 <% if (pagination.currentPage < pagination.numberOfPages) {
                     const nextPage = pagination.currentPage + 1; %>
-                    <a class="btn btn-outline-primary" href="<%= baseRoute %>?pn=<%= nextPage %>">&gt;</a>
+                    <a class="btn btn-outline-primary" href="pagination_nextPage">&gt;</a>
                 <% } %>
             </div>
         </div>
     </div>
 <% } %>
+
+<script>
+    const pagination = <%- JSON.stringify({
+        currentPage: pagination.currentPage,
+        numberOfPages: pagination.numberOfPages
+    }); %>
+</script>
+
+<script src="/javascript/paginations/setPaginationsHRef.js"></script>

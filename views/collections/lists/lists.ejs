@@ -42,9 +42,7 @@
     </div>
 </div>
 
-<%- include("../../partials/pagination.ejs", {
-    baseRoute: `/collections/${collection.id}`
-}) %>
+<%- include("../../partials/pagination.ejs") %>
 
 <script>
     const collection = <%- JSON.stringify(collection, function(key, value) {
