@@ -37,9 +37,18 @@ class AuthorizationError extends Error {
     }
 }
 
+class LimitError extends Error {
+    constructor(message) {
+        super(message);
+        this.statusCode = 403;
+        this.name = "LimitError";
+    }
+}
+
 module.exports = {
     SqlError,
     ValueError,
     InternalError,
-    AuthorizationError
+    AuthorizationError,
+    LimitError
 }

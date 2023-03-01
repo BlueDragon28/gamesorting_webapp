@@ -18,6 +18,7 @@ const { isLoggedIn } = require("../utils/users/authentification");
 const { checkCollectionAuth } = require("../utils/users/authorization");
 const bigint = require("../utils/numbers/bigint");
 const Pagination = require("../utils/sql/pagination");
+const { isCollectionMaxLimitMiddleware } = require("../utils/validation/limitNumberElements");
 
 const router = express.Router();
 
@@ -101,7 +102,7 @@ router.get("/:collectionID/edit", checkCollectionAuth, wrapAsync(async (req, res
 /*
 Create a new collection
 */
-router.post("/", validation.item({ name: true }), wrapAsync(async (req, res) => {
+router.post("/", isCollectionMaxLimitMiddleware, validation.item({ name: true }), wrapAsync(async (req, res) => {
     const { name } = req.body;
 
     const newCollection = new Collection(req.session.user.id, name);
