@@ -1,5 +1,4 @@
 USE gamesorting_webapp;
-
 -- This table hold the list of collections, a collection hold one or many list inside.
 -- Each collections is based on a specific subject (ex: games, books, etc)
 DROP TABLE IF EXISTS collections;
@@ -59,5 +58,6 @@ CREATE TABLE IF NOT EXISTS users(
     UserID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     Username VARCHAR(300) NOT NULL,
     Email VARCHAR(300) NOT NULL,
-    Password VARCHAR(10000) NOT NULL
+    Password VARCHAR(10000) NOT NULL,
+    BypassRestriction BOOLEAN NOT NULL DEFAULT FALSE
 );
