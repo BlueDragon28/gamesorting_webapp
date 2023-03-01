@@ -121,7 +121,7 @@ async function deleteUser(userID, connection) {
     }
 
     const foundUser = await User.findByID(userID, connection);
-    const [foundCollections] = await Collection.findAllFromUserID(userID, 0, connection);
+    const [foundCollections] = await Collection.findFromUserID(userID, 0, connection);
 
     for (let collection of foundCollections) {
         await deleteCollection(collection.id, connection);
