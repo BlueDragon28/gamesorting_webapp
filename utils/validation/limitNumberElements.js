@@ -6,11 +6,11 @@ const { existingOrNewConnection } = require("../sql/sql");
 
 const COLLECTION_LIMIT = 5;
 
-async function isMaxLimitTemplateMiddleware(req, res, next, model, modelName, limit) {
+async function isMaxLimitTemplateMiddleware(req, res, next, parentID, model, modelName, limit) {
     const user = req.session.user;
      const [count, isUserBypassingRestriction] = 
         await existingOrNewConnection(null, async function(connection) {
-            return [await model.getCount(user.id, connection),
+            return [await model.getCount(parentID, connection),
                 await User.isBypassingRestriction(user.id, connection)];
         }
     );
@@ -23,7 +23,15 @@ async function isMaxLimitTemplateMiddleware(req, res, next, model, modelName, li
 }
 
 async function isCollectionMaxLimitMiddleware(req, res, next) {
-    await isMaxLimitTemplateMiddleware(req, res, next, Collection, "collection", COLLECTION_LIMIT);
+    await isMaxLimitTemplateMiddleware(
+        req, 
+        res, 
+        next, 
+        req.session.user.id, 
+        Collection, 
+        "collection", 
+        COLLECTION_LIMIT
+    );
 }
 
 module.exports = {
