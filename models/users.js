@@ -250,6 +250,18 @@ class User {
             }
         });
     }
+
+    static async isBypassingRestriction(userID, connection) {
+        if (!bigint.isValid(userID)) {
+            throw new ValueError(400, "Invalid User");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const user = await User.findByID(userID, connection);
+
+            return user.bypassRestriction === true;
+        });
+    }
 }
 
 module.exports = {
