@@ -16,6 +16,7 @@ const {
 } = require("../utils/errors/celebrateErrorsMiddleware");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkListAuth, checkItemAuth } = require("../utils/users/authorization");
+const { isItemLaxLimitMiddleware } = require("../utils/validation/limitNumberElements");
 
 const router = express.Router({ mergeParams: true });
 
@@ -128,7 +129,7 @@ router.get("/items/:itemID/edit", checkItemAuth, customDataEjsHelper, wrapAsync(
 /*
 Insert a new item into a list inside a collection
 */
-router.post("/items", checkListAuth, parseCustomColumnsData, 
+router.post("/items", checkListAuth, isItemLaxLimitMiddleware, parseCustomColumnsData, 
             validation.item({ name: true, url: true, customData: true }),
             customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;

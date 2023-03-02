@@ -1,5 +1,6 @@
 const { Collection } = require("../../models/collections");
 const { List } = require("../../models/lists");
+const { Item } = require("../../models/items");
 const { User } = require("../../models/users");
 const { LimitError } = require("../errors/exceptions");
 const wrapAsync = require("../errors/wrapAsync");
@@ -7,6 +8,7 @@ const { existingOrNewConnection } = require("../sql/sql");
 
 const COLLECTION_LIMIT = 5;
 const LIST_LIMIT = 5;
+const ITEM_LIMIT = 3000;
 
 async function isMaxLimitTemplateMiddleware(req, res, next, parentID, model, modelName, limit, connection) {
     const user = req.session.user;
@@ -53,7 +55,25 @@ async function isListMaxLimitMiddleware(req, res, next) {
     });
 }
 
+async function isItemLaxLimitMiddleware(req, res, next) {
+    const { listID } = req.params;
+    await existingOrNewConnection(null, async function(connection) {
+        const list = await List.findByID(listID, connection);
+        await isMaxLimitTemplateMiddleware(
+            req, 
+            res, 
+            next, 
+            list, 
+            Item, 
+            "item", 
+            ITEM_LIMIT, 
+            connection
+        );
+    })
+}
+
 module.exports = {
     isCollectionMaxLimitMiddleware: wrapAsync(isCollectionMaxLimitMiddleware),
     isListMaxLimitMiddleware: wrapAsync(isListMaxLimitMiddleware),
+    isItemLaxLimitMiddleware: wrapAsync(isItemLaxLimitMiddleware),
 }
