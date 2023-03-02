@@ -7,6 +7,7 @@ class User {
     id = undefined;
     username = undefined;
     email = undefined;
+    bypassRestriction = undefined;
     #hashPassword = undefined;
 
     constructor(username, email, password, hashPassword = true) {
@@ -37,7 +38,8 @@ class User {
         if (!this.username || typeof this.username !== "string" || !this.username.length ||
             !this.email || typeof this.email !== "string" || !this.email.length ||
             !this.#hashPassword || typeof this.#hashPassword !== "string" || !this.#hashPassword.length ||
-            (this.id && !bigint.isValid(this.id))) {
+            (this.id && !bigint.isValid(this.id)) ||
+            (this.bypassRestriction !== undefined && typeof this.bypassRestriction !== "boolean")) {
             return false;
         }
 
@@ -116,9 +118,9 @@ class User {
 
     async #_createUser(connection) {
         const queryStatement = 
-            "INSERT INTO users (Username, Email, Password) " +
+            `INSERT INTO users (Username, Email, Password ${this.bypassRestriction === true ? ", BypassRestriction" : ""}) ` +
             `VALUES ("${sqlString(this.username)}", "${sqlString(this.email)}", ` + 
-            `"${sqlString(this.#hashPassword)}")`;
+            `"${sqlString(this.#hashPassword)}" ${this.bypassRestriction === true ? ", \"TRUE\"" : ""})`;
 
         try {
             const result = await connection.query(queryStatement);
@@ -142,6 +144,7 @@ class User {
             "UPDATE users SET " +
             `Username = "${sqlString(this.username)}", Email = "${sqlString(this.email)}", ` +
             `Password = "${sqlString(this.#hashPassword)}" ` +
+            `BypassRestriction = "${this.bypassRestriction === true ? "TRUE" : "FALSE"}" ` +
             `WHERE UserID = ${this.id}`;
 
         try {
@@ -178,7 +181,7 @@ class User {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                "SELECT UserID, Username, Email, Password " +
+                "SELECT UserID, Username, Email, Password, BypassRestriction " +
                 "FROM users " +
                 `WHERE Username = "${sqlString(username)}" OR Email = "${sqlString(username)}"`;
 
@@ -189,10 +192,11 @@ class User {
                     return null;
                 }
 
-                const { UserID, Username, Email, Password } = queryResult[0];
+                const { UserID, Username, Email, Password, BypassRestriction } = queryResult[0];
 
                 const foundUser = new User(Username, Email, Password, false);
                 foundUser.id = UserID;
+                foundUser.bypassRestriction = BypassRestriction !== 0 ? true : false;
 
                 return foundUser;
             } catch (error) {
@@ -208,7 +212,7 @@ class User {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `SELECT UserID, Username, Email, Password FROM users WHERE UserID = ${userID}`;
+                `SELECT UserID, Username, Email, Password, BypassRestriction FROM users WHERE UserID = ${userID}`;
             
             try {
                 const queryResult = await connection.query(queryStatement);
@@ -217,10 +221,11 @@ class User {
                     return null;
                 }
 
-                const { UserID, Username, Email, Password } = queryResult[0];
+                const { UserID, Username, Email, Password, BypassRestriction } = queryResult[0];
 
                 const foundUser = new User(Username, Email, Password, false);
                 foundUser.id = UserID;
+                foundUser.bypassRestriction = BypassRestriction !== 0 ? true : false;
 
                 return foundUser;
             } catch (error) {
