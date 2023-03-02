@@ -6,20 +6,24 @@ const { existingOrNewConnection } = require("../sql/sql");
 
 const COLLECTION_LIMIT = 5;
 
-async function isCollectionMaxLimitMiddleware(req, res, next) {
+async function isMaxLimitTemplateMiddleware(req, res, next, model, modelName, limit) {
     const user = req.session.user;
-    const [collectionCount, isUserBypassingRestriction] = 
+     const [count, isUserBypassingRestriction] = 
         await existingOrNewConnection(null, async function(connection) {
-            return [await Collection.getCount(user.id, connection),
+            return [await model.getCount(user.id, connection),
                 await User.isBypassingRestriction(user.id, connection)];
         }
     );
 
-    if (collectionCount >= COLLECTION_LIMIT && !isUserBypassingRestriction) {
-        throw new LimitError(`You have reached the limit of ${COLLECTION_LIMIT} collections.`)
+    if (count >= limit && !isUserBypassingRestriction) {
+        throw new LimitError(`You have reached the limit of ${limit} ${modelName}.`)
     }
 
     next();
+}
+
+async function isCollectionMaxLimitMiddleware(req, res, next) {
+    await isMaxLimitTemplateMiddleware(req, res, next, Collection, "collection", COLLECTION_LIMIT);
 }
 
 module.exports = {
