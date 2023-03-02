@@ -18,6 +18,7 @@ const { trimColumns, checkForDuplicate, checkForDuplicateWithCurrentColumns, ret
     require("../utils/data/listCustomColumnsMiddlewares");
 const bigint = require("../utils/numbers/bigint");
 const Pagination = require("../utils/sql/pagination");
+const { isListMaxLimitMiddleware } = require("../utils/validation/limitNumberElements");
 
 const router = express.Router({ mergeParams: true });
 
@@ -149,27 +150,31 @@ router.get("/lists/:listID/edit", checkListAuth, wrapAsync(async (req, res) => {
 /*
 Add a new list to a collection
 */
-router.post("/lists", checkCollectionAuth, validation.item({ name: true }), wrapAsync(async (req, res) => {
-    const { collectionID } = req.params;
-    const { name } = req.body;
+router.post("/lists", 
+    checkCollectionAuth, 
+    isListMaxLimitMiddleware,
+    validation.item({ name: true }), 
+    wrapAsync(async (req, res) => {
+        const { collectionID } = req.params;
+        const { name } = req.body;
 
-    const collection = await Collection.findByID(collectionID);
+        const collection = await Collection.findByID(collectionID);
 
-    if (!collection || !collection instanceof Collection || !collection.isValid()) {
-        throw new InternalError("Failed to get collection");
-    }
+        if (!collection || !collection instanceof Collection || !collection.isValid()) {
+            throw new InternalError("Failed to get collection");
+        }
 
-    const newList = new List(name, collection)
+        const newList = new List(name, collection)
 
-    if (!newList.isValid()) {
-        throw new ValueError(400, "Invalid List Data");
-    }
+        if (!newList.isValid()) {
+            throw new ValueError(400, "Invalid List Data");
+        }
 
-    await newList.save();
+        await newList.save();
 
-    req.flash("success", "Successfully created a new list");
+        req.flash("success", "Successfully created a new list");
 
-    res.redirect(`${req.baseUrl}`);
+        res.redirect(`${req.baseUrl}`);
 }));
 
 /*
