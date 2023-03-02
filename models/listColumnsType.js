@@ -266,6 +266,25 @@ class ListColumnType {
         });
     }
 
+    static async getCount(listID, connection) {
+        if (!bigint.isValid(listID)) {
+            throw new ValueError(400, "Invalid List");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                `SELECT COUNT(*) AS count FROM listColumnsType WHERE ListID = ${listID}`;
+
+            try {
+                const queryResult = (await connection.query(queryStatement))[0];
+
+                return queryResult.count;
+            } catch (error) {
+                throw new SqlError(`Failed to query number of customs columns: ${error.message}`);
+            }
+        });
+    }
+
     static #parseFoundColumnsType(list, columnsType) {
         const columnTypeArray = [];
 

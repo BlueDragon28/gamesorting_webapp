@@ -18,7 +18,7 @@ const { trimColumns, checkForDuplicate, checkForDuplicateWithCurrentColumns, ret
     require("../utils/data/listCustomColumnsMiddlewares");
 const bigint = require("../utils/numbers/bigint");
 const Pagination = require("../utils/sql/pagination");
-const { isListMaxLimitMiddleware } = require("../utils/validation/limitNumberElements");
+const { isListMaxLimitMiddleware, isCustomColumnsLimitMiddleware } = require("../utils/validation/limitNumberElements");
 
 const router = express.Router({ mergeParams: true });
 
@@ -84,6 +84,7 @@ Post route to add and delete custom columns
 */
 router.post("/lists/:listID/custom-columns", 
     checkListAuth, 
+    isCustomColumnsLimitMiddleware,
     trimColumns,
     checkForDuplicate, 
     retrievePreviousColumns,
