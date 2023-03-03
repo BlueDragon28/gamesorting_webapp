@@ -1,5 +1,9 @@
 const mariadb = require("./connection");
 
+beforeAll(async function() {
+    return mariadb.openPool();
+});
+
 test("Check if connection to database is successfull", async function() {
     function testDatabaseConnection(connection) {
         expect(typeof connection?.close).toBe("function");
@@ -9,7 +13,7 @@ test("Check if connection to database is successfull", async function() {
     return mariadb.getConnection(testDatabaseConnection);
 });
 
-afterAll(function() {
-    mariadb.closePool();
+afterAll(async function() {
+    return mariadb.closePool();
 });
 
