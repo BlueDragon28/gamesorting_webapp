@@ -6,13 +6,13 @@ Handle bigint manipulation
 Convert string to BigInt
 */
 const fromStringToBigInt = function (str) {
-    if (!str && typeof str !== "string") {
+    if (typeof str !== "string") {
         return null;
     }
 
     const bigIntValue = BigInt(str);
 
-    if (!bigIntValue) {
+    if (typeof bigIntValue !== "bigint") {
         return null;
     }
 
@@ -23,8 +23,7 @@ const fromStringToBigInt = function (str) {
 Check if a value is a valid number
 */
 const isValid = function(bigint) {
-    if (!bigint && 
-            typeof bigint !== "number" &&
+    if (typeof bigint !== "number" &&
             typeof bigint !== "bigint" &&
             typeof bigint !== "string") {
         return false;
@@ -32,9 +31,10 @@ const isValid = function(bigint) {
 
     if (typeof bigint === "string") {
         bigint = fromStringToBigInt(bigint);
+        return typeof bigint === "bigint";
     }
 
-    return bigint ? true : false;
+    return true;
 }
 
 /*
