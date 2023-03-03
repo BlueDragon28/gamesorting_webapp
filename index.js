@@ -13,6 +13,9 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
+const mariadb = require("./sql/connection");
+
+mariadb.openPool();
 
 const app = express();
 

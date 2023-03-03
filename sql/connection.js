@@ -6,12 +6,16 @@ functions to make queries.
 const mariadb = require("mariadb");
 const { SqlError } = require("../utils/errors/exceptions");
 
-const pool = mariadb.createPool({
-    user: "bluedragon28",
-    socketPath: "/var/run/mysql/mysql.sock",
-    database: "gamesorting_webapp",
-    connectionLimit: 1
-})
+let pool = undefined;
+
+async function openPool(suffix = "") {
+    pool = mariadb.createPool({
+        user: "bluedragon28",
+        socketPath: "/var/run/mysql/mysql.sock",
+        database: "gamesorting_webapp" + suffix,
+        connectionLimit: 1
+    });
+}
 
 module.exports = {
     getConnection: async function(func) {
@@ -38,6 +42,8 @@ module.exports = {
             connection.close();
         }
     },
+
+    openPool,
 
     closePool: async function() {
         return pool.end().catch(err => undefined);
