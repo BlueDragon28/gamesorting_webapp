@@ -37,5 +37,9 @@ module.exports = {
         } finally {
             connection.close();
         }
+    },
+
+    closePool: async function() {
+        return pool.end().catch(err => undefined);
     }
 };
