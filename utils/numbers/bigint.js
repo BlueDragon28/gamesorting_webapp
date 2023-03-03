@@ -23,14 +23,18 @@ const fromStringToBigInt = function (str) {
 Check if a value is a valid number
 */
 const isValid = function(bigint) {
-    if (typeof bigint !== "number" &&
+    if ((typeof bigint !== "number" || (typeof bigint === "number" && isNaN(bigint))) &&
             typeof bigint !== "bigint" &&
             typeof bigint !== "string") {
         return false;
     }
 
     if (typeof bigint === "string") {
-        bigint = fromStringToBigInt(bigint);
+        try {
+            bigint = fromStringToBigInt(bigint);
+        } catch (error) {
+            return false;
+        }
         return typeof bigint === "bigint";
     }
 
@@ -42,7 +46,7 @@ Convert a value to a bigint
 */
 const toBigInt = function(value) {
     if (!isValid(value)) {
-        return null;
+        throw TypeError(`Cannot convert ${value} to bigint.`)
     }
 
     if (typeof value === "string") {
