@@ -1,3 +1,5 @@
+const mariadb = require("../sql/connection");
+const seeds = require("../sql/seeds");
 const { Collection } = require("./collections");
 
 test("Create valid collection object", async function() {
@@ -54,5 +56,141 @@ test("Create collection object with invalid id", async function() {
 
     col.id = false;
     expect(() => col.isValid()).toThrow();
+});
+
+describe("collection dabase manipulation", function() {
+    beforeAll(async function() {
+        await mariadb.openPool();
+        return seeds.seeds();
+    });
+
+    afterAll(async function() {
+        return mariadb.closePool();
+    });
+
+    async function collectionQuery(func) {
+        let error;
+        let queryResult
+
+        try {
+            queryResult = await func();
+        } catch (err) {
+            error = err;
+        }
+
+        return [queryResult, error];
+    }
+
+    let collection;
+
+    it ("save a collection", async function() {
+        collection = new Collection(2, "A New Collection");
+        const [,error] = await collectionQuery(async () => collection.save());
+
+        expect(collection?.isValid()).toBe(true);
+        expect(error).toBe(undefined);
+        expect(typeof collection?.id).toBe("bigint");
+    });
+
+    it("save an invalid collection", async function() {
+        let [,error] = await collectionQuery(async () => new Collection(null, "a col").save());
+
+        expect(error).not.toBe(undefined);
+
+        [,error] = await collectionQuery(async () => new Collection(2, "").save());
+       
+        expect(error).not.toBe(undefined);
+    });
+
+    it("save a duplicate collection", async function() {
+        const [,error] = await collectionQuery(async () => new Collection(2, "Games").save());
+
+        expect(error).not.toBe(undefined);
+    });
+
+    it("get a collection from id", async function() {
+        let [findCollection, error] = await collectionQuery(async () => Collection.findByID(collection.id));
+
+        expect(findCollection instanceof Collection).toBe(true);
+        expect(error).toBe(undefined);
+        expect(findCollection?.id).toBe(collection.id);
+        expect(typeof findCollection?.id).toBe("bigint");
+        expect(findCollection?.name).toBe("A New Collection");
+
+        [findCollection, error] = await collectionQuery(async () => Collection.findByID(0));
+
+        expect(error).toBe(undefined);
+        expect(findCollection).toBe(null);
+    });
+
+    it("update a collection", async function() {
+        collection.name = "Another collection";
+        const [,error] = await collectionQuery(async () => collection.save());
+        expect(error).toBe(undefined);
+    });
+
+    it("check updated collection", async function() {
+        const [findCollection, error] =
+            await collectionQuery(async () => Collection.findByID(collection.id));
+
+        expect(error).toBe(undefined);
+        expect(findCollection instanceof Collection).toBe(true);
+        expect(typeof findCollection?.id).toBe("bigint");
+        expect(findCollection?.id).toBe(collection.id);
+        expect(findCollection.name).toBe("Another collection");
+    });
+
+    it("check update invalid collection", async function() {
+        const updatedCollection = new Collection(null, collection.name);
+        updatedCollection.id = collection.id;
+        
+        let [,error] = await collectionQuery(async () => updatedCollection.save());
+
+        expect(error).not.toBe(undefined);
+
+        updatedCollection.id = 2;
+        updatedCollection.name = "";
+
+        [,error] = await collectionQuery(async () => updatedCollection.save());
+
+        expect(error).not.toBe(undefined);
+
+        updatedCollection.name = 25;
+
+        [,error] = await collectionQuery(async () => updatedCollection.save());
+
+        expect(error).not.toBe(undefined);
+    });
+
+    it("update collection to a duplicate value", async function() {
+        const updatedCollection = new Collection(collection.userID, "Games");
+        updatedCollection.id = updatedCollection.id;
+        const [,error] = await collectionQuery(async () => updatedCollection.save());
+        expect(error).not.toBe(undefined);
+    });
+
+    it("check if user allowed", async function() {
+        const [isUserAllowed, error] = 
+            await collectionQuery(async () => Collection.isUserAllowed(2, collection.id));
+        expect(error).toBe(undefined);
+        expect(isUserAllowed).toBe(true);
+    });
+
+    it("check if user not allowed", async function() {
+        const [isUserAllowed, error] =
+            await collectionQuery(async () => Collection.isUserAllowed(1, collection.id));
+        expect(error).toBe(undefined);
+        expect(isUserAllowed).toBe(false);
+    });
+
+    it("delete a collection", async function() {
+        const [,error] = await collectionQuery(async () => Collection.deleteFromID(collection.id));
+        expect(error).toBe(undefined);
+    });
+
+    it("delete invalid collection", async function() {
+        const [,error] = await collectionQuery(async () => Collection.deleteFromID(600000000000000));
+        expect(error).not.toBe(undefined);
+    });
 });
 
