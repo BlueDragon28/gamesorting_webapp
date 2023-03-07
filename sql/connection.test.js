@@ -1,7 +1,7 @@
 const mariadb = require("./connection");
 
 beforeAll(async function() {
-    return mariadb.openPool();
+    return mariadb.openPool("_testing");
 });
 
 test("Check if connection to database is successfull", async function() {
