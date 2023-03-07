@@ -215,6 +215,10 @@ class Collection {
 
             try {
                 const queryResult = await connection.query(queryStatement);
+
+                if (queryResult.affectedRows === 0) {
+                    throw ValueError(400, "Invalid Collection ID");
+                }
             } catch (error) {
                 throw new SqlError(`Failed to delete collection ${id}: ${error.message}`);
             }
