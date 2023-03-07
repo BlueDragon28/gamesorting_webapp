@@ -1,4 +1,4 @@
-USE gamesorting_webapp;
+-- USE gamesorting_webapp;
 -- This table hold the list of collections, a collection hold one or many list inside.
 -- Each collections is based on a specific subject (ex: games, books, etc)
 DROP TABLE IF EXISTS collections;

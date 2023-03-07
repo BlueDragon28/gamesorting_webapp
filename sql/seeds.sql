@@ -1,4 +1,4 @@
-USE gamesorting_webapp;
+-- USE gamesorting_webapp;
 
 -- Insert data into collections table
 DELETE FROM collections;
