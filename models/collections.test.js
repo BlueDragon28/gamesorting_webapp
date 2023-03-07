@@ -1,6 +1,7 @@
 const mariadb = require("../sql/connection");
 const seeds = require("../sql/seeds");
 const { Collection } = require("./collections");
+const Pagination = require("../utils/sql/pagination");
 
 test("Create valid collection object", async function() {
     let col = new Collection(1, "A Collection");
@@ -191,6 +192,52 @@ describe("collection dabase manipulation", function() {
     it("delete invalid collection", async function() {
         const [,error] = await collectionQuery(async () => Collection.deleteFromID(600000000000000));
         expect(error).not.toBe(undefined);
+    });
+
+    it("test getCount", async function() {
+        const [count, error] = 
+            await collectionQuery(async () => Collection.getCount(2));
+
+        expect(error).toBe(undefined);
+        expect(count).toBe(3n);
+    });
+
+    it("Get collections from userID", async function() {
+        const [collections, error] = 
+            await collectionQuery(async () => Collection.findFromUserID(2));
+
+        expect(collections.length).toBe(2);
+        expect(collections[0].length).toBe(3);
+        expect(collections[1] instanceof Pagination).toBe(true);
+        expect(collections[1].numberOfPages).toBe(1);
+        expect(collections[1].currentPage).toBe(0);
+        expect(collections[1].isValid).toBe(true);
+    });
+
+    it("insert 27 items", async function() {
+        for (let i = 0; i < 26; i++) {
+            const [,error] =
+                await collectionQuery(async () => new Collection(2, `col_${i}`).save());
+            expect(error).toBe(undefined);
+        }
+
+        let [collections, error] = 
+            await collectionQuery(async () => Collection.findFromUserID(2, 1));
+
+        expect(error).toBe(undefined);
+        expect(collections.length).toBe(2);
+        expect(collections[0].length).toBe(15);
+        expect(collections[1].numberOfPages).toBe(2);
+        expect(collections[1].currentPage).toBe(1);
+
+        [collections, error] =
+            await collectionQuery(async () => Collection.findFromUserID(2, 2));
+
+        expect(error).toBe(undefined);
+        expect(collections.length).toBe(2);
+        expect(collections[0].length).toBe(14);
+        expect(collections[1].numberOfPages).toBe(2);
+        expect(collections[1].currentPage).toBe(2);
     });
 });
 
