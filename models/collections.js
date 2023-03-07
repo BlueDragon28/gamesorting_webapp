@@ -20,7 +20,7 @@ class Collection {
 
     isValid() {
         this.id = this.id ? bigint.toBigInt(this.id) : undefined;
-        this.name = this.name.trim();
+        this.name = typeof this.name === "string" ? this.name.trim() : undefined;
         
         if ((this.id && !bigint.isValid(this.id)) ||
             !bigint.isValid(this.userID) ||
