@@ -13,7 +13,8 @@ async function openPool(suffix = "") {
         user: "bluedragon28",
         socketPath: "/var/run/mysql/mysql.sock",
         database: "gamesorting_webapp" + suffix,
-        connectionLimit: 1
+        connectionLimit: 1,
+        multipleStatements: true
     });
 }
 
