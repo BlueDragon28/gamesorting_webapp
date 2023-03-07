@@ -19,10 +19,10 @@ class Collection {
     }
 
     isValid() {
-        this.id = this.id ? bigint.toBigInt(this.id) : undefined;
+        this.id = this.id !== undefined ? bigint.toBigInt(this.id) : undefined;
         this.name = typeof this.name === "string" ? this.name.trim() : undefined;
         
-        if ((this.id && !bigint.isValid(this.id)) ||
+        if ((this.id !== undefined && !bigint.isValid(this.id)) ||
             !bigint.isValid(this.userID) ||
             !this.name || typeof this.name !== "string" || !this.name.length) {
             return false;
