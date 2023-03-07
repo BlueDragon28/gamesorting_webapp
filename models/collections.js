@@ -251,7 +251,7 @@ class Collection {
     static async getCount(userID, connection) {
         userID = bigint.toBigInt(userID);
 
-        if (!bigint.isValid(userID) || !connection) {
+        if (!bigint.isValid(userID)) {
             throw new ValueError(400, "Invalid UserID");
         }
 
