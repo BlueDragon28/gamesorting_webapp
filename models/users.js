@@ -31,14 +31,14 @@ class User {
     }
 
     isValid() {
-        this.id = this.id ? bigint.toBigInt(this.id) : undefined;
-        this.username = this.username.trim();
-        this.email = this.email.trim();
+        this.id = this.id !== undefined ? bigint.toBigInt(this.id) : undefined;
+        this.username = typeof this.username === "string" ? this.username.trim() : undefined
+        this.email = typeof this.email === "string" ? this.email.trim() : undefined;
 
         if (!this.username || typeof this.username !== "string" || !this.username.length ||
             !this.email || typeof this.email !== "string" || !this.email.length ||
             !this.#hashPassword || typeof this.#hashPassword !== "string" || !this.#hashPassword.length ||
-            (this.id && !bigint.isValid(this.id)) ||
+            (this.id !== undefined && !bigint.isValid(this.id)) ||
             (this.bypassRestriction !== undefined && typeof this.bypassRestriction !== "boolean")) {
             return false;
         }
