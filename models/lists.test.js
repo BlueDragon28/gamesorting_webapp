@@ -113,6 +113,17 @@ describe("collection dabase manipulation", function() {
         expect(error).not.toBe(undefined);
     });
 
+    it("save a duplicate list to another collection should work just fine", async function() {
+        let [booksCollection, error] =
+            await listQuery(async () => Collection.findByID(2));
+        expect(error).toBe(undefined);
+        expect(booksCollection instanceof Collection).toBe(true);
+
+        [,error] = 
+            await listQuery(async () => new List("Played Games", booksCollection).save());
+        expect(error).toBe(undefined);
+    });
+
     it("get a list from id", async function() {
         let [findList, error] = await listQuery(async () => List.findByID(list.id));
 
