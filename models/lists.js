@@ -20,10 +20,10 @@ class List {
     }
 
     isValid() {
-        this.id = this.id ? bigint.toBigInt(this.id) : undefined;
-        this.name = this.name.trim();
+        this.id = this.id !== undefined ? bigint.toBigInt(this.id) : undefined;
+        this.name = typeof this.name === "string" ? this.name.trim() : undefined;
         
-        if ((this.id && !bigint.isValid(this.id)) ||
+        if ((this.id !== undefined && !bigint.isValid(this.id)) ||
             !this.name || typeof this.name !== "string" || !this.name.length ||
             !this.parentCollection || !this.parentCollection instanceof Collection ||
             !this.parentCollection.isValid()) {
