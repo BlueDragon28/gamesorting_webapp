@@ -58,7 +58,7 @@ test("Create list object with invalid name", async function() {
 });
 
 test("Create list object with invalid id", async function() {
-    let list = new Collection("collection", collection);
+    let list = new List("list", collection);
     list.id = "Hello There";
     expect(() => list.isValid()).toThrow();
 
