@@ -204,6 +204,30 @@ describe("collection dabase manipulation", function() {
         expect(error).not.toBe(undefined);
     });
 
+    it("get user by username or email", async function() {
+        let [findUser, error] = await userQuery(async () => User.findByNameOrEmail("a_new_username"));
+        expect(error).toBe(undefined);
+        expect(findUser instanceof User).toBe(true);
+        expect(findUser.username).toBe("a_new_username");
+
+        [findUser, error] = await userQuery(async () => User.findByNameOrEmail("jlqsdfmjsdf@dqfqsjmdfdsq.com"));
+
+        expect(error).toBe(undefined);
+        expect(findUser instanceof User).toBe(true);
+        expect(findUser.username).toBe("a_new_username");
+    });
+
+    it("get invalid user by username or email", async function() {
+        let [findUser, error] = await userQuery(async () => User.findByNameOrEmail("abcd"));
+        expect(error).toBe(undefined);
+        expect(findUser).toBe(null);
+
+        [findUser, error] = await userQuery(async () => User.findByNameOrEmail("blabla@blabla.blabla"));
+
+        expect(error).toBe(undefined);
+        expect(findUser).toBe(null);
+    });
+
     it("delete a user", async function() {
         const [,error] = await userQuery(async () => User.deleteFromID(user.id));
         expect(error).toBe(undefined);
