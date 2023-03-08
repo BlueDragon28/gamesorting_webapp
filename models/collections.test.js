@@ -214,7 +214,7 @@ describe("collection dabase manipulation", function() {
         expect(collections[1].isValid).toBe(true);
     });
 
-    it("insert 27 items", async function() {
+    it("insert 26 items", async function() {
         for (let i = 0; i < 26; i++) {
             const [,error] =
                 await collectionQuery(async () => new Collection(2, `col_${i}`).save());
