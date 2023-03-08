@@ -109,6 +109,13 @@ describe("collection dabase manipulation", function() {
         expect(error).not.toBe(undefined);
     });
 
+    it("save a duplicate collection to another user should work just fine", async function() {
+        const [,error] = 
+            await collectionQuery(async () => new Collection(1, "Games").save());
+
+        expect(error).toBe(undefined);
+    });
+
     it("get a collection from id", async function() {
         let [findCollection, error] = await collectionQuery(async () => Collection.findByID(collection.id));
 
