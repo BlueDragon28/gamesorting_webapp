@@ -222,6 +222,10 @@ class List {
 
             try {
                 const queryResult = await connection.query(queryStatement);
+
+                if (queryResult.affectedRows === 0) {
+                    throw ValueError(400, "Invalid List ID");
+                }
             } catch (error) {
                 throw new SqlError(`Failed to delete list ${id}: ${error.message}`);
             }
