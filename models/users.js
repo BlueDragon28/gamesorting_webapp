@@ -245,6 +245,10 @@ class User {
 
             try {
                 const queryResult = await connection.query(queryStatement);
+
+                if (queryResult.affectedRows === 0) {
+                    throw ValueError(400, "Invalid User ID");
+                }
             } catch (error) {
                 throw new SqlError(`Failed to retrieve user: ${error.message}`);
             }
