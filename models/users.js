@@ -94,7 +94,7 @@ class User {
     }
 
     setPassword(password, hashPassword = true) {
-        if (password && typeof password === "string") {
+        if (password && typeof password === "string" && password.trim().length) {
             this.#hashPassword = 
                 hashPassword ? bcrypt.hashSync(password.trim(), 12) : password;
         }
