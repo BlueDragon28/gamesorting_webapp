@@ -38,7 +38,7 @@ class Item {
         if (this.url && typeof this.url === "string") {
             this.url = this.url.trim();
         } else {
-            this.url = undefined;
+            this.url = "";
         }
         
         if ((this.id !== undefined && !bigint.isValid(this.id)) ||
