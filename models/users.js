@@ -120,7 +120,7 @@ class User {
         const queryStatement = 
             `INSERT INTO users (Username, Email, Password ${this.bypassRestriction === true ? ", BypassRestriction" : ""}) ` +
             `VALUES ("${sqlString(this.username)}", "${sqlString(this.email)}", ` + 
-            `"${sqlString(this.#hashPassword)}" ${this.bypassRestriction === true ? ", \"TRUE\"" : ""})`;
+            `"${sqlString(this.#hashPassword)}" ${this.bypassRestriction === true ? ", TRUE" : ""})`;
 
         try {
             const result = await connection.query(queryStatement);
