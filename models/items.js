@@ -33,13 +33,15 @@ class Item {
     }
 
     isValid() {
-        this.id = this.id ? bigint.toBigInt(this.id) : undefined;
-        this.name = this.name.trim();
+        this.id = this.id !== undefined ? bigint.toBigInt(this.id) : undefined;
+        this.name = typeof this.name === "string" ? this.name.trim() : undefined;
         if (this.url && typeof this.url === "string") {
             this.url = this.url.trim();
+        } else {
+            this.url = undefined;
         }
         
-        if ((this.id && !bigint.isValid(this.id)) ||
+        if ((this.id !== undefined && !bigint.isValid(this.id)) ||
             !this.name || typeof this.name !== "string" || !this.name.length ||
             !this.parentList || !this.parentList instanceof List ||
             !this.parentList.isValid()) {
