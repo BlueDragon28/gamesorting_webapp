@@ -143,8 +143,8 @@ class User {
         const queryStatement = 
             "UPDATE users SET " +
             `Username = "${sqlString(this.username)}", Email = "${sqlString(this.email)}", ` +
-            `Password = "${sqlString(this.#hashPassword)}" ` +
-            `BypassRestriction = "${this.bypassRestriction === true ? "TRUE" : "FALSE"}" ` +
+            `Password = "${sqlString(this.#hashPassword)}", ` +
+            `BypassRestriction = ${this.bypassRestriction === true ? "TRUE" : "FALSE"} ` +
             `WHERE UserID = ${this.id}`;
 
         try {
