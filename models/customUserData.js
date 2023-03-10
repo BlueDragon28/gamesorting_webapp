@@ -23,14 +23,16 @@ class CustomRowsItems {
     }
 
     isValid() {
-        this.id = this.id ? bigint.toBigInt(this.id) : undefined;
-        this.itemID = this.itemID ? bigint.toBigInt(this.itemID) : undefined;
-        this.columnTypeID = this.columnTypeID ? bigint.toBigInt(this.columnTypeID) : undefined;
+        this.id = this.id !== undefined ? bigint.toBigInt(this.id) : undefined;
+        this.itemID = this.itemID !== undefined ? bigint.toBigInt(this.itemID) : undefined;
+        this.columnTypeID = this.columnTypeID !== undefined ? bigint.toBigInt(this.columnTypeID) : undefined;
         if (typeof this.value === "string") {
             this.value = this.value.trim();
+        } else {
+            this.value = undefined;
         }
         
-        if ((this.id && !bigint.isValid(this.id)) ||
+        if ((this.id !== undefined && !bigint.isValid(this.id)) ||
             !this.itemID || (this.itemID && !bigint.isValid(this.itemID)) ||
             !this.columnTypeID || (this.columnTypeID && !bigint.isValid(this.columnTypeID)) ||
             !this.value || typeof this.value !== "string" || !this.value.length) {
