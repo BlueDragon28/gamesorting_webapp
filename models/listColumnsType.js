@@ -167,7 +167,7 @@ class ListColumnType {
                 }
 
                 const foundColumnType = new ListColumnType(queryResult[0].Name, queryResult[0].Type, foundList);
-                foundColumnType.id = queryResult[0].ListID;
+                foundColumnType.id = queryResult[0].ListColumnTypeID;
 
                 if (!foundColumnType.isValid()) {
                     return null;
