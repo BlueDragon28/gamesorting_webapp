@@ -105,6 +105,10 @@ describe("collection dabase manipulation", function() {
         [,error] = await itemQuery(async () => new Item("", null, list).save());
        
         expect(error).not.toBe(undefined);
+
+        [,error] = await itemQuery(async () => new Item("Valid Item", null, new List("Valid List", list.parentCollection)).save());
+
+        expect(error).not.toBe(undefined);
     });
 
     it("save a duplicate item", async function() {

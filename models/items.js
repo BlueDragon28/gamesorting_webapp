@@ -54,7 +54,8 @@ class Item {
     async save(connection) {
         const isItemExisting = await this.exists(connection);
 
-        if (!this.isValid(connection)) {
+        if (!this.isValid(connection) ||
+            !bigint.isValid(this.parentList.id)) {
             throw new ValueError(400, "Invalid Item Name");
         }
 
