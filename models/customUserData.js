@@ -219,6 +219,10 @@ class CustomRowsItems {
 
             try {
                 const queryResult = await connection.query(queryStatement);
+
+                if (queryResult.affectedRows === 0) {
+                    throw new ValueError(400, "Invalid Custom Row Data ID");
+                }
             } catch (error) {
                 throw new SqlError(`Failed to delete custom data ${id}: ${error.message}`);
             }
