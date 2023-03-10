@@ -33,12 +33,12 @@ class ListColumnType {
     }
 
     isValid() {
-        this.id = this.id ? bigint.toBigInt(this.id) : undefined;
-        this.name = this.name.trim();
+        this.id = this.id !== undefined ? bigint.toBigInt(this.id) : undefined;
+        this.name = typeof this.name === "string" ? this.name.trim() : undefined;
         
-        if ((this.id && !bigint.isValid(this.id)) ||
+        if ((this.id !== undefined && !bigint.isValid(this.id)) ||
             !this.name || typeof this.name !== "string" || !this.name.length ||
-            !this.type || typeof this.type !== "object" || !this.type.type || typeof this.type.type !== "string" ||
+            !this.type || typeof this.type !== "object" || !this.type?.type || typeof this.type?.type !== "string" ||
             !this.parentList || !this.parentList instanceof List ||
             !this.parentList.isValid()) {
             return false;
@@ -242,6 +242,10 @@ class ListColumnType {
 
             try {
                 const queryResult = await connection.query(queryStatement);
+
+                if (queryResult.affectedRows === 0) {
+                    throw ValueError(400, "Invalid List Column Type ID");
+                }
             } catch (error) {
                 throw new SqlError(`Failed to delete columns type from list id: ${error.message}`);
             }
