@@ -106,5 +106,8 @@ async function parseColumnsType(req, res, next) {
 
 module.exports = {
     parseColumnsType: wrapAsync(parseColumnsType),
-    validate
+    validate,
+    _: {
+        columnDataValidation: columnDataAndTypeValidation
+    }
 };
