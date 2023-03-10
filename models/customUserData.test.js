@@ -11,7 +11,6 @@ let item;
 beforeAll(async function() {
     await mariadb.openPool();
     await seeds.seeds();
-    list = await List.findByID(1)
     listColumnType = await ListColumnType.findByID(1);
     item = await Item.findByID(1);
 });
