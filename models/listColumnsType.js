@@ -58,7 +58,8 @@ class ListColumnType {
     async save(connection) {
         const isListColumnTypeExisting = await this.exists(connection);
 
-        if (!this.isValid(connection)) {
+        if (!this.isValid(connection) ||
+            !bigint.isValid(this.parentList.id)) {
             throw new ValueError(400, "Invalid List Column Type Name");
         }
 

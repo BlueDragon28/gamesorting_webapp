@@ -4,7 +4,6 @@ const { List } = require("./lists");
 const { Item } = require("./items");
 const { ListColumnType } = require("./listColumnsType");
 const { CustomRowsItems } = require("./customUserData");
-const Pagination = require("../utils/sql/pagination");
 
 let list;
 
@@ -133,6 +132,10 @@ describe("collection dabase manipulation", function() {
 
         [,error] = await listColumnTypeQuery(async () => new ListColumnType("", {}, list).save());
        
+        expect(error).not.toBe(undefined);
+
+        [,error] = await listColumnTypeQuery(async () => new ListColumnType("Valid Column", stringType, new List("Valid List", list.parentCollection)).save());
+
         expect(error).not.toBe(undefined);
     });
 
