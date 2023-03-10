@@ -264,6 +264,10 @@ class ListColumnType {
 
             try {
                 const queryResult = await connection.query(queryStatement);
+
+                if (queryResult.affectedRows === 0) {
+                    throw new ValueError(400, "Invalid List");
+                }
             } catch (error) {
                 throw new SqlError(`Failed to delete custom column ${customListID}: ${error.message}`);
             }
