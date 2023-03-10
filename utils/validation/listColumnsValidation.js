@@ -47,5 +47,8 @@ function validateDeleteColumn() {
 
 module.exports = {
     listColumnsValidation: validate,
-    validateDeleteColumn
+    validateDeleteColumn,
+    _: {
+        columnsValidation: makeListColumnValidation
+    }
 }
