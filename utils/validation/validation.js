@@ -115,5 +115,13 @@ module.exports = {
     id: validateID(),
     item: function(itemToValidate) {
         return validateItem(itemToValidate);
+    },
+    _: {
+        validateID: function() {
+            return paramsValidation(idValidation());
+        },
+        validateItem: function(itemToValidate) {
+            return bodyValidation(itemValidation(itemToValidate));
+        }
     }
 }
