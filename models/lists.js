@@ -36,8 +36,9 @@ class List {
     async save(connection) {
         const isListExisting = await this.exists(connection);
 
-        if (!this.isValid(connection)) {
-            throw new ValueError(400, "Invalid List Name");
+        if (!this.isValid(connection) || 
+            (!bigint.isValid(this.parentCollection.id))) {
+            throw new ValueError(400, "Invalid List");
         }
 
         if (await this.isDuplicate(connection)) {
