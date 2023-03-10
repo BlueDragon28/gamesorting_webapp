@@ -86,5 +86,11 @@ module.exports = {
     validateRegisteringUser,
     validateLoginUser,
     validateEmailUpdate,
-    validatePasswordUpdate
+    validatePasswordUpdate,
+    _: {
+        user: makeRegisterUserValidation,
+        login: makeLoginUserValidation,
+        emailUpdate: makeEmailUpdateValidation,
+        passwordUpdate: makePasswordUpdateValidation
+    }
 };
