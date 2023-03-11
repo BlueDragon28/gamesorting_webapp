@@ -11,7 +11,9 @@ const listsRouter = require("./routes/lists");
 const itemsRouter = require("./routes/items");
 const usersRouter = require("./routes/users");
 const methodOverride = require("method-override");
+const { default: RedisStore } = require("connect-redis");
 const session = require("express-session");
+const { createClient } = require("redis");
 const flash = require("connect-flash");
 const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
@@ -29,10 +31,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
 
+const redisClient = createClient({
+    url: "redis://127.0.0.1:6379"
+});
+redisClient.connect().catch(console.err);
+
+const redisStore = new RedisStore({
+    client: redisClient,
+    prefix: "gamesorting_webapp"
+});
+
 app.use(session({
     secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
+    store: redisStore,
     cookie: {
         httpOnly: true,
         maxAge: 1000 * 3600 * 24 * 7
@@ -80,6 +93,7 @@ const server = app.listen(8080, () => {
 async function closeServer() {
     server.close();
     await mariadb.closePool();
+    await redisClient.disconnect();
 
     if (process.env.NODE_ENV !== "production") {
         console.log("server has been closed!");
