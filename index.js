@@ -1,6 +1,8 @@
 /*
 Required packages and js files
 */
+require("dotenv").config();
+
 const path = require("path");
 const express = require("express");
 const ejsMate = require("ejs-mate");
@@ -28,7 +30,7 @@ app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
 
 app.use(session({
-    secret: "developmentonlysecret",
+    secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
     cookie: {
