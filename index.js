@@ -73,6 +73,18 @@ app.use((err, req, res, next) => {
     res.status(statusCode).send("<p>" + message + (stack ? ("<br>" + stack) : "") + "</p>");
 });
 
-app.listen(8080, () => {
+const server = app.listen(8080, () => {
     console.log("Listing on port 8080");
 });
+
+async function closeServer() {
+    server.close();
+    await mariadb.closePool();
+
+    if (process.env.NODE_ENV !== "production") {
+        console.log("server has been closed!");
+    }
+};
+
+process.on("SIGINT", closeServer);
+process.on("SIGTERM", closeServer);

@@ -10,7 +10,7 @@ let pool = undefined;
 
 let databaseName = process.env.MARIADB_DATABASE_NAME;
 
-async function openPool(suffix = "") {
+function openPool(suffix = "") {
     pool = mariadb.createPool({
         user: process.env.MARIADB_USER,
         socketPath: process.env.MARIADB_SOCKET_PATH,
@@ -50,5 +50,7 @@ module.exports = {
 
     closePool: async function() {
         return pool.end().catch(err => undefined);
-    }
+    },
+
+    getPool: () => pool
 };
