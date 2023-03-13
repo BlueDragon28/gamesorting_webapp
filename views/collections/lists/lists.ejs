@@ -12,17 +12,10 @@
 
 <!-- Display the available lists in a list of cards -->
 <% for(let list of lists) { %>
-    <div class="row pb-3">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="fs-4 fw-normal pb-3"><%= list.name %></h2>
-
-                    <a class="btn btn-info" href="/collections/<%= collection.id %>/lists/<%= list.id %>">View List</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <%- include("../../partials/itemWidget.ejs", {
+        url: `/collections/${collection.id}/lists/${list.id}`,
+        title: list.name
+    }) %>
 <% } %>
 
 <div class="modal fade" id="deleteCollectionModal" tabindex="-1" aria-labelledby="deleteCollectionModal">
