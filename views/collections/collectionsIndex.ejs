@@ -9,13 +9,10 @@
 <link rel="stylesheet" href="/styles/card.css">
 
 <% for(let collection of collections) { %>
-    <div class="row pb-1">
-        <div class="col-16">
-            <a class="item-card" href="/collections/<%= collection.id %>">
-                    <h2><%= collection.name %></h2>
-            </a>
-        </div>
-    </div>
+    <%- include("../partials/itemWidget.ejs", { 
+         url: `/collections/${collection.id}`,
+         title: collection.name
+     }) %>
 <% } %>
 
 <%- include("../partials/pagination.ejs") %>
