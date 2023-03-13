@@ -86,8 +86,8 @@ app.use((err, req, res, next) => {
     res.status(statusCode).send("<p>" + message + (stack ? ("<br>" + stack) : "") + "</p>");
 });
 
-const server = app.listen(8080, () => {
-    console.log("Listing on port 8080");
+const server = app.listen(process.env.LISTENING_PORT, () => {
+    console.log(`Listing on port ${process.env.LISTENING_PORT}`);
 });
 
 async function closeServer() {
