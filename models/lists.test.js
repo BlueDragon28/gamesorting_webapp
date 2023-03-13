@@ -8,7 +8,7 @@ const Pagination = require("../utils/sql/pagination");
 let collection;
 
 beforeAll(async function() {
-    mariadb.openPool();
+    mariadb.openPool("_testing");
     await seeds.seeds();
     collection = await Collection.findByID(1)
 });

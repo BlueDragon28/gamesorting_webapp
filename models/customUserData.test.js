@@ -10,7 +10,7 @@ let listColumnType;
 let item;
 
 beforeAll(async function() {
-    mariadb.openPool();
+    mariadb.openPool("_testing");
     await seeds.seeds();
     listColumnType = await ListColumnType.findByID(1);
     item = await Item.findByID(1);

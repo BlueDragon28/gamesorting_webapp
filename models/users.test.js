@@ -78,7 +78,7 @@ test("Create user object with invalid id", async function() {
 
 describe("collection dabase manipulation", function() {
     beforeAll(async function() {
-        mariadb.openPool();
+        mariadb.openPool("_testing");
         return seeds.seeds();
     });
 

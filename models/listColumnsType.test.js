@@ -19,7 +19,7 @@ const intType = {
 };
 
 beforeAll(async function() {
-    mariadb.openPool();
+    mariadb.openPool("_testing");
     await seeds.seeds();
     list = await List.findByID(1)
 });
