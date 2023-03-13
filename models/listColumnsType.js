@@ -243,10 +243,6 @@ class ListColumnType {
 
             try {
                 const queryResult = await connection.query(queryStatement);
-
-                if (queryResult.affectedRows === 0) {
-                    throw ValueError(400, "Invalid List Column Type ID");
-                }
             } catch (error) {
                 throw new SqlError(`Failed to delete columns type from list id: ${error.message}`);
             }
