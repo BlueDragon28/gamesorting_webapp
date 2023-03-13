@@ -2,6 +2,7 @@ const helmet = require("helmet");
 
 const styleSrcUrls = [
     "'self'",
+    "'unsafe-inline'",
     "https://cdn.jsdelivr.net",
 ];
 
@@ -11,13 +12,21 @@ const scriptSrcUrls = [
     "https://cdn.jsdelivr.net"
 ]
 
-function configureHelmet(app) {
-    app.use(helmet()); // Add some layer of security
+const imgSrcUrls = [
+    "'self'",
+    "data:",
+    "https://cdn.jsdelivr.net"
+]
 
+function configureHelmet(app) {
     app.use(helmet.contentSecurityPolicy({
+        useDefaults: false,
         directives: {
+            defaultSrc: ["'self'"],
             scriptSrc: scriptSrcUrls,
-            styleSrc: styleSrcUrls
+            styleSrc: styleSrcUrls,
+            upgradeInsecureRequests: process.env.NODE_END === "production" ? [] : null,
+            imgSrc: imgSrcUrls
         }
     }));
 }
