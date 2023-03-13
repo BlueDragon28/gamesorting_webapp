@@ -42,12 +42,15 @@ const redisStore = new RedisStore({
     prefix: "gamesorting_webapp"
 });
 
+const secureCookie = process.env.NODE_ENV === "production";
 app.use(session({
+    name: "sessionID",
     secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
     store: redisStore,
     cookie: {
+        secure: secureCookie,
         httpOnly: true,
         maxAge: 1000 * 3600 * 24 * 7
     }
