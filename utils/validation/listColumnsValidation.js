@@ -1,4 +1,5 @@
-const { celebrate, Joi, Segments } = require("celebrate");
+const { celebrate, Segments } = require("celebrate");
+const Joi = require("./extendedJoi");
 
 const ColumnType = {
     str: "@String",
@@ -8,7 +9,7 @@ const ColumnType = {
 function makeListColumnValidation() {
     return Joi.object({
         id: Joi.number(),
-        name: Joi.string().min(1).required(),
+        name: Joi.string().min(1).forbidHTML().required(),
         type: Joi.object({
             type: Joi.string().valid(...Object.values(ColumnType)).required(),
             min: Joi.when("type", {

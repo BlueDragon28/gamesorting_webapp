@@ -12,8 +12,6 @@ function parseCelebrateError(err, req, res, next) {
         return next(new InternalError("Invalid Error"));
     }
 
-    console.log(firstError);
-
     next(firstError);
 }
 
@@ -64,7 +62,8 @@ function errorsWithPossibleRedirect(customErrorMessage) {
                 return res.redirect(req.baseUrl);
             } else if (req.method === "POST" || req.method === "PUT") {
                 flashJoiErrorMessage(error, req);
-                return res.redirect(`${req.originalUrl}`);
+                //return res.redirect(`${req.originalUrl}`);
+                return res.redirect("/collections");
             }
         } else if (error.name === "InternalError" || error.name === "SqlError") {
             req.flash("error", "Oups!!! Something went wrong!");

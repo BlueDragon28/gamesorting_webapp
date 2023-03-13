@@ -1,9 +1,10 @@
 const bigint = require("../numbers/bigint");
-const { celebrate, Joi, Segments } = require("celebrate");
+const { celebrate, Segments } = require("celebrate");
+const Joi = require("./extendedJoi");
 
-let usernameValidation = Joi.string().trim().required();
-let emailValidation = Joi.string().trim().email().required();
-let passwordValidation = Joi.string().trim().required();
+let usernameValidation = Joi.string().trim().forbidHTML().required();
+let emailValidation = Joi.string().trim().email().forbidHTML().required();
+let passwordValidation = Joi.string().trim().forbidHTML().required();
 
 if (process.env.NODE_ENV === "production") {
     usernameValidation = usernameValidation.min(7);

@@ -1,4 +1,5 @@
-const { celebrate, Joi, Segments } = require("celebrate");
+const { celebrate, Segments } = require("celebrate");
+const Joi = require("./extendedJoi");
 
 /*
 Validation of ID
@@ -19,7 +20,7 @@ function idValidation() {
 /*
 String Validation
 */
-const nameValidation = Joi.string().trim().max(300, "utf8").required();
+const nameValidation = Joi.string().trim().max(300, "utf8").forbidHTML().required();
 const uriValidation = Joi.alternatives().try(
     Joi.string().trim().max(10000, "utf8").uri({
         scheme: [

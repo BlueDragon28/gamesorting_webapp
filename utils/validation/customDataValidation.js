@@ -2,7 +2,8 @@
 This module is doing all the custom data validation
 */
 
-const { celebrate, Joi, Segments } = require("celebrate");
+const { celebrate, Segments } = require("celebrate");
+const Joi = require("./extendedJoi");
 const { ListColumnType } = require("../../models/listColumnsType");
 const mariadb = require("../../sql/connection");
 const { ValueError, InternalError } = require("../errors/exceptions");
