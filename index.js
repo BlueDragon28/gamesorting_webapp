@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const path = require("path");
 const express = require("express");
+const http = require("http");
 const { configureHelmet } = require("./utils/security/basicSecurity");
 const ejsMate = require("ejs-mate");
 const collectionsRouter = require("./routes/collections");
@@ -93,9 +94,8 @@ app.use((err, req, res, next) => {
     res.status(statusCode).send("<p>" + message + (stack ? ("<br>" + stack) : "") + "</p>");
 });
 
-const server = app.listen(process.env.LISTENING_PORT, () => {
-    console.log(`Listing on port ${process.env.LISTENING_PORT}`);
-});
+const server = http.createServer(app);
+server.listen(process.env.LISTENING_PORT);
 
 async function closeServer() {
     server.close();
