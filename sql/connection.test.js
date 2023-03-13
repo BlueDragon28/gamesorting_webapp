@@ -1,3 +1,4 @@
+require("../utils/testingEnv");
 const mariadb = require("./connection");
 
 beforeAll(async function() {

@@ -1,3 +1,4 @@
+require("../testingEnv");
 const mariadb = require("../../sql/connection");
 const { sqlString, existingOrNewConnection } = require("./sql");
 

@@ -1,3 +1,4 @@
+require("../utils/testingEnv");
 const mariadb = require("../sql/connection");
 const seeds = require("../sql/seeds");
 const { Collection } = require("./collections");
@@ -61,7 +62,7 @@ test("Create collection object with invalid id", async function() {
 
 describe("collection dabase manipulation", function() {
     beforeAll(async function() {
-        await mariadb.openPool();
+        mariadb.openPool();
         return seeds.seeds();
     });
 

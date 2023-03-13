@@ -1,3 +1,4 @@
+require("../utils/testingEnv");
 const mariadb = require("../sql/connection");
 const seeds = require("../sql/seeds");
 const { List } = require("./lists");
@@ -9,7 +10,7 @@ let listColumnType;
 let item;
 
 beforeAll(async function() {
-    await mariadb.openPool();
+    mariadb.openPool();
     await seeds.seeds();
     listColumnType = await ListColumnType.findByID(1);
     item = await Item.findByID(1);

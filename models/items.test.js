@@ -1,3 +1,4 @@
+require("../utils/testingEnv");
 const mariadb = require("../sql/connection");
 const seeds = require("../sql/seeds");
 const { List } = require("./lists");
@@ -7,7 +8,7 @@ const Pagination = require("../utils/sql/pagination");
 let list;
 
 beforeAll(async function() {
-    await mariadb.openPool();
+    mariadb.openPool();
     await seeds.seeds();
     list = await List.findByID(1)
 });
