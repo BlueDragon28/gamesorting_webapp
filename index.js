@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const path = require("path");
 const express = require("express");
+const { configureHelmet } = require("./utils/security/basicSecurity");
 const ejsMate = require("ejs-mate");
 const collectionsRouter = require("./routes/collections");
 const listsRouter = require("./routes/lists");
@@ -31,6 +32,8 @@ app.disable("x-powered-by"); // X-Powered-By http header indicate what web serve
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
+
+configureHelmet(app); // Add the middleware of helmets
 
 const redisClient = createClient({
     url: process.env.REDIS_URL
