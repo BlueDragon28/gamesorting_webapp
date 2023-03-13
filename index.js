@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
 
 const redisClient = createClient({
-    url: "redis://127.0.0.1:6379"
+    url: process.env.REDIS_URL
 });
 redisClient.connect().catch(console.err);
 
