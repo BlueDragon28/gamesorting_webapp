@@ -26,6 +26,7 @@ const app = express();
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.disable("x-powered-by"); // X-Powered-By http header indicate what web server is currently be used
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // parse body
