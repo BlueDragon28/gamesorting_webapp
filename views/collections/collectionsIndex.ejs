@@ -6,8 +6,6 @@
     <a class="btn btn-primary" href="/collections/new">New Collection</a>
 </div>
 
-<link rel="stylesheet" href="/styles/card.css">
-
 <% for(let collection of collections) { %>
     <%- include("../partials/itemWidget.ejs", { 
          url: `/collections/${collection.id}`,
