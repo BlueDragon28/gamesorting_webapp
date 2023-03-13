@@ -1,0 +1,25 @@
+.item-card {
+    display: block;
+    background-color: lightgray;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 0;
+    color: black;
+    text-decoration: none;
+}
+
+.item-card:hover,
+.item-card:active {
+    background-color: #aaa;
+}
+
+.item-card h2 {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+    font-size: 1.5rem;
+    pointer-events: none;
+    user-select: none;
+}

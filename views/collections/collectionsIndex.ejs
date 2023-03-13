@@ -6,16 +6,14 @@
     <a class="btn btn-primary" href="/collections/new">New Collection</a>
 </div>
 
-<% for(let collection of collections) { %>
-    <div class="row pb-3">
-        <div class="col-16">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="fs-4 fw-normal mb-4"><%= collection.name %></h2>
+<link rel="stylesheet" href="/styles/card.css">
 
-                    <a class="btn btn-info" href="/collections/<%= collection.id %>">View Collection</a>
-                </div>
-            </div>
+<% for(let collection of collections) { %>
+    <div class="row pb-1">
+        <div class="col-16">
+            <a class="item-card" href="/collections/<%= collection.id %>">
+                    <h2><%= collection.name %></h2>
+            </a>
         </div>
     </div>
 <% } %>
