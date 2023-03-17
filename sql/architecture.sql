@@ -61,3 +61,13 @@ CREATE TABLE IF NOT EXISTS users(
     Password VARCHAR(10000) NOT NULL,
     BypassRestriction BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+-- This table hold the token for the password lost interface
+DROP TABLE IF EXISTS usersLostPassword;
+
+CREATE TABLE IF NOT EXISTS usersLostPassword(
+    UserLostID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    UserID BIGINT UNSIGNED NOT NULL,
+    Token UUID NOT NULL,
+    Time BIGINT UNSIGNED NOT NULL
+);

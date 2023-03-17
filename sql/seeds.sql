@@ -66,3 +66,5 @@ VALUES
     (1, "Some user", "some@email.com", "$2a$12$bNG5j/sssJaBmlY21hpChOq.pc5q0A18Byj0jclPt4JgRDtdTWIf."),
     (2, "BlueDragon28", "dragon@sisu.com", "$2a$12$dyYOCKe0BHbk4Xl/lGuztuthifqdPIMOX93P1wXOeO7hQ32/1eSTi");
 
+
+DELETE FROM usersLostPassword;
