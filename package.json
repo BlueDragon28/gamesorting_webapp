@@ -30,6 +30,7 @@
     "mariadb": "^3.0.2",
     "method-override": "^3.0.0",
     "redis": "^4.6.5",
-    "sanitize-html": "^2.10.0"
+    "sanitize-html": "^2.10.0",
+    "uuid": "^9.0.0"
   }
 }
