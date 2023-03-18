@@ -1,6 +1,7 @@
 const express = require("express");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { User } = require("../models/users");
+const { UserLostPassword } = require("../models/usersLostPassword");
 const { checkIfUserValid } = require("../utils/validation/users");
 const { isLoggedIn } = require("../utils/users/authentification");
 const { deleteUser } = require("../utils/data/deletionHelper");
@@ -47,6 +48,15 @@ router.get("/logout", function(req, res) {
     res.redirect("/");
 });
 
+router.get("/lostpassword", function(req, res) {
+    if (req.session.user && checkIfUserValid(req.session.user)) {
+        req.flash("success", "Already logged in");
+        return res.redirect("/collections");
+    }
+
+    res.render("login/lostPassword");
+});
+
 router.post("/register", validateRegisteringUser(), wrapAsync(async function(req, res) {
     const { username, email, password } = req.body.user;
     const user = new User(username, email, password);
@@ -80,6 +90,26 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
 
     res.render("login/userInformations", { user: foundUser });
 }));
+
+router.post("/lostpassword", async function(req, res) {
+    const { email } = req.body;
+
+    await existingOrNewConnection(null, async function(connection) {
+        const foundUser = await User.findByNameOrEmail(email, connection);
+
+        if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
+            console.log("nope");
+            return;
+        }
+
+        const lostUser = new UserLostPassword(foundUser);
+        console.log(lostUser);
+
+        await lostUser.save(connection);
+    });
+
+    res.redirect("/");
+});
 
 router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
     const { deleteUser: removeUser } = req.body;
