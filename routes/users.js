@@ -148,7 +148,7 @@ router.post("/lostpassword/:tokenID", validateLostPasswordUpdate(),  wrapAsync(a
         await existingOrNewConnection(null, async function(connection) {
             const tokenData = await UserLostPassword.findByToken(tokenID, connection);
 
-            if (!tokenData || !tokenData?.isValid() || !tokenData?.parentUser || !tokenData?.parentUser?.isValid()) {
+            if (!tokenData || !tokenData?.isValid() || !tokenData?.parentUser || !tokenData?.parentUser?.isValid() || !tokenData?.isRecent()) {
                 throw new Error();
             }
 
@@ -158,8 +158,8 @@ router.post("/lostpassword/:tokenID", validateLostPasswordUpdate(),  wrapAsync(a
             await tokenData.delete(connection);
         });
     } catch (error) {
-        req.flash(error, "Failed to update password");
-        return res.redirect(`/users/lostpassword/${tokenID}`);
+        req.flash(error, "Invalid token");
+        return res.redirect("/");
     }
 
     req.flash("success", "Password updated successfully");
