@@ -182,6 +182,22 @@ class UserLostPassword {
         });
     }
 
+    static async deleteExpiredToken(connection) {
+        return await existingOrNewConnection(connection, async function(connection) {
+            const expiredMaxDate = Date.now() - UserLostPassword.maxTime;
+
+            const queryStatement = 
+                "DELETE FROM usersLostPassword " +
+                `WHERE Time < ${expiredMaxDate}`;
+
+            try {
+                await connection.query(queryStatement);
+            } catch (error) {
+                throw new SqlError(`Failed to delete expired token: ${error.message}`);
+            }
+        });
+    }
+
     static parseTime(time) {
         const [year, month, day, hours, minutes, seconds] = [
             time.getUTCFullYear(),

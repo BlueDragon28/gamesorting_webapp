@@ -136,4 +136,26 @@ describe("UserLostPassword database manipulation", function() {
 
         expect(error).toBe(undefined);
     });
+
+    it("test delete expired token", async function() {
+        const validDate = new UserLostPassword(user, undefined, undefined, new Date());
+        const expiredDate = new UserLostPassword(user, undefined, undefined, new Date(Date.now() - 1000 * 60 * 5 /* Expired 5 minutes ago */));
+        await validDate.save();
+        await expiredDate.save();
+
+        // Remove expired token
+        await UserLostPassword.deleteExpiredToken();
+
+        const [validToken, error] =
+            await lostUserQuery(async () => UserLostPassword.findByToken(validDate.token));
+        expect(error).toBe(undefined);
+        expect(validToken instanceof UserLostPassword).toBe(true);
+        expect(validToken.token).toBe(validDate.token);
+
+        const [invalidToken, error2] =
+            await lostUserQuery(async () => UserLostPassword.findByToken(expiredDate.token));
+        expect(error).toBe(undefined);
+        expect(invalidToken).toBe(null);
+    });
 });
+
