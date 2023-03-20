@@ -129,6 +129,37 @@ router.post("/lostpassword", wrapAsync(async function(req, res) {
     res.redirect("/");
 }));
 
+router.post("/lostpassword/:tokenID", wrapAsync(async function(req, res) {
+    const { tokenID } = req.params;
+    const { password, retypePassword } = req.body;
+
+    if (!password?.length || retypePassword !== password) {
+        req.flash("error", "Password must be the same");
+        return res.redirect(`/users/lostpassword/${tokenID}`);
+    }
+
+    try {
+        await existingOrNewConnection(null, async function(connection) {
+            const tokenData = await UserLostPassword.findByToken(tokenID, connection);
+
+            if (!tokenData || !tokenData?.isValid() || !tokenData?.parentUser || !tokenData?.parentUser?.isValid()) {
+                throw new Error();
+            }
+
+            const user = tokenData.parentUser;
+            user.setPassword(password);
+            await user.save(connection);
+            await tokenData.delete(connection);
+        });
+    } catch (error) {
+        req.flash(error, "Failed to update password");
+        return res.redirect(`/users/lostpassword/${tokenID}`);
+    }
+
+    req.flash("success", "Password updated successfully");
+    res.redirect("/users/login");
+}));
+
 router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
     const { deleteUser: removeUser } = req.body;
     const userID = req.session.user.id;
