@@ -5,6 +5,11 @@ const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
 
 class UserLostPassword {
+    static maxTime = 
+        process.env.NODE_ENV === "production" ? 
+            1000 * 60 * 60 * 2 :
+            1000 * 60 * 2;
+
     id = undefined;
     parentUser = undefined;
     token = undefined;
@@ -70,6 +75,12 @@ class UserLostPassword {
         }
 
         return true;
+    }
+
+    isRecent() {
+        const now = Date.now();
+        const elapse = now - this.time;
+        return elapse <= UserLostPassword.maxTime;
     }
 
     async save(connection) {

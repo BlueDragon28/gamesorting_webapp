@@ -62,13 +62,17 @@ router.get("/lostpassword", function(req, res) {
 router.get("/lostpassword/:tokenID", wrapAsync(async function(req, res) {
     const { tokenID } = req.params;
 
-    const [tokenData, isFound] = await existingOrNewConnection(null, async function(connection) {
+    const [tokenData, isFound, isRecent] = await existingOrNewConnection(null, async function(connection) {
         const lostUserData = await UserLostPassword.findByToken(tokenID, connection);
 
-        return [lostUserData, (lostUserData instanceof UserLostPassword && lostUserData.isValid())];
+        return [
+            lostUserData, 
+            (lostUserData instanceof UserLostPassword && lostUserData.isValid()),
+            (lostUserData instanceof UserLostPassword && lostUserData.isRecent())
+        ];
     });
 
-    if (!isFound) {
+    if (!isFound || !isRecent) {
         req.flash("error", "Invalid token");
         return res.redirect("/");
     } 
