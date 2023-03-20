@@ -123,12 +123,10 @@ router.post("/lostpassword", wrapAsync(async function(req, res) {
         const foundUser = await User.findByNameOrEmail(email, connection);
 
         if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
-            console.log("nope");
             return;
         }
 
         const lostUser = new UserLostPassword(foundUser);
-        console.log(lostUser);
 
         await sendLostPasswordEmail(foundUser.email, 
             `${process.env.DOMAINE_NAME}/users/lostpassword/${lostUser.token}`);
