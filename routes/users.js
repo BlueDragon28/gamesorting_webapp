@@ -20,6 +20,7 @@ const {
     validateLostPasswordUpdate
 } = require("../utils/validation/users");
 const {ValueError} = require("../utils/errors/exceptions");
+const { sendLostPasswordEmail } = require("../utils/email/email");
 
 const router = express.Router();
 
@@ -128,6 +129,9 @@ router.post("/lostpassword", wrapAsync(async function(req, res) {
 
         const lostUser = new UserLostPassword(foundUser);
         console.log(lostUser);
+
+        await sendLostPasswordEmail(foundUser.email, 
+            `${process.env.DOMAINE_NAME}/users/lostpassword/${lostUser.token}`);
 
         await lostUser.save(connection);
     });
