@@ -72,7 +72,8 @@ router.get("/lostpassword/:tokenID", wrapAsync(async function(req, res) {
     } 
 
     res.render("login/createNewPasswordOnLoss", { tokenID });
-}));
+}),
+errorsWithPossibleRedirect("Invalid token", "/"));
 
 router.post("/register", validateRegisteringUser(), wrapAsync(async function(req, res) {
     const { username, email, password } = req.body.user;

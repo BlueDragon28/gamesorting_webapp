@@ -54,12 +54,16 @@ function returnHasJSONIfNeeded(err, req, res, next) {
         });
 }
 
-function errorsWithPossibleRedirect(customErrorMessage) {
+function errorsWithPossibleRedirect(customErrorMessage, redirectLocation = null) {
     return function(error, req, res, next) {
         if (error.name === "ValueError" || error.name === "ValidationError") {
             if (req.method === "GET" && req.url.length > 1) {
                 req.flash("error", customErrorMessage);
-                return res.redirect(req.baseUrl);
+                if (typeof redirectLocation === "string" && redirectLocation.length) {
+                    return res.redirect(redirectLocation);
+                } else {
+                    return res.redirect(req.baseUrl);
+                }
             } else if (req.method === "POST" || req.method === "PUT") {
                 flashJoiErrorMessage(error, req);
                 //return res.redirect(`${req.originalUrl}`);
