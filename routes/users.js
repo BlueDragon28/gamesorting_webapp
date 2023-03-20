@@ -57,6 +57,23 @@ router.get("/lostpassword", function(req, res) {
     res.render("login/lostPassword");
 });
 
+router.get("/lostpassword/:tokenID", wrapAsync(async function(req, res) {
+    const { tokenID } = req.params;
+
+    const [tokenData, isFound] = await existingOrNewConnection(null, async function(connection) {
+        const lostUserData = await UserLostPassword.findByToken(tokenID, connection);
+
+        return [lostUserData, (lostUserData instanceof UserLostPassword && lostUserData.isValid())];
+    });
+
+    if (!isFound) {
+        req.flash("error", "Invalid token");
+        return res.redirect("/");
+    } 
+
+    res.render("login/createNewPasswordOnLoss", { tokenID });
+}));
+
 router.post("/register", validateRegisteringUser(), wrapAsync(async function(req, res) {
     const { username, email, password } = req.body.user;
     const user = new User(username, email, password);
@@ -91,7 +108,7 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
     res.render("login/userInformations", { user: foundUser });
 }));
 
-router.post("/lostpassword", async function(req, res) {
+router.post("/lostpassword", wrapAsync(async function(req, res) {
     const { email } = req.body;
 
     await existingOrNewConnection(null, async function(connection) {
@@ -109,7 +126,7 @@ router.post("/lostpassword", async function(req, res) {
     });
 
     res.redirect("/");
-});
+}));
 
 router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
     const { deleteUser: removeUser } = req.body;
