@@ -131,9 +131,9 @@ router.post("/lostpassword", wrapAsync(async function(req, res) {
 
 router.post("/lostpassword/:tokenID", wrapAsync(async function(req, res) {
     const { tokenID } = req.params;
-    const { password, retypePassword } = req.body;
+    const { password, retypedPassword } = req.body;
 
-    if (!password?.length || retypePassword !== password) {
+    if (!password?.length || retypedPassword !== password) {
         req.flash("error", "Password must be the same");
         return res.redirect(`/users/lostpassword/${tokenID}`);
     }
