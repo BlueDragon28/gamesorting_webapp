@@ -4,6 +4,7 @@ const joiUser = validation.user();
 const joiLogin = validation.login();
 const joiEmailUpdate = validation.emailUpdate();
 const joiPWUpdate = validation.passwordUpdate();
+const joiLostPassword = validation.lostPasswordUpdate();
 
 it("test register user", function() {
     let result = joiUser.validate({
@@ -127,3 +128,49 @@ it("password update", function() {
     });
     expect(result.error).not.toBe(undefined);
 });
+
+it("lost password update", function() {
+    let result = joiLostPassword.validate({
+        password: "12345",
+        retypedPassword: "12345"
+    });
+    expect(result.error).toBe(undefined);
+
+    result = joiLostPassword.validate({
+        password: "abcde",
+        retypedPassword: "abcde"
+    });
+    expect(result.error).toBe(undefined);
+
+    result = joiLostPassword.validate({
+        password: "12345",
+        retypedPassword: "6789"
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiLostPassword.validate({
+        password: "",
+        retypedPassword: ""
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiLostPassword.validate({
+        password: null,
+        retypedPassword: null
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiLostPassword.validate({
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiLostPassword.validate({
+        password: "12345"
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiLostPassword.validate({
+        retypedPassword: "12345"
+    });
+    expect(result.error).not.toBe(undefined);
+})

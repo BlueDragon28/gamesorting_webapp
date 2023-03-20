@@ -9,13 +9,15 @@ const { existingOrNewConnection } = require("../utils/sql/sql");
 const { 
     parseCelebrateError, 
     errorsWithPossibleRedirect, 
-    returnHasJSONIfNeeded 
+    returnHasJSONIfNeeded,
+    flashJoiErrorMessage
 } = require("../utils/errors/celebrateErrorsMiddleware");
 const {
     validateRegisteringUser,
     validateLoginUser,
     validateEmailUpdate,
-    validatePasswordUpdate
+    validatePasswordUpdate,
+    validateLostPasswordUpdate
 } = require("../utils/validation/users");
 const {ValueError} = require("../utils/errors/exceptions");
 
@@ -129,7 +131,7 @@ router.post("/lostpassword", wrapAsync(async function(req, res) {
     res.redirect("/");
 }));
 
-router.post("/lostpassword/:tokenID", wrapAsync(async function(req, res) {
+router.post("/lostpassword/:tokenID", validateLostPasswordUpdate(),  wrapAsync(async function(req, res) {
     const { tokenID } = req.params;
     const { password, retypedPassword } = req.body;
 
@@ -158,7 +160,14 @@ router.post("/lostpassword/:tokenID", wrapAsync(async function(req, res) {
 
     req.flash("success", "Password updated successfully");
     res.redirect("/users/login");
-}));
+}), parseCelebrateError, function(err, req, res, next) {
+    if (err.name === "ValidationError") {
+        flashJoiErrorMessage(err, req);
+        return res.redirect(req.originalUrl);
+    }
+
+    next(err);
+});
 
 router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
     const { deleteUser: removeUser } = req.body;

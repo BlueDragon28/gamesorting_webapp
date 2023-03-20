@@ -84,5 +84,6 @@ function errorsWithPossibleRedirect(customErrorMessage, redirectLocation = null)
 module.exports = {
     parseCelebrateError,
     errorsWithPossibleRedirect,
-    returnHasJSONIfNeeded
+    returnHasJSONIfNeeded,
+    flashJoiErrorMessage
 }

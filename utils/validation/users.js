@@ -46,6 +46,13 @@ function makePasswordUpdateValidation() {
     }).required();
 }
 
+function makeLostPasswordUpdateValidation() {
+    return Joi.object({
+        password: passwordValidation,
+        retypedPassword: passwordValidation.valid(Joi.ref("password"))
+    });
+}
+
 function validateRegisteringUser() {
     const celebrateValidation = {
         [Segments.BODY]: Joi.object({
@@ -82,16 +89,25 @@ function validatePasswordUpdate() {
     return celebrate(celebrateValidation);
 }
 
+function validateLostPasswordUpdate() {
+    const celebrateValidation = {
+        [Segments.BODY]: makeLostPasswordUpdateValidation()
+    };
+    return celebrate(celebrateValidation);
+}
+
 module.exports = {
     checkIfUserValid,
     validateRegisteringUser,
     validateLoginUser,
     validateEmailUpdate,
     validatePasswordUpdate,
+    validateLostPasswordUpdate,
     _: {
         user: makeRegisterUserValidation,
         login: makeLoginUserValidation,
         emailUpdate: makeEmailUpdateValidation,
-        passwordUpdate: makePasswordUpdateValidation
+        passwordUpdate: makePasswordUpdateValidation,
+        lostPasswordUpdate: makeLostPasswordUpdateValidation
     }
 };
