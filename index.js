@@ -22,6 +22,7 @@ const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
 const mariadb = require("./sql/connection");
 const fs = require("fs");
+const { activate: activateTask, deactivate: deactiveTask } = require("./utils/automaticTasks/automaticTask");
 
 mariadb.openPool();
 
@@ -112,6 +113,7 @@ async function closeServer() {
     server.close();
     await mariadb.closePool();
     await redisClient.disconnect();
+    deactiveTask();
 
     if (process.env.NODE_ENV !== "production") {
         console.log("server has been closed!");
@@ -120,3 +122,5 @@ async function closeServer() {
 
 process.on("SIGINT", closeServer);
 process.on("SIGTERM", closeServer);
+
+activateTask();
