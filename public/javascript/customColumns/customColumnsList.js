@@ -94,8 +94,8 @@ function parseType() {
         const inputMax = columnNumberMaxInput.value;
         return {
             type,
-            min: inputMin.length > 0 ? inputMin : 0,
-            max: inputMax.length > 0 ? inputMax : 20000
+            min: inputMin.length > 0 ? inputMin : -2147483648,
+            max: inputMax.length > 0 ? inputMax : 2147483647
         };
     }
     }
