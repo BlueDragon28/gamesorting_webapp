@@ -56,11 +56,6 @@ test("Create invallid user lost password object", function() {
     expect(userLost.isValid()).toBe(false);
 });
 
-test("Test UserLostPassword parseTime method", function() {
-    let time = UserLostPassword.parseTime(new Date("2023-03-17 00:00:00 UTC"));
-    //expect(time).toBe("2023-03-17 00:00:00");
-});
-
 describe("UserLostPassword database manipulation", function() {
     let user;
 

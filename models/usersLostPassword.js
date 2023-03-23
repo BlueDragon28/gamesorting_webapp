@@ -3,6 +3,7 @@ const bigint = require("../utils/numbers/bigint");
 const { v4: uuid, validate: uuidValidate } = require("uuid");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { AES_unique: AES } = require("../utils/data/encryption");
 
 class UserLostPassword {
     static maxTime = 
@@ -31,7 +32,7 @@ class UserLostPassword {
             }
         }
 
-        if (token !== undefined && typeof token === "string" && uuidValidate(token)) {
+        if (token !== undefined && typeof token === "string"/* && uuidValidate(token)*/) {
             this.token = token;
         } else if (token === undefined) {
             this.token = uuid();
@@ -110,7 +111,7 @@ class UserLostPassword {
 
         const queryStatement =
             "INSERT INTO usersLostPassword(UserID, Token, Time) " +
-            `VALUES (${this.parentUser.id}, "${sqlString(this.token)}", ${this.time.valueOf()})`;
+            `VALUES (${this.parentUser.id}, "${AES.encrypt(this.token)}", ${this.time.valueOf()})`;
 
 
         try {
@@ -135,7 +136,7 @@ class UserLostPassword {
             const queryStatement = 
                 "SELECT UserLostID, UserID, Token, Time " +
                 "FROM usersLostPassword " +
-                `WHERE Token = "${sqlString(token)}"`;
+                `WHERE Token = "${AES.encrypt(token)}"`;
 
             try {
                 const queryResult = await connection.query(queryStatement);
@@ -152,7 +153,7 @@ class UserLostPassword {
                     return null
                 }
 
-                const foundLostUser = new UserLostPassword(foundUser, UserLostID, Token, Number(Time));
+                const foundLostUser = new UserLostPassword(foundUser, UserLostID, AES.decrypt(Token), Number(Time));
 
                 return foundLostUser;
             } catch (error) {
