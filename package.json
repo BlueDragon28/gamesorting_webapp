@@ -16,11 +16,11 @@
   "author": "Erwan Saclier de la Bâtie (BlueDragon28)",
   "license": "MIT",
   "dependencies": {
+    "aes-js": "^3.1.2",
     "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.1",
     "connect-flash": "^0.1.1",
     "connect-redis": "^7.0.1",
-    "crypto-js": "^4.1.1",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
     "ejs-mate": "^4.0.0",
