@@ -12,6 +12,7 @@ import { hideError, setError } from "./userModalErrorCard.js";
     const passwordSubmitButton = document.querySelector("#button-submit-new-password");
     
     const inputEmail = document.querySelector("#input-email");
+    const inputPassword = document.querySelector("#input-password");
     const inputCurrentPassword = document.querySelector("#current-password");
     const inputNewPassword = document.querySelector("#new-password");
     const inputRetypeNewPassword = document.querySelector("#retype-new-password");
@@ -20,6 +21,7 @@ import { hideError, setError } from "./userModalErrorCard.js";
 
     function resetInputs() {
         inputEmail.value = "";
+        inputPassword.value = "";
         inputCurrentPassword.value = "";
         inputNewPassword.value = "";
         inputRetypeNewPassword.value = "";
@@ -59,8 +61,9 @@ import { hideError, setError } from "./userModalErrorCard.js";
         }
 
         const emailValue = inputEmail.value.trim();
+        const passwordValue = inputPassword.value.trim();
 
-        if (!submitEmail(emailValue)) {
+        if (!submitEmail(emailValue, passwordValue)) {
             return;
         }
 

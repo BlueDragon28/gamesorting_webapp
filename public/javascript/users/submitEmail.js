@@ -14,9 +14,14 @@ function whenProcessed(event) {
     }
 }
 
-export default function(email) {
+export default function(email, password) {
     if (!email.trim().length) {
-        setError("Email Cannot Be Empty")
+        setError("Email cannot be empty")
+        return false;
+    }
+
+    if (!password.trim().length) {
+        setError("Password cannot be empty");
         return false;
     }
 
@@ -29,7 +34,8 @@ export default function(email) {
     xhrRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
     xhrRequest.setRequestHeader("Accept", "application/json");
     xhrRequest.send(JSON.stringify({
-        email
+        email,
+        password
     }));
 
     return true;

@@ -69,12 +69,14 @@ it("test login user", function() {
 
 it("test email update", function() {
     let result = joiEmailUpdate.validate({
-        email: "my@email.com"
+        email: "my@email.com",
+        password: "12345"
     });
     expect(result.error).toBe(undefined);
 
     result = joiLogin.validate({
-        email: ""
+        email: "",
+        password: ""
     });
     expect(result.error).not.toBe(undefined);
 
@@ -89,6 +91,22 @@ it("test email update", function() {
     expect(result.error).not.toBe(undefined);
 
     result = joiLogin.validate({
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiLogin.validate({
+        password: "12345"
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiLogin.validate({
+        password: null
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiLogin.validate({
+        email: null,
+        password: null
     });
     expect(result.error).not.toBe(undefined);
 });

@@ -19,7 +19,7 @@ const {
     validatePasswordUpdate,
     validateLostPasswordUpdate
 } = require("../utils/validation/users");
-const {ValueError} = require("../utils/errors/exceptions");
+const { ValueError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
 
 const router = express.Router();
@@ -202,7 +202,7 @@ router.put("/email",
         isLoggedIn, 
         validateEmailUpdate(), 
         wrapAsync(async function(req, res, next) {
-    const { email } = req.body;
+    const { email, password } = req.body;
 
     const [success, error] = 
             await existingOrNewConnection(null, async function(connection) {
@@ -211,6 +211,10 @@ router.put("/email",
 
             if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
                 return [false, { statusCode: 404, message: "User Not Found!" }];
+            }
+
+            if (!foundUser.compare(foundUser.email, password)) {
+                return [false, { statusCode: 404, message: "Invalid password" }];
             }
 
             foundUser.email = email;

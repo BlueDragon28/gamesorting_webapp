@@ -34,7 +34,8 @@ function makeLoginUserValidation() {
 
 function makeEmailUpdateValidation() {
     return Joi.object({
-        email: emailValidation
+        email: emailValidation,
+        password: passwordValidation
     }).required();
 }
 
