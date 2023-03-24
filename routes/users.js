@@ -86,7 +86,7 @@ router.post("/register", validateRegisteringUser(), wrapAsync(async function(req
     const { username, email, password } = req.body.user;
     const user = new User(username, email, password);
     await user.save();
-    res.redirect("/");
+    res.redirect("/users/login");
 }));
 
 router.post("/login", validateLoginUser(), wrapAsync(async function(req, res) {
