@@ -1,5 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
+<link rel="stylesheet" href="/styles/starability-basic.min.css">
+
 <%
 function getCustomColumn(columnTypeID) {
     for (let customRow of item.customData) {
@@ -46,6 +48,21 @@ The form have two fields, Name and Url. -->
                         <div class="invalid-feedback">
                             You need to set a valid url!
                         </div>
+                    </div>
+
+                    <div class="mb-4 starability-basic">
+                        <div class="form-label">Rating</div>
+                        <input class="input-no-rate" type="radio" name="rating" id="no-rate" <%= item.rating <= 0 || item.rating > 5 ? "checked" : "" %> value="0">
+                        <input type="radio" name="rating" id="first-rate1" value="1" <%= item.rating === 1 ? "checked" : "" %>>
+                        <label for="first-rate1" title="Terrible">1 Star</label>
+                        <input type="radio" name="rating" id="first-rate2" value="2" <%= item.rating === 2 ? "checked" : "" %>>
+                        <label for="first-rate2" title="Not good">2 Star</label>
+                        <input type="radio" name="rating" id="first-rate3" value="3" <%= item.rating === 3 ? "checked" : "" %>>
+                        <label for="first-rate3" title="Average">3 Star</label>
+                        <input type="radio" name="rating" id="first-rate4" value="4" <%= item.rating === 4 ? "checked" : "" %>>
+                        <label for="first-rate4" title="Very good">4 Star</label>
+                        <input type="radio" name="rating" id="first-rate5" value=5 <%= item.rating === 5 ? "checked" : "" %>>
+                        <label for="first-rate5" title="Amazing">5 Star</label>
                     </div>
 
                     <!-- Inserting the control of the custom datas -->

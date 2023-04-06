@@ -1,5 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
+<link rel="stylesheet" href="/styles/starability-basic.min.css">
+
 <!-- A form to create a new items
 The form have two fields, Name and Url. -->
 <div class="row">
@@ -30,6 +32,21 @@ The form have two fields, Name and Url. -->
                         <div class="invalid-feedback">
                             You need to set a valid url!
                         </div>
+                    </div>
+
+                    <div class="mb-4 starability-basic">
+                        <div class="form-label">Rating</div>
+                        <input class="input-no-rate" type="radio" name="rating" id="no-rate" checked value="0">
+                        <input type="radio" name="rating" id="first-rate1" value="1">
+                        <label for="first-rate1" title="Terrible">1 Star</label>
+                        <input type="radio" name="rating" id="first-rate2" value="2">
+                        <label for="first-rate2" title="Not good">2 Star</label>
+                        <input type="radio" name="rating" id="first-rate3" value="3">
+                        <label for="first-rate3" title="Average">3 Star</label>
+                        <input type="radio" name="rating" id="first-rate4" value="4">
+                        <label for="first-rate4" title="Very good">4 Star</label>
+                        <input type="radio" name="rating" id="first-rate5" value=5>
+                        <label for="first-rate5" title="Amazing">5 Star</label>
                     </div>
 
                     <!-- Inserting the control the custom columns -->

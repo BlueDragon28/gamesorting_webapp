@@ -133,7 +133,7 @@ router.post("/items", checkListAuth, isItemLaxLimitMiddleware, parseCustomColumn
             validation.item({ name: true, url: true, customData: true }),
             customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
-    const { name, url, customColumns } = req.body;
+    const { name, url, rating, customColumns } = req.body;
 
     const parentList = await List.findByID(listID);
 
@@ -142,6 +142,7 @@ router.post("/items", checkListAuth, isItemLaxLimitMiddleware, parseCustomColumn
     }
 
     const newItem = new Item(name, url, parentList);
+    newItem.rating = rating;
 
     if (!newItem) {
         throw new ValueError(400, "Invalid Name or URL");
@@ -171,7 +172,7 @@ router.put("/items/:itemID", checkItemAuth, parseCustomColumnsData,
             validation.item({ name: true, url: true, customData: true }),
     customDataValidation.parseColumnsType, customDataValidation.validate(), wrapAsync(async (req, res) => {
     const { collectionID, listID, itemID } = req.params;
-    const { name, url, customColumns } = req.body;
+    const { name, url, rating, customColumns } = req.body;
 
     // Find Item
     const foundItem = await Item.findByID(itemID);
@@ -186,6 +187,7 @@ router.put("/items/:itemID", checkItemAuth, parseCustomColumnsData,
     // Update item
     foundItem.name = name;
     foundItem.url = url;
+    foundItem.rating = rating;
 
     if (!foundItem.isValid()) {
         throw new ValueError(400, "Invalid Name Or Url");
