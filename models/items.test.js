@@ -91,6 +91,7 @@ describe("collection dabase manipulation", function() {
 
     it ("save an item", async function() {
         item = new Item("A New Item", "https://www.dymmysite.com", list);
+        item.rating = 5;
         const [,error] = await itemQuery(async () => item.save());
 
         expect(item?.isValid()).toBe(true);
@@ -139,6 +140,7 @@ describe("collection dabase manipulation", function() {
         expect(findItem?.name).toBe("A New Item");
         expect(findItem?.url).toBe("https://www.dymmysite.com");
         expect(findItem.parentList instanceof List).toBe(true);
+        expect(findItem.rating).toBe(5);
 
         [findItem, error] = await itemQuery(async () => Item.findByID(0));
 
@@ -148,6 +150,7 @@ describe("collection dabase manipulation", function() {
 
     it("update an item", async function() {
         item.name = "Another item";
+        item.rating = 4;
         const [,error] = await itemQuery(async () => item.save());
         expect(error).toBe(undefined);
     });
@@ -162,6 +165,7 @@ describe("collection dabase manipulation", function() {
         expect(findItem?.id).toBe(item.id);
         expect(findItem.name).toBe("Another item");
         expect(findItem.parentList.id).toBe(list.id);
+        expect(findItem.rating).toBe(4);
     });
 
     it("check update invalid item", async function() {

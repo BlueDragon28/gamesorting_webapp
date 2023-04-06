@@ -9,6 +9,7 @@ class Item {
     id;
     name;
     url;
+    rating = 0;
     parentList;
     customData;
 
@@ -39,6 +40,12 @@ class Item {
             this.url = this.url.trim();
         } else {
             this.url = "";
+        }
+
+        if (typeof this.rating === "string") {
+            this.rating = Number(this.rating);
+        } else if (typeof this.rating !== "number") {
+            this.rating = 0;
         }
         
         if ((this.id !== undefined && !bigint.isValid(this.id)) ||
@@ -107,9 +114,10 @@ class Item {
     }
 
     async #_createItem(connection) {
-        const queryStatement = `INSERT INTO items(ListID, Name ${this.url.length > 0 ? ", URL" : ""}) ` +
+        const queryStatement = `INSERT INTO items(ListID, Name ${this.url.length > 0 ? ", URL" : ""} ${this.rating > 0 ? ", Rating" : ""}) ` +
             `VALUES (${this.parentList.id}, "${sqlString(this.name)}" ` +
-            ` ${this.url.length > 0 ? ", \"" + sqlString(this.url) + "\"": ""})`;
+            ` ${this.url.length > 0 ? ", \"" + sqlString(this.url) + "\"": ""}` + 
+            ` ${this.rating > 0 ? ", " + this.rating: ""})`;
 
         try {
             const queryResult = await connection.query(queryStatement);
@@ -130,7 +138,7 @@ class Item {
 
     async #_updateItem(connection) {
         let queryStatement = 
-            `UPDATE items SET Name = "${sqlString(this.name)}"`;
+            `UPDATE items SET Name = "${sqlString(this.name)}", Rating = ${this.rating}`;
 
         if (typeof this.url === "string") {
             queryStatement += `, URL = \"${sqlString(this.url)}\" `;
@@ -170,7 +178,7 @@ class Item {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                "SELECT l.ListID AS ListID, i.ItemID AS ItemID, i.Name AS Name, i.URL AS URL " + 
+                "SELECT l.ListID AS ListID, i.ItemID AS ItemID, i.Name AS Name, i.URL AS URL, i.Rating AS Rating " + 
                 "FROM items i " +
                 "INNER JOIN lists l USING (ListID) " +
                 `WHERE ItemID = ${id}`;
@@ -189,6 +197,7 @@ class Item {
 
                 const foundItem = new Item(queryResult[0].Name, queryResult[0].URL, foundList);
                 foundItem.id = queryResult[0].ItemID;
+                foundItem.rating = queryResult[0].Rating;
 
                 if (!foundItem.isValid()) {
                     return null;
@@ -311,6 +320,7 @@ class Item {
         for (let item of items) {
             const newItem = new Item(item.Name, item.URL, list);
             newItem.id = item.ItemID;
+            newItem.rating = item.Rating;
 
             if (newItem.isValid()) {
                 itemsArray.push(newItem);

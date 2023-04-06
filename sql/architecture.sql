@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS items(
     ItemID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     ListID BIGINT UNSIGNED NOT NULL, -- To wich list the item is own
     Name VARCHAR(300) NOT NULL, -- The name of the item
-    URL VARCHAR(10000)
+    URL VARCHAR(10000),
+    Rating TINYINT UNSIGNED DEFAULT 0
 );
 
 -- This table hold the values of each custom rows of each items
