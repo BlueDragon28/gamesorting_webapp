@@ -1,5 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
+<link rel="stylesheet" href="/styles/starability-basic.min.css">
+
 <%
 function getColumnType(columnTypeID) {
     for (let item of listColumnsType) {
@@ -23,6 +25,10 @@ function getColumnType(columnTypeID) {
                         <% if (item.url) { %> 
                             <p class="text-muted">URL: <a class="card-link" href="<%= item.url %>"><%= item.url %></a></p>
                         <% } %> 
+
+                        <p class="starability-result" data-rating="<%= item.rating %>">
+                            Rated: <%= item.rating %> star<%= item.rating > 1 ? "s" : "" %>
+                        </p>
 
                         <% for(let customData of item.customData) { %>
                             <% const columnType = getColumnType(customData.columnTypeID); %>
