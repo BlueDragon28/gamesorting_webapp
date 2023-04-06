@@ -228,7 +228,7 @@ class Item {
             }
 
             let queryStatement = 
-                `SELECT ItemID, Name, URL FROM items WHERE ListID = ${list.id} `;
+                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} `;
 
             if (pageNumber !== 0) {
                 queryStatement += `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;

@@ -1,7 +1,14 @@
 <div class="row pb-1">
     <div class="col-16">
         <a href="<%= url %>" class="item-card">
-            <h2><%= title %></h2>
+            <div class="d-flex">
+                <h2 class="flex-fill"><%= title %></h2>
+                <% if (typeof rating === "number") { %>
+                    <div class="starability-result" data-rating="<%= rating %>">
+                        Rated: <%= rating %> star<%= rating > 1 ? "s" : "" %>
+                    </div>
+                <% } %>
+            </div>
         </a>
     </div>
 </div>

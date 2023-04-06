@@ -1,5 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
+<link rel="stylesheet" href="/styles/starability-basic.min.css">
+
 <h1 class="display-4"><%= list.name %></h1>
 
 <div class="pb-4">
@@ -16,7 +18,8 @@
 <% for(let item of items) { %>
     <%- include("../../../partials/itemWidget.ejs", {
         url: `/collections/${list.parentCollection.id}/lists/${list.id}/items/${item.id}`,
-        title: item.name
+        title: item.name,
+        rating: item.rating
     }) %>
 <% } %>
 
