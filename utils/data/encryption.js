@@ -45,16 +45,22 @@ function arrayToMultipleOf16(array) {
     return newArray;
 }
 
-function encryptToAES(text) {
-    const aesCbc = new AES.ModeOfOperation.cbc(key, iv);
+function encryptToAES(text, encryptionKey, initialVectorKey) {
+    if (!encryptionKey) encryptionKey = key;
+    if (!initialVectorKey) initialVectorKey = iv;
+
+    const aesCbc = new AES.ModeOfOperation.cbc(encryptionKey, initialVectorKey);
     const textBytes = arrayToMultipleOf16(AES.utils.utf8.toBytes(text));
     const encryptedBytes = aesCbc.encrypt(textBytes);
     const encryptedHex = AES.utils.hex.fromBytes(encryptedBytes);
     return encryptedHex;
 }
 
-function decryptFromAES(data) {
-    const aesCbc = new AES.ModeOfOperation.cbc(key, iv);
+function decryptFromAES(data, encryptionKey, initialVectorKey) {
+    if (!encryptionKey) encryptionKey = key;
+    if (!initialVectorKey) initialVectorKey = iv;
+
+    const aesCbc = new AES.ModeOfOperation.cbc(encryptionKey, initialVectorKey);
     const encryptedBytes = AES.utils.hex.toBytes(data);
     const decryptedBytes = aesCbc.decrypt(encryptedBytes);
     const decryptedText = AES.utils.utf8.fromBytes(decryptedBytes);
