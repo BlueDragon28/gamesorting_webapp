@@ -1,6 +1,10 @@
 // Only include dotenv in development mode
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
+} else {
+    require("./utils/loadingEnvVariable").getEnvValueFromFile(
+        process.env.ENV_VAR_FILE
+    );
 }
 
 /*
