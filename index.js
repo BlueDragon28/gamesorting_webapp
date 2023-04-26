@@ -1,8 +1,11 @@
+// Only include dotenv in development mode
+if (process.env.NODE_ENV !== "production") {
+    require("dotenv").config();
+}
+
 /*
 Required packages and js files
 */
-require("dotenv").config();
-
 const path = require("path");
 const express = require("express");
 const http = require("http");
