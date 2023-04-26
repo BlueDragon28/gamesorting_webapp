@@ -103,8 +103,8 @@ function readEncryptedFile(filesPath) {
     return decryptedFile;
 }
 
-const unencryptedFileRegEx = /^FILE:[A-Za-z0-9/]+$/
-const encryptedFileRegEx = /^FILE:[A-Za-z0-9/]+;[A-Za-z0-9/]+$/;
+const unencryptedFileRegEx = /^FILE:[A-Za-z0-9/\.]+$/
+const encryptedFileRegEx = /^FILE:[A-Za-z0-9/\.]+;[A-Za-z0-9/\.]+$/;
 
 function getEnvValueFromFile(envValue) {
     if (typeof envValue !== "string" || !envValue.length) {
