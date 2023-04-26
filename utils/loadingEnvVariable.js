@@ -118,7 +118,7 @@ function getEnvValueFromFile(envValue) {
             return null;
         }
 
-        return readFileSync(filePath);
+        return readFileSync(filePath, {encoding: "utf8"});
     } else if (encryptedFileRegEx.test(envValue)) {
         const [,filesPath] = envValue.split(":");
         return readEncryptedFile(filesPath);
