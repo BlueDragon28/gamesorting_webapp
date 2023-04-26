@@ -1,3 +1,4 @@
+require("../testingEnv");
 const { _: validation } = require("./customDataValidation");
 
 const joiObject = validation.columnDataValidation()
