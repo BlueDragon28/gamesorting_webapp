@@ -50,7 +50,7 @@ function hexTo8bitNumber(encryptionHex) {
         let _8bitNumber = 0;
 
         for (let j = 0; j < 2; j++) {
-            const hexCharacter = twoHex[j];
+            const hexCharacter = twoHex[j].toUpperCase();
             let number = hexString.indexOf(hexCharacter);
 
             if (number === -1) return null;
@@ -80,7 +80,7 @@ function readKeyFile(filePath) {
 
 function readEncryptedFile(filesPath) {
     const [encryptedFilePath, encryptionKeyFilePath] =
-        filesPath.split(":");
+        filesPath.split(";");
 
     if (typeof encryptedFilePath !== "string" || typeof encryptionKeyFilePath !== "string" ||
         !encryptedFilePath.length || !encryptionKeyFilePath.length) {
@@ -92,11 +92,11 @@ function readEncryptedFile(filesPath) {
 
     if (encryptionKey === null || !encryptionKey?.length) return null;
 
-    const encryptedFileData = readFileSync(encryptedFilePath, {encoding: "utf8"});
+    const encryptedFileData = readFileSync(encryptedFilePath);
 
-    if (typeof encryptedFileData !== "string" || !encryptedFileData.length) return null;
+    if (!encryptedFileData.length) return null;
 
-    const decryptedFile = decrypt(encryptedFileData, encryptionKey);
+    const decryptedFile = decrypt(encryptedFileData.toString("hex"), encryptionKey);
 
     if (typeof decryptedFile !== "string" || !decryptedFile.length) return null;
 
