@@ -6,7 +6,6 @@ require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const http = require("http");
-const https = require("https");
 const { configureHelmet } = require("./utils/security/basicSecurity");
 const ejsMate = require("ejs-mate");
 const collectionsRouter = require("./routes/collections");
@@ -21,7 +20,6 @@ const flash = require("connect-flash");
 const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
 const mariadb = require("./sql/connection");
-const fs = require("fs");
 const { activate: activateTask, deactivate: deactiveTask } = require("./utils/automaticTasks/automaticTask");
 
 mariadb.openPool();
@@ -97,17 +95,8 @@ app.use((err, req, res, next) => {
     res.status(statusCode).send("<p>" + message + (stack ? ("<br>" + stack) : "") + "</p>");
 });
 
-let server
-if (process.env.NODE_ENV === "production") {
-    server = https.createServer({
-        key: fs.readFileSync(process.env.PRIVATE_KEY),
-        cert: fs.readFileSync(process.env.PUBLIC_CERT)
-    }, app);
-    server.listen(process.env.LISTENING_PORT);
-} else {
-    server = http.createServer(app);
-    server.listen(process.env.LISTENING_PORT);
-}
+const server = http.createServer(app);
+server.listen(process.env.LISTENING_PORT);
 
 async function closeServer() {
     server.close();
