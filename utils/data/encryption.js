@@ -39,7 +39,7 @@ for (const ivByte of iv) {
 function arrayToMultipleOf16(array) {
     const newArray = [...array];
     while (newArray.length % 16 !== 0) {
-        newArray.push(32);
+        newArray.push(0x0f);
     }
 
     return newArray;
@@ -91,7 +91,9 @@ function decryptFromAES(data, encryptionKey, initialVectorKey) {
     const aesCbc = new AES.ModeOfOperation.cbc(encryptionKey, initialVectorKey);
     const encryptedBytes = AES.utils.hex.toBytes(data);
     const decryptedBytes = aesCbc.decrypt(encryptedBytes);
-    const decryptedText = AES.utils.utf8.fromBytes(decryptedBytes);
+    const decryptedBuffer = Buffer.from(decryptedBytes);
+    const lastValueIndex = decryptedBuffer.indexOf(0x0f);
+    const decryptedText = decryptedBuffer.subarray(0, lastValueIndex).toString("utf8");
     return decryptedText.trim();
 }
 
