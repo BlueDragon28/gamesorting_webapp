@@ -1,0 +1,24 @@
+<% layout("layouts/boilerplate.ejs") -%>
+
+<link rel="stylesheet" href="/styles/admin/activities.css">
+
+<dl class="chart">
+    <dt>Activites last 30 days</dt>
+    <% if (userActivity?.days?.length) { %>
+        <% for (const day of userActivity.days) { %>
+            <% const percentage = day.activities / userActivity.maxADay * 100; %>
+            <dd class="chart-content">
+                <div class="chart-element-text">Day <%= day.day %></div>
+                <div class="chart-line" style="width: <%= percentage %>%;"></div>
+            </dd>
+        <% } %>
+    <% } else { %>
+        <dd>No data available!</dd>
+    <% } %>
+</dl>
+
+<div class="chart-cross-line"></div>
+
+<div>
+    <div class="total-activities"><b>Total:</b> <%= userActivity.total %></div>
+</div>

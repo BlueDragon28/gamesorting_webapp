@@ -1,0 +1,32 @@
+.chart-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.chart-line {
+    content: "";
+    display: block;
+    height: 40px;
+    background-color: #40916c;
+}
+
+.chart-element-text {
+    min-width: 70px;
+}
+
+.chart dt {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.chart-cross-line {
+    height: 1px;
+    background-color: gray;
+}
+
+.total-activities {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+}

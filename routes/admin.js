@@ -17,33 +17,48 @@ async function isUserAdmin(req, res, next) {
     next();
 }
 
-function separeActiviesByDays(activities) {
-    if (Array.isArray(activities)) {
-        return []
+function divideActiviesByDays(activities) {
+    if (!Array.isArray(activities)) {
+        return {
+            days: [],
+            maxADay: 0
+        }
     }
 
     const now = Date.now();
     const parsedDate = [];
     const aDayInMilliseconds = 24 * 60 * 60 * 1000;
+    let maxActivityADay = 0;
+    let totalActivity = 0;
 
     for (let i = 0; i < 30; i++) {
         const endTime = now - (aDayInMilliseconds * i);
         const startTime = now - (aDayInMilliseconds * (i+1));
         const day = {
-            day: i,
+            day: i+1,
             activities: 0
         };
 
         for (const activity of activities) {
-            if (activity.time >= startTime && activity.time <= startTime) {
+            if (activity.time >= startTime && activity.time <= endTime) {
                 day.activities++;
             }
         }
 
         parsedDate.push(day);
+
+        if (day.activities > maxActivityADay) {
+            maxActivityADay = day.activities;
+        }
+
+        totalActivity+= day.activities;
     }
 
-    return parsedDate;
+    return {
+        days: parsedDate,
+        maxADay: maxActivityADay,
+        total: totalActivity
+    };
 }
 
 router.use(isLoggedIn);
@@ -53,7 +68,7 @@ router.get("/activities", wrapAsync(async function(req, res) {
     const userActivitesInLast32Days = 
         await UserActivity.findByTimelapsFromNow(30 * 24); // last 30 days
     
-    const parsedDateValue = separeActiviesByDays(userActivitesInLast32Days);
+    const parsedDateValue = divideActiviesByDays(userActivitesInLast32Days);
 
     res.render("admin/activities", { userActivity: parsedDateValue });
 }));
