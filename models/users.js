@@ -9,6 +9,7 @@ class User {
     email = undefined;
     bypassRestriction = undefined;
     #hashPassword = undefined;
+    isAdmin = undefined;
 
     constructor(username, email, password, hashPassword = true) {
         if (username && typeof username === "string") {
@@ -34,12 +35,13 @@ class User {
         this.id = this.id !== undefined ? bigint.toBigInt(this.id) : undefined;
         this.username = typeof this.username === "string" ? this.username.trim() : undefined
         this.email = typeof this.email === "string" ? this.email.trim() : undefined;
-
+        
         if (!this.username || typeof this.username !== "string" || !this.username.length ||
             !this.email || typeof this.email !== "string" || !this.email.length ||
             !this.#hashPassword || typeof this.#hashPassword !== "string" || !this.#hashPassword.length ||
             (this.id !== undefined && !bigint.isValid(this.id)) ||
-            (this.bypassRestriction !== undefined && typeof this.bypassRestriction !== "boolean")) {
+            (this.bypassRestriction !== undefined && typeof this.bypassRestriction !== "boolean") ||
+            (this.isAdmin !== undefined && typeof this.isAdmin !== "boolean")) {
             return false;
         }
 
@@ -118,9 +120,12 @@ class User {
 
     async #_createUser(connection) {
         const queryStatement = 
-            `INSERT INTO users (Username, Email, Password ${this.bypassRestriction === true ? ", BypassRestriction" : ""}) ` +
+            `INSERT INTO users (Username, Email, Password` +
+            `${this.bypassRestriction === true ? ", BypassRestriction" : ""} ` +
+            `${typeof this.isAdmin === "boolean" ? ", IsAdmin" : ""} ) ` +
             `VALUES ("${sqlString(this.username)}", "${sqlString(this.email)}", ` + 
-            `"${sqlString(this.#hashPassword)}" ${this.bypassRestriction === true ? ", TRUE" : ""})`;
+            `"${sqlString(this.#hashPassword)}" ${this.bypassRestriction === true ? ", TRUE" : ""}` +
+            `${typeof this.isAdmin === "boolean" ? "," + this.isAdmin : ""})`;
 
         try {
             const result = await connection.query(queryStatement);
@@ -144,7 +149,8 @@ class User {
             "UPDATE users SET " +
             `Username = "${sqlString(this.username)}", Email = "${sqlString(this.email)}", ` +
             `Password = "${sqlString(this.#hashPassword)}", ` +
-            `BypassRestriction = ${this.bypassRestriction === true ? "TRUE" : "FALSE"} ` +
+            `BypassRestriction = ${this.bypassRestriction === true ? "TRUE" : "FALSE"}, ` +
+            `IsAdmin = ${this.isAdmin === true ? "TRUE" : "FALSE"} ` +
             `WHERE UserID = ${this.id}`;
 
         try {
@@ -181,7 +187,7 @@ class User {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                "SELECT UserID, Username, Email, Password, BypassRestriction " +
+                "SELECT UserID, Username, Email, Password, BypassRestriction, IsAdmin " +
                 "FROM users " +
                 `WHERE Username = "${sqlString(username)}" OR Email = "${sqlString(username)}"`;
 
@@ -192,10 +198,11 @@ class User {
                     return null;
                 }
 
-                const { UserID, Username, Email, Password, BypassRestriction } = queryResult[0];
+                const { UserID, Username, Email, Password, BypassRestriction, IsAdmin } = queryResult[0];
 
                 const foundUser = new User(Username, Email, Password, false);
                 foundUser.id = UserID;
+                foundUser.isAdmin = typeof IsAdmin === "boolean" ? IsAdmin : undefined;
                 foundUser.bypassRestriction = BypassRestriction !== 0 ? true : false;
 
                 return foundUser;
@@ -212,7 +219,7 @@ class User {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `SELECT UserID, Username, Email, Password, BypassRestriction FROM users WHERE UserID = ${userID}`;
+                `SELECT UserID, Username, Email, Password, BypassRestriction, IsAdmin FROM users WHERE UserID = ${userID}`;
             
             try {
                 const queryResult = await connection.query(queryStatement);
@@ -221,10 +228,11 @@ class User {
                     return null;
                 }
 
-                const { UserID, Username, Email, Password, BypassRestriction } = queryResult[0];
+                const { UserID, Username, Email, Password, BypassRestriction, IsAdmin } = queryResult[0];
 
                 const foundUser = new User(Username, Email, Password, false);
                 foundUser.id = UserID;
+                foundUser.isAdmin = IsAdmin === 1 ? true : IsAdmin === 0 ? false : undefined;
                 foundUser.bypassRestriction = BypassRestriction !== 0 ? true : false;
 
                 return foundUser;
@@ -264,6 +272,18 @@ class User {
             const user = await User.findByID(userID, connection);
 
             return user.bypassRestriction === true;
+        });
+    }
+
+    static async isAdmin(userID, connection) {
+        if (!bigint.isValid(userID)) {
+            throw new ValueError(400, "Invalid User");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const user = await User.findByID(userID, connection);
+
+            return user.isAdmin === true;
         });
     }
 }

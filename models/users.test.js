@@ -2,6 +2,7 @@ require("../utils/testingEnv");
 const mariadb = require("../sql/connection");
 const seeds = require("../sql/seeds");
 const { User } = require("./users");
+const bigint = require("../utils/numbers/bigint");
 
 test("Create valid user object", async function() {
     let user = new User("a_user", "some@email.com", "12345");
@@ -284,5 +285,24 @@ describe("collection dabase manipulation", function() {
         const [,error] = await userQuery(async () => User.isBypassingRestriction(null));
         expect(error).not.toBe(undefined);
     });
+
+    it("check isAdmin option", async function() {
+        const adminUser = new User("abcdefgh", "email@provider.com", "12345", false);
+        adminUser.isAdmin = true;
+
+        let [,error] = await userQuery(async () => adminUser.save());
+        expect(error).toBe(undefined);
+        expect(typeof adminUser.id).toBe("bigint");
+
+        const isUserAdmin = await User.isAdmin(adminUser.id);
+        expect(isUserAdmin).toBe(true);
+
+        adminUser.isAdmin = false;
+        [,error] = await userQuery(async () => adminUser.save());
+        expect(error).toBe(undefined);
+
+        const isUserNotAdmin = await User.isAdmin(adminUser.id);
+        expect(isUserNotAdmin).toBe(false);
+    })
 });
 
