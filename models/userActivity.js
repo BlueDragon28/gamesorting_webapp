@@ -3,6 +3,8 @@ const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
 
 class UserActivity {
+    static expirationHours = 30 * 24; // Expiration after 30 days.
+
     id;
     userID;
     type;
