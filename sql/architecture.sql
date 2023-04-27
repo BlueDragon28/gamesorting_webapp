@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS users(
     Username VARCHAR(300) NOT NULL,
     Email VARCHAR(300) NOT NULL,
     Password VARCHAR(10000) NOT NULL,
-    BypassRestriction BOOLEAN NOT NULL DEFAULT FALSE
+    BypassRestriction BOOLEAN NOT NULL DEFAULT FALSE,
+    IsAdmin BOOLEAN DEFAULT FALSE
 );
 
 -- This table hold the token for the password lost interface
