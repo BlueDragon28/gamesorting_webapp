@@ -28,6 +28,7 @@ const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
 const mariadb = require("./sql/connection");
 const { activate: activateTask, deactivate: deactiveTask } = require("./utils/automaticTasks/automaticTask");
+const userActivitiesMiddleware = require("./utils/users/activities");
 
 mariadb.openPool();
 
@@ -76,6 +77,8 @@ app.use(function(req, res, next) {
 });
 
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(userActivitiesMiddleware);
 
 app.get("/", (req, res) => {
     res.render("index");
