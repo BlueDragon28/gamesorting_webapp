@@ -39,11 +39,13 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.disable("x-powered-by"); // X-Powered-By http header indicate what web server is currently be used
 
+configureHelmet(app); // Add the middleware of helmets
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
 
-configureHelmet(app); // Add the middleware of helmets
 
 const redisClient = createClient({
     url: process.env.REDIS_URL
@@ -75,8 +77,6 @@ app.use(function(req, res, next) {
     res.locals.activeLink = "";
     next();
 });
-
-app.use(express.static(path.join(__dirname, "public")));
 
 app.use(userActivitiesMiddleware);
 
