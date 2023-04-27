@@ -30,6 +30,7 @@ const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddlewar
 const mariadb = require("./sql/connection");
 const { activate: activateTask, deactivate: deactiveTask } = require("./utils/automaticTasks/automaticTask");
 const userActivitiesMiddleware = require("./utils/users/activities");
+const checkIfUserAdmin = require("./utils/users/checkIsUserAdmin");
 
 mariadb.openPool();
 
@@ -78,6 +79,7 @@ app.use(function(req, res, next) {
     res.locals.activeLink = "";
     next();
 });
+app.use(checkIfUserAdmin);
 
 app.use(userActivitiesMiddleware);
 
