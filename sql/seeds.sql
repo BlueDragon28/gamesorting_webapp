@@ -68,3 +68,4 @@ VALUES
 
 
 DELETE FROM usersLostPassword;
+DELETE FROM userActivity;
