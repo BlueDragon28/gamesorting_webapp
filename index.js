@@ -2,7 +2,8 @@
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 } else {
-    require("./utils/loadingEnvVariable").getEnvValueFromFile(
+    require("dotenv").config({path: process.env.FIRST_VAR_FILE});
+    require("./utils/loadingEnvVariable").loadEnvVariableFromFile(
         process.env.ENV_VAR_FILE
     );
 }
@@ -31,6 +32,7 @@ const mariadb = require("./sql/connection");
 const { activate: activateTask, deactivate: deactiveTask } = require("./utils/automaticTasks/automaticTask");
 const userActivitiesMiddleware = require("./utils/users/activities");
 const checkIfUserAdmin = require("./utils/users/checkIsUserAdmin");
+const { getEnvValueFromFile, isFileBased } = require("./utils/loadingEnvVariable");
 const { getEnvValueFromFile, isFileBased } = require("../utils/loadingEnvVariable");
 
 mariadb.openPool();
