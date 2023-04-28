@@ -31,6 +31,7 @@ const mariadb = require("./sql/connection");
 const { activate: activateTask, deactivate: deactiveTask } = require("./utils/automaticTasks/automaticTask");
 const userActivitiesMiddleware = require("./utils/users/activities");
 const checkIfUserAdmin = require("./utils/users/checkIsUserAdmin");
+const { getEnvValueFromFile, isFileBased } = require("../utils/loadingEnvVariable");
 
 mariadb.openPool();
 
@@ -59,7 +60,20 @@ const redisStore = new RedisStore({
     prefix: "gamesorting_webapp"
 });
 
-const secureCookie = process.env.NODE_ENV === "production";
+const secureCookie = false; //process.env.NODE_ENV === "production";
+let sessionSecret; 
+if (process.env.NODE_ENV !== "production") {
+    sessionSecret = "mytestsecret";
+} else {
+    if (typeof process.env.SESSION_SECRET_KEY !== "string" || !process.env.SESSION_SECRET_KEY.length) {
+        throw new Error("No session secret provided");
+    }
+
+    sessionSecret = isFileBased(process.env.SESSION_SECRET_KEY) ?
+        getEnvValueFromFile(process.env.SESSION_SECRET_KEY) :
+        process.env.SESSION_SECRET_KEY;
+}
+
 app.use(session({
     name: "sessionID",
     secret: process.env.SESSION_SECRET_KEY,
