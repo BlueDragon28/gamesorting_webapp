@@ -11,19 +11,28 @@ let pool = undefined;
 
 const dbConnectionInfo = {
     user: undefined,
+    password: undefined,
     host: undefined,
     port: undefined,
     socketPath: undefined,
     database: undefined,
     connectionLimit: 1,
-    multipleStatements: true
+    multipleStatements: true,
 };
 
-if (typeof process.env.MARIADB_USER !== "string" && !process.env.MARIADB_USER.length) {
+if (typeof process.env.MARIADB_USER === "string" && process.env.MARIADB_USER.length) {
+    dbConnectionInfo.user = isFileBased(process.env.MARIADB_USER) ?
+        getEnvValueFromFile(process.env.MARIADB_USER) : process.env.MARIADB_USER;
+} else if (!process.env.MARIADB_SOCKET_PATH) {
     throw new Error("Database user username must be provided with the MARIADB_USER env variable!");
 }
-dbConnectionInfo.user = isFileBased(process.env.MARIADB_USER) ?
-    getEnvValueFromFile(process.env.MARIADB_USER) : process.env.MARIADB_USER;
+
+if (typeof process.env.MARIADB_PASSWORD === "string" && process.env.MARIADB_PASSWORD.length) {
+    dbConnectionInfo.password = isFileBased(process.env.MARIADB_PASSWORD) ?
+        getEnvValueFromFile(process.env.MARIADB_PASSWORD) : process.env.MARIADB_PASSWORD;
+} else if (!process.env.MARIADB_SOCKET_PATH) {
+    throw new Error("You must provide a password to connect to mariadb")
+}
 
 if (typeof process.env.MARIADB_HOST_PORT === "string" && process.env.MARIADB_HOST_PORT.length) {
     const [host,port] = 
@@ -34,11 +43,7 @@ if (typeof process.env.MARIADB_HOST_PORT === "string" && process.env.MARIADB_HOS
     
     dbConnectionInfo.host = host;
     dbConnectionInfo.port = port;
-} else if (typeof process.env.MARIADB_SOCKET_PATH === "string" && process.env.MARIADB_SOCKET_PATH.length) {
-    dbConnectionInfo.socketPath = process.env.MARIADB_SOCKET_PATH;
-} else {
-    throw new Error("You must provide MariaDB user and host or socket path connection info!");
-}
+} 
 
 if (typeof process.env.MARIADB_DATABASE_NAME === "string" && process.env.MARIADB_DATABASE_NAME.length) {
     dbConnectionInfo.database = process.env.MARIADB_DATABASE_NAME;
@@ -51,7 +56,17 @@ if (typeof process.env.MARIADB_CONNECTION_LIMIT === "string" && process.env.MARI
 }
 
 function openPool(suffix = "") {
-    pool = mariadb.createPool(dbConnectionInfo);
+    if (process.env.NODE_ENV === "production") {
+        pool = mariadb.createPool(dbConnectionInfo);
+    } else {
+        pool = mariadb.createPool({
+            user: process.env.MARIADB_USER,
+            socketPath: process.env.MARIADB_SOCKET_PATH,
+            database: process.env.MARIADB_DATABASE_NAME + suffix,
+            connectionLimit: process.env.MARIADB_CONNECTION_LIMIT,
+            multipleStatements: true,
+        });
+    }
 }
 
 module.exports = {
