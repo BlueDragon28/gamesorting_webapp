@@ -1,0 +1,53 @@
+services:
+  gamesorting_webapp:
+    image: bluedragon28/gamesorting_webapp
+    build: .
+    #image: node:18
+    #command: sh -c "npm install --save-prod && NODE_ENV=production node ./index.js"
+    #working_dir: /app
+    ports:
+      - 8080:8080
+    environment:
+      - FIRST_VAR_FILE=/config_file/.env
+      - ENV_VAR_FILE=/config_file/env.txt
+    volumes:
+      - /opt/gamesorting_webapp/app-config:/config_file
+      - .:/app
+    
+    depends_on:
+      gamesorting_redis:
+        condition: service_healthy
+      gamesorting_mariadb:
+        condition: service_healthy
+  
+  gamesorting_mariadb:
+    image: mariadb:10
+    volumes:
+      - gamesorting_mariadb_data:/var/lib/mysql
+      - /opt/gamesorting_webapp/mariadb/config_env:/config_file
+    environment:
+      - MARIADB_USER_FILE=/config_file/user
+      - MARIADB_PASSWORD_HASH_FILE=/config_file/user_hash
+      - MARIADB_ROOT_PASSWORD_HASH_FILE=/config_file/root_hash
+      - MARIADB_DATABASE=gamesorting_webapp
+    
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping",]
+      timeout: 20s
+      retries: 10
+  
+  gamesorting_redis:
+    image: redis:alpine
+    volumes:
+      - gamesorting_redis_data:/data
+    command: redis-server --save 60 1 --loglevel warning
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 30s
+      retries: 10
+
+volumes:
+  gamesorting_mariadb_data:
+  gamesorting_redis_data:

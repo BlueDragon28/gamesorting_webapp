@@ -1,8 +1,5 @@
 node_modules
 public
 testFile
-.dockerignore
 .env
-.gitignore
-Dockerfile
 package-lock.json
