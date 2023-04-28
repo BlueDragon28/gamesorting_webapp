@@ -71,7 +71,8 @@ function readKeyFile(filePath) {
         return null;
     }
 
-    const encryptionHex = readFileSync(filePath, {encoding: "utf8"}).split("\n")[0].trim();
+    const data = readFileSync(filePath, {encoding: "utf8"}).split("\n")[0];
+    const encryptionHex = data;
 
     if (typeof encryptionHex !== "string" || !encryptionHex.length) return null;
 

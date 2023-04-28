@@ -33,7 +33,6 @@ const { activate: activateTask, deactivate: deactiveTask } = require("./utils/au
 const userActivitiesMiddleware = require("./utils/users/activities");
 const checkIfUserAdmin = require("./utils/users/checkIsUserAdmin");
 const { getEnvValueFromFile, isFileBased } = require("./utils/loadingEnvVariable");
-const { getEnvValueFromFile, isFileBased } = require("../utils/loadingEnvVariable");
 
 mariadb.openPool();
 
@@ -50,7 +49,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
-
 
 const redisClient = createClient({
     url: process.env.REDIS_URL

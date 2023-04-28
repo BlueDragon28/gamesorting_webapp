@@ -35,7 +35,6 @@ for (const ivByte of iv) {
     }
 }
 
-
 function arrayToMultipleOf16(array) {
     const newArray = [...array];
     while (newArray.length % 16 !== 0) {
