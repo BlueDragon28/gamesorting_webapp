@@ -44,7 +44,10 @@ app.set("views", path.join(__dirname, "views"));
 app.disable("x-powered-by"); // X-Powered-By http header indicate what web server is currently be used
 
 configureHelmet(app); // Add the middleware of helmets
-app.use(express.static(path.join(__dirname, "public")));
+
+if (process.env.NODE_ENV !== "production") {
+    app.use(express.static(path.join(__dirname, "public")));
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // parse body
