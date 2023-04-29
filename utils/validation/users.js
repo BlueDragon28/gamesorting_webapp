@@ -6,10 +6,10 @@ let usernameValidation = Joi.string().trim().forbidHTML().required();
 let emailValidation = Joi.string().trim().email().forbidHTML().required();
 let passwordValidation = Joi.string().trim().forbidHTML().required();
 
-if (process.env.NODE_ENV === "production") {
+// if (process.env.NODE_ENV === "production") {
     usernameValidation = usernameValidation.min(7);
     passwordValidation = passwordValidation.min(7);
-}
+// }
 
 function checkIfUserValid(user) {
     return  user && bigint.isValid(user.id) && 

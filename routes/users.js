@@ -87,7 +87,9 @@ router.post("/register", validateRegisteringUser(), wrapAsync(async function(req
     const user = new User(username, email, password);
     await user.save();
     res.redirect("/users/login");
-}));
+}),
+    parseCelebrateError,
+    errorsWithPossibleRedirect("Invalid credentials", "/users/register"));
 
 router.post("/login", validateLoginUser(), wrapAsync(async function(req, res) {
     const { username, password } = req.body.user;
@@ -104,7 +106,9 @@ router.post("/login", validateLoginUser(), wrapAsync(async function(req, res) {
 
     req.flash("success", "Welcome Back!");
     res.redirect("/collections");
-}));
+}),
+    parseCelebrateError,
+    errorsWithPossibleRedirect("Invalid credentials", "/users/login"));
 
 router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
     const userID = req.session.user.id;

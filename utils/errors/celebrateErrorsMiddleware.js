@@ -67,14 +67,18 @@ function errorsWithPossibleRedirect(customErrorMessage, redirectLocation = null)
             } else if (req.method === "POST" || req.method === "PUT") {
                 flashJoiErrorMessage(error, req);
                 //return res.redirect(`${req.originalUrl}`);
-                return res.redirect("/collections");
+                if (typeof redirectLocation === "string" && redirectLocation.length) {
+                    return res.redirect(redirectLocation);
+                } else {
+                    return res.redirect(process.env.NODE_ENV ==="production" && req.session.user ? "/collections" : "/");
+                }
             }
         } else if (error.name === "InternalError" || error.name === "SqlError") {
             req.flash("error", "Oups!!! Something went wrong!");
-            return res.redirect(process.env.NODE_ENV ==="production" ? "/collections" : "/");
+            return res.redirect(process.env.NODE_ENV ==="production" && req.session.user ? "/collections" : "/");
         } else if (error.name === "AuthorizationError" || error.name === "LimitError") {
             req.flash("error", error.message);
-            return res.redirect(process.env.NODE_ENV ==="production" ? "/collections" : "/");
+            return res.redirect(process.env.NODE_ENV ==="production" && req.session.user ? "/collections" : "/");
         }
 
         next(error);
