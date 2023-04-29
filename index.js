@@ -2,7 +2,6 @@
 if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 } else {
-    require("dotenv").config({path: process.env.FIRST_VAR_FILE});
     require("./utils/loadingEnvVariable").loadEnvVariableFromFile(
         process.env.ENV_VAR_FILE
     );
