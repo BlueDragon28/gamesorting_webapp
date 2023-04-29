@@ -25,6 +25,7 @@ services:
     volumes:
       - gamesorting_mariadb_data:/var/lib/mysql
       - /opt/gamesorting_webapp/mariadb/config_env:/config_file
+      - /opt/gamesorting_webapp/mariadb/config:/etc/mysql/conf.d
     environment:
       - MARIADB_USER_FILE=/config_file/user
       - MARIADB_PASSWORD_HASH_FILE=/config_file/user_hash
