@@ -14,7 +14,7 @@ test("read env file", function() {
     expect(typeof process.env.MY_VAR2).toBe("string");
     expect(process.env.MY_VAR2).toBe("FILE:testFile/valueFile.txt");
 
-    expect(process.env.MY_VAR3).toBe("FILE:testFile/valueFile.enc;testFile/valueFile.key");
+    expect(process.env.MY_VAR3).toBe("FILE:testFile/valueFile.enc;testFile/valueFile.key;testFile/valueFile.iv");
 });
 
 test("test if MY_VAR2 is file based value", function() {
