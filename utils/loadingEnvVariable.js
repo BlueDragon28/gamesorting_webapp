@@ -1,5 +1,5 @@
 const { existsSync, readFileSync } = require("fs");
-const { decrypt } = require("./data/encryption").AES_unique;
+const { decrypt } = require("./data/baseEncryption");
 
 function isFileBased(varValue) {
     if (typeof varValue !== "string" || !varValue.length) {
@@ -80,7 +80,7 @@ function readKeyFile(filePath) {
 }
 
 function readEncryptedFile(filesPath) {
-    const [encryptedFilePath, encryptionKeyFilePath] =
+    const [encryptedFilePath, encryptionKeyFilePath, encryptionIvFilePath] =
         filesPath.split(";");
 
     if (typeof encryptedFilePath !== "string" || typeof encryptionKeyFilePath !== "string" ||
@@ -93,11 +93,19 @@ function readEncryptedFile(filesPath) {
 
     if (encryptionKey === null || !encryptionKey?.length) return null;
 
-    const encryptedFileData = readFileSync(encryptedFilePath);
+    const encryptionIv = readKeyFile(encryptionIvFilePath);
+
+    if (encryptionIv === null || !encryptionIv?.length) return null;
+
+    let encryptedFileData = readFileSync(encryptedFilePath);
 
     if (!encryptedFileData.length) return null;
 
-    const decryptedFile = decrypt(encryptedFileData.toString("hex"), encryptionKey);
+    if (encryptedFileData[encryptedFileData.length-1] == 0x0A) {
+        encryptedFileData = encryptedFileData.subarray(0, encryptedFileData.length-1);
+    }
+
+    const decryptedFile = decrypt(encryptedFileData.toString("hex"), encryptionKey, encryptionIv);
 
     if (typeof decryptedFile !== "string" || !decryptedFile.length) return null;
 
@@ -105,7 +113,7 @@ function readEncryptedFile(filesPath) {
 }
 
 const unencryptedFileRegEx = /^FILE:[A-Za-z0-9/\._\-]+$/
-const encryptedFileRegEx = /^FILE:[A-Za-z0-9/\._\-]+;[A-Za-z0-9/\._\-]+$/;
+const encryptedFileRegEx = /^FILE:[A-Za-z0-9/\._\-]+;[A-Za-z0-9/\._\-]+;[A-Za-z0-9/\._\-]+$/;
 
 function getEnvValueFromFile(envValue) {
     if (typeof envValue !== "string" || !envValue.length) {
@@ -119,7 +127,7 @@ function getEnvValueFromFile(envValue) {
             return null;
         }
 
-        const data = readFileSync(filePath, {encoding: "utf8"});
+        const data = readFileSync(filePath, {encoding: "utf8"}).split("\n")[0];
         return data;
     } else if (encryptedFileRegEx.test(envValue)) {
         const [,filesPath] = envValue.split(":");
