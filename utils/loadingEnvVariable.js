@@ -141,6 +141,7 @@ module.exports = {
     isFileBased,
     loadEnvVariableFromFile,
     getEnvValueFromFile,
+    hexTo8bitNumber,
     _: {
         parseLine,
         hexTo8bitNumber
