@@ -1,10 +1,8 @@
 services:
   gamesorting_webapp:
-    image: bluedragon28/gamesorting_webapp
-    build: .
-    #image: node:18
-    #command: sh -c "npm install --save-prod && NODE_ENV=production node ./index.js"
-    #working_dir: /app
+    image: node:18
+    command: sh -c "npm install --save-prod && NODE_ENV=production node ./index.js"
+    working_dir: /app
     ports:
       - 8080:8080
     environment:
