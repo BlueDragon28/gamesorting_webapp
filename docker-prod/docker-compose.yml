@@ -8,6 +8,7 @@ services:
       - ENV_VAR_FILE=/config_file/env.txt
     volumes:
       - /opt/gamesorting_webapp/app-config:/config_file
+    restart: always
     
     depends_on:
       gamesorting_redis:
@@ -26,6 +27,7 @@ services:
       - MARIADB_PASSWORD_HASH_FILE=/config_file/user_hash
       - MARIADB_ROOT_PASSWORD_HASH_FILE=/config_file/root_hash
       - MARIADB_DATABASE=gamesorting_webapp
+    restart: always
     
     healthcheck:
       test: ["CMD", "mysqladmin", "ping",]
@@ -37,6 +39,7 @@ services:
     volumes:
       - gamesorting_redis_data:/data
     command: redis-server --save 60 1 --loglevel warning
+    restart: always
 
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
