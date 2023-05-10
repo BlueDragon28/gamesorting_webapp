@@ -54,23 +54,15 @@ class Pagination {
     }
 
     /*
-    Save the reverse items order choice of the user
+    Save or restore the reverse items order choice of the user
     */
-    static saveReverseOrderMiddleware(req, res, next) {
-        if (req.query.reverse !== undefined) {
+    static saveRestoreReverseItemsOrderMiddleware(req, res, next) {
+        if (typeof req.query.reverse === "string" && req.query.reverse.length) {
             req.session.reverseItems = req.query.reverse === "true" ? true : false;
             return next();
         }
 
-        req.session.reverseItems = false;
-        next();
-    }
-
-    /*
-    Restore the reverse items order choice middleware
-    */
-    static restoreReverseOrderMiddleware(req, res, next) {
-        res.locals.isItemsReversed = req.session.reverseItems === true ? true : false;
+        req.query.reverse = req.session.reverseItems === true ? "true" : "false";
         next();
     }
 }

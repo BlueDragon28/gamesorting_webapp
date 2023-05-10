@@ -48,7 +48,7 @@ Entry point to list all items inside a list
 router.get("/lists/:listID", 
         checkListAuth, 
         Pagination.parsePageNumberMiddleware, 
-        Pagination.saveReverseOrderMiddleware,
+        Pagination.saveRestoreReverseItemsOrderMiddleware,
         wrapAsync(async (req, res) => {
 
     const { collectionID, listID } = req.params;

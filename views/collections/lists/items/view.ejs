@@ -43,7 +43,7 @@ function getColumnType(columnTypeID) {
 
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteItemModal">Delete</button>
 
-                    <a class="btn btn-secondary" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>?reverse=<%= isItemsReversed === true ? "true" : "false" %>">Go Back!</a>
+                    <a class="btn btn-secondary" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>">Go Back!</a>
                 </li>
             </ul>
         </div>

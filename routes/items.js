@@ -17,7 +17,6 @@ const {
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkListAuth, checkItemAuth } = require("../utils/users/authorization");
 const { isItemLaxLimitMiddleware } = require("../utils/validation/limitNumberElements");
-const Pagination = require("../utils/sql/pagination");
 
 const router = express.Router({ mergeParams: true });
 
@@ -90,7 +89,6 @@ Display informations about an item
 */
 router.get("/items/:itemID", 
         checkItemAuth, 
-        Pagination.restoreReverseOrderMiddleware,
         wrapAsync(async (req, res) => {
 
     const { collectionID, listID, itemID } = req.params;
