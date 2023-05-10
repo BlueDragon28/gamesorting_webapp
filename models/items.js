@@ -224,7 +224,11 @@ class Item {
         return await existingOrNewConnection(connection, async function(connection) {
             const numberOfItems = await Item.getCount(list, connection);
 
-            const pagination = new Pagination(pageNumber, numberOfItems, reverse);
+            // If page number if to high, set it to 1
+            const validPageNumber = await Item.isValidPageNumber(list, pageNumber, connection) ?
+                pageNumber : 1;
+
+            const pagination = new Pagination(validPageNumber, numberOfItems, reverse);
             if (!pagination.isValid) {
                 throw new ValueError(400, "Invalid page number");
             }
@@ -233,7 +237,7 @@ class Item {
                 `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} ORDER BY ItemID ${reverse === true ? "DESC" : "ASC"} `;
 
             if (pageNumber !== 0) {
-                queryStatement += `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
+                queryStatement += `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(validPageNumber)}`;
             }
 
             try {
@@ -314,6 +318,21 @@ class Item {
                 throw new SqlError(`Failed to query number of items in lists: ${error.message}`);
             }
         });
+    }
+
+    static async isValidPageNumber(list, pageNumber, connection) {
+        if (!list.isValid()) {
+            throw new ValueError(400, "Invalid list");
+        }
+
+        if (typeof pageNumber !== "number" && pageNumber < 0) {
+            throw new ValueError(400, "Invalid page number");
+        }
+
+        const itemCount = await Item.getCount(list, connection);
+        const numberOfPages = Math.ceil(Number(itemCount) / Pagination.ITEM_PER_PAGES);
+
+        return pageNumber <= numberOfPages;
     }
 
     static #parseFoundItems(list, items) {
