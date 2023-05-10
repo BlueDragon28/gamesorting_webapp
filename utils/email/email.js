@@ -17,8 +17,8 @@ async function sendLostPasswordEmail(to, url) {
         from: `"GameSorting" <${senderEmail}>`,
         to,
         subject: "Lost password",
-        text: "Click here to reset your password!\nThis link will only be valid for the next 2 hours.",
-        html: `<p>Click <a href="${url}">here</a> to reset your password!</p><p>This link will only be valid for the next 2 hours.</p>`
+        text: "Click here to reset your password!\nThis link will only be valid for the next 2 hours.\nThis email was sent automatically, do not anwser it.",
+        html: `<p>Click <a href="${url}">here</a> to reset your password!</p><p>This link will only be valid for the next 2 hours.</p><p>This email was sent automatically, do not anwser it.</p>`
     });
 }
 
