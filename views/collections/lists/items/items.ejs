@@ -1,6 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
 <link rel="stylesheet" href="/styles/starability-basic.min.css">
+<link rel="stylesheet" href="/styles/interactionButtons/interactionButtons.css">
 
 <h1 class="display-4"><%= list.name %></h1>
 
@@ -10,9 +11,12 @@
     <a class="btn btn-info" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/custom-columns">Update Custom Columns</a>
     <a class="btn btn-secondary" href="/collections/<%= list.parentCollection.id %>">Go Back!</a>
 
-    <!--<form class="d-inline" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?_method=DELETE" method="post">-->
     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteListModal">Delete List</button>
-    <!--</form>-->
+
+    <a class="iconLinkButton <%= pagination.reverseOrder === true ? "reversed" : "" %>" data-toggle="tooltip" title="Switch items order"
+        href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?reverse=<%= pagination.reverseOrder === true ? "false" : "true" %>">
+        <img src="/images/crescendoOrder.svg" alt="items display order">
+    </a>
 </div>
 
 <% for(let item of items) { %>

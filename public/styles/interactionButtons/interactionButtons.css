@@ -1,0 +1,15 @@
+.iconLinkButton:hover,
+.iconLinkButton:active {
+    display: inline-block;
+    background-color: #e0e1dd;
+    border-radius: 4px;
+}
+
+.iconLinkButton img {
+    width: 40px;
+    aspect-ratio: 1/1;
+}
+
+.iconLinkButton.reversed img {
+    transform: scaleY(-1);
+}

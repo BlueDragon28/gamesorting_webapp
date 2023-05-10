@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256mm"
+   height="256mm"
+   viewBox="0 0 256 256"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="crescendoOrder.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.54866744"
+     inkscape:cx="380.92291"
+     inkscape:cy="470.2302"
+     inkscape:window-width="1920"
+     inkscape:window-height="1007"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#000000;stroke-width:0.653235;stroke-linejoin:bevel;stroke-dasharray:0.326619, 0.326619"
+       id="rect3744"
+       width="40.031883"
+       height="27.960962"
+       x="100.54165"
+       y="31.409012" />
+    <rect
+       style="fill:#000000;stroke-width:0.866345;stroke-linejoin:bevel;stroke-dasharray:0.433174, 0.433174"
+       id="rect3854"
+       width="70.412308"
+       height="27.960962"
+       x="100.54165"
+       y="84.325676" />
+    <rect
+       style="fill:#000000;stroke-width:1.06587;stroke-linejoin:bevel;stroke-dasharray:0.532937, 0.532937"
+       id="rect3856"
+       width="106.57948"
+       height="27.960962"
+       x="100.54165"
+       y="137.24232" />
+    <rect
+       style="fill:#000000;stroke-width:1.19973;stroke-linejoin:bevel;stroke-dasharray:0.599868, 0.599868"
+       id="rect3858"
+       width="135.03099"
+       height="27.960962"
+       x="100.54165"
+       y="190.15904" />
+    <path
+       id="rect3860"
+       style="fill:#000000;stroke-width:1.38533;stroke-linejoin:bevel;stroke-dasharray:0.692668, 0.692668"
+       d="M 32.368567,20.207552 V 198.25353 H 16.00109 L 46.348592,235.42129 76.69661,198.25353 H 60.329134 V 20.207552 Z" />
+  </g>
+</svg>
