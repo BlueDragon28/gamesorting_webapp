@@ -18,3 +18,13 @@ test("Some invalid pagination, field isValid should be false", function() {
     expect(new Pagination(5, 5).isValid).toBe(false);
     expect(new Pagination(3, 30).isValid).toBe(false);
 });
+
+test("Test reverse order pagination", function() {
+    expect(new Pagination(0, 1, true).isValid).toBe(true);
+    expect(new Pagination(1, 1, false).isValid).toBe(true);
+});
+
+test("Test invalid order pagination", function() {
+    const pgn = new Pagination(1, 1, 15);
+    expect(pgn.isValid).toBe(false);
+});

@@ -1,14 +1,14 @@
 const { isNumber } = require("../numbers/number");
-const wrapAsync = require("../errors/wrapAsync");
 
 class Pagination {
     static ITEM_PER_PAGES = 15;
 
     numberOfPages;
     currentPage;
+    reverseOrder = false;
     isValid = false;
 
-    constructor(currentPage = 0, numberOfItems = 0) {
+    constructor(currentPage = 0, numberOfItems = 0, reverseOrder = false) {
         currentPage = Number(currentPage);
         numberOfItems = Number(numberOfItems);
 
@@ -25,9 +25,12 @@ class Pagination {
             }
         }
 
+        this.reverseOrder = reverseOrder;
+
         this.isValid = typeof this.currentPage === "number" && this.currentPage >= 0 &&
                 typeof this.numberOfPages === "number" && this.numberOfPages >= 1 &&
-                this.currentPage <= this.numberOfPages;
+                this.currentPage <= this.numberOfPages &&
+                (this.reverseOrder === true || this.reverseOrder === false);
     }
 
     static calcOffset(pageNumber) {
