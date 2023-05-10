@@ -1,9 +1,12 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
+<link rel="stylesheet" href="/styles/interactionButtons/interactionButtons.css">
+
 <h1 class="display-4">Collections</h1>
 
 <div class="mb-4">
-    <a class="btn btn-primary" href="/collections/new">New Collection</a>
+    <a class="iconLinkButton" href="/collections/new"><img 
+        src="/images/new.svg" alt="Add a new collection icon"></a>
 </div>
 
 <% for(let collection of collections) { %>

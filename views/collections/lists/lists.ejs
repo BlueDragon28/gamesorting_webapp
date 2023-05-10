@@ -1,9 +1,11 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
 <h1 class="display-4"><%= collection.name//lists.parent.collection.Name %></h1>
+<link rel="stylesheet" href="/styles/interactionButtons/interactionButtons.css">
 
 <div class="mb-4">
-    <a class="btn btn-primary" href="/collections/<%= collection.id %>/lists/new">New List</a>
+    <a class="iconLinkButton" href="/collections/<%= collection.id %>/lists/new"><img
+        src="/images/new.svg" alt="Add a new list icon"></a>
     <a class="btn btn-success" href="/collections/<%= collection.id %>/edit">Edit Collection</a>
     <a class="btn btn-secondary" href="/collections">Go Back</a>
 

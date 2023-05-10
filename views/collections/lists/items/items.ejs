@@ -6,7 +6,8 @@
 <h1 class="display-4"><%= list.name %></h1>
 
 <div class="pb-4">
-    <a class="btn btn-primary" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/items/new">New Item</a>
+    <a class="iconLinkButton" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/items/new"><img 
+        src="/images/new.svg" alt="Add a new item icon"></a>
     <a class="btn btn-success" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/edit">Edit List</a>
     <a class="btn btn-info" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/custom-columns">Update Custom Columns</a>
     <a class="btn btn-secondary" href="/collections/<%= list.parentCollection.id %>">Go Back!</a>
@@ -14,9 +15,8 @@
     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteListModal">Delete List</button>
 
     <a class="iconLinkButton <%= pagination.reverseOrder === true ? "reversed" : "" %>" data-toggle="tooltip" title="Switch items order"
-        href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?reverse=<%= pagination.reverseOrder === true ? "false" : "true" %>">
-        <img src="/images/crescendoOrder.svg" alt="items display order">
-    </a>
+        href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?reverse=<%= pagination.reverseOrder === true ? "false" : "true" %>"><img 
+        src="/images/crescendoOrder.svg" alt="items display order"></a>
 </div>
 
 <% for(let item of items) { %>
