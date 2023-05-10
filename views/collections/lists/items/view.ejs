@@ -1,6 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
 <link rel="stylesheet" href="/styles/starability-basic.min.css">
+<link rel="stylesheet" href="/styles/text.css">
 
 <%
 function getColumnType(columnTypeID) {
@@ -23,7 +24,7 @@ function getColumnType(columnTypeID) {
                         <h1 class="card-title fs-3"><%= item.name %></h1>
 
                         <% if (item.url) { %> 
-                            <p class="text-muted">URL: <a class="card-link" href="<%= item.url %>"><%= item.url %></a></p>
+                            <p class="text-muted three-dot-text">URL: <a class="card-link" href="<%= item.url %>"><%= item.url %></a></p>
                         <% } %> 
 
                         <p class="starability-result" data-rating="<%= item.rating %>">
