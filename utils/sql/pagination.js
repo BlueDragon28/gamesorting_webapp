@@ -53,6 +53,20 @@ class Pagination {
         next();
     }
 
+    static parseItemsPageNumberMiddleware(req, res, next) {
+        let pageNumber = parseInt(req.query.pn);
+
+        if (!pageNumber || pageNumber < 1) {
+            pageNumber = req.session.itemsPageNumber >= 1 ? 
+                req.session.itemsPageNumber : 1;
+        }
+
+        req.query.pn = pageNumber;
+        req.session.itemsPageNumber = pageNumber;
+
+        next();
+    }
+
     /*
     Save or restore the reverse items order choice of the user
     */
