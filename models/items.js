@@ -213,22 +213,24 @@ class Item {
         });
     }
 
-    static async findFromList(list, pageNumber = 0, connection) {
+    static async findFromList(list, pageNumber = 0, reverse = false, connection) {
         if (!list || !list instanceof List || !list.isValid() ||
                 typeof pageNumber !== "number" || pageNumber < 0) {
             throw new ValueError(400, "Invalid List");
         }
 
+        if (reverse !== true && reverse !== false) throw new ValueError("Invalid reverse value!");
+
         return await existingOrNewConnection(connection, async function(connection) {
             const numberOfItems = await Item.getCount(list, connection);
 
-            const pagination = new Pagination(pageNumber, numberOfItems);
+            const pagination = new Pagination(pageNumber, numberOfItems, reverse);
             if (!pagination.isValid) {
                 throw new ValueError(400, "Invalid page number");
             }
 
             let queryStatement = 
-                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} `;
+                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} ORDER BY ItemID ${reverse === true ? "DESC" : "ASC"} `;
 
             if (pageNumber !== 0) {
                 queryStatement += `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;

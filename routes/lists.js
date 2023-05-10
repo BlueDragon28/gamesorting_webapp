@@ -48,9 +48,10 @@ Entry point to list all items inside a list
 router.get("/lists/:listID", checkListAuth, Pagination.parsePageNumberMiddleware, wrapAsync(async (req, res) => {
     const { collectionID, listID } = req.params;
     const pageNumber = req.query.pn;
+    const isReverse = req.query.reverse === "true" ? true : false;
 
     const list = await List.findByID(listID);
-    const [items, pagination] = await Item.findFromList(list, pageNumber);
+    const [items, pagination] = await Item.findFromList(list, pageNumber, isReverse);
     
     if (!list) {
         throw new InternalError(`Failed To Query List From List ${listID}`);
