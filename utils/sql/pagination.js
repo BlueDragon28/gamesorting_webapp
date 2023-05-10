@@ -52,6 +52,27 @@ class Pagination {
 
         next();
     }
+
+    /*
+    Save the reverse items order choice of the user
+    */
+    static saveReverseOrderMiddleware(req, res, next) {
+        if (req.query.reverse !== undefined) {
+            req.session.reverseItems = req.query.reverse === "true" ? true : false;
+            return next();
+        }
+
+        req.session.reverseItems = false;
+        next();
+    }
+
+    /*
+    Restore the reverse items order choice middleware
+    */
+    static restoreReverseOrderMiddleware(req, res, next) {
+        res.locals.isItemsReversed = req.session.reverseItems === true ? true : false;
+        next();
+    }
 }
 
 module.exports = Pagination;

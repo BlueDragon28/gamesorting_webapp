@@ -17,6 +17,7 @@ const {
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkListAuth, checkItemAuth } = require("../utils/users/authorization");
 const { isItemLaxLimitMiddleware } = require("../utils/validation/limitNumberElements");
+const Pagination = require("../utils/sql/pagination");
 
 const router = express.Router({ mergeParams: true });
 
@@ -87,7 +88,11 @@ router.get("/items/new", checkListAuth, customDataEjsHelper, wrapAsync(async (re
 /*
 Display informations about an item
 */
-router.get("/items/:itemID", checkItemAuth, wrapAsync(async (req, res) => {
+router.get("/items/:itemID", 
+        checkItemAuth, 
+        Pagination.restoreReverseOrderMiddleware,
+        wrapAsync(async (req, res) => {
+
     const { collectionID, listID, itemID } = req.params;
 
     const item = await Item.findByID(itemID);

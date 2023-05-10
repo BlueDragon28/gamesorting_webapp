@@ -45,7 +45,12 @@ router.get("/lists/new", checkCollectionAuth, wrapAsync(async (req, res) => {
 /*
 Entry point to list all items inside a list
 */
-router.get("/lists/:listID", checkListAuth, Pagination.parsePageNumberMiddleware, wrapAsync(async (req, res) => {
+router.get("/lists/:listID", 
+        checkListAuth, 
+        Pagination.parsePageNumberMiddleware, 
+        Pagination.saveReverseOrderMiddleware,
+        wrapAsync(async (req, res) => {
+
     const { collectionID, listID } = req.params;
     const pageNumber = req.query.pn;
     const isReverse = req.query.reverse === "true" ? true : false;
