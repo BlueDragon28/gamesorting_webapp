@@ -7,7 +7,9 @@
     <a class="iconLinkButton" data-toggle="tooltip" title="Add a new list"
         href="/collections/<%= collection.id %>/lists/new"><img
         src="/images/new.svg" alt="Add a new list icon"></a>
-    <a class="btn btn-success" href="/collections/<%= collection.id %>/edit">Edit Collection</a>
+    <a class="iconLinkButton" data-toggle="tooltip" title="Edit collection"
+        href="/collections/<%= collection.id %>/edit"><img 
+        src="/images/edit.svg" alt="Edit collection"></a>
     <a class="btn btn-secondary" href="/collections">Go Back</a>
 
     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCollectionModal">Delete Collection</button>

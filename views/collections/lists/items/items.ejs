@@ -9,7 +9,9 @@
     <a class="iconLinkButton" data-toggle="tooltip" title="Add a new item"
         href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/items/new"><img 
         src="/images/new.svg" alt="Add a new item icon"></a>
-    <a class="btn btn-success" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/edit">Edit List</a>
+    <a class="iconLinkButton" data-toggle="tooltip" title="Edit list"
+        href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/edit"><img 
+        src="/images/edit.svg" alt="Edit the list icon"></a>
     <a class="btn btn-info" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/custom-columns">Update Custom Columns</a>
     <a class="btn btn-secondary" href="/collections/<%= list.parentCollection.id %>">Go Back!</a>
 
