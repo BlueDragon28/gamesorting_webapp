@@ -17,7 +17,8 @@
         href="/collections/<%= list.parentCollection.id %>"><img 
         src="/images/back.svg" alt="Go back icon"></a>
 
-    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteListModal">Delete List</button>
+    <button class="iconLinkButton" data-bs-toggle="modal" data-bs-target="#deleteListModal" data-toggle="tooltip" title="Delete list"><img 
+        src="/images/delete.svg" alt="Delete list icon"></button>
 
     <a class="iconLinkButton <%= pagination.reverseOrder === true ? "reversed" : "" %>" data-toggle="tooltip" title="Switch items order"
         href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?reverse=<%= pagination.reverseOrder === true ? "false" : "true" %>"><img 

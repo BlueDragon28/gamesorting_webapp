@@ -13,3 +13,8 @@
 .iconLinkButton.reversed img {
     transform: scaleY(-1);
 }
+
+button.iconLinkButton {
+    background-color: transparent;
+    border: none;
+}
