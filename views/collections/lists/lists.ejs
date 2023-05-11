@@ -4,7 +4,8 @@
 <link rel="stylesheet" href="/styles/interactionButtons/interactionButtons.css">
 
 <div class="mb-4">
-    <a class="iconLinkButton" href="/collections/<%= collection.id %>/lists/new"><img
+    <a class="iconLinkButton" data-toggle="tooltip" title="Add a new list"
+        href="/collections/<%= collection.id %>/lists/new"><img
         src="/images/new.svg" alt="Add a new list icon"></a>
     <a class="btn btn-success" href="/collections/<%= collection.id %>/edit">Edit Collection</a>
     <a class="btn btn-secondary" href="/collections">Go Back</a>
