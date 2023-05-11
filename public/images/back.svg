@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256mm"
+   height="256mm"
+   viewBox="0 0 256 256"
+   version="1.1"
+   id="svg604"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="back.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview606"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.77593294"
+     inkscape:cx="329.92542"
+     inkscape:cy="496.1769"
+     inkscape:window-width="1920"
+     inkscape:window-height="1007"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs601">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect836"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,7.9375,0,1 @ F,0,0,1,0,7.9375,0,1 @ F,0,0,1,0,7.9375,0,1 @ F,0,0,1,0,7.9375,0,1 @ F,0,0,1,0,7.9375,0,1 @ F,0,0,1,0,7.9375,0,1 @ F,0,0,1,0,7.9375,0,1"
+       unit="px"
+       method="auto"
+       mode="F"
+       radius="30"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+  </defs>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path777"
+       style="fill:#000000;stroke-width:17.1771"
+       d="M 124.45287 18.088818 A 109.96841 109.96841 0 0 0 18.136361 123.1961 A 109.96841 109.96841 0 0 0 123.06226 237.85732 A 109.96841 109.96841 0 0 0 237.85163 133.07095 L 237.87489 132.53661 A 109.96841 109.96841 0 0 0 132.67045 18.130676 A 109.96841 109.96841 0 0 0 124.45287 18.088818 z M 111.23662 84.294596 A 3.5848434 3.5848434 0 0 1 114.32997 87.845801 L 114.32997 104.03603 A 7.9375 7.9375 0 0 0 122.26747 111.97353 L 184.71896 111.97353 A 7.9375 7.9375 0 0 1 192.65646 119.91103 L 192.65646 136.08885 A 7.9375 7.9375 0 0 1 184.71896 144.02635 L 122.26747 144.02635 A 7.9375 7.9375 0 0 0 114.32997 151.96385 L 114.32997 168.15459 A 3.5848436 3.5848436 0 0 1 108.37478 170.84384 L 65.713818 133.2482 A 6.9951175 6.9951175 0 0 1 65.713818 122.7522 L 108.37478 85.156042 A 3.5848434 3.5848434 0 0 1 111.23662 84.294596 z " />
+  </g>
+</svg>
