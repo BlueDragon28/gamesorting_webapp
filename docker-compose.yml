@@ -1,7 +1,7 @@
 services:
   gamesorting_webapp:
     image: node:18
-    command: sh -c "npm install --save-prod && NODE_ENV=production node ./index.js"
+    command: sh -c "npm install --save-dev && NODE_ENV=production npm run dev"
     working_dir: /app
     ports:
       - 8080:8080
