@@ -54,6 +54,13 @@ function makeLostPasswordUpdateValidation() {
     });
 }
 
+function makeDeleteUserValidation() {
+    return Joi.object({
+        deleteUser: Joi.boolean().invalid(false).sensitive(),
+        password: passwordValidation
+    });
+}
+
 function validateRegisteringUser() {
     const celebrateValidation = {
         [Segments.BODY]: Joi.object({
@@ -97,6 +104,13 @@ function validateLostPasswordUpdate() {
     return celebrate(celebrateValidation);
 }
 
+function validateDeleteUser() {
+    const celebrateValidation = {
+        [Segments.BODY]: makeDeleteUserValidation()
+    };
+    return celebrate(celebrateValidation);
+}
+
 module.exports = {
     checkIfUserValid,
     validateRegisteringUser,
@@ -104,11 +118,13 @@ module.exports = {
     validateEmailUpdate,
     validatePasswordUpdate,
     validateLostPasswordUpdate,
+    validateDeleteUser,
     _: {
         user: makeRegisterUserValidation,
         login: makeLoginUserValidation,
         emailUpdate: makeEmailUpdateValidation,
         passwordUpdate: makePasswordUpdateValidation,
-        lostPasswordUpdate: makeLostPasswordUpdateValidation
+        lostPasswordUpdate: makeLostPasswordUpdateValidation,
+        deleteUser: makeDeleteUserValidation
     }
 };

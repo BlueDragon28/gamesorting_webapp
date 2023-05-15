@@ -5,6 +5,7 @@ const joiLogin = validation.login();
 const joiEmailUpdate = validation.emailUpdate();
 const joiPWUpdate = validation.passwordUpdate();
 const joiLostPassword = validation.lostPasswordUpdate();
+const joiDeleteUser = validation.deleteUser();
 
 it("test register user", function() {
     let result = joiUser.validate({
@@ -191,4 +192,30 @@ it("lost password update", function() {
         retypedPassword: "12345"
     });
     expect(result.error).not.toBe(undefined);
-})
+});
+
+it("test delete user", function() {
+    let result = joiDeleteUser.validate({
+        deleteUser: true,
+        password: "12345"
+    });
+    expect(result.error).toBe(undefined);
+
+    result = joiDeleteUser.validate({
+        deleteUser: false,
+        password: "12345"
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiDeleteUser.validate({
+        deleteUser: '12345',
+        password: "12345"
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiDeleteUser.validate({
+        deleteUser: true,
+        password: true
+    });
+    expect(result.error).not.toBe(undefined);
+});

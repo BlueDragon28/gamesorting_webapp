@@ -17,7 +17,8 @@ const {
     validateLoginUser,
     validateEmailUpdate,
     validatePasswordUpdate,
-    validateLostPasswordUpdate
+    validateLostPasswordUpdate,
+    validateDeleteUser
 } = require("../utils/validation/users");
 const { ValueError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
@@ -179,8 +180,8 @@ router.post("/lostpassword/:tokenID", validateLostPasswordUpdate(),  wrapAsync(a
     next(err);
 });
 
-router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
-    const { deleteUser: removeUser } = req.body;
+router.delete("/", isLoggedIn, validateDeleteUser(), wrapAsync(async function(req, res, next) {
+    const { deleteUser: removeUser, password: currentPassword } = req.body;
     const userID = req.session.user.id;
     const username = req.session.user.username;
 
@@ -188,9 +189,33 @@ router.delete("/", isLoggedIn, wrapAsync(async function(req, res) {
         throw new ValueError(400, "Invalid User Deletion Request");
     }
 
-    await existingOrNewConnection(null, async function(connection) {
-        await deleteUser(userID, connection);
+    const [success, error] = await existingOrNewConnection(null, async function(connection) {
+        try {
+            const foundUser = await User.findByID(userID, connection);
+            
+            if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
+                throw new ValueError(500, "Invalid foundUser!");
+            }
+
+            if (!foundUser.compare(foundUser.username, currentPassword)) {
+                throw new ValueError(404, "Invalid password!");
+            }
+        } catch (e) {
+            return [false, { statusCode: e.statusCode, message: e.message }];
+        }
+
+        try {
+            await deleteUser(userID, connection);
+        } catch (e) {
+            return [false, { statusCode: 500, message: `Failed to delete user: ${e.message}`}];
+        }
+
+        return [true, null];
     });
+
+    if (!success) {
+        return next(error);
+    }
 
     req.session.user = null;
 

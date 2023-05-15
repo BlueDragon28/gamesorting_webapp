@@ -5,12 +5,20 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
     const deleteUserButton = document.querySelector("#button-delete-user");
     const openModalButton = document.querySelector("#open-delete-user-modal-button");
 
+    const currentPasswordInput = document.querySelector("#delete-current-password");
+
     let modal = new bootstrap.Modal(domModal);
+
+    function resetInputs() {
+        currentPasswordInput.value = "";
+    }
 
     function openModal() {
         if (!modal) {
             return;
         }
+
+        resetInputs();
 
         modal.show();
     }
@@ -21,13 +29,15 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
         if (response.type === "SUCCESS") {
             makeAlertCard("success", response.message);
         } else {
-            makeAlertCard("error", response.message);
+            return makeAlertCard("error", response.message);
         }
 
         window.location = "/";
     }
 
     function deleteUser() {
+        const userPassword = currentPasswordInput.value;
+
         const xhrRequest = new XMLHttpRequest();
         xhrRequest.addEventListener("load", whenProcessed);
         xhrRequest.addEventListener("error", whenProcessed);
@@ -35,7 +45,8 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
         xhrRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
         xhrRequest.setRequestHeader("Accept", "application/json");
         xhrRequest.send(JSON.stringify({
-            deleteUser: true
+            deleteUser: true,
+            password: userPassword
         }));
     }
 
