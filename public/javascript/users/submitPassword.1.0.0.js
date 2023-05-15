@@ -1,4 +1,4 @@
-import { hideError, setError } from "./userModalErrorCard.js";
+import { hideError, setError } from "./userModalErrorCard.1.0.0.js";
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 
 function checkPassword(...passwords) {

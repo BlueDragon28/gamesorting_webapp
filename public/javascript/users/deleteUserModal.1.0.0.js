@@ -1,5 +1,5 @@
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
-import { hideError, setError } from "./userModalErrorCard.js";
+import { hideError, setError } from "./userModalErrorCard.1.0.0.js";
 
 (function openAskForUserDeletionModal() {
     const domModal = document.querySelector("#ask-for-user-deletion");
