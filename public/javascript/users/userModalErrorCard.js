@@ -1,12 +1,16 @@
-const errorCard = document.querySelector("#modal-error-card");
-const errorText = document.querySelector("#modal-error-text");
+const errorCards = document.getElementsByClassName("modal-error-card");
+const errorTextSpan = document.getElementsByClassName("modal-error-text");
 
 function showError() {
-    errorCard.classList.remove("d-none");
+    for (const card of errorCards) {
+        card.classList.remove("d-none");
+    }
 }
 
 export function hideError() {
-    errorCard.classList.add("d-none");
+    for (const card of errorCards) {
+        card.classList.add("d-none");
+    }
 }
 
 export function setError(message) {
@@ -14,7 +18,9 @@ export function setError(message) {
         return;
     }
 
-    errorText.innerText = "ERROR: " + message;
+    for (const errorText of errorTextSpan) {
+        errorText.innerText = "ERROR: " + message;
+    }
     showError();
 }
 
