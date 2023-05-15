@@ -1,4 +1,5 @@
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
+import { hideError, setError } from "./userModalErrorCard.js";
 
 (function openAskForUserDeletionModal() {
     const domModal = document.querySelector("#ask-for-user-deletion");
@@ -19,6 +20,7 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
         }
 
         resetInputs();
+        hideError();
 
         modal.show();
     }
@@ -52,6 +54,11 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 
     function onDeleteUser() {
         if (!modal) {
+            return;
+        }
+
+        if (!currentPasswordInput.value.length) {
+            setError("Password cannot be empty");
             return;
         }
 
