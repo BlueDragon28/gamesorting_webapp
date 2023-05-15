@@ -1,6 +1,12 @@
 const { Joi } = require("celebrate");
 const sanitizeHTML = require("sanitize-html");
 
+function revertEscapedEntities(str) {
+    return str.replaceAll(/&amp;/g, "&")
+        .replaceAll(/&lt;/g, "<")
+        .replaceAll(/&gt;/g, ">");
+}
+
 function htmlSanitizeExtension(joi) {
     return {
         type: "string",
@@ -11,10 +17,10 @@ function htmlSanitizeExtension(joi) {
         rules: {
             forbidHTML: {
                 validate(value, helpers) {
-                    const sanitized = sanitizeHTML(value, {
+                    const sanitized = revertEscapedEntities(sanitizeHTML(value, {
                         allowedTags: [],
                         allowedAttributes: {}
-                    });
+                    }));
                     if (sanitized !== value) {
                         return helpers.error("string.forbidHTML", {value})
                     }
