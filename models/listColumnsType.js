@@ -74,6 +74,14 @@ class ListColumnType {
         }
     }
 
+    async delete(connection) {
+        if (!this.isValid()) {
+            return;
+        }
+
+        await ListColumnType.deleteFromID(this.id, connection);
+    }
+
     async exists(connection) {
         if (!this.id) {
             return false;
