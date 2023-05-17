@@ -219,7 +219,7 @@ class Item {
             throw new ValueError(400, "Invalid List");
         }
 
-        if (reverse !== true && reverse !== false) throw new ValueError("Invalid reverse value!");
+        if (reverse !== true && reverse !== false) throw new ValueError(400, "Invalid reverse value!");
 
         return await existingOrNewConnection(connection, async function(connection) {
             const numberOfItems = await Item.getCount(list, connection);
