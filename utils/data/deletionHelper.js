@@ -61,7 +61,7 @@ async function deleteItemsFromList(list, connection) {
         return;
     }
 
-    const [items] = await Item.findFromList(list, 0, connection);
+    const [items] = await Item.findFromList(list, 0, false, connection);
     for (let item of items) {
         await deleteItem(item.id, connection);
     }
