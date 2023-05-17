@@ -212,7 +212,7 @@ router.put("/lists/:listID", checkListAuth, validation.item({ name: true }), wra
 /*
 Delete a list from a collection
 */
-router.delete("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
+router.delete("/lists/:listID", checkListAuth, wrapAsync(async (req, res, next) => {
     const paramListID = bigint.toBigInt(req.params.listID);
     const listID = bigint.toBigInt(req.body.listID);
 
@@ -226,9 +226,19 @@ router.delete("/lists/:listID", checkListAuth, wrapAsync(async (req, res) => {
             });
     }
 
-    await existingOrNewConnection(undefined, async function(connection) {
-        await deleteList(listID, connection);
+    const [success, error] = await existingOrNewConnection(undefined, async function(connection) {
+        try {
+            await deleteList(listID, connection);
+        } catch (error) {
+            return [false, { statusCode: 500, message: `Failed to delete list: ${error.message}` }];
+        }
+
+        return [true, null];
     });
+
+    if (!success) {
+        return next(error);
+    }
 
     const successMessage = "Succesfully deleted this list!";
 
