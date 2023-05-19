@@ -6,7 +6,7 @@ const { sendContactMessage } = require("../utils/email/email");
 const router = express.Router();
 
 router.get("/contact", async function(req, res) {
-    res.render("contact/contact.ejs");
+    res.render("contact/temporaryContact.ejs");
 });
 
 router.post("/contact", validateContactMessage(), wrapAsync(async function(req, res) {
