@@ -1,10 +1,17 @@
+<style>
+    /* Force the displayed stars to have a fixed size and not disappear in the right corner of the screen. */
+    .starsSize {
+        min-width: 150px;
+    }
+</style>
+
 <div class="row pb-1">
     <div class="col-16">
         <a href="<%= url %>" class="item-card">
             <div class="d-flex">
                 <h2 class="flex-fill"><%= title %></h2>
                 <% if (typeof rating === "number") { %>
-                    <div class="starability-result" data-rating="<%= rating %>">
+                    <div class="starability-result starsSize" data-rating="<%= rating %>">
                         Rated: <%= rating %> star<%= rating > 1 ? "s" : "" %>
                     </div>
                 <% } %>
