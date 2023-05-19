@@ -20,6 +20,7 @@ const listsRouter = require("./routes/lists");
 const itemsRouter = require("./routes/items");
 const usersRouter = require("./routes/users");
 const adminRouter = require("./routes/admin");
+const contactRouter = require("./routes/contact");
 const methodOverride = require("method-override");
 const { default: RedisStore } = require("connect-redis");
 const session = require("express-session");
@@ -108,6 +109,7 @@ app.use("/collections/:collectionID", listsRouter);
 app.use("/collections/:collectionID/lists/:listID", itemsRouter);
 app.use("/users", usersRouter);
 app.use("/admin", adminRouter);
+app.use("/", contactRouter);
 
 /*
 Parsing celebrate errors
