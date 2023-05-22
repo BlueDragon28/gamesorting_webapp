@@ -3,7 +3,7 @@ const wrapAsync = require("../utils/errors/wrapAsync");
 const { User } = require("../models/users");
 const { UserLostPassword } = require("../models/usersLostPassword");
 const { checkIfUserValid } = require("../utils/validation/users");
-const { isLoggedIn } = require("../utils/users/authentification");
+const { isLoggedIn, isUserPasswordValid } = require("../utils/users/authentification");
 const { deleteUser } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { 
@@ -181,7 +181,7 @@ router.post("/lostpassword/:tokenID", validateLostPasswordUpdate(),  wrapAsync(a
     next(err);
 });
 
-router.delete("/", isLoggedIn, validateDeleteUser(), wrapAsync(async function(req, res, next) {
+router.delete("/", isLoggedIn, validateDeleteUser(), isUserPasswordValid, wrapAsync(async function(req, res, next) {
     const { deleteUser: removeUser, password: currentPassword } = req.body;
     const userID = req.session.user.id;
     const username = req.session.user.username;
@@ -191,20 +191,6 @@ router.delete("/", isLoggedIn, validateDeleteUser(), wrapAsync(async function(re
     }
 
     const [success, error] = await existingOrNewConnection(null, async function(connection) {
-        try {
-            const foundUser = await User.findByID(userID, connection);
-            
-            if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
-                throw new ValueError(500, "Invalid foundUser!");
-            }
-
-            if (!foundUser.compare(foundUser.username, currentPassword)) {
-                throw new ValueError(404, "Invalid password!");
-            }
-        } catch (e) {
-            return [false, { statusCode: e.statusCode, message: e.message }];
-        }
-
         try {
             await deleteUser(userID, connection);
         } catch (e) {
@@ -230,9 +216,10 @@ router.delete("/", isLoggedIn, validateDeleteUser(), wrapAsync(async function(re
 
 router.put("/email", 
         isLoggedIn, 
-        validateEmailUpdate(), 
+        validateEmailUpdate(),
+        isUserPasswordValid,
         wrapAsync(async function(req, res, next) {
-    const { email, password } = req.body;
+    const { email/*, password*/ } = req.body;
 
     const [success, error] = 
             await existingOrNewConnection(null, async function(connection) {
@@ -241,10 +228,6 @@ router.put("/email",
 
             if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
                 return [false, { statusCode: 404, message: "User Not Found!" }];
-            }
-
-            if (!foundUser.compare(foundUser.email, password)) {
-                return [false, { statusCode: 404, message: "Invalid password" }];
             }
 
             foundUser.email = email;
@@ -272,6 +255,7 @@ router.put("/email",
 router.put("/password", 
         isLoggedIn, 
         validatePasswordUpdate(), 
+        isUserPasswordValid,
         wrapAsync(async function(req, res, next) {
     const { currentPassword, newPassword, retypedPassword } = req.body;
 
@@ -293,10 +277,6 @@ router.put("/password",
 
             if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
                 return [false, { statusCode: 404, message: "User Not Found!" }];
-            }
-
-            if (!foundUser.compare(foundUser.username, currentPassword)) {
-                return [false, { statusCode: 400, message: "Invalid Current Password" }];
             }
 
             foundUser.setPassword(newPassword);
