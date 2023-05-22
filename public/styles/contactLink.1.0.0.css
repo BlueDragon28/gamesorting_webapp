@@ -1,0 +1,8 @@
+.email-link {
+    color: black;
+}
+
+.email-link:hover,
+.email-link:active {
+    color: rgb(75, 75, 75);
+}
