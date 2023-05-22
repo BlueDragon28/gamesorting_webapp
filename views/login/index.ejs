@@ -1,5 +1,7 @@
 <%- layout("layouts/boilerplate") %>
 
+<link rel="stylesheet" href="/styles/contactLink.1.0.0.css">
+
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <form action="/users/login" method="post">
@@ -15,9 +17,31 @@
                         <input class="form-control" type="password" name="user[password]" id="password">
                     </div>
                     <button class="btn btn-success d-block w-100 mb-2">Login</button>
-                    <a class="btn btn-info d-block w-100" href="/users/lostpassword">Lost Password</a>
+                    <!-- <a class="btn btn-info d-block w-100" href="/users/lostpassword">Lost Password</a> -->
+                    <button type="button" class="btn btn-info d-block w-100" data-bs-toggle="modal" data-bs-target="#lostPasswordInfo">Lost Password</button>
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="lostPasswordInfo" aria-labelledby="lostPasswordInfo" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Lost password request not available</h1>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Unfortunely, the password recovery system is not available yet.
+                    If you lost your password, please contact me at <a class="email-link" href="mailto:contact@bluedragon28.com">contact@bluedragon28.com</a> and include the username and email used by your account. I will try to help you.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-secondary" href="/contact">Contact</a>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
     </div>
 </div>
