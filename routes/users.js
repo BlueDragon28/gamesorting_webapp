@@ -20,7 +20,7 @@ const {
     validateLostPasswordUpdate,
     validateDeleteUser
 } = require("../utils/validation/users");
-const { ValueError } = require("../utils/errors/exceptions");
+const { ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
 
 const router = express.Router();
@@ -122,6 +122,7 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
 }));
 
 router.post("/lostpassword", wrapAsync(async function(req, res) {
+    throw new InternalError("Not yet implemented");
     const { email } = req.body;
 
     await existingOrNewConnection(null, async function(connection) {
