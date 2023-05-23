@@ -101,6 +101,46 @@ class UserActivity {
         });
     }
 
+    static async findUniqueUsersFromTimelaps(timelapsHoursBegin, timelapsHoursEnd = 0, connection) {
+        if ((typeof timelapsHoursBegin !== "number" &&
+            typeof timelapsHoursBegin !== "bigint") ||
+            (typeof timelapsHoursEnd !== "number" &&
+            typeof timelapsHoursBegin !== "bigint") ||
+            timelapsHoursBegin <= 0 || timelapsHoursEnd < 0 || timelapsHoursBegin <= timelapsHoursEnd ||
+            isNaN(timelapsHoursBegin) || isNaN(timelapsHoursEnd)) {
+            
+            throw new ValueError("Invalid timelaps");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const timeNow = Date.now();
+            const begin = timeNow - UserActivity.#fromHoursToMilliseconds(timelapsHoursBegin)
+            const end = timeNow - UserActivity.#fromHoursToMilliseconds(timelapsHoursEnd);
+
+            const queryStatement = 
+                "SELECT COUNT(*) AS uniqueUsers FROM " +
+                "(SELECT UserID FROM userActivity " +
+                `WHERE (Time >= ${begin}) AND (Time <= ${end}) AND (UserID IS NOT NULL) ` +
+                "GROUP BY UserID) AS users";
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+
+                if (!queryResult.length) {
+                    return 0;
+                }
+
+                if (queryResult[0]?.uniqueUsers) {
+                    return queryResult[0].uniqueUsers;
+                } else {
+                    return -1;
+                }
+            } catch (error) {
+                throw new SqlError(`Failed to query unique users in UserActivity from timelaps: ${error.message}`);
+            }
+        });
+    }
+
     static async deleteAllAfterTimelaps(timelapsHours, connection) {
         if ((typeof timelapsHours !== "number" &&
             typeof timelapsHours !== "bigint") ||

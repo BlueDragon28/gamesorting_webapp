@@ -98,6 +98,14 @@ describe("user activity database manipulation", function() {
         }
     });
 
+    it("Get unique user in activity from timelaps", async function() {
+        const [uniqueUsers, error] = await userActivityQuery(async () =>
+            UserActivity.findUniqueUsersFromTimelaps(1, 0));
+        
+        expect(error).toBe(undefined);
+        expect(uniqueUsers).toBe(1n);
+    });
+
     it("insert 10 user activity with 6 after 10 hours and 4 before 10 hours", async function() {
         async function insertActivity(time) {
             const [,error] = 
@@ -135,5 +143,13 @@ describe("user activity database manipulation", function() {
         
         expect(error).toBe(undefined);
         expect(usersActivities.length).toBe(5);
+    });
+
+    it("but from only one user", async function() {
+        const [uniqueUser, error] = await userActivityQuery(async () =>
+            UserActivity.findUniqueUsersFromTimelaps(10, 0));
+        
+        // expect(error).toBe(undefined);
+        // expect(uniqueUser).toBe(1n);
     });
 });
