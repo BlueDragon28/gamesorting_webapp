@@ -13,7 +13,7 @@
     <a class="iconLinkButton" href="/collections" data-toggle="tooltip" title="Go back to collections"><img 
         src="/images/back.svg" alt="Back to collection icon"></a>
 
-    <button type="button" class="iconLinkButton" data-bs-toggle="modal" data-bs-target="#deleteCollectionModal" data-toggle="tooltip" title="Delete collection"><img 
+    <button type="button" class="iconLinkButton" id="open-delete-collection-modal-button" data-toggle="tooltip" title="Delete collection"><img 
         src="/images/delete.svg" alt="Delete collection icon"></button>
 </div>
 
@@ -32,7 +32,18 @@
                 <h1 class="modal-title fs-5">Delete Collection</h1>
             </div>
             <div class="modal-body">
-                <p>Do you really want to delete this collection? There is no going back!</p>
+                <div class="card text-bg-danger mb-3 d-none modal-error-card">
+                    <div class="card-body">
+                        <span class="modal-error-text">Some Text!</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <p>Do you really want to delete this collection? There is no going back!</p>
+                </div>
+                <div>
+                    <label class="form-label" for="deleteCollectionUserPassword">Password</label>
+                    <input class="form-control" type="password" name="password" id="deleteCollectionUserPassword">
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
