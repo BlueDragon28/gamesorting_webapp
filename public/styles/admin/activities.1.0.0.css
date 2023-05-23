@@ -11,6 +11,13 @@
     background-color: #40916c;
 }
 
+.chart-line:hover,
+.chart-line:active {
+    border: 1.5px solid #a2d2ff;
+    background-color: #4eb185;
+    cursor: pointer;
+}
+
 .chart-element-text {
     min-width: 70px;
 }
