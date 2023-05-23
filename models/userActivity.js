@@ -76,20 +76,28 @@ class UserActivity {
     }
 
     static async findByTimelapsFromNow(timelapsHours, connection) {
-        if ((typeof timelapsHours !== "number" && 
-            typeof timelapsHours !== "bigint") || 
-            timelapsHours <= 0 || isNaN(timelapsHours)) {
+        return await UserActivity.findByTimelaps(timelapsHours, 0, connection);
+    }
+
+    static async findByTimelaps(timelapsHoursBegin, timelapsHoursEnd, connection) {
+        if ((typeof timelapsHoursBegin !== "number" &&
+            typeof timelapsHoursBegin !== "bigint") ||
+            (typeof timelapsHoursEnd !== "number" &&
+            typeof timelapsHoursBegin !== "bigint") ||
+            timelapsHoursBegin <= 0 || timelapsHoursEnd < 0 || timelapsHoursBegin <= timelapsHoursEnd ||
+            isNaN(timelapsHoursBegin) || isNaN(timelapsHoursEnd)) {
+            
             throw new ValueError("Invalid timelaps");
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
-            const timelaps = UserActivity.#fromHoursToMilliseconds(timelapsHours);
             const timeNow = Date.now();
-            const oldestTime = timeNow - timelaps;
+            const begin = timeNow - UserActivity.#fromHoursToMilliseconds(timelapsHoursBegin);
+            const end = timeNow - UserActivity.#fromHoursToMilliseconds(timelapsHoursEnd);
 
             const queryStatement =
-                "SELECT UserActivityID, UserID, Type, Time FROM userActivity "+
-                `WHERE Time >= ${oldestTime}`;
+                "SELECT UserActivityID, UserID, Type, Time FROM userActivity " +
+                `WHERE (Time >= ${begin}) AND (Time <= ${end})`;
 
             try {
                 const queryResult = await connection.query(queryStatement);

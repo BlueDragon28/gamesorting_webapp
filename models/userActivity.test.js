@@ -127,6 +127,14 @@ describe("user activity database manipulation", function() {
         }
     });
 
+    it("check number after 10 hours using findByTimelaps", async function() {
+        const [foundActivies, error] = await userActivityQuery(async () => 
+            UserActivity.findByTimelaps(20, 10));
+
+        expect(error).toBe(undefined);
+        expect(foundActivies?.length).toBe(6);
+    });
+
     it("delete all activity after 10 hours", async function() {
         const _10hours = 10;
 
