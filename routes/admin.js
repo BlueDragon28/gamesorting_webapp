@@ -21,8 +21,9 @@ function divideActiviesByDays(activities) {
     if (!Array.isArray(activities)) {
         return {
             days: [],
-            maxADay: 0
-        }
+            maxADay: 0,
+            total: 0
+        };
     }
 
     const now = Date.now();
