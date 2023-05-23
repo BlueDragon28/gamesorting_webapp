@@ -14,7 +14,7 @@ const {
 } = require("../utils/errors/celebrateErrorsMiddleware");
 const { deleteCollection } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
-const { isLoggedIn } = require("../utils/users/authentification");
+const { isLoggedIn, isUserPasswordValid } = require("../utils/users/authentification");
 const { checkCollectionAuth } = require("../utils/users/authorization");
 const bigint = require("../utils/numbers/bigint");
 const Pagination = require("../utils/sql/pagination");
@@ -144,7 +144,7 @@ router.put("/:collectionID", checkCollectionAuth, validation.item({ name: true }
 /*
 Delete a collection
 */
-router.delete("/:collectionID", checkCollectionAuth, wrapAsync(async (req, res) => {
+router.delete("/:collectionID", checkCollectionAuth, isUserPasswordValid, wrapAsync(async (req, res) => {
     const paramsCollectionID = bigint.toBigInt(req.params.collectionID);
     const collectionID = bigint.toBigInt(req.body.collectionID);
 
