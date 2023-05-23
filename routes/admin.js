@@ -63,6 +63,10 @@ function divideActiviesByDays(activities) {
 
 router.use(isLoggedIn);
 router.use(wrapAsync(isUserAdmin));
+router.use(function(req, res, next) {
+    res.locals.activeLink = "Admin";
+    next();
+});
 
 router.get("/", function(req, res) {
     res.render("admin/index");
