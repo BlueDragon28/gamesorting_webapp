@@ -9,7 +9,7 @@
             <% const percentage = day.activities / userActivity.maxADay * 100; %>
             <dd class="chart-content">
                 <div class="chart-element-text">Day <%= day.day %></div>
-                <div class="chart-line" style="width: <%= percentage %>%;"></div>
+                <a class="chart-line" style="width: <%= percentage %>%;" href="/admin/activities/byday/<%= day.day %>"></a>
             </dd>
         <% } %>
     <% } else { %>
