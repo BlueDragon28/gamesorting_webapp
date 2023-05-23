@@ -65,10 +65,10 @@ router.use(isLoggedIn);
 router.use(wrapAsync(isUserAdmin));
 
 router.get("/activities", wrapAsync(async function(req, res) {
-    const userActivitesInLast32Days = 
+    const userActivitesInLast30Days = 
         await UserActivity.findByTimelapsFromNow(30 * 24); // last 30 days
     
-    const parsedDateValue = divideActiviesByDays(userActivitesInLast32Days);
+    const parsedDateValue = divideActiviesByDays(userActivitesInLast30Days);
 
     res.render("admin/activities", { userActivity: parsedDateValue });
 }));
