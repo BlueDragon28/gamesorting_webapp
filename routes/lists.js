@@ -14,6 +14,7 @@ const {
 const { deleteList, deleteCustomDatasFromListColumnType } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkCollectionAuth, checkListAuth } = require("../utils/users/authorization");
+const { isUserPasswordValid } = require("../utils/users/authentification");
 const { trimColumns, checkForDuplicate, checkForDuplicateWithCurrentColumns, retrievePreviousColumns } = 
     require("../utils/data/listCustomColumnsMiddlewares");
 const bigint = require("../utils/numbers/bigint");
@@ -212,7 +213,7 @@ router.put("/lists/:listID", checkListAuth, validation.item({ name: true }), wra
 /*
 Delete a list from a collection
 */
-router.delete("/lists/:listID", checkListAuth, wrapAsync(async (req, res, next) => {
+router.delete("/lists/:listID", checkListAuth, isUserPasswordValid, wrapAsync(async (req, res, next) => {
     const paramListID = bigint.toBigInt(req.params.listID);
     const listID = bigint.toBigInt(req.body.listID);
 
