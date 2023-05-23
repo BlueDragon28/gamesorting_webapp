@@ -17,7 +17,7 @@ async function isUserAdmin(req, res, next) {
     next();
 }
 
-function divideActiviesByDays(activities) {
+function divideActivitiesByDays(activities) {
     if (!Array.isArray(activities)) {
         return {
             days: [],
@@ -77,7 +77,7 @@ router.get("/activities", wrapAsync(async function(req, res) {
     const userActivitesInLast30Days = 
         await UserActivity.findByTimelapsFromNow(30 * 24); // last 30 days
     
-    const parsedDateValue = divideActiviesByDays(userActivitesInLast30Days);
+    const parsedDateValue = divideActivitiesByDays(userActivitesInLast30Days);
 
     res.render("admin/activities", { userActivity: parsedDateValue });
 }));
