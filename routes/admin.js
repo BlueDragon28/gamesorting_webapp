@@ -64,6 +64,10 @@ function divideActiviesByDays(activities) {
 router.use(isLoggedIn);
 router.use(wrapAsync(isUserAdmin));
 
+router.get("/", function(req, res) {
+    res.render("admin/index");
+});
+
 router.get("/activities", wrapAsync(async function(req, res) {
     const userActivitesInLast30Days = 
         await UserActivity.findByTimelapsFromNow(30 * 24); // last 30 days
