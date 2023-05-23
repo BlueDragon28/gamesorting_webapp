@@ -63,6 +63,20 @@ function divideActivitiesByDays(activities) {
     };
 }
 
+function activitiesADay(activities) {
+    if (!Array.isArray(activities)) {
+        return {
+            total : 0
+        }
+    }
+
+    let totalActivity = activities.length;
+
+    return {
+        total: totalActivity
+    };
+}
+
 router.use(isLoggedIn);
 router.use(wrapAsync(isUserAdmin));
 router.use(function(req, res, next) {
@@ -87,6 +101,28 @@ router.get("/activities", wrapAsync(async function(req, res) {
     const parsedDateValue = divideActivitiesByDays(activitiesLast30Days);
 
     res.render("admin/activities", { userActivity: parsedDateValue, uniqueUsers: uniqueUsersLast30Days });
+}));
+
+router.get("/activities/byday/:day", wrapAsync(async function(req, res) {
+    const dayNumber = parseInt(req.params.day);
+
+    if (dayNumber <= 0 || dayNumber > 30 || isNaN(dayNumber)) {
+        throw new ValueError("Invalid day");
+    }
+
+    const from = dayNumber > 1 ? 24 * (dayNumber) : 24;
+    const to = dayNumber > 1 ? 24 * (dayNumber - 1) : 0;
+
+    const [activities, uniqueUser] = await existingOrNewConnection(null, async function(connection) {
+        const userActivities = await UserActivity.findByTimelaps(from, to, connection);
+        const uniqueUser = await UserActivity.findUniqueUsersFromTimelaps(from, to, connection);
+        return [userActivities, uniqueUser]
+    });
+
+    const userActivities = activitiesADay(activities);
+    userActivities.dayNumber = dayNumber;
+
+    res.render("admin/activitiesByDay", { userActivities, uniqueUser});
 }));
 
 module.exports = router;
