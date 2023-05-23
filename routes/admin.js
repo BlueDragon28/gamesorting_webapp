@@ -2,6 +2,7 @@ const express = require("express");
 const { User } = require("../models/users");
 const { UserActivity } = require("../models/userActivity");
 const { isLoggedIn } = require("../utils/users/authentification");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 const wrapAsync = require("../utils/errors/wrapAsync");
 
 const router = express.Router();
@@ -74,12 +75,18 @@ router.get("/", function(req, res) {
 });
 
 router.get("/activities", wrapAsync(async function(req, res) {
-    const userActivitesInLast30Days = 
-        await UserActivity.findByTimelapsFromNow(30 * 24); // last 30 days
-    
-    const parsedDateValue = divideActivitiesByDays(userActivitesInLast30Days);
+    const [activitiesLast30Days, uniqueUsersLast30Days] = 
+            await existingOrNewConnection(null, async function(connection) {
 
-    res.render("admin/activities", { userActivity: parsedDateValue });
+        const userActivitesInLast30Days = await UserActivity.findByTimelapsFromNow(30 * 24, connection); // last 30 days
+        const uniqueUsersLast30Days = await UserActivity.findUniqueUsersFromTimelaps(30 * 24, 0, connection) // last 30 days;
+
+        return [userActivitesInLast30Days, uniqueUsersLast30Days];
+    });
+    
+    const parsedDateValue = divideActivitiesByDays(activitiesLast30Days);
+
+    res.render("admin/activities", { userActivity: parsedDateValue, uniqueUsers: uniqueUsersLast30Days });
 }));
 
 module.exports = router;
