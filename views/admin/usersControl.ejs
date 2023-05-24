@@ -1,0 +1,14 @@
+<% layout("layouts/boilerplate.ejs") -%>
+
+<h1 class="fs-1">Users Control</h1>
+
+<div class="mt-3 mb-3">
+    <% for (let user of users) { %>
+        <%- include("../partials/itemWidget.ejs", {
+            url: `/admin/users/${user.id}`,
+            title: user.username
+        }) %>
+    <% } %>
+</div>
+
+<%- include("../partials/pagination.ejs") %>

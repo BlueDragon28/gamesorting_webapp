@@ -9,13 +9,19 @@ const sections = [
         icon: "/images/statistics.svg",
         alt: "Statistics icon",
         endpoint: "/admin/activities"
-    }
+    },
+    {
+        name: "Users",
+        icon: "/images/userIcon.svg",
+        alt: "User icon",
+        endpoint: "/admin/users"
+    },
 ];
 %>
 
 <h1 class="display-4">Admin Control Center</h1>
 
-<div class="d-flex flex-row flex-wrap justify-content-between">
+<div class="d-flex flex-row flex-wrap justify-content-start">
     <% for (const section of sections) { %>
         <a href="<%= section.endpoint %>" class="card section-card">
             <div class="card-body">

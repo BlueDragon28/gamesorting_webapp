@@ -4,6 +4,8 @@ const { UserActivity } = require("../models/userActivity");
 const { isLoggedIn } = require("../utils/users/authentification");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const wrapAsync = require("../utils/errors/wrapAsync");
+const Pagination = require("../utils/sql/pagination");
+const { InternalError, ValueError } = require("../utils/errors/exceptions");
 
 const router = express.Router();
 
@@ -123,6 +125,20 @@ router.get("/activities/byday/:day", wrapAsync(async function(req, res) {
     userActivities.dayNumber = dayNumber;
 
     res.render("admin/activitiesByDay", { userActivities, uniqueUser});
+}));
+
+router.get("/users", Pagination.parsePageNumberMiddleware,
+    wrapAsync(async function(req, res) {
+
+    const pageNumber = req.query.pn;
+
+    const [users, pagination] = await User.findUsers(pageNumber);
+
+    if (!users || !Array.isArray(users)) {
+        throw new InternalError("Failed to Query Users");
+    }
+
+    res.render("admin/usersControl.ejs", { users, pagination });
 }));
 
 module.exports = router;
