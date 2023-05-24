@@ -1,13 +1,13 @@
-import deleteHelper from "./deleteHelper.1.0.0.js";
+import postHelper from "../admin/postHelper.1.0.0.js";
 
 (function() {
-    deleteHelper({
+    postHelper({
         modalID: "deleteCollectionModal",
-        deleteButtonID: "deleteCollectionButton",
-        userPasswordInputID: "deleteCollectionUserPassword",
-        openModalButtonID: "open-delete-collection-modal-button",
+        postButtonID: "deleteCollectionButton",
+        passwordInput: "deleteCollectionUserPassword",
+        openModalButton: "open-delete-collection-modal-button",
         redirect: "/collections",
-        apiEndpoint: `/collections/${collection.id}`,
+        apiEndpoint: `/collections/${collection.id}?_method=DELETE`,
         data: {
             collectionID: collection.id           
         }
