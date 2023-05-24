@@ -3,6 +3,7 @@ const mariadb = require("../sql/connection");
 const seeds = require("../sql/seeds");
 const { User } = require("./users");
 const bigint = require("../utils/numbers/bigint");
+const { calcOffset } = require("../utils/sql/pagination");
 
 test("Create valid user object", async function() {
     let user = new User("a_user", "some@email.com", "12345");
@@ -304,5 +305,54 @@ describe("collection dabase manipulation", function() {
         const isUserNotAdmin = await User.isAdmin(adminUser.id);
         expect(isUserNotAdmin).toBe(false);
     })
+
+    it("get number of users", async function() {
+        const [numberOfUsers, error] = await userQuery(async () => 
+            User.getCount());
+
+        expect(error).toBe(undefined);
+        expect(numberOfUsers).toBe(4n);
+    });
+
+    it("get all users", async function() {
+        const [usersList, error] = await userQuery(async () =>
+            User.findUsers(1));
+
+        expect(error).toBe(undefined);
+        expect(usersList[0].length).toBe(4);
+    });
+
+    it("insert 46 users", async function() {
+        for (let i = 0; i < 46; i++) {
+            const [,error] = await userQuery(async () =>
+                new User(`user_${i}`, `user${i}@mail.com`, "12345", false).save());
+
+            expect(error).toBe(undefined);
+        }
+    });
+
+    it("there should be 50 users", async function() {
+        const [numberOfUsers, error] = await userQuery(async () => 
+            User.getCount());
+        
+        expect(error).toBe(undefined);
+        expect(numberOfUsers).toBe(50n);
+    });
+
+    it("get first page of users", async function() {
+        const [firstPage, error] = await userQuery(async () => 
+            User.findUsers(1));
+
+        expect(error).toBe(undefined);
+        expect(firstPage[0].length).toBe(15);
+    });
+
+    it("get second page", async function() {
+        const [secondPage, error] = await userQuery(async () =>
+            User.findUsers(2));
+
+        expect(error).toBe(undefined);
+        expect(secondPage[0].length).toBe(15);
+    });
 });
 

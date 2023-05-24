@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const bigint = require("../utils/numbers/bigint");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const Pagination = require("../utils/sql/pagination");
 
 class User {
     id = undefined;
@@ -242,6 +243,41 @@ class User {
         });
     }
 
+    static async findUsers(pageNumber = 0, connection) {
+        if (typeof pageNumber !== "number" || pageNumber < 0) {
+            throw new ValueError(400, "Invalid page number");
+        }
+
+        if (pageNumber === 0) {
+            pageNumber = 1;
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const numberOfItems = await User.getCount(connection);
+
+            const pagination = new Pagination(pageNumber, numberOfItems);
+            if (!pagination.isValid) {
+                throw new ValueError(400, "Invalid page number");
+            }
+
+            const queryStatement =
+                "SELECT UserID, Username, Email, Password, BypassRestriction, IsAdmin FROM users " +
+                `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
+            
+            try {
+                const queryResult = await connection.query(queryStatement);
+
+                if (!queryResult.length) {
+                    return [[], pagination];
+                }
+
+                return [User.#parseFoundUsers(queryResult), pagination];
+            } catch (error) {
+                throw new SqlError(`Failed to get all users: ${error.message}`);
+            }
+        });
+    }
+
     static async deleteFromID(userID, connection) {
         if (!bigint.isValid(userID)) {
             throw new ValueError(400, "Invalid User");
@@ -285,6 +321,36 @@ class User {
 
             return user.isAdmin === true;
         });
+    }
+
+    static async getCount(connection) {
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                "SELECT COUNT(*) AS count FROM users";
+
+            try {
+                const queryResult = (await connection.query(queryStatement))[0];
+
+                return queryResult.count;
+            } catch(error) {
+                throw new SqlError(`Failed to query number of items in users! ${error.message}`);
+            }
+        });
+    }
+
+    static #parseFoundUsers(users) {
+        const usersList = [];
+
+        for (const item of users) {
+            const user = new User(item.Username, item.Email, item.Password, false);
+            user.isAdmin = item.IsAdmin;
+            user.bypassRestriction = item.BypassRestriction;
+            user.id = item.UserID;
+
+            usersList.push(user);
+        }
+
+        return usersList;
     }
 }
 
