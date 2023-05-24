@@ -66,7 +66,37 @@
     </div>
 </div>
 
+<div class="modal fade" id="delete-user-modal" tabindex="-1" aria-labelledby="deleteUserModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Delete User</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card text-bg-danger mb-3 d-none modal-error-card">
+                    <div class="card-body">
+                        <span class="modal-error-text">Some Text!</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <p>Do you really want to delete this user? There is no going back!</p>
+                </div>
+                <div>
+                    <label class="form-label" for="delete-user-password">Admin Password</label>
+                    <input class="form-control" type="password" name="password" id="delete-user-password">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="delete-user-modal-button">Delete User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     const user = <%- JSON.stringify({id: user.id.toString()}) %>
 </script>
 <script type="module" src="/javascript/admin/userBypassRestriction.1.0.0.js"></script>
+<script type="module" src="/javascript/admin/deleteUser.1.0.0.js"></script>

@@ -8,6 +8,7 @@ const Pagination = require("../utils/sql/pagination");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const { returnHasJSONIfNeeded, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const bigint = require("../utils/numbers/bigint");
+const { deleteUser } = require("../utils/data/deletionHelper");
 
 const router = express.Router();
 
@@ -209,6 +210,57 @@ router.post("/users/:userID/bypass-restriction", isUserPasswordValid,
     }
 
     const successMessage = "Successfully updated bypass restriction";
+    req.flash("success", successMessage);
+    res.set("Content-type", "application/json")
+        .send({
+            type: "SUCCESS",
+            message: successMessage
+        });
+}));
+
+router.delete("/users/:userID", isUserPasswordValid, 
+        wrapAsync(async function(req, res, next) {
+    
+    const { delete: deleteUserAction } = req.body;
+    let userID = req.params.userID;
+
+    if (!userID || !bigint.isValid(userID)) {
+        return next({
+            statusCode: 400,
+            message: "Invalid request"
+        });
+    }
+
+    userID = bigint.toBigInt(userID);
+
+    if (deleteUserAction !== true) {
+        return next({
+            statusCode: 400,
+            message: "Invalid user id"
+        });
+    }
+
+    const [success, error] = await existingOrNewConnection(null, async function(connection) {
+        try {
+            const foundUser = await User.findByID(userID, connection);
+
+            if (!foundUser || !foundUser?.isValid()) {
+                return [false, {statusCode: 400, message:"Invalid user id"}];
+            }
+
+            await deleteUser(userID, connection);
+
+            return [true, null];
+        } catch (error) {
+            return [false, {statusCode: 500, message: `Failed to delete user: ${error.message}`}];
+        }
+    })
+
+    if (!success) {
+        return next(error);
+    }
+
+    const successMessage = "Successfully deleted user";
     req.flash("success", successMessage);
     res.set("Content-type", "application/json")
         .send({
