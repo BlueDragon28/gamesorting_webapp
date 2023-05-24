@@ -1,0 +1,72 @@
+<% layout("layouts/boilerplate.ejs") -%>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title fs-3 mb-3"><%= user.username %></h1>
+
+                <div class="mb-3">
+                    <div class="text-muted">
+                        <%= user.bypassRestriction ? 
+                            "Is bypassing restriction":
+                            "Do not bypass restriction" %>
+                    </div>
+                    <%- user.isAdmin ? "<div class=\"text-muted\">Is Admin</div>" : "" %>
+                </div>
+
+                <a href="/admin/users" class="btn btn-secondary">Back</a>
+
+                <% if (user.bypassRestriction) { %>
+                    <button id="stop-user-bypass-restriction-button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#bypass-restriction-modal">Stop bypassing restrictions</button>
+                <% } else { %>
+                    <button id="make-user-bypass-restriction-button" class="btn btn-success">Bypassing restrictions</button>
+                <% } %>
+
+                <button id="delete-user-button" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bypass-restriction-modal" tabindex="-1" aria-labelledby="bypassUserRectriction">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5"><%= user.bypassRestriction ? "Stop bypassing restriction" : "Bypass restriction" %></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card text-bg-danger mb-3 d-none modal-error-card">
+                    <div class="card-body">
+                        <span class="modal-error-text">Some Text!</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <% if (user.bypassRestriction) { %>
+                        <p>Stop user from bypassing restrictions!</p>
+                    <% } else { %>
+                        <p>Make user bypassing restrictions!</p>
+                    <% } %>
+                </div>
+                <div>
+                    <label class="form-label" for="">Admin Password</label>
+                    <input class="form-control" type="password" name="password" id="modal-bypass-admin-password">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <% if (user.bypassRestriction) { %>
+                    <button type="button" class="btn btn-success" id="modal-stop-bypass-button">Stop bypass restrictions</button>
+                <% } else { %>
+                    <button type="button" class="btn btn-success" id="modal-bypass-button">Bypass restrictions</button>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const user = <%- JSON.stringify({id: user.id.toString()}) %>
+</script>
+<script type="module" src="/javascript/admin/userBypassRestriction.1.0.0.js"></script>

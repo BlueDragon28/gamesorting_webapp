@@ -1,24 +1,24 @@
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 import { hideError, setError } from "../users/userModalErrorCard.1.0.0.js";
 
-function deleteHelper(params) {
+function postHelper(params) {
     const modalID = params.modalID;
-    const deleteButtonID = params.deleteButtonID;
-    const userPasswordInputID = params.userPasswordInputID;
-    const openModalButtonID = params.openModalButtonID;
-    const redirectLocaltion = params.redirect;
+    const postButtonID = params.postButtonID;
+    const passwordInputID = params.passwordInput;
+    const openModalButtonID = params.openModalButton;
+    const redirectLocation = params.redirect;
     const apiEndpoint = params.apiEndpoint;
     const dataToSend = params.data;
 
-    if (!modalID || !deleteButtonID || !userPasswordInputID || !openModalButtonID ||
-            !redirectLocaltion || !apiEndpoint || typeof dataToSend !== "object") {
+    if (!modalID || !postButtonID || !passwordInputID || !openModalButtonID ||
+        !redirectLocation || !apiEndpoint || typeof dataToSend !== "object") {
         throw new Error("Invalid params");
     }
 
     const domModal = document.getElementById(modalID);
-    const deleteButtonModal = document.getElementById(deleteButtonID);
+    const postButtonModal = document.getElementById(postButtonID);
     const bootstrapModal = new bootstrap.Modal(domModal);
-    const userPasswordInput = document.getElementById(userPasswordInputID);
+    const passwordInput = document.getElementById(passwordInputID);
     const openModalButton = document.getElementById(openModalButtonID);
 
     function hideModal() {
@@ -26,7 +26,7 @@ function deleteHelper(params) {
     }
 
     function resetInput() {
-        userPasswordInput.value = "";
+        passwordInput.value = "";
     }
 
     function openModal() {
@@ -40,14 +40,14 @@ function deleteHelper(params) {
         const response = JSON.parse(event.target.response);
 
         if (response.type === "SUCCESS") {
-            window.location = redirectLocaltion;
+            window.location = redirectLocation;
         } else {
             makeAlertCard("error", "ERROR: " + response.message);
         }
     }
 
     function getPassword() {
-        const userPassword = userPasswordInput.value;
+        const userPassword = passwordInput.value;
 
         if (!userPassword || !userPassword.length) {
             return [false, null];
@@ -56,8 +56,8 @@ function deleteHelper(params) {
         }
     }
 
-    function onDelete() {
-        const [success, userPassword] = getPassword();
+    function onProcess() {
+        const [success, password] = getPassword();
 
         if (!success) {
             return setError("Password cannot be empty");
@@ -66,19 +66,19 @@ function deleteHelper(params) {
         const xhrRequest = new XMLHttpRequest();
         xhrRequest.addEventListener("load", onFinish);
         xhrRequest.addEventListener("error", onFinish);
-        xhrRequest.open("POST", apiEndpoint + "?_method=DELETE");
+        xhrRequest.open("POST", apiEndpoint);
         xhrRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
         xhrRequest.setRequestHeader("Accept", "application/json");
         xhrRequest.send(JSON.stringify({
             ...dataToSend,
-            password: userPassword
+            password: password
         }));
 
         hideModal();
     }
 
-    deleteButtonModal.addEventListener("click", onDelete);
     openModalButton.addEventListener("click", openModal);
+    postButtonModal.addEventListener("click", onProcess);
 }
 
-export default deleteHelper;
+export default postHelper;
