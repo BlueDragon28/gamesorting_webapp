@@ -7,6 +7,7 @@ const wrapAsync = require("../utils/errors/wrapAsync");
 const Pagination = require("../utils/sql/pagination");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const { returnHasJSONIfNeeded, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
+const bigint = require("../utils/numbers/bigint");
 
 const router = express.Router();
 
@@ -143,11 +144,13 @@ router.get("/users", Pagination.parsePageNumberMiddleware,
 }));
 
 router.get("/users/:userID", wrapAsync(async function(req, res) {
-    const userID = parseInt(req.params.userID);
+    let userID = req.params.userID;
 
-    if (!userID || typeof userID !== "number" || isNaN(userID)) {
+    if (!userID || !bigint.isValid(userID)) {
         throw new ValueError(404, "Invalid user ID");
     }
+
+    userID = bigint.toBigInt(userID);
 
     const user = await User.findByID(userID);
 
@@ -161,9 +164,9 @@ router.get("/users/:userID", wrapAsync(async function(req, res) {
 router.post("/users/:userID/bypass-restriction", isUserPasswordValid, 
         wrapAsync(async function(req, res) {
     const { bypass } = req.body;
-    const userID = parseInt(req.params.userID);
+    let userID = req.params.userID;
 
-    if (!userID || typeof userID !== "number" || isNaN(userID)) {
+    if (!userID || !bigint.isValid(userID)) {
         return res.set("Content-type", "application/json")
             .status(400)
             .send({
@@ -171,6 +174,8 @@ router.post("/users/:userID/bypass-restriction", isUserPasswordValid,
                 message: "Invalid user id"
             });
     }
+
+    userID = bigint.toBigInt(userID);
 
     if (bypass !== true && bypass !== false) {
         return res.set("Content-type", "application/json")
