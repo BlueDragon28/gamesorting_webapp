@@ -7,6 +7,9 @@
                 <h1 class="card-title fs-3 mb-3"><%= user.username %></h1>
 
                 <div class="mb-3">
+                    <% if (isCurrentUser) { %>
+                        <div class="text-muted">Hehe, it's me!!!</div>
+                    <% } %>
                     <div class="text-muted">
                         <%= user.bypassRestriction ? 
                             "Is bypassing restriction":
@@ -17,13 +20,15 @@
 
                 <a href="/admin/users" class="btn btn-secondary">Back</a>
 
-                <% if (user.bypassRestriction) { %>
-                    <button id="stop-user-bypass-restriction-button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#bypass-restriction-modal">Stop bypassing restrictions</button>
-                <% } else { %>
-                    <button id="make-user-bypass-restriction-button" class="btn btn-success">Bypassing restrictions</button>
-                <% } %>
+                <% if (!isCurrentUser) { %>
+                    <% if (user.bypassRestriction) { %>
+                        <button id="stop-user-bypass-restriction-button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#bypass-restriction-modal">Stop bypassing restrictions</button>
+                    <% } else { %>
+                        <button id="make-user-bypass-restriction-button" class="btn btn-success">Bypassing restrictions</button>
+                    <% } %>
 
-                <button id="delete-user-button" class="btn btn-danger">Delete</button>
+                    <button id="delete-user-button" class="btn btn-danger">Delete</button>
+                <% } %>
             </div>
         </div>
     </div>

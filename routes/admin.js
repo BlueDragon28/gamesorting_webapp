@@ -159,7 +159,9 @@ router.get("/users/:userID", wrapAsync(async function(req, res) {
         throw new ValueError(404, "User not found");
     }
 
-    res.render("admin/userInfo.ejs", { user });
+    const isCurrentUser = req.session?.user?.id == user.id;
+
+    res.render("admin/userInfo.ejs", { user, isCurrentUser });
 }));
 
 router.post("/users/:userID/bypass-restriction", isUserPasswordValid, 
