@@ -6,12 +6,19 @@ const columnTypeInput = document.querySelector("#column-type");
 const columnNumberBlock = document.querySelector("#column-number-block");
 const columnNumberMinInput = document.querySelector("#column-number-min");
 const columnNumberMaxInput = document.querySelector("#column-number-max");
+const columnStarBlock = document.getElementById("column-star-block");
+const columnStarNumberInput = document.getElementById("column-star-number");
 
 columnTypeInput.addEventListener("change", function(event) {
     if (columnTypeInput.value === "@Int") {
         columnNumberBlock.classList.remove("d-none");
+        columnStarBlock.classList.add("d-none");
+    } else if (columnTypeInput.value === "@Stars") {
+        columnNumberBlock.classList.add("d-none");
+        columnStarBlock.classList.remove("d-none");
     } else {
         columnNumberBlock.classList.add("d-none");
+        columnStarBlock.classList.add("d-none");
     }
 })
 
@@ -27,11 +34,21 @@ function parseIntTypeToHtml(columnType) {
         Max: <b class="column-max-int">${columnType.max}</b>`;
 }
 
+function parseStarsTypeToHtml(columnType) {
+    if (!columnType.type || isNaN(columnType.max)) {
+        return "";
+    }
+
+    return `<br>Max stars: <b>${columnType.max}</b>`;
+}
+
 function parseTypeToHtml(columnType) {
     if (columnType.type === "@String") {
         return "";
     } else if (columnType.type === "@Int") {
         return parseIntTypeToHtml(columnType);
+    } else if (columnType.type === "@Stars") {
+        return parseStarsTypeToHtml(columnType);
     }
 
     return "";
@@ -72,7 +89,9 @@ function resetInputs() {
     columnTypeInput.value = "@String";
     columnNumberMinInput.value = "";
     columnNumberMaxInput.value = "";
+    columnStarNumberInput.value = "";
     columnNumberBlock.classList.add("d-none");
+    columnStarBlock.classList.add("d-none");
 }
 
 /*
@@ -96,6 +115,14 @@ function parseType() {
             type,
             min: inputMin.length > 0 ? inputMin : -2147483648,
             max: inputMax.length > 0 ? inputMax : 2147483647
+        };
+    }
+    case "@Stars":
+    {
+        const inputMax = columnStarNumberInput.value;
+        return {
+            type,
+            max: inputMax.length > 0 ? inputMax : 5
         };
     }
     }

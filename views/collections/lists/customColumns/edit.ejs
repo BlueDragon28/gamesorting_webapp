@@ -55,6 +55,7 @@ function exportListCustomColumns() {
                         <select class="form-control" name="columnType" id="column-type">
                             <option value="@String" active>String</option>
                             <option value="@Int">Int</option>
+                            <option value="@Stars">Stars</option>
                         </select>
                     </div>
                     <div class="d-none" id="column-number-block">
@@ -66,6 +67,10 @@ function exportListCustomColumns() {
                             <label class="form-label" for="column-number-max">Max</label>
                             <input class="form-control" type="number" id="column-number-max">
                         </div>
+                    </div>
+                    <div class="d-none mb-3" id="column-star-block">
+                        <label class="form-label" for="column-star-number">Num Stars</label>
+                        <input class="form-control" type="number" id="column-star-number" min="0" max="10">
                     </div>
                     <button class="btn btn-success w-100">Add</button>
                 </form>
