@@ -3,7 +3,8 @@ const Joi = require("./extendedJoi");
 
 const ColumnType = {
     str: "@String",
-    int: "@Int"
+    int: "@Int",
+    stars: "@Stars"
 }
 
 function makeListColumnValidation() {
@@ -20,7 +21,11 @@ function makeListColumnValidation() {
             max: Joi.when("type", {
                 is: Joi.string().valid(ColumnType.int).required(),
                 then: Joi.number().min(Joi.ref("min")).required(),
-                otherwise: Joi.valid(null)
+                otherwise: Joi.when("type", {
+                    is: Joi.string().valid(ColumnType.stars).required(),
+                    then: Joi.number().min(5).max(10).required(),
+                    otherwise: Joi.valid(null)
+                })
             })
         }).required()
     });
