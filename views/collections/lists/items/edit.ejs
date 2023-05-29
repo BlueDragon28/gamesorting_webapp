@@ -1,6 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
 <link rel="stylesheet" href="/styles/starability-basic.min.css">
+<link rel="stylesheet" href="/styles/customColumns/starsCustomColumns.1.0.0.css">
 
 <%
 function getCustomColumn(columnTypeID) {
@@ -69,10 +70,18 @@ The form have two fields, Name and Url. -->
                     <% for(let columnType of listColumnsType) { %>
                         <% let customRowData = getCustomColumn(columnType.id) %>
                         <% let customColumnID = `customColumn_${customRowData.id}`; %> 
-
-                        <div class="mb-3">
-                            <label class="form-label" for="<%= customColumnID %>"><%= columnType.name %></label>
-                            <input class="form-control" <%- getCustomControlType(columnType) %> name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>" value="<%= customRowData.value %>">
+                        <div class="mb-3 <%= columnType.type.type === "@Stars" ? `starability-basic stars-with-${columnType.type.max}` : "" %>">
+                            <% if (columnType.type.type === "@Stars") { %>
+                                <div class="form-label"><%= columnType.name %></div>
+                                <input class="input-no-rate" type="radio" name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>-no-rate" <%= customRowData.value == 0 ? "checked" : "" %> value="0">
+                                <% for (let indexStar = 0; indexStar < columnType.type.max; indexStar++) { %>
+                                <input class="first-rate<%= indexStar+1 %>" type="radio" name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>-rate<%= indexStar+1 %>" <%= customRowData.value == indexStar+1 ? "checked" : "" %> value="<%= indexStar+1 %>">
+                                <label for="<%= customColumnID %>-rate<%= indexStar+1 %>"><%= indexStar+1 %> Star</label>
+                                <% } %>
+                            <% } else { %>
+                                <label class="form-label" for="<%= customColumnID %>"><%= columnType.name %></label>
+                                <input class="form-control" <%- getCustomControlType(columnType) %> name="customColumns[<%= customColumnID %>]" id="<%= customColumnID %>" value="<%= customRowData.value %>">
+                            <% } %>
                         </div>
                     <% } %>
                 
