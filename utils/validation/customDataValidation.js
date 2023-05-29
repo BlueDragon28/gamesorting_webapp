@@ -72,10 +72,21 @@ function makeCustomDataNumberValidation() {
     }).unknown().required();
 }
 
+function makeCustomDataStarsValidation() {
+    return Joi.object({
+        Value: Joi.number().min(0).max(Joi.ref("columnType.max")),
+        columnType: Joi.object({
+            type: Joi.string().pattern(/@Stars/).required(),
+            max: Joi.number()
+        }).unknown().required()
+    }).unknown().required();
+}
+
 function columnDataAndTypeValidation() {
     return Joi.alternatives().try(
         makeCustomDataStringValidation(),
-        makeCustomDataNumberValidation()
+        makeCustomDataNumberValidation(),
+        makeCustomDataStarsValidation()
     );
 }
 
