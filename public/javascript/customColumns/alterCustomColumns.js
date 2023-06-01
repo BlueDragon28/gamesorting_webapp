@@ -9,10 +9,13 @@ const submitButton = document.getElementById("update-custom-column-submit-button
 const bootstrapModel = new bootstrap.Modal(domModal);
 
 let currentCustomData;
+let originalColumns;
+let newColumns;
 
-export function openDialog(customData) {
+export function openDialog(customData, originalCols, newCols) {
     currentCustomData = customData;
-    console.log(currentCustomData);
+    originalColumns = originalCols;
+    newColumns = newCols;
 
     hideError();
     customColumnName.innerText = currentCustomData.name;
@@ -30,6 +33,20 @@ function onFinished(event) {
     }
 }
 
+function findDuplicate(name) {
+    const lowercaseName = name.toLowerCase();
+
+    for (const item of originalColumns) {
+        if (lowercaseName === item.name.toLowerCase()) return true;
+    }
+
+    for (const item of newColumns) {
+        if (lowercaseName === item.name.toLowerCase()) return true;
+    }
+
+    return false;
+}
+
 function submitData() {
     if (typeof currentCustomData !== "object") {
         return;
@@ -40,6 +57,8 @@ function submitData() {
         return setError("Name cannot be empty");
     } else if (inputValue === currentCustomData.name) {
         return setError("Cannot update if the name if the same as before");
+    } else if (findDuplicate(inputValue)) {
+        return setError("This name is already used");
     }
 
     const xhrRequest = new XMLHttpRequest();

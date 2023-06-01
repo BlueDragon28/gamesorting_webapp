@@ -69,7 +69,7 @@ function createHtmlCustomColumn(customColumn) {
         .then(alterCustomColumnsImport => {
             const { openDialog } = alterCustomColumnsImport;
             buttonEditColumn.addEventListener("click", function(){
-                openDialog(customColumn);
+                openDialog(customColumn , listCustomColumns, newColumnsList);
             });
         });
 
