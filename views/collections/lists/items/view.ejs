@@ -1,6 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
 <link rel="stylesheet" href="/styles/starability-basic.min.css">
+<link rel="stylesheet" href="/styles/customColumns/starsCustomColumns.1.0.0.css">
 <link rel="stylesheet" href="/styles/text.css">
 
 <%
@@ -33,7 +34,11 @@ function getColumnType(columnTypeID) {
 
                         <% for(let customData of item.customData) { %>
                             <% const columnType = getColumnType(customData.columnTypeID); %>
-                            <p class="text-muted"><%= columnType.name %>: <%= customData.value %></p>
+                            <% if (columnType.type.type === "@Stars") { %>
+                                <p class="starability-result" data-rating="<%= customData.value %>"></p>
+                            <% } else { %>
+                                <p class="text-muted"><%= columnType.name %>: <%= customData.value %></p>
+                            <% } %>
                         <% } %>
                     </div>
                 </li>
