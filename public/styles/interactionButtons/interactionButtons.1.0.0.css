@@ -18,3 +18,20 @@ button.iconLinkButton {
     background-color: transparent;
     border: none;
 }
+
+.customColumnButton {
+    display: block;
+    background-color: transparent;
+    border: none;
+}
+
+.customColumnButton:hover,
+.customColumnButton:active {
+    filter: brightness(0.2);
+}
+
+.customColumnButton img {
+    display: block;
+    width: 20px;
+    aspect-ratio: 1/1;
+}

@@ -1,4 +1,3 @@
-
 const columnsListDiv = document.querySelector("#columnsList");
 const customColumnForm = document.querySelector("#customColumnSubmitter");
 const columnNameInput = document.querySelector("#column-name");
@@ -57,12 +56,29 @@ function createHtmlCustomColumn(customColumn) {
         ${parseTypeToHtml(customColumn.type)}`;
     flexContainer.append(pCardTitle);
 
+    const innerFlexContainer = document.createElement("div");
+    innerFlexContainer.classList.add("d-flex", "flex-row", "justify-content-end", "align-items-center");
+    flexContainer.append(innerFlexContainer);
+
+    const buttonEditColumn = document.createElement("button");
+    buttonEditColumn.innerHTML = "<img src=\"/images/editCustomColumns.svg\" alt=\"edit custom column icon\">";
+    buttonEditColumn.classList.add("customColumnButton");
+    innerFlexContainer.append(buttonEditColumn);
+
+    import("./alterCustomColumns.js")
+        .then(alterCustomColumnsImport => {
+            const { openDialog } = alterCustomColumnsImport;
+            buttonEditColumn.addEventListener("click", function(){
+                openDialog(customColumn);
+            });
+        });
+
     const buttonDeleteColumn = document.createElement("button");
     buttonDeleteColumn.type = "button";
     buttonDeleteColumn.classList.add("btn-close");
     buttonDeleteColumn.addEventListener("click", 
         () => onColumnDeletion(divContainer, customColumn.fromList, customColumn.index));
-    flexContainer.append(buttonDeleteColumn);
+    innerFlexContainer.append(buttonDeleteColumn);
 
     columnsListDiv.append(divContainer);
 }
