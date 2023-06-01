@@ -1,7 +1,6 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
 <link rel="stylesheet" href="/styles/starability-basic.min.css">
-<link rel="stylesheet" href="/styles/customColumns/starsCustomColumns.1.0.0.css">
 
 <!-- A form to create a new items
 The form have two fields, Name and Url. -->
@@ -58,7 +57,7 @@ The form have two fields, Name and Url. -->
                                 <% const customColumnName = `customColumns[${customColumnID}]`; %>
                                 <div class="form-label"><%= customColumn.name %></div>
                                 <input class="input-no-rate" type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-no-rate" checked value="0">
-                                <% for (let indexStar = 0; indexStar < customColumn.type.max; indexStar++) { %>
+                                <% for (let indexStar = 0; indexStar < 5; indexStar++) { %>
                                     <input class="first-rate<%= indexStar+1 %>" type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-rate<%= indexStar+1 %>" value="<%= indexStar+1 %>">
                                     <label for="<%= customColumnName %>-rate<%= indexStar+1 %>"><%= indexStar+1 %> Star</label>
                                 <% } %>
