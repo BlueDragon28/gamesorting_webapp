@@ -24,8 +24,10 @@ function parseIntTypeToHtml(columnType) {
         return "";
     }
 
-    return `<br>Min: <b class="column-int-min">${columnType.min}</b>
+    const spanElement = document.createElement("span");
+    spanElement.innerHTML = `<br>Min: <b class="column-int-min">${columnType.min}</b>
         Max: <b class="column-max-int">${columnType.max}</b>`;
+    return spanElement;
 }
 
 function parseTypeToHtml(columnType) {
@@ -50,10 +52,19 @@ function createHtmlCustomColumn(customColumn) {
 
     const pCardTitle = document.createElement("p");
     pCardTitle.classList.add("mb-1", "mt-1");
-    pCardTitle.innerHTML = 
-        `Name: <b class="column-name">${customColumn.name}</b>
-        Type: <b class="column-type">${customColumn.type.type}</b>
-        ${parseTypeToHtml(customColumn.type)}`;
+
+    const columnName = document.createElement("b");
+    columnName.classList.add("column-type");
+    columnName.innerText = customColumn.name;
+    pCardTitle.append("Name: ", columnName);
+
+    const columnType = document.createElement("b");
+    columnType.classList.add("column-type");
+    columnType.innerText = customColumn.type.type;
+    pCardTitle.append(" Type: ", columnType);
+
+    pCardTitle.append(parseTypeToHtml(customColumn.type));
+
     flexContainer.append(pCardTitle);
 
     const innerFlexContainer = document.createElement("div");
@@ -69,7 +80,7 @@ function createHtmlCustomColumn(customColumn) {
         .then(alterCustomColumnsImport => {
             const { openDialog } = alterCustomColumnsImport;
             buttonEditColumn.addEventListener("click", function(){
-                openDialog(customColumn , listCustomColumns, newColumnsList);
+                openDialog(customColumn , listCustomColumns, newColumnsList, columnName);
             });
         });
 

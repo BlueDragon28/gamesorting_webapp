@@ -11,11 +11,14 @@ const bootstrapModel = new bootstrap.Modal(domModal);
 let currentCustomData;
 let originalColumns;
 let newColumns;
+let nameDomElement;
+let newName = "";
 
-export function openDialog(customData, originalCols, newCols) {
+export function openDialog(customData, originalCols, newCols, nameElement) {
     currentCustomData = customData;
     originalColumns = originalCols;
     newColumns = newCols;
+    nameDomElement = nameElement;
 
     hideError();
     customColumnName.innerText = currentCustomData.name;
@@ -27,9 +30,11 @@ function onFinished(event) {
     const response = JSON.parse(event.target.response);
 
     if (response.type === "SUCCESS") {
-        window.location = window.location;
+        makeAlertCard("success", "SUCCESS: " + response.message);
+        nameDomElement.innerText = newName;
+        currentCustomData.name = newName;
     } else {
-        makeAlertCard("error", response.message);
+        makeAlertCard("error", "ERROR: " + response.message);
     }
 }
 
@@ -60,6 +65,8 @@ function submitData() {
     } else if (findDuplicate(inputValue)) {
         return setError("This name is already used");
     }
+
+    newName = inputValue;
 
     const xhrRequest = new XMLHttpRequest();
     xhrRequest.addEventListener("load", onFinished);
