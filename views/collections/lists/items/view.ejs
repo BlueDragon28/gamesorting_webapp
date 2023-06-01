@@ -34,7 +34,10 @@ function getColumnType(columnTypeID) {
                         <% for(let customData of item.customData) { %>
                             <% const columnType = getColumnType(customData.columnTypeID); %>
                             <% if (columnType.type.type === "@Stars") { %>
-                                <p class="starability-result" data-rating="<%= customData.value %>"></p>
+                                <div class="d-flex flex-row justify-content-start align-items-center">
+                                    <div class="text-muted me-1"><%= columnType.name %>:</div>
+                                    <div class="starability-result" data-rating="<%= customData.value %>"></div>
+                                </div>
                             <% } else { %>
                                 <p class="text-muted"><%= columnType.name %>: <%= customData.value %></p>
                             <% } %>
