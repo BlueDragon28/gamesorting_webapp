@@ -74,10 +74,9 @@ function makeCustomDataNumberValidation() {
 
 function makeCustomDataStarsValidation() {
     return Joi.object({
-        Value: Joi.number().min(0).max(Joi.ref("columnType.max")),
+        Value: Joi.number().min(0).max(5),
         columnType: Joi.object({
-            type: Joi.string().pattern(/@Stars/).required(),
-            max: Joi.number()
+            type: Joi.string().pattern(/@Stars/).required()
         }).unknown().required()
     }).unknown().required();
 }

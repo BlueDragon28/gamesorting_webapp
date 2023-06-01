@@ -21,11 +21,7 @@ function makeListColumnValidation() {
             max: Joi.when("type", {
                 is: Joi.string().valid(ColumnType.int).required(),
                 then: Joi.number().min(Joi.ref("min")).required(),
-                otherwise: Joi.when("type", {
-                    is: Joi.string().valid(ColumnType.stars).required(),
-                    then: Joi.number().min(5).max(10).required(),
-                    otherwise: Joi.valid(null)
-                })
+                otherwise: Joi.valid(null)
             })
         }).required()
     });
