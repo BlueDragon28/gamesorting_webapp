@@ -173,11 +173,11 @@ describe("collection dabase manipulation", function() {
         expect(findListColumnType).toBe(null);
     });
 
-    it("update a List Column Type should not work", async function() {
+    it("update a List Column Type should work just fine", async function() {
         listColumnType.name = "Another List Column Type";
         listColumnType.type = intType;
         const [,error] = await listColumnTypeQuery(async () => listColumnType.save());
-        expect(error).not.toBe(undefined);
+        expect(error).toBe(undefined);
     });
 
     it("delete a List Column Type", async function() {

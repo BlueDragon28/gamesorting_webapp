@@ -6,7 +6,7 @@ const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
-const { listColumnsValidation, validateDeleteColumn } = require("../utils/validation/listColumnsValidation");
+const { listColumnsValidation, validateDeleteColumn, validateUpdateColumn } = require("../utils/validation/listColumnsValidation");
 const { 
     parseCelebrateError, 
     errorsWithPossibleRedirect,
@@ -138,6 +138,44 @@ router.delete("/lists/:listID/custom-column",
 
     res.set("Content-type", "application/json")
         .send({ type: "SUCCESS", message: `Successfully delete column ${customColumn.name}!` })
+}));
+
+router.put("/lists/:listID/custom-column", 
+    checkListAuth,
+    validateUpdateColumn(),
+    wrapAsync(async function(req, res, next) {
+    
+    const { customColumn } = req.body;
+
+    const [success, error] = await existingOrNewConnection(null, async function(connection) {
+        let foundListColumnType;
+        try {
+            foundListColumnType = await ListColumnType.findByID(customColumn.id, connection);
+        } catch (error) {
+            return [false, {statusCode: 400, message: "Invalid List Column ID"}];
+        }
+
+        if (!foundListColumnType instanceof ListColumnType || !foundListColumnType.isValid()) {
+            return [false, {statusCode: 400, message: "Invalid List Column ID"}];
+        }
+
+        foundListColumnType.name = customColumn.name;
+
+        try {
+            await foundListColumnType.save(connection);
+        } catch (error) {
+            return [false, {statusCode: 500, message: "Failed to update list column"}];
+        }
+
+        return [true, null];
+    });
+
+    if (!success) {
+        next(error);
+    }
+
+    res.set("Content-type", "application/json")
+        .send({ type: "SUCCESS", message: `Successfully updated column ${customColumn.name}`});
 }));
 
 /*

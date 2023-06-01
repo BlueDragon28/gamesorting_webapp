@@ -70,7 +70,7 @@ class ListColumnType {
         if (!isListColumnTypeExisting) {
             await this.#createListColumnType(connection);
         } else {
-            throw new InternalError("Cannot add this custom column: custom column already exists");
+            await this.#updateListColumnType(connection);
         }
     }
 
@@ -147,6 +147,26 @@ class ListColumnType {
             }
         } catch (error) {
             throw new SqlError(`Failed to insert a listColumnsType: ${error.message}`);
+        }
+    }
+
+    async #updateListColumnType(connection) {
+        return await existingOrNewConnection(connection, this.#_updateListColumnType.bind(this));
+    }
+
+    async #_updateListColumnType(connection) {
+        let queryStatement = 
+            `UPDATE listColumnsType SET Name = "${sqlString(this.name)}" ` +
+            `WHERE ListColumnTypeID = ${this.id}`;
+
+        try {
+            const result = await connection.query(queryStatement);
+
+            if (result.affectedRows === 0) {
+                throw new SqlError("Invalid List Column ID");
+            }
+        } catch (error) {
+            throw new SqlError(`Failed to update item: ${error.message}`);
         }
     }
 
