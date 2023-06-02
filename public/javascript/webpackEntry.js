@@ -3,3 +3,4 @@ import "./runtimeFlash/serverFlashes";
 import "./paginations/setPaginationsHRef";
 import "./users/openUpdateModal.1.0.0";
 import "./users/deleteUserModal.1.0.0";
+import "./contact/maxCharacter.1.0.0";
