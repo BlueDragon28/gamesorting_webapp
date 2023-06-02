@@ -2,11 +2,14 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 import { hideError, setError } from "./userModalErrorCard.1.0.0.js";
 
 (function openAskForUserDeletionModal() {
-    const domModal = document.querySelector("#ask-for-user-deletion");
-    const deleteUserButton = document.querySelector("#button-delete-user");
-    const openModalButton = document.querySelector("#open-delete-user-modal-button");
+    const domModal = document.getElementById("ask-for-user-deletion");
+    const deleteUserButton = document.getElementById("button-delete-user");
+    const openModalButton = document.getElementById("open-delete-user-modal-button");
+    const currentPasswordInput = document.getElementById("delete-current-password");
 
-    const currentPasswordInput = document.querySelector("#delete-current-password");
+    if (!domModal || !deleteUserButton || !openModalButton || !currentPasswordInput) {
+        return;
+    }
 
     let modal = new bootstrap.Modal(domModal);
 
