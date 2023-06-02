@@ -1,6 +1,18 @@
 import postHelper from "./postHelper.1.0.0.js";
 
 (function() {
+    try {
+        user;
+    } catch (err) {
+        return;
+    }
+    if (!user || !document.getElementById("delete-user-modal") ||
+        !document.getElementById("delete-user-password") ||
+        !document.getElementById("delete-user-button")) {
+
+        return;
+    }
+
     postHelper({
         modalID: "delete-user-modal",
         postButtonID: "delete-user-modal-button",
