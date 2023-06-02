@@ -13,5 +13,6 @@ import "./customColumns/customColumnsList";
 import "./customColumns/updateCustomColumns";
 
 // CSS
+import "../styles/index.css";
 import "../styles/card.css";
 import "../styles/toolButton.css";
