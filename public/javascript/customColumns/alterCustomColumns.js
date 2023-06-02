@@ -66,6 +66,13 @@ function submitData() {
         return setError("This name is already used");
     }
 
+    if (currentCustomData.id == "-1") {
+        currentCustomData.name = inputValue;
+        nameDomElement.innerText = inputValue;
+        bootstrapModel.hide();
+        return;
+    }
+
     newName = inputValue;
 
     const xhrRequest = new XMLHttpRequest();
