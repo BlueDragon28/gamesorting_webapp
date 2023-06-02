@@ -1,6 +1,20 @@
 import postHelper from "../../admin/postHelper.1.0.0.js";
 
 (function() {
+    try {
+        list;
+    } catch (err) {
+        return;
+    }
+
+    if (!list || !document.getElementById("deleteListModal") ||
+        !document.getElementById("deleteListButton") ||
+        !document.getElementById("deleteListUserPassword") ||
+        !document.getElementById("open-delete-list-modal-button")) {
+
+        return;
+    }
+
     postHelper({
         modalID: "deleteListModal",
         postButtonID: "deleteListButton",
