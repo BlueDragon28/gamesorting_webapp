@@ -16,3 +16,4 @@ import "./customColumns/updateCustomColumns";
 import "../styles/index.css";
 import "../styles/card.css";
 import "../styles/toolButton.css";
+import "../styles/contactLink.css";
