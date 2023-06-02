@@ -1,6 +1,20 @@
 import postHelper from "../admin/postHelper.1.0.0.js";
 
 (function() {
+    try {
+        collection;
+    } catch (err) {
+        return;
+    }
+
+    if (!collection || !document.getElementById("deleteCollectionModal") ||
+        !document.getElementById("deleteCollectionButton") ||
+        !document.getElementById("deleteCollectionUserPassword") ||
+        !document.getElementById("open-delete-collection-modal-button")) {
+
+        return;
+    }
+
     postHelper({
         modalID: "deleteCollectionModal",
         postButtonID: "deleteCollectionButton",

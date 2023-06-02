@@ -6,3 +6,4 @@ import "./users/deleteUserModal.1.0.0";
 import "./contact/maxCharacter.1.0.0";
 import "./admin/userBypassRestriction.1.0.0";
 import "./admin/deleteUser.1.0.0";
+import "./collections/deleteCollection.1.0.0";
