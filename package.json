@@ -18,6 +18,7 @@
   "author": "Erwan Saclier de la Bâtie (BlueDragon28)",
   "license": "MIT",
   "dependencies": {
+    "@bluedragon28/node-reload": "^0.1.1",
     "aes-js": "^3.1.2",
     "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.1",
@@ -33,11 +34,12 @@
     "nodemailer": "^6.9.1",
     "redis": "^4.6.5",
     "sanitize-html": "^2.10.0",
-    "uuid": "^9.0.0",
-    "@bluedragon28/node-reload": "^0.1.1"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
-    "jest": "^29.4.3"
+    "jest": "^29.4.3",
+    "webpack": "^5.85.0",
+    "webpack-cli": "^5.1.1"
   }
 }
