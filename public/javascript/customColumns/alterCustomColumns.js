@@ -1,12 +1,11 @@
 import { setError, hideError } from "../users/userModalErrorCard.1.0.0.js";
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 
-const domModal = document.getElementById("update-custom-column-info-modal");
-const customColumnName = document.getElementById("modal-custom-column-title-name");
-const inputName = document.getElementById("modal-custom-column-name-input");
-const submitButton = document.getElementById("update-custom-column-submit-button");
-
-const bootstrapModel = new bootstrap.Modal(domModal);
+let domModal;
+let customColumnName;
+let inputName;
+let submitButton;
+let bootstrapModel;
 
 let currentCustomData;
 let originalColumns;
@@ -92,4 +91,24 @@ function submitData() {
     bootstrapModel.hide();
 }
 
-submitButton.addEventListener("click", submitData);
+(function() {
+    try {
+        list;
+        listCustomColumns;
+    } catch (err) {
+        return;
+    }
+
+    domModal = document.getElementById("update-custom-column-info-modal");
+    customColumnName = document.getElementById("modal-custom-column-title-name");
+    inputName = document.getElementById("modal-custom-column-name-input");
+    submitButton = document.getElementById("update-custom-column-submit-button");
+    bootstrapModel = new bootstrap.Modal(domModal);
+
+    if (!domModal || !customColumnName || !inputName || !submitButton) {
+        return;
+    }
+
+    submitButton.addEventListener("click", submitData);
+})();
+

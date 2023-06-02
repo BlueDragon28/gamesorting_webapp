@@ -9,3 +9,5 @@ import "./admin/deleteUser.1.0.0";
 import "./collections/deleteCollection.1.0.0";
 import "./collections/lists/deleteList.1.0.0";
 import "./collections/lists/items/deleteItem";
+import "./customColumns/customColumnsList";
+import "./customColumns/updateCustomColumns";
