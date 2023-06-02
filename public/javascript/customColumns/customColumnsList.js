@@ -1,4 +1,5 @@
 import { openDialog } from "./alterCustomColumns";
+import { openDeleteModal } from "./deleteColumns.js";
 
 let count = 0;
 let newColumnsList = [];
@@ -196,10 +197,9 @@ let newColumnsList = [];
     /*
     Remove a column the user selected
     */
-    async function onColumnDeletion(divContainer, fromList, index) {
+    function onColumnDeletion(divContainer, fromList, index) {
         if (fromList === "original") {
             const originalColumn = listCustomColumns[index];
-            const { openDeleteModal } = await import("./deleteColumns.js");
             openDeleteModal(divContainer, originalColumn);
         } else if (fromList === "new") {
             newColumnsList = newColumnsList.filter(column => column.index !== index);

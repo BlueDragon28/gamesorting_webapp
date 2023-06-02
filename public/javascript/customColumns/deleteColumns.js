@@ -3,10 +3,10 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 // Store the last event handler set
 let deleteColumnButtonEventHandler;
 
-const deleteColumnModal = document.querySelector("#ask-for-delete-current-col");
-const columnNameText = document.querySelector("#modal-col-name-title");
-const deleteColumnButton = document.querySelector("#modal-button-delete-custom-column");
-const bootstrapModal = new bootstrap.Modal(deleteColumnModal);
+let deleteColumnModal;
+let columnNameText;
+let deleteColumnButton;
+let bootstrapModal;
 
 export function openDeleteModal(divContainer, customColumn) {
     columnNameText.innerText = customColumn.name;
@@ -51,3 +51,15 @@ export function openDeleteModal(divContainer, customColumn) {
 
     bootstrapModal.show();
 }
+
+(function() {
+    deleteColumnModal = document.getElementById("ask-for-delete-current-col");
+    columnNameText = document.getElementById("modal-col-name-title");
+    deleteColumnButton = document.getElementById("modal-button-delete-custom-column");
+
+    if (!deleteColumnModal || !columnNameText || !deleteColumnButton) {
+        return;
+    }
+
+    bootstrapModal = new bootstrap.Modal(deleteColumnModal);
+})();
