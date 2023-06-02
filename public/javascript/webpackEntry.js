@@ -13,9 +13,12 @@ import "./customColumns/customColumnsList";
 import "./customColumns/updateCustomColumns";
 
 // CSS
+import "../styles/starability-basic.min.css";
 import "../styles/index.css";
 import "../styles/card.css";
 import "../styles/toolButton.css";
 import "../styles/contactLink.css";
 import "../styles/admin/activities.css";
 import "../styles/admin/adminIndex.css";
+import "../styles/interactionButtons/interactionButtons.css";
+import "../styles/text.css";
