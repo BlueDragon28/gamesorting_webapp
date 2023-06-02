@@ -42,11 +42,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="card text-bg-danger mb-3 d-none modal-error-card">
-                    <div class="card-body">
-                        <span class="modal-error-text">Some Text!</span>
-                    </div>
-                </div>
+                <%- include("../partials/modalErrorCard.ejs") %>
                 <div class="mb-3">
                     <% if (user.bypassRestriction) { %>
                         <p>Stop user from bypassing restrictions!</p>

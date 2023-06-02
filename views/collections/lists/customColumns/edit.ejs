@@ -107,9 +107,7 @@ function exportListCustomColumns() {
                 <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="card text-bg-danger mb-3 d-none modal-error-card">
-                    <span class="modal-error-text">Some Text!</span>
-                </div>
+                <%- include("../../../partials/modalErrorCard.ejs") %>
                 <div>
                     <label class="form-label" for="modal-custom-column-name">Name</label>
                     <input class="form-control" type="text" id="modal-custom-column-name-input">
