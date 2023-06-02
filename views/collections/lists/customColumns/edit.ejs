@@ -36,6 +36,8 @@ function exportListCustomColumns() {
     const list = <%- JSON.stringify(exportList(), jsonReplacer) %>;
     const listCustomColumns = <%- `[ ${exportListCustomColumns()} ]` %>
         .map(function(column, index) { return { ...column, index, fromList: "original" } });
+    let count = 0;
+    let newColumnsList = [];
 </script>
 
 <div class="row">

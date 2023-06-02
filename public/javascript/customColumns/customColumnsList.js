@@ -1,13 +1,12 @@
 import { openDialog } from "./alterCustomColumns";
 import { openDeleteModal } from "./deleteColumns.js";
 
-let count = 0;
-let newColumnsList = [];
-
 (function() {
     try {
         list;
         listCustomColumns;
+        count;
+        newColumnsList;
     } catch (err) {
         return;
     }
@@ -22,7 +21,7 @@ let newColumnsList = [];
 
     if (!columnsListDiv || !customColumnForm || !columnNameInput ||
         !columnTypeInput || !columnNumberBlock || !columnNumberMinInput ||
-        !columnNumberMaxInput) {
+        !columnNumberMaxInput || count !== 0 || !Array.isArray(newColumnsList)) {
 
         return;
     }
