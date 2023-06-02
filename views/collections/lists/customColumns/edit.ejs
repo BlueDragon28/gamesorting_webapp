@@ -30,8 +30,6 @@ function exportListCustomColumns() {
 }
 %>
 
-<link rel="stylesheet" href="/styles/interactionButtons/interactionButtons.1.0.0.css">
-
 <script>
     const list = <%- JSON.stringify(exportList(), jsonReplacer) %>;
     const listCustomColumns = <%- `[ ${exportListCustomColumns()} ]` %>
