@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --runInBand",
     "dev": "node-reload -w index.js,models,routes,sql,utils",
-    "prod": "NODE_ENV=production node-reload --autorestart"
+    "prod": "NODE_ENV=production node-reload --autorestart",
+    "webpack-dev": "NODE_ENV=development webpack --config webpack.development.config.js"
   },
   "keywords": [
     "wishlist",
