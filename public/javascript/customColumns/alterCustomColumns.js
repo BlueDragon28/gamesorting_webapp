@@ -1,4 +1,4 @@
-import { setError, hideError } from "../users/userModalErrorCard.1.0.0.js";
+import { setError, hideError } from "../users/userModalErrorCard.js";
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 
 let domModal;

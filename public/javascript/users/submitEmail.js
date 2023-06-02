@@ -1,4 +1,4 @@
-import { setError, hideError } from "./userModalErrorCard.1.0.0.js";
+import { setError, hideError } from "./userModalErrorCard.js";
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 
 const emailContentTextSpan = document.querySelector("#email-content-text");

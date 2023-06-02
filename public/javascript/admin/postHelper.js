@@ -1,5 +1,5 @@
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
-import { hideError, setError } from "../users/userModalErrorCard.1.0.0.js";
+import { hideError, setError } from "../users/userModalErrorCard.js";
 
 function postHelper(params) {
     const modalID = params.modalID;

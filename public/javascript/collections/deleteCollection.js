@@ -1,4 +1,4 @@
-import postHelper from "../admin/postHelper.1.0.0.js";
+import postHelper from "../admin/postHelper.js";
 
 (function() {
     try {

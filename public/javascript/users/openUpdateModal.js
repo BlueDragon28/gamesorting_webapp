@@ -1,6 +1,6 @@
-import submitEmail from "./submitEmail.1.0.0.js";
-import submitPassword from "./submitPassword.1.0.0.js";
-import { hideError, setError } from "./userModalErrorCard.1.0.0.js";
+import submitEmail from "./submitEmail.js";
+import submitPassword from "./submitPassword.js";
+import { hideError, setError } from "./userModalErrorCard.js";
 
 (function openUpdateModelOnUserRequest() {
     const modalTitle = document.getElementById("modal-title");
