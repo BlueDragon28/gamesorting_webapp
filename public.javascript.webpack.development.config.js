@@ -1,4 +1,6 @@
 const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
     mode: "development",
@@ -10,5 +12,24 @@ module.exports = {
     resolve: {
         roots: [path.resolve(__dirname, "public")]
     },
-    devtool: false
+    devtool: false,
+    module: {
+        rules: [
+            {
+                test: /.css$/,
+                use: [MiniCssExtractPlugin.loader, "css-loader"]
+            }
+        ]
+    },
+    optimization: {
+        minimizer: [
+            `...`,
+            new CssMinimizerPlugin()
+        ]
+    },
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: "app.1.0.0.css"
+        })
+    ]
 }

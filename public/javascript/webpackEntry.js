@@ -11,3 +11,7 @@ import "./collections/lists/deleteList";
 import "./collections/lists/items/deleteItem";
 import "./customColumns/customColumnsList";
 import "./customColumns/updateCustomColumns";
+
+// CSS
+import "../styles/card.css";
+import "../styles/toolButton.css";
