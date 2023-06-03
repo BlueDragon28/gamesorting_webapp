@@ -19,6 +19,8 @@
     <button class="iconLinkButton" id="open-delete-list-modal-button" data-toggle="tooltip" title="Delete list"><img 
         src="/images/delete.svg" alt="Delete list icon"></button>
 
+    <a class="iconLinkButton" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/sorting-options" id="open-sorting-order-section">Sorting order</a>
+
     <a class="iconLinkButton <%= pagination.reverseOrder === true ? "reversed" : "" %>" data-toggle="tooltip" title="Switch items order"
         href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?reverse=<%= pagination.reverseOrder === true ? "false" : "true" %>"><img 
         src="/images/crescendoOrder.svg" alt="items display order"></a>

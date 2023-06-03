@@ -1,0 +1,33 @@
+<% layout("layouts/boilerplate.ejs") -%> 
+
+<link rel="stylesheet" href="/styles/sorting-styles.css">
+
+<div class="card">
+    <div class="card-body">
+        <h1 class="card-title fs-3" data-toggle="tooltip" title="How to sort the items">Sorting Options</h1>
+
+        <div class="top-button-container">
+            <button class="btn btn-secondary btn-noborder active" type="button" id="no-sorting-button">None</button>
+            <button class="btn btn-secondary btn-noborder" type="button" id="sorting-by-name-button">Name</button>
+            <button class="btn btn-secondary btn-noborder" type="button" id="sorting-by-rating-button">Rating</button>
+        </div>
+
+        <div class="no-order" id="no-order-block">
+            <p class="no-order-text">No ordering selected!</p>
+        </div>
+
+        <div class="ordering-orientation d-none mb-4" id="simple-order-block">
+            <p class="no-order-text">How to order ?</p>
+            <div class="top-button-container">
+                <button class="btn btn-secondary btn-noborder" id="ascending-button-choice">Ascending</button>
+                <button class="btn btn-secondary btn-noborder" id="descending-button-choice">Descending</button>
+            </div>
+        </div>
+
+        <a class="btn btn-secondary" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/">Back</a>
+        <button class="btn btn-success" type="button" id="submit-order-change">Submit</button>
+
+    </div>
+</div>
+
+<script src="/javascript/collections/lists/sorting/sorting-page-edit.js" type="module"></script>

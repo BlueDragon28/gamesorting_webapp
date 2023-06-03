@@ -87,6 +87,25 @@ router.get("/lists/:listID/custom-columns", checkListAuth, wrapAsync(async (req,
 }));
 
 /*
+Options on how to sort the items.
+*/
+router.get("/lists/:listID/sorting-options", checkListAuth, wrapAsync(async (req, res) => {
+    const { listID } = req.params;
+
+    const [foundList] = await existingOrNewConnection(null, async function(connection) {
+        const foundList = await List.findByID(listID, connection);
+
+        if (!foundList.isValid()) {
+            throw new ValueError(404, "Could not find valid list");
+        }
+
+        return [foundList]
+    });
+
+    res.render("collections/lists/sorting/edit", { list: foundList });
+}));
+
+/*
 Post route to add and delete custom columns
 */
 router.post("/lists/:listID/custom-columns", 

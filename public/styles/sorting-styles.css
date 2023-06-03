@@ -1,0 +1,30 @@
+.btn-noborder {
+    margin: 0;
+    flex-grow: 1;
+    border-radius: 0;
+}
+
+.btn-noborder,
+.btn-noborder:hover, 
+.btn-noborder:active {
+    border-right: 1px solid black;
+}
+
+.btn-noborder:last-child {
+    border-right: none;
+}
+
+.top-button-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: none;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.no-order-text {
+    font-size: 1.5rem;
+    margin: 15px 0;
+    text-align: center;
+}
+
