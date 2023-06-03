@@ -54,15 +54,27 @@ class Pagination {
     }
 
     static parseItemsPageNumberMiddleware(req, res, next) {
+        const { listID } = req.params;
+
         let pageNumber = parseInt(req.query.pn);
 
-        if (!pageNumber || pageNumber < 1) {
-            pageNumber = req.session.itemsPageNumber >= 1 ? 
-                req.session.itemsPageNumber : 1;
+        if (pageNumber) {
+            pageNumber = pageNumber >= 1 ? pageNumber : 1;
+        } else if (
+                req.session.itemsPageNumber?.listID === listID &&
+                req.session.itemsPageNumber?.pageNumber !== undefined &&
+                req.session.itemsPageNumber?.pageNumber >= 1) {
+
+            pageNumber = req.session.itemsPageNumber.pageNumber;
+        } else {
+            pageNumber = 1;
         }
 
         req.query.pn = pageNumber;
-        req.session.itemsPageNumber = pageNumber;
+        req.session.itemsPageNumber = {
+            listID,
+            pageNumber
+        }
 
         next();
     }
