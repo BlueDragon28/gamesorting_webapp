@@ -16,12 +16,12 @@
             <p class="no-order-text">No ordering selected!</p>
         </div>
 
-        <div class="ordering-orientation d-none mb-4" id="simple-order-block">
-            <p class="no-order-text">How to order ?</p>
-            <div class="top-button-container">
-                <button class="btn btn-secondary btn-noborder" id="ascending-button-choice">Ascending</button>
-                <button class="btn btn-secondary btn-noborder" id="descending-button-choice">Descending</button>
-            </div>
+        <div class="d-none" id="by-name-ordering-block">
+            <p class="no-order-text">Ordering by name!</p>
+        </div>
+
+        <div class="d-none" id="by-rating-ordering-block">
+            <p class="no-order-text">Ordering by rating!</p>
         </div>
 
         <a class="btn btn-secondary" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/">Back</a>

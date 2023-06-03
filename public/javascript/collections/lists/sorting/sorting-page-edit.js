@@ -1,34 +1,33 @@
 let currentSelection = "no-order";
-let orderDirection = "no-direction";
 
 let noSortingButton;
 let sortingByNameButton;
 let sortingByRatingButton;
 
 let noOrderBlock;
-let simpleOrderBlock;
+let byNameBlock;
+let byRatingBlock
 
 let ascendingButton;
 let descendingButton;
-
-function resetChoice() {
-    ascendingButton.classList.remove("active");
-    descendingButton.classList.remove("active");
-    orderDirection = "no-direction";
-}
 
 function activeBlock(blockType) {
     if (blockType === "no-order") {
         noOrderBlock.classList.remove("d-none");
     } else {
         noOrderBlock.classList.add("d-none");
-        console.log("oups");
     }
 
-    if (blockType === "simple-order-block") {
-        simpleOrderBlock.classList.remove("d-none");
+    if (blockType === "by-name") {
+        byNameBlock.classList.remove("d-none");
     } else {
-        simpleOrderBlock.classList.add("d-none");
+        byNameBlock.classList.add("d-none");
+    }
+
+    if (blockType === "by-rating") {
+        byRatingBlock.classList.remove("d-none");
+    } else {
+        byRatingBlock.classList.add("d-none");
     }
 }
 
@@ -59,7 +58,6 @@ function selectNoOrder() {
 
     activeBlock("no-order");
     activeButton("no-order");
-    resetChoice();
 
     currentSelection = "no-order";
 }
@@ -69,9 +67,8 @@ function selectOrderByName() {
         return;
     }
 
-    activeBlock("simple-order-block");
+    activeBlock("by-name");
     activeButton("sorting-name");
-    resetChoice();
 
     currentSelection = "order-by-name";
 }
@@ -81,21 +78,10 @@ function selectOrderByRating() {
         return;
     }
 
-    activeBlock("simple-order-block");
+    activeBlock("by-rating");
     activeButton("sorting-rating");
-    resetChoice();
 
     currentSelection = "order-by-rating";
-}
-
-function selectAcendingOrder(order) {
-    if (order === "ascending-order") {
-        ascendingButton.classList.add("active");
-        descendingButton.classList.remove("active");
-    } else {
-        ascendingButton.classList.remove("active");
-        descendingButton.classList.add("active");
-    }
 }
 
 (function() {
@@ -104,20 +90,15 @@ function selectAcendingOrder(order) {
     sortingByRatingButton = document.getElementById("sorting-by-rating-button");
 
     noOrderBlock = document.getElementById("no-order-block");
-    simpleOrderBlock = document.getElementById("simple-order-block");
-
-    ascendingButton = document.getElementById("ascending-button-choice");
-    descendingButton = document.getElementById("descending-button-choice");
+    byNameBlock = document.getElementById("by-name-ordering-block");
+    byRatingBlock = document.getElementById("by-rating-ordering-block");
 
     if (!noSortingButton || !sortingByNameButton || !sortingByRatingButton ||
-        !noOrderBlock || !simpleOrderBlock || !ascendingButton || !descendingButton) {
+        !noOrderBlock || !byNameBlock || !byRatingBlock) {
         return;
     }
 
     noSortingButton.addEventListener("click", selectNoOrder);
     sortingByNameButton.addEventListener("click", selectOrderByName);
     sortingByRatingButton.addEventListener("click", selectOrderByRating);
-
-    ascendingButton.addEventListener("click", () => selectAcendingOrder("ascending-order"));
-    descendingButton.addEventListener("click", () => selectAcendingOrder("descending-order"));
 })();
