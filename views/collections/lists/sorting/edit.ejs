@@ -30,4 +30,8 @@
     </div>
 </div>
 
+<script>
+    const list = <%- JSON.stringify(list, (key, value) => typeof value === "bigint" ? value.toString() : value) %>;
+    const listSorting = <%- JSON.stringify(listSorting, (key, value) => typeof value === "bigint" ? value.toString() : value) %>;
+</script>
 <script src="/javascript/collections/lists/sorting/sorting-page-edit.js" type="module"></script>
