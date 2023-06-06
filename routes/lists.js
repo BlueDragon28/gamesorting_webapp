@@ -20,6 +20,7 @@ const { trimColumns, checkForDuplicate, checkForDuplicateWithCurrentColumns, ret
 const bigint = require("../utils/numbers/bigint");
 const Pagination = require("../utils/sql/pagination");
 const { isListMaxLimitMiddleware, isCustomColumnsLimitMiddleware } = require("../utils/validation/limitNumberElements");
+const { ListSorting } = require("../models/listSorting");
 
 const router = express.Router({ mergeParams: true });
 
@@ -92,17 +93,72 @@ Options on how to sort the items.
 router.get("/lists/:listID/sorting-options", checkListAuth, wrapAsync(async (req, res) => {
     const { listID } = req.params;
 
-    const [foundList] = await existingOrNewConnection(null, async function(connection) {
+    const [foundList, foundListSorting] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
 
         if (!foundList.isValid()) {
             throw new ValueError(404, "Could not find valid list");
         }
 
-        return [foundList]
+        const foundListSorting = await ListSorting.findByList(foundList, connection);
+
+        if (foundListSorting !== null && 
+            (!foundListSorting instanceof ListSorting || !foundListSorting.isValid())) {
+            throw new ValueError(500, "Invalid list sorting");
+        }
+
+        return [foundList, foundListSorting];
     });
 
-    res.render("collections/lists/sorting/edit", { list: foundList });
+    res.render("collections/lists/sorting/edit", { 
+        list: foundList,
+        listSorting: foundListSorting
+    });
+}));
+
+router.post("/lists/:listID/sorting-options", 
+    checkListAuth, 
+    wrapAsync(async (req, res, next) => 
+{
+    const { listID } = req.params;
+    const { type: sortingType, setTo: sortingSetTo } = req.body;
+
+    if (sortingType !== "sorting") {
+        return next({ statusCode: 400, message: "Invalid type" });
+    }
+
+    const [success, error] = await existingOrNewConnection(null, async function(connection) {
+        try {
+            const foundList = await List.findByID(listID, connection);
+
+            if (!foundList instanceof List || !foundList.isValid()) {
+                return [false, {statusCode: 404, message: "Could not find this list"}];
+            }
+
+            const newListSorting = new ListSorting(sortingSetTo, foundList);
+
+            if (!newListSorting.isValid()) {
+                return [false, {statusCode: 400, message: "Invalid list sorting"}];
+            }
+
+            await newListSorting.save(connection);
+        } catch (error) {
+            console.error(error);
+            return [false, {statusCode: 500, message: "Oups! Something went wrong!"}];
+        }
+
+        return [true, null];
+    });
+
+    if (!success) {
+        return next(error);
+    }
+
+    const successMessage = "Updated sorting options sucessfully";
+    res.send({
+        type: "SUCCESS",
+        message: successMessage
+    })
 }));
 
 /*
