@@ -1,7 +1,5 @@
 <% layout("layouts/boilerplate.ejs") -%> 
 
-<link rel="stylesheet" href="/styles/sorting-styles.css">
-
 <div class="card">
     <div class="card-body">
         <h1 class="card-title fs-3" data-toggle="tooltip" title="How to sort the items">Sorting Options</h1>
@@ -34,4 +32,3 @@
     const list = <%- JSON.stringify(list, (key, value) => typeof value === "bigint" ? value.toString() : value) %>;
     const listSorting = <%- JSON.stringify(listSorting, (key, value) => typeof value === "bigint" ? value.toString() : value) %>;
 </script>
-<script src="/javascript/collections/lists/sorting/sorting-page-edit.js" type="module"></script>

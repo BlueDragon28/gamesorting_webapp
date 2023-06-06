@@ -11,6 +11,7 @@ import "./collections/lists/deleteList";
 import "./collections/lists/items/deleteItem";
 import "./customColumns/customColumnsList";
 import "./customColumns/updateCustomColumns";
+import "./collections/lists/sorting/sorting-page-edit.js";
 
 // CSS
 import "../styles/starability-basic.min.css";
@@ -22,3 +23,4 @@ import "../styles/admin/activities.css";
 import "../styles/admin/adminIndex.css";
 import "../styles/interactionButtons/interactionButtons.css";
 import "../styles/text.css";
+import "../styles/sorting-styles.css";
