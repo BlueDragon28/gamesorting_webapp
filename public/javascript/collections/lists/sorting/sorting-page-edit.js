@@ -111,7 +111,7 @@ function submitChange() {
 }
 
 function restoreSelection() {
-    const storedSelection = listSorting.type;
+    const storedSelection = listSorting?.type;
 
     if (storedSelection === "no-order") {
         return;
