@@ -1,5 +1,6 @@
 const bigint = require("../utils/numbers/bigint");
 const { List } = require("./lists");
+const { ListSorting, isValidListSorting } = require("./listSorting");
 const { CustomRowsItems } = require("./customUserData");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
@@ -223,6 +224,8 @@ class Item {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const numberOfItems = await Item.getCount(list, connection);
+            
+            const foundListSorting = await ListSorting.findByList(list, connection);
 
             // If page number if to high, set it to 1
             const validPageNumber = await Item.isValidPageNumber(list, pageNumber, connection) ?
@@ -234,7 +237,17 @@ class Item {
             }
 
             let queryStatement = 
-                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} ORDER BY ItemID ${reverse === true ? "DESC" : "ASC"} `;
+                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} ORDER BY `;
+
+            const reverseSqlValue = reverse === true ? "DESC" : "ASC";
+
+            if (isValidListSorting(foundListSorting) && foundListSorting.type === "order-by-name") {
+                queryStatement += `Name ${reverseSqlValue} `;
+            } else if (isValidListSorting(foundListSorting) && foundListSorting.type === "order-by-rating") {
+                queryStatement += `Rating ${reverseSqlValue} `;
+            } else {
+                queryStatement += `ItemID ${reverseSqlValue} `;
+            }
 
             if (pageNumber !== 0) {
                 queryStatement += `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(validPageNumber)}`;

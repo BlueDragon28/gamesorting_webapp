@@ -3,6 +3,7 @@ const { List } = require("./lists");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
 
+
 class ListSorting {
     id;
     type;
@@ -194,6 +195,11 @@ class ListSorting {
     }
 }
 
+function isValidListSorting(listSorting) { 
+    return listSorting instanceof ListSorting && listSorting.isValid(); 
+}
+
 module.exports = {
-    ListSorting
+    ListSorting,
+    isValidListSorting
 };
