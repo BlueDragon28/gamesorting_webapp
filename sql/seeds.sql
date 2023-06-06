@@ -69,3 +69,4 @@ VALUES
 
 DELETE FROM usersLostPassword;
 DELETE FROM userActivity;
+DELETE FROM listSorting;

@@ -1,5 +1,6 @@
 const { CustomRowsItems } = require("../../models/customUserData");
 const { Item } = require("../../models/items");
+const { ListSorting } = require("../../models/listSorting");
 const { ListColumnType } = require("../../models/listColumnsType");
 const { List } = require("../../models/lists");
 const { Collection } = require("../../models/collections");
@@ -75,6 +76,14 @@ async function deleteListColumnsType(listID, connection) {
     await ListColumnType.deleteFromList(listID, connection);
 }
 
+async function deleteListSorting(list, connection) {
+    if (!list instanceof List || !list.isValid()) {
+        return;
+    }
+
+    await ListSorting.deleteFromList(list, connection);
+}
+
 async function deleteList(listID, connection) {
     if (!bigint.isValid(listID)) {
         return;
@@ -88,6 +97,7 @@ async function deleteList(listID, connection) {
 
     await deleteListColumnsType(foundList.id, connection)
     await deleteItemsFromList(foundList, connection)
+    await deleteListSorting(foundList, connection);
     await List.deleteFromID(foundList.id, connection);
 }
 
@@ -133,6 +143,7 @@ async function deleteUser(userID, connection) {
 module.exports = {
     deleteCustomDatasFromListColumnType,
     deleteCustomDatasFromItemID,
+    deleteListSorting,
     deleteItem,
     deleteList,
     deleteCollection,

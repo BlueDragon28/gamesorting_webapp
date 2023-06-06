@@ -4,6 +4,7 @@ const seeds = require("../../sql/seeds");
 const {
     deleteCustomDatasFromListColumnType,
     deleteCustomDatasFromItemID,
+    deleteListSorting,
     deleteCollection,
     deleteList,
     deleteItem,
@@ -16,6 +17,7 @@ const { Item } = require("../../models/items");
 const { ListColumnType } = require("../../models/listColumnsType");
 const { CustomRowsItems } = require("../../models/customUserData");
 const { existingOrNewConnection } = require("../sql/sql");
+const { ListSorting } = require("../../models/listSorting");
 
 let user;
 let collection;
@@ -137,10 +139,29 @@ test("delete an item", async function() {
     expect(result).toBe(null);
 });
 
+test("delete list sorting", async function() {
+    let [result, error] = await delQuery(() => new ListSorting("no-sorting", list).save());
+    expect(error).toBe(undefined);
+
+    [result, error] = await delQuery(() => ListSorting.findByList(list));
+    expect(error).toBe(undefined);
+    expect(result instanceof ListSorting).toBe(true);
+
+    [result, error] = await delQuery(() => deleteListSorting(list));
+    expect(error).toBe(undefined);
+
+    [result, error] = await delQuery(() => ListSorting.findByList(list));
+    expect(error).toBe(undefined);
+    expect(result).toBe(null);
+})
+
 test("delete list", async function() {
     expect(list.isValid()).toBe(true);
 
-    let [result, error] = await delQuery(() => Item.findFromList(list));
+    let [result, error] = await delQuery(() => new ListSorting("no-sorting", list));
+    expect(error).toBe(undefined);
+
+    [result, error] = await delQuery(() => Item.findFromList(list));
     expect(error).toBe(undefined);
     expect(result[0]?.length).toBe(2);
 
@@ -161,6 +182,10 @@ test("delete list", async function() {
     expect(result?.length).toBe(0);
 
     [result, error] = await delQuery(() => List.findByID(list.id));
+    expect(error).toBe(undefined);
+    expect(result).toBe(null);
+
+    [result, error] = await delQuery(() => ListSorting.findByList(list));
     expect(error).toBe(undefined);
     expect(result).toBe(null);
 });
