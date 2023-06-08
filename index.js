@@ -101,6 +101,10 @@ app.use(checkIfUserAdmin);
 app.use(userActivitiesMiddleware);
 
 app.get("/", (req, res) => {
+    if (req.session?.user?.id) { // Redirect to /collections if user is loggedin
+        res.redirect("/collections");
+    }
+
     res.render("index");
 });
 
