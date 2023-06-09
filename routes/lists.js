@@ -51,6 +51,7 @@ router.get("/lists/:listID",
         checkListAuth, 
         Pagination.parseItemsPageNumberMiddleware, 
         Pagination.saveRestoreReverseItemsOrderMiddleware,
+        Pagination.parseSearchOptions,
         wrapAsync(async (req, res) => {
 
     const { collectionID, listID } = req.params;
@@ -58,7 +59,13 @@ router.get("/lists/:listID",
     const isReverse = req.query.reverse === "true" ? true : false;
 
     const list = await List.findByID(listID);
-    const [items, pagination] = await Item.findFromList(list, pageNumber, isReverse);
+    const [items, pagination] = 
+        await Item.findFromList(
+            list, 
+            pageNumber, 
+            isReverse, 
+            undefined, 
+            req.searchParams);
     
     if (!list) {
         throw new InternalError(`Failed To Query List From List ${listID}`);
