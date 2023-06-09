@@ -96,11 +96,19 @@ class Pagination {
     Parse incoming search options
     */
     static parseSearchOptions(req, res, next) {
+        const { listID } = req.params;
+
+        if (req.session.searchParams) {
+            if (req.session.searchParams?.listID !== listID) {
+                delete req.session.searchParams;
+            }
+        }
+
         const exactMath = req.query.sm;
         const regex = req.query.sr;
         const searchText = req.query.st;
 
-        if (!exactMath?.length || !regex?.length || typeof searchText !== "string") {
+        if (!exactMath?.length || !regex?.length || typeof searchText !== "string" || !listID) {
             return next();
         }
 
@@ -119,7 +127,8 @@ class Pagination {
         const searchData = {
             exactMatch: isRegex ? false : isExactMatch,
             regex: isRegex,
-            text
+            text,
+            listID
         };
 
         req.session.searchParams = searchData;
