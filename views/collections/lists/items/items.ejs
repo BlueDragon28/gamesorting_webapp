@@ -30,7 +30,7 @@
         src="/images/crescendoOrder.svg" alt="items display order"></a>
 </div>
 
-<%- include("../../../partials/itemsSearchBox.ejs") %>
+<%- include("../../../partials/itemsSearchBox.ejs", { searchData: searchParams }) %>
 
 <% for(let item of items) { %>
     <%- include("../../../partials/itemWidget.ejs", {
