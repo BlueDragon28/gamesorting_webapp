@@ -57,7 +57,7 @@ router.get("/lists/:listID",
     const { collectionID, listID } = req.params;
     const pageNumber = req.query.pn;
     const isReverse = req.query.reverse === "true" ? true : false;
-    const searchParams = req.searchParams;
+    const searchParams = req.session.searchParams;
 
     const list = await List.findByID(listID);
     const [items, pagination] = 

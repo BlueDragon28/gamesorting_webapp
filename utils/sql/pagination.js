@@ -106,14 +106,23 @@ class Pagination {
 
         const isExactMatch = exactMath === "true" ? true : false;
         const isRegex = regex === "true" ? true : false;
+        const text = searchText.trim();
+
+        if (!text.length) {
+            if (req.session.searchParams) {
+                delete req.session.searchParams;
+            }
+
+            return next();
+        }
 
         const searchData = {
             exactMatch: isRegex ? false : isExactMatch,
             regex: isRegex,
-            text: searchText.trim()
+            text
         };
 
-        req.searchParams = searchData;
+        req.session.searchParams = searchData;
         next();
     }
 }
