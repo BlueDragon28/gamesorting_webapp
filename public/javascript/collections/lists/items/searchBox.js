@@ -23,7 +23,7 @@ function onSubmitSearch() {
     const searchText= searchInput.value;
 
     const data = {
-        text: searchText,
+        text: searchText.trim(),
         regex,
         exactMatch : regex ? false : exactMatch
     };
