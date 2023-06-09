@@ -6,6 +6,29 @@ const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
 const Pagination = require("../utils/sql/pagination");
 
+function addSearchOptions(searchOptions) {
+    if (!searchOptions || typeof searchOptions.exactMatch !== "boolean" ||
+            typeof searchOptions.regex !== "boolean" ||
+            typeof searchOptions.text !== "string" || !searchOptions.text.length) {
+        
+        return "";
+    }
+
+    let searchStatement;
+
+    const { exactMatch, regex, text } = searchOptions;
+
+    if (exactMatch) {
+        searchStatement = ` AND Name = "${sqlString(text)}"`;
+    } else if (regex) {
+        searchStatement = ` AND Name RLIKE "${sqlString(text)}"`
+    } else {
+        searchStatement = ` AND Name LIKE "%${sqlString(text)}%"`
+    }
+
+    return searchStatement;
+}
+
 class Item {
     id;
     name;
@@ -214,7 +237,7 @@ class Item {
         });
     }
 
-    static async findFromList(list, pageNumber = 0, reverse = false, connection) {
+    static async findFromList(list, pageNumber = 0, reverse = false, connection, searchOptions = null) {
         if (!list || !list instanceof List || !list.isValid() ||
                 typeof pageNumber !== "number" || pageNumber < 0) {
             throw new ValueError(400, "Invalid List");
@@ -237,10 +260,10 @@ class Item {
             }
 
             let queryStatement = 
-                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} ORDER BY `;
+                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} `; 
+            queryStatement += addSearchOptions(searchOptions) + " ORDER BY ";
 
             const reverseSqlValue = reverse === true ? "DESC" : "ASC";
-
             if (isValidListSorting(foundListSorting) && foundListSorting.type === "order-by-name") {
                 queryStatement += `Name ${reverseSqlValue} `;
             } else if (isValidListSorting(foundListSorting) && foundListSorting.type === "order-by-rating") {
