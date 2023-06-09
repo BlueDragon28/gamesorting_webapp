@@ -57,6 +57,7 @@ router.get("/lists/:listID",
     const { collectionID, listID } = req.params;
     const pageNumber = req.query.pn;
     const isReverse = req.query.reverse === "true" ? true : false;
+    const searchParams = req.searchParams;
 
     const list = await List.findByID(listID);
     const [items, pagination] = 
@@ -65,7 +66,7 @@ router.get("/lists/:listID",
             pageNumber, 
             isReverse, 
             undefined, 
-            req.searchParams);
+            searchParams);
     
     if (!list) {
         throw new InternalError(`Failed To Query List From List ${listID}`);
@@ -75,7 +76,7 @@ router.get("/lists/:listID",
         throw new InternalError("Failed To Query Items From List");
     }
 
-    res.render("collections/lists/items/items", { list, items, pagination });
+    res.render("collections/lists/items/items", { list, items, pagination, searchParams });
 }));
 
 /*
