@@ -91,6 +91,28 @@ class Pagination {
         req.query.reverse = req.session.reverseItems === true ? "true" : "false";
         next();
     }
+
+    /*
+    Parse incoming search options
+    */
+    static parseSearchOptions(req, res, next) {
+        const exactMath = req.query.sm;
+        const regex = req.query.sr;
+        const searchText = req.query.st;
+
+        if (!exactMath?.length || !regex?.length || typeof searchText !== "string") {
+            return next();
+        }
+
+        const searchData = {
+            exactMatch: exactMath === "true" ? true : false,
+            regex: regex === "true" ? true : false,
+            text: searchText
+        };
+
+        req.searchParams = searchData;
+        next();
+    }
 }
 
 module.exports = Pagination;
