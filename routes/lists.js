@@ -7,6 +7,7 @@ const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const { listColumnsValidation, validateDeleteColumn, validateUpdateColumn } = require("../utils/validation/listColumnsValidation");
+const { searchOptionsValidation } = require("../utils/validation/searchOptionsValidation");
 const { 
     parseCelebrateError, 
     errorsWithPossibleRedirect,
@@ -51,6 +52,7 @@ router.get("/lists/:listID",
         checkListAuth, 
         Pagination.parseItemsPageNumberMiddleware, 
         Pagination.saveRestoreReverseItemsOrderMiddleware,
+        searchOptionsValidation,
         Pagination.parseSearchOptions,
         wrapAsync(async (req, res) => {
 

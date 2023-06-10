@@ -104,17 +104,15 @@ class Pagination {
             }
         }
 
-        const exactMath = req.query.sm;
-        const regex = req.query.sr;
-        const searchText = req.query.st;
+        const isExactMatch = req.query.sm;
+        const isRegex = req.query.sr;
+        const text = req.query.st;
 
-        if (!exactMath?.length || !regex?.length || typeof searchText !== "string" || !listID) {
+        if (typeof isExactMatch !== "boolean" || typeof isRegex !== "boolean" || 
+                    typeof text !== "string" || !listID) {
+
             return next();
         }
-
-        const isExactMatch = exactMath === "true" ? true : false;
-        const isRegex = regex === "true" ? true : false;
-        const text = searchText.trim();
 
         if (!text.length) {
             if (req.session.searchParams) {
