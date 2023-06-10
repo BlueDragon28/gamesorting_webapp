@@ -13,7 +13,10 @@ function handleRegexChange(event) {
 function onCancelSearch() {
     const locationUrl = new URL(window.location).toString();
     const newUrl = 
-        locationUrl.split(/[?#]/)[0];
+        new URL(locationUrl.split(/[?#]/)[0]);
+    newUrl.searchParams.append("sm", "false");
+    newUrl.searchParams.append("sr", "false");
+    newUrl.searchParams.append("st", "");
     window.location = newUrl;
 }
 
