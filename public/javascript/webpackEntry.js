@@ -24,3 +24,4 @@ import "../styles/admin/adminIndex.css";
 import "../styles/interactionButtons/interactionButtons.css";
 import "../styles/text.css";
 import "../styles/sorting-styles.css";
+import "../styles/searchBox.css";
