@@ -4,6 +4,7 @@ let regexCheckbox;
 let searchInput;
 let cancelButton;
 let searchButton;
+let openSearchButton;
 
 function handleRegexChange(event) {
     const isEnabled = event.target.checked;
@@ -42,6 +43,10 @@ function submitData(data) {
     window.location = url.toString();
 }
 
+function toggleSearchCard() {
+    searchBlock.classList.toggle("d-none");
+}
+
 (function() {
     searchBlock = document.getElementById("search-items-block");
     exactMathCheckbox = document.getElementById("search-exact-match");
@@ -49,13 +54,16 @@ function submitData(data) {
     searchInput = document.getElementById("search-text-input");
     cancelButton = document.getElementById("cancel-search-button");
     searchButton = document.getElementById("submit-search-button");
+    openSearchButton = document.getElementById("open-search-card-button");
 
     if (!searchBlock || !exactMathCheckbox || !regexCheckbox ||
-        !searchInput || !cancelButton || !searchButton) {
+        !searchInput || !cancelButton || !searchButton ||
+        !openSearchButton) {
         return;
     }
 
     regexCheckbox.addEventListener("change", handleRegexChange);
     cancelButton.addEventListener("click", onCancelSearch);
     searchButton.addEventListener("click", onSubmitSearch);
+    openSearchButton.addEventListener("click", toggleSearchCard);
 })();

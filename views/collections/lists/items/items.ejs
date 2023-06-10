@@ -23,7 +23,7 @@
         href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/sorting-options"><img
         src="/images/sorting.svg" alt="Sorting list icon"></a>
 
-    <button type="button">Search</button>
+    <button type="button" id="open-search-card-button">Search</button>
 
     <a class="iconLinkButton <%= pagination.reverseOrder === true ? "reversed" : "" %>" data-toggle="tooltip" title="Switch items order"
         href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>?reverse=<%= pagination.reverseOrder === true ? "false" : "true" %>"><img 
