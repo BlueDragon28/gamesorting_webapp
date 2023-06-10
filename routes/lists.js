@@ -59,14 +59,17 @@ router.get("/lists/:listID",
     const isReverse = req.query.reverse === "true" ? true : false;
     const searchParams = req.session.searchParams;
 
-    const list = await List.findByID(listID);
-    const [items, pagination] = 
-        await Item.findFromList(
-            list, 
-            pageNumber, 
-            isReverse, 
-            undefined, 
-            searchParams);
+    const [list, items, pagination] = await existingOrNewConnection(null, async function(connection) {
+        const list = await List.findByID(listID, connection);
+        const [items, pagination] = 
+            await Item.findFromList(
+                list, 
+                pageNumber, 
+                isReverse, 
+                connection, 
+                searchParams);
+        return [list, items, pagination];
+    });
     
     if (!list) {
         throw new InternalError(`Failed To Query List From List ${listID}`);
