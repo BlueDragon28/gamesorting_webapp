@@ -246,7 +246,7 @@ class Item {
         if (reverse !== true && reverse !== false) throw new ValueError(400, "Invalid reverse value!");
 
         return await existingOrNewConnection(connection, async function(connection) {
-            const numberOfItems = await Item.getCount(list, connection);
+            const numberOfItems = await Item.getCount(list, connection, searchOptions);
             
             const foundListSorting = await ListSorting.findByList(list, connection);
 
@@ -336,7 +336,7 @@ class Item {
         });
     }
 
-    static async getCount(list, connection) {
+    static async getCount(list, connection, searchOptions = null) {
         if (!list.isValid()) {
             throw new ValueError(400, "Invalid list");
         }
@@ -344,7 +344,7 @@ class Item {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement =
                 "SELECT COUNT(*) AS count FROM items " +
-                `WHERE ListID = ${list.id}`;
+                `WHERE ListID = ${list.id}` + addSearchOptions(searchOptions);
             
             try {
                 const queryResult = (await connection.query(queryStatement))[0];
