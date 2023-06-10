@@ -44,7 +44,7 @@ function submitData(data) {
 }
 
 function toggleSearchCard() {
-    searchBlock.classList.toggle("d-none");
+    searchBlock.classList.toggle("hide");
 }
 
 (function() {

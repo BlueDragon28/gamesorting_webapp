@@ -1,0 +1,13 @@
+.search-card-transition {
+    max-height: 280px;
+    overflow: hidden;
+    transition: max-height 500ms ease-in-out, border 500ms ease-in-out,
+        margin 600ms ease-in-out, padding 600ms ease-in-out;
+}
+
+.search-card-transition.hide {
+    max-height: 0;
+    border: none;
+    margin: 0 !important;
+    padding: 0 !important;
+}
