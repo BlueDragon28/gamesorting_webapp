@@ -266,5 +266,33 @@ describe("collection dabase manipulation", function() {
         expect(items[1].numberOfPages).toBe(2);
         expect(items[1].currentPage).toBe(2);
     });
+
+    it("check search system", async function() {
+        let searchObject = {
+            exactMatch: true,
+            regex: false,
+            text: "item_1"
+        };
+
+        let [result, error] = await itemQuery(() => 
+            Item.findFromList(list, 1, false, null, searchObject));
+
+        expect(error).toBe(undefined);
+        expect(result[0].length).toBe(1);
+
+        searchObject.exactMatch = false;
+        [result, error] = await itemQuery(() =>
+            Item.findFromList(list, 1, false, null, searchObject));
+        expect(error).toBe(undefined);
+        expect(result[0].length).toBe(11);
+
+        searchObject.regex = true;
+        searchObject.text = "^item_[0-1]+$";
+        [result, error] = await itemQuery(() =>
+            Item.findFromList(list, 1, false, null, searchObject));
+        
+        expect(error).toBe(undefined);
+        expect(result[0].length).toBe(4);
+    });
 });
 
