@@ -6,6 +6,8 @@ let cancelButton;
 let searchButton;
 let openSearchButton;
 
+const searchID = "Ave Maria, gratia plena";
+
 function handleRegexChange(event) {
     const isEnabled = event.target.checked;
     exactMathCheckbox.disabled = isEnabled;
@@ -18,6 +20,7 @@ function onCancelSearch() {
     newUrl.searchParams.append("sm", "false");
     newUrl.searchParams.append("sr", "false");
     newUrl.searchParams.append("st", "");
+    newUrl.searchParams.append("id", searchID);
     window.location = newUrl;
 }
 
@@ -27,6 +30,7 @@ function onSubmitSearch() {
     const searchText= searchInput.value;
 
     const data = {
+        id: searchID,
         text: searchText.trim(),
         regex,
         exactMatch : regex ? false : exactMatch
@@ -40,6 +44,7 @@ function submitData(data) {
     url.searchParams.set("sm", data.exactMatch ? "true" : "false");
     url.searchParams.set("sr", data.regex ? "true" : "false");
     url.searchParams.set("st", data.text);
+    url.searchParams.set("id", data.id);
     window.location = url.toString();
 }
 
