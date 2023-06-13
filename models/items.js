@@ -29,6 +29,21 @@ function addSearchOptions(searchOptions) {
     return searchStatement;
 }
 
+function applyListSorting(listSorting) {
+    let queryStatement = "";
+    const reverseSqlValue = listSorting.reverseOrder === true ? "DESC" : "ASC";
+
+    if (isValidListSorting(listSorting) && listSorting.type === "order-by-name") {
+        queryStatement += `Name ${reverseSqlValue} `;
+    } else if (isValidListSorting(listSorting) && listSorting.type === "order-by-rating") {
+        queryStatement += `Rating ${reverseSqlValue} `;
+    } else {
+        queryStatement += `ItemID ${reverseSqlValue} `;
+    }
+
+    return queryStatement;
+}
+
 class Item {
     id;
     name;
@@ -260,17 +275,10 @@ class Item {
             }
 
             let queryStatement = 
-                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} `; 
-            queryStatement += addSearchOptions(searchOptions) + " ORDER BY ";
-
-            const reverseSqlValue = foundListSorting.reverseOrder === true ? "DESC" : "ASC";
-            if (isValidListSorting(foundListSorting) && foundListSorting.type === "order-by-name") {
-                queryStatement += `Name ${reverseSqlValue} `;
-            } else if (isValidListSorting(foundListSorting) && foundListSorting.type === "order-by-rating") {
-                queryStatement += `Rating ${reverseSqlValue} `;
-            } else {
-                queryStatement += `ItemID ${reverseSqlValue} `;
-            }
+                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} ` + 
+                addSearchOptions(searchOptions) + 
+                " ORDER BY " +
+                applyListSorting(foundListSorting);
 
             if (pageNumber !== 0) {
                 queryStatement += `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(validPageNumber)}`;
