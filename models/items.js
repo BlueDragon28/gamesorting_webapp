@@ -237,18 +237,18 @@ class Item {
         });
     }
 
-    static async findFromList(list, pageNumber = 0, reverse = false, connection, searchOptions = null) {
+    static async findFromList(list, pageNumber = 0, listSorting = null, connection, searchOptions = null) {
         if (!list || !list instanceof List || !list.isValid() ||
                 typeof pageNumber !== "number" || pageNumber < 0) {
             throw new ValueError(400, "Invalid List");
         }
 
-        if (reverse !== true && reverse !== false) throw new ValueError(400, "Invalid reverse value!");
-
         return await existingOrNewConnection(connection, async function(connection) {
             const numberOfItems = await Item.getCount(list, connection, searchOptions);
             
-            const foundListSorting = await ListSorting.findByList(list, connection);
+            const foundListSorting = listSorting instanceof ListSorting ?
+                listSorting :
+                await ListSorting.findByList(list, connection);
 
             // If page number if to high, set it to 1
             const validPageNumber = await Item.isValidPageNumber(list, pageNumber, connection) ?
