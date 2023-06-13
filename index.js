@@ -102,7 +102,7 @@ app.use(userActivitiesMiddleware);
 
 app.get("/", (req, res) => {
     if (req.session?.user?.id && process.env.NODE_ENV === "production") { // Redirect to /collections if user is loggedin
-        res.redirect("/collections");
+        return res.redirect("/collections");
     }
 
     res.render("index");
