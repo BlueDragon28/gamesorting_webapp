@@ -31,7 +31,8 @@ function addSearchOptions(searchOptions) {
 
 function applyListSorting(listSorting) {
     let queryStatement = "";
-    const reverseSqlValue = listSorting.reverseOrder === true ? "DESC" : "ASC";
+    const reverseSqlValue = isValidListSorting(listSorting) ?
+        (listSorting.reverseOrder === true ? "DESC" : "ASC") :"ASC";
 
     if (isValidListSorting(listSorting) && listSorting.type === "order-by-name") {
         queryStatement += `Name ${reverseSqlValue} `;
@@ -269,7 +270,8 @@ class Item {
             const validPageNumber = await Item.isValidPageNumber(list, pageNumber, connection) ?
                 pageNumber : 1;
 
-            const pagination = new Pagination(validPageNumber, numberOfItems, foundListSorting.reverseOrder);
+            const pagination = new Pagination(validPageNumber, numberOfItems, 
+                foundListSorting instanceof ListSorting ? foundListSorting.reverseOrder : false);
             if (!pagination.isValid) {
                 throw new ValueError(400, "Invalid page number");
             }
