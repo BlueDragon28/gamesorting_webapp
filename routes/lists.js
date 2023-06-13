@@ -63,6 +63,17 @@ router.get("/lists/:listID",
 
     const [list, items, pagination] = await existingOrNewConnection(null, async function(connection) {
         const list = await List.findByID(listID, connection);
+
+        if (req.query.reverse) {
+            let foundListSorting = await ListSorting.findByList(list, connection);
+            if (!foundListSorting) {
+                foundListSorting = new ListSorting("no-order", list);
+            }
+            foundListSorting.reverseOrder = req.query.reverse;
+
+            await foundListSorting.save(connection);
+        }
+
         const [items, pagination] = 
             await Item.findFromList(
                 list, 

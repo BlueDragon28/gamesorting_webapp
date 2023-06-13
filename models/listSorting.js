@@ -8,14 +8,21 @@ class ListSorting {
     id;
     type;
     parentList;
+    reverseOrder;
 
-    constructor(type, parentList) {
+    constructor(type, parentList, reverseOrder = null) {
         if (typeof type === "string") {
             this.type = type;
         }
 
         if (parentList instanceof List) {
             this.parentList = parentList;
+        }
+
+        if (typeof reverseOrder === "boolean") {
+            this.reverseOrder = reverseOrder;
+        } else {
+            this.reverseOrder = null;
         }
     }
 
@@ -25,7 +32,8 @@ class ListSorting {
 
         if ((this.is !== undefined && !bigint.isValid(this.id)) ||
             typeof this.type !== "string" || !this.type?.length ||
-            !this.parentList instanceof List || !this.parentList?.isValid()) {
+            !this.parentList instanceof List || !this.parentList?.isValid() ||
+            (this.reverseOrder !== null && typeof this.reverseOrder !== "boolean")) {
 
             return false;
         }
@@ -85,8 +93,8 @@ class ListSorting {
 
     async #_createItem(connection) {
         const queryStatement =
-            "INSERT INTO listSorting(ListID, Type) " +
-            `VALUES (${this.parentList.id}, \"${sqlString(this.type)}\")`;
+            `INSERT INTO listSorting(ListID, Type ${typeof this.reverseOrder === "boolean" ? ", ReverseOrder" : ""}) ` +
+            `VALUES (${this.parentList.id}, \"${sqlString(this.type)}\"${typeof this.reverseOrder === "boolean" ? ", " + (this.reverseOrder ? "TRUE" : "FALSE") : ""})`;
 
         try {
             const queryResult = await connection.query(queryStatement);
@@ -108,12 +116,13 @@ class ListSorting {
     async #_updateItem(connection) {
         let queryStatement =
             `UPDATE listSorting SET Type = \"${sqlString(this.type)}\" ` +
+            `${typeof this.reverseOrder === "boolean" ? `, ReverseOrder = ${this.reverseOrder ? "TRUE" : "FALSE"}` : ""} ` +
             `WHERE ListSortingID = ${this.id}`;
 
         try {
             const queryResult = await connection.query(queryStatement);
         } catch (error) {
-            throw new SqlError(`Failed to update list sortingelement: ${error.message}`);
+            throw new SqlError(`Failed to update list sorting element: ${error.message}`);
         }
     }
 
@@ -124,7 +133,7 @@ class ListSorting {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                "SELECT ListSortingID, ListID, Type FROM listSorting " +
+                "SELECT ListSortingID, ListID, ReverseOrder, Type FROM listSorting " +
                 `WHERE ListID = ${list.id}`;
 
             try {
@@ -184,7 +193,7 @@ class ListSorting {
             return null;
         }
 
-        const listSorting = new ListSorting(result.Type, list);
+        const listSorting = new ListSorting(result.Type, list, result.ReverseOrder);
         listSorting.id = result.ListSortingID;
 
         if (!listSorting.isValid()) {

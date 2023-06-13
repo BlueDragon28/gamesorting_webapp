@@ -82,13 +82,11 @@ class Pagination {
     /*
     Save or restore the reverse items order choice of the user
     */
-    static saveRestoreReverseItemsOrderMiddleware(req, res, next) {
+    static async saveRestoreReverseItemsOrderMiddleware(req, res, next) {
         if (typeof req.query.reverse === "string" && req.query.reverse.length) {
-            req.session.reverseItems = req.query.reverse === "true" ? true : false;
-            return next();
+            req.query.reverse = req.query.reverse === "true" ? true : false;
         }
 
-        req.query.reverse = req.session.reverseItems === true ? "true" : "false";
         next();
     }
 
