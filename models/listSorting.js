@@ -21,6 +21,8 @@ class ListSorting {
 
         if (typeof reverseOrder === "boolean") {
             this.reverseOrder = reverseOrder;
+        } else if (typeof reverseOrder === "number") {
+            this.reverseOrder = reverseOrder !== 0;
         } else {
             this.reverseOrder = null;
         }

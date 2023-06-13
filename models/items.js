@@ -254,7 +254,7 @@ class Item {
             const validPageNumber = await Item.isValidPageNumber(list, pageNumber, connection) ?
                 pageNumber : 1;
 
-            const pagination = new Pagination(validPageNumber, numberOfItems, reverse);
+            const pagination = new Pagination(validPageNumber, numberOfItems, foundListSorting.reverseOrder);
             if (!pagination.isValid) {
                 throw new ValueError(400, "Invalid page number");
             }
@@ -263,7 +263,7 @@ class Item {
                 `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} `; 
             queryStatement += addSearchOptions(searchOptions) + " ORDER BY ";
 
-            const reverseSqlValue = reverse === true ? "DESC" : "ASC";
+            const reverseSqlValue = foundListSorting.reverseOrder === true ? "DESC" : "ASC";
             if (isValidListSorting(foundListSorting) && foundListSorting.type === "order-by-name") {
                 queryStatement += `Name ${reverseSqlValue} `;
             } else if (isValidListSorting(foundListSorting) && foundListSorting.type === "order-by-rating") {
