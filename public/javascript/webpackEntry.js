@@ -12,6 +12,7 @@ import "./collections/lists/items/deleteItem";
 import "./customColumns/customColumnsList";
 import "./customColumns/updateCustomColumns";
 import "./collections/lists/sorting/sorting-page-edit.js";
+import "./collections/lists/items/searchBox";
 
 // CSS
 import "../styles/starability-basic.min.css";
