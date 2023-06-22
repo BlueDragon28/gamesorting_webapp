@@ -72,6 +72,17 @@ class CustomRowsItems {
         return existingOrNewConnection(connection, this.#_exists.bind(this));
     }
 
+    toBaseObject() {
+        if (!this.isValid()) return null;
+
+        return {
+            id: this.id,
+            value: this.value,
+            itemID: this.itemID,
+            columnTypeID: this.columnTypeID
+        };
+    }
+
     async #_exists(connection) {
         if (!this.isValid()) {
             return false;

@@ -98,6 +98,17 @@ class ListColumnType {
         return await existingOrNewConnection(connection, this.#_isDuplicate.bind(this));
     }
 
+    toBaseObject() {
+        if (!this.isValid()) return null;
+
+        return {
+            id: this.id,
+            name: this.name,
+            type: this.type,
+            parentListID: this.parentList.id
+        };
+    }
+
     async #_exists(connection) {
         if (!this.isValid()) {
             return false;

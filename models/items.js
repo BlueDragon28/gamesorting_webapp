@@ -133,6 +133,19 @@ class Item {
         return await existingOrNewConnection(connection, this.#_isDuplicate.bind(this));
     }
 
+    toBaseObject() {
+        if (!this.isValid()) return null;
+
+        return {
+            id: this.id,
+            name: this.name,
+            url: this.url,
+            rating: this.rating,
+            customData: this.customData ? this.customData.map(item => item.toBaseObject()) : null,
+            parentListID: this.parentList.id
+        };
+    }
+
     async #_exists(connection) {
         if (!this.isValid()) {
             return false;

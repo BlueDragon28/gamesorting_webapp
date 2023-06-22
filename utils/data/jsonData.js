@@ -15,11 +15,13 @@ async function createDirIfNotExisting() {
 
 class FileStream {
     filePath;
+    fileName;
     fileHandle;
     fileStream;
 
     constructor() {
-        this.filePath = path.join(jsonDir, uuid());
+        this.fileName = uuid();
+        this.filePath = path.join(jsonDir, this.fileName + ".json",);
     }
 
     async open() {

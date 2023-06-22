@@ -23,6 +23,7 @@ const Pagination = require("../utils/sql/pagination");
 const { isListMaxLimitMiddleware, isCustomColumnsLimitMiddleware } = require("../utils/validation/limitNumberElements");
 const { ListSorting } = require("../models/listSorting");
 const { FileStream, convertToJSON } = require("../utils/data/jsonData");
+const { CustomRowsItems } = require("../models/customUserData");
 
 const router = express.Router({ mergeParams: true });
 
@@ -407,6 +408,10 @@ router.get("/lists/:listID/download-json",
             const foundListColumnType = await ListColumnType.findFromList(foundList, connection);
             const items = (await Item.findFromList(foundList, 0, null, connection))[0];
 
+            for (const item of items) {
+                item.customData = await CustomRowsItems.findFromItem(item.id, connection);
+            }
+
             return [foundList, foundListColumnType, items];
         } catch (error) {
             throw new InternalError(`Failed to get data: ${error.message}`);
@@ -416,15 +421,17 @@ router.get("/lists/:listID/download-json",
     const fileStream = new FileStream();
     try {
         await fileStream.open();
-        await fileStream.write('{"customColumnsType":[');
 
-        const listColumnTypeStr = listColumnType.reduce((accumulator, currentValue) => {
-            return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue);
+        const listStr = '{"list":' + convertToJSON(foundList.toBaseObject());
+        await fileStream.write(listStr);
+
+        const listColumnTypeStr = ',"customColumnsType":[' + listColumnType.reduce((accumulator, currentValue) => {
+            return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
         }, "") + "],";
         await fileStream.write(listColumnTypeStr);
 
         const itemsStr = '"items":[' + items.reduce((accumulator, currentValue) => {
-            return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue);
+            return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
         }, "") + "]}";
         await fileStream.write(itemsStr);
     } catch (err) {

@@ -68,6 +68,16 @@ class List {
         return await existingOrNewConnection(connection, this.#_isDuplicate.bind(this));
     }
 
+    toBaseObject() {
+        if (!this.isValid()) return;
+
+        return {
+            id: this.id,
+            name: this.name,
+            parentCollectionID: this.parentCollection.id
+        };
+    }
+
     async #_exists(connection) {
         if (!this.isValid()) {
             return false;
