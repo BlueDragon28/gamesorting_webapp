@@ -22,6 +22,7 @@ const bigint = require("../utils/numbers/bigint");
 const Pagination = require("../utils/sql/pagination");
 const { isListMaxLimitMiddleware, isCustomColumnsLimitMiddleware } = require("../utils/validation/limitNumberElements");
 const { ListSorting } = require("../models/listSorting");
+const { FileStream, convertToJSON } = require("../utils/data/jsonData");
 
 const router = express.Router({ mergeParams: true });
 
@@ -387,6 +388,52 @@ router.delete("/lists/:listID", checkListAuth, isUserPasswordValid, wrapAsync(as
             type: "SUCCESS",
             message: successMessage        
         });
+}));
+
+router.get("/lists/:listID/download-json", 
+    checkListAuth, 
+    wrapAsync(async (req, res) => {
+
+    const { collectionID, listID } = req.params;
+
+    const [foundList, listColumnType, items] = await existingOrNewConnection(null, async function(connection) {
+        try {
+            const foundList = await List.findByID(listID, connection);
+
+            if (!foundList instanceof List || !foundList.isValid()) {
+                throw new Error("Invalid list");
+            }
+            
+            const foundListColumnType = await ListColumnType.findFromList(foundList, connection);
+            const items = (await Item.findFromList(foundList, 0, null, connection))[0];
+
+            return [foundList, foundListColumnType, items];
+        } catch (error) {
+            throw new InternalError(`Failed to get data: ${error.message}`);
+        }
+    });
+
+    const fileStream = new FileStream();
+    try {
+        await fileStream.open();
+        await fileStream.write('{"customColumnsType":[');
+
+        const listColumnTypeStr = listColumnType.reduce((accumulator, currentValue) => {
+            return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue);
+        }, "") + "],";
+        await fileStream.write(listColumnTypeStr);
+
+        const itemsStr = '"items":[' + items.reduce((accumulator, currentValue) => {
+            return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue);
+        }, "") + "]}";
+        await fileStream.write(itemsStr);
+    } catch (err) {
+        console.log(err);
+    } finally {
+        await fileStream.close();
+    }
+
+    res.redirect(`/collections/${collectionID}/lists/${listID}`);
 }));
 
 router.use(parseCelebrateError);
