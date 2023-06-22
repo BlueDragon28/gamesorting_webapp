@@ -30,7 +30,7 @@ const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
 const mariadb = require("./sql/connection");
 const { activate: activateTask, deactivate: deactiveTask } = require("./utils/automaticTasks/automaticTask");
-const userActivitiesMiddleware = require("./utils/users/activities");
+const { registerActivityMiddleware } = require("./utils/automaticTasks/activitiesHandling");
 const checkIfUserAdmin = require("./utils/users/checkIsUserAdmin");
 const { getEnvValueFromFile, isFileBased } = require("./utils/loadingEnvVariable");
 
@@ -98,7 +98,7 @@ app.use(function(req, res, next) {
 });
 app.use(checkIfUserAdmin);
 
-app.use(userActivitiesMiddleware);
+app.use(registerActivityMiddleware);
 
 app.get("/", (req, res) => {
     if (req.session?.user?.id && process.env.NODE_ENV === "production") { // Redirect to /collections if user is loggedin
@@ -136,9 +136,9 @@ server.listen(process.env.LISTENING_PORT);
 
 async function closeServer() {
     server.close();
+    await deactiveTask();
     await mariadb.closePool();
     await redisClient.disconnect();
-    deactiveTask();
 
     if (process.env.NODE_ENV !== "production") {
         console.log("server has been closed!");

@@ -1,16 +1,18 @@
 const deleteLostPasswordToken = require("./deleteLostPasswordToken");
 const deleteExpiredActivity = require("./deleteUserActivies");
+const { enableTask: activitiesHandling } = require("./activitiesHandling");
 
 const activatedTask= [];
 
 function activate() {
     activatedTask.push(deleteLostPasswordToken());
     activatedTask.push(deleteExpiredActivity())
+    activatedTask.push(activitiesHandling());
 }
 
-function deactivate() {
+async function deactivate() {
     for (const task of activatedTask) {
-        task.deactivate();
+        await task.deactivate();
     }
 }
 
