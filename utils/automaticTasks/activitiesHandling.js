@@ -23,6 +23,7 @@ async function saveActivities() {
     const acitivitiesModels = userActivities.map(item => (
         new UserActivity(item.userID, item.type, item.time)
     ));
+    userActivities.splice(0);
 
     await existingOrNewConnection(null, async function(connection) {
         for (const activity of acitivitiesModels) {
