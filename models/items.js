@@ -273,15 +273,13 @@ class Item {
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
-            const numberOfItems = await Item.getCount(list, connection, searchOptions);
-            
             const foundListSorting = listSorting instanceof ListSorting ?
                 listSorting :
                 await ListSorting.findByList(list, connection);
 
             // If page number if to high, set it to 1
-            const validPageNumber = await Item.isValidPageNumber(list, pageNumber, connection) ?
-                pageNumber : 1;
+            const [isValidPageNumber, numberOfItems] = await Item.isValidPageNumber(list, pageNumber, connection, searchOptions)
+            const validPageNumber = isValidPageNumber ? pageNumber : 1;
 
             const pagination = new Pagination(validPageNumber, numberOfItems, 
                 foundListSorting instanceof ListSorting ? foundListSorting.reverseOrder : false);
@@ -379,7 +377,7 @@ class Item {
         });
     }
 
-    static async isValidPageNumber(list, pageNumber, connection) {
+    static async isValidPageNumber(list, pageNumber, connection, searchOptions = null) {
         if (!list.isValid()) {
             throw new ValueError(400, "Invalid list");
         }
@@ -388,10 +386,10 @@ class Item {
             throw new ValueError(400, "Invalid page number");
         }
 
-        const itemCount = await Item.getCount(list, connection);
+        const itemCount = await Item.getCount(list, connection, searchOptions);
         const numberOfPages = Math.ceil(Number(itemCount) / Pagination.ITEM_PER_PAGES);
 
-        return pageNumber <= numberOfPages;
+        return [pageNumber <= numberOfPages, itemCount];
     }
 
     static #parseFoundItems(list, items) {
