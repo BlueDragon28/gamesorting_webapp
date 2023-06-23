@@ -1,5 +1,5 @@
 const path = require("path");
-const { mkdir, open } = require("node:fs/promises");
+const { mkdir, open, rm } = require("node:fs/promises");
 const { existsSync } = require("node:fs");
 const { v4: uuid } = require("uuid")
 
@@ -15,19 +15,25 @@ async function createDirIfNotExisting() {
 
 class FileStream {
     filePath;
+    fileDir;
     fileName;
     fileHandle;
     fileStream;
 
     constructor() {
-        this.fileName = uuid();
-        this.filePath = path.join(jsonDir, this.fileName + ".json",);
+        this.fileName = uuid() + ".json";
+        this.filePath = path.join(jsonDir, this.fileName);
+        this.fileDir = jsonDir;
     }
 
     async open() {
         await createDirIfNotExisting();
         this.fileHandle = await open(this.filePath, "w", 0o644);
         this.fileStream = this.fileHandle.createWriteStream({encoding: "utf8"});
+    }
+
+    delete() {
+        return rm(this.filePath);
     }
 
     write(str) {

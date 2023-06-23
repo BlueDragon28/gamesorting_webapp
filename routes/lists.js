@@ -24,6 +24,9 @@ const { isListMaxLimitMiddleware, isCustomColumnsLimitMiddleware } = require("..
 const { ListSorting } = require("../models/listSorting");
 const { FileStream, convertToJSON } = require("../utils/data/jsonData");
 const { CustomRowsItems } = require("../models/customUserData");
+const { compressZip, streamZip} = require("../utils/data/zipCompression");
+const path = require("node:path");
+const { rm } = require("node:fs/promises")
 
 const router = express.Router({ mergeParams: true });
 
@@ -441,7 +444,7 @@ router.get("/lists/:listID/download-json",
 
     const { collectionID, listID } = req.params;
 
-    await existingOrNewConnection(null, async function(connection) {
+    const fileStream = await existingOrNewConnection(null, async function(connection) {
         let fileStream;
         try {
             const [foundList, foundListColumnType] = await getListHeaderData(listID, connection);
@@ -463,9 +466,22 @@ router.get("/lists/:listID/download-json",
                 await fileStream.close();
             }
         }
+        return fileStream;
     });
 
-    res.redirect(`/collections/${collectionID}/lists/${listID}`);
+    const workingDir = fileStream.fileDir;
+    const archiveName = fileStream.fileName + ".zip";
+    const fileToCompress = fileStream.fileName;
+    await compressZip(workingDir, archiveName, false, fileToCompress);
+    await fileStream.delete();
+
+    try {
+        await streamZip(req, res, path.join(workingDir, archiveName), archiveName);
+    } catch (error) {
+        throw error;
+    } finally {
+        await rm(path.join(workingDir, archiveName));
+    }
 }));
 
 router.use(parseCelebrateError);
