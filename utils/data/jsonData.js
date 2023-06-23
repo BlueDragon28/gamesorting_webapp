@@ -20,8 +20,18 @@ class FileStream {
     fileHandle;
     fileStream;
 
-    constructor() {
-        this.fileName = uuid() + ".json";
+    constructor(prefix = "") {
+        if (!prefix || typeof prefix !== "string") {
+            prefix = "";
+        }
+
+        prefix = prefix.trim();
+
+        if (prefix.length) {
+            prefix += "-";
+        }
+
+        this.fileName = prefix + uuid() + ".json";
         this.filePath = path.join(jsonDir, this.fileName);
         this.fileDir = jsonDir;
     }

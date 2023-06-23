@@ -454,7 +454,7 @@ router.get("/lists/:listID/download-json",
                 item.customData = await CustomRowsItems.findFromItem(item.id, connection);
             }
 
-            fileStream = new FileStream();
+            fileStream = new FileStream(foundList.name);
             await fileStream.open();
 
             await writeListHeaderData(fileStream, {list: foundList, columnType: foundListColumnType});
