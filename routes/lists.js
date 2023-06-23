@@ -391,54 +391,65 @@ router.delete("/lists/:listID", checkListAuth, isUserPasswordValid, wrapAsync(as
         });
 }));
 
+async function getListHeaderData(listID, connection) {
+    const foundList = await List.findByID(listID, connection);
+
+    if (!foundList instanceof List || !foundList.isValid()) {
+        throw new Error("Invalid list");
+    }
+
+    const foundListColumnType = await ListColumnType.findFromList(foundList, connection);
+    return [foundList, foundListColumnType];
+}
+
+async function writeListHeaderData(fileStream, data) {
+    const { list: foundList, columnType: foundListColumnType } = data;
+
+    const listStr = '{"list":' + convertToJSON(foundList.toBaseObject());
+    await fileStream.write(listStr);
+
+    const listColumnTypeStr = ',"customColumnsType":[' + foundListColumnType.reduce((accumulator, currentValue) => {
+        return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
+    }, "") + "],";
+    await fileStream.write(listColumnTypeStr);
+}
+
 router.get("/lists/:listID/download-json", 
     checkListAuth, 
     wrapAsync(async (req, res) => {
 
     const { collectionID, listID } = req.params;
 
-    const [foundList, listColumnType, items] = await existingOrNewConnection(null, async function(connection) {
+    await existingOrNewConnection(null, async function(connection) {
+        let fileStream;
         try {
-            const foundList = await List.findByID(listID, connection);
-
-            if (!foundList instanceof List || !foundList.isValid()) {
-                throw new Error("Invalid list");
-            }
-            
-            const foundListColumnType = await ListColumnType.findFromList(foundList, connection);
+            const [foundList, foundListColumnType] = await getListHeaderData(listID, connection);
             const items = (await Item.findFromList(foundList, 0, null, connection))[0];
 
             for (const item of items) {
                 item.customData = await CustomRowsItems.findFromItem(item.id, connection);
             }
 
+            fileStream = new FileStream();
+            await fileStream.open();
+
+            await writeListHeaderData(fileStream, {list: foundList, columnType: foundListColumnType});
+
+            const itemsStr = '"items":[' + items.reduce((accumulator, currentValue) => {
+                return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
+            }, "") + "]}";
+            await fileStream.write(itemsStr);
+
             return [foundList, foundListColumnType, items];
         } catch (error) {
+            console.log(error);
             throw new InternalError(`Failed to get data: ${error.message}`);
+        } finally {
+            if (fileStream) {
+                await fileStream.close();
+            }
         }
     });
-
-    const fileStream = new FileStream();
-    try {
-        await fileStream.open();
-
-        const listStr = '{"list":' + convertToJSON(foundList.toBaseObject());
-        await fileStream.write(listStr);
-
-        const listColumnTypeStr = ',"customColumnsType":[' + listColumnType.reduce((accumulator, currentValue) => {
-            return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
-        }, "") + "],";
-        await fileStream.write(listColumnTypeStr);
-
-        const itemsStr = '"items":[' + items.reduce((accumulator, currentValue) => {
-            return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
-        }, "") + "]}";
-        await fileStream.write(itemsStr);
-    } catch (err) {
-        console.log(err);
-    } finally {
-        await fileStream.close();
-    }
 
     res.redirect(`/collections/${collectionID}/lists/${listID}`);
 }));
