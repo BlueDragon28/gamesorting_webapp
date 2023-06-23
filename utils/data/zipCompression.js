@@ -51,9 +51,11 @@ async function streamZip(req, res, archivePath, archiveName) {
     return new Promise((resolve, reject) => {
         fileStream.pipe(res, {end: false});
         fileStream.on("error", (error) => {
+            res.end();
             reject(error);
         });
         fileStream.on("end", () => {
+            res.end();
             resolve();
         });
     });
