@@ -414,6 +414,27 @@ async function writeListHeaderData(fileStream, data) {
     await fileStream.write(listColumnTypeStr);
 }
 
+async function writeItemsIntoJSON(fileStream, list, connection) {
+    const itemsCount = await Item.getCount(list, connection);
+    const numberOfPages = Math.ceil(Number(itemsCount) / Pagination.ITEM_PER_PAGES);
+
+    await fileStream.write('"items":[');
+    for (let i = 0; i < numberOfPages; i++) {
+        const pageNumber = i+1;
+        const foundItems = (await Item.findFromList(list, pageNumber, null, connection))[0];
+        for (const item of foundItems) {
+            foundItems.customData = await CustomRowsItems.findFromItem(item.id, connection);
+        }
+
+        const itemsStr = (i > 0 ? "," : "") + 
+            foundItems.reduce((accumulator, currentValue) => (
+                accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject())
+            ), "");
+        await fileStream.write(itemsStr);
+    }
+    await fileStream.write("]}");
+}
+
 router.get("/lists/:listID/download-json", 
     checkListAuth, 
     wrapAsync(async (req, res) => {
@@ -434,15 +455,8 @@ router.get("/lists/:listID/download-json",
             await fileStream.open();
 
             await writeListHeaderData(fileStream, {list: foundList, columnType: foundListColumnType});
-
-            const itemsStr = '"items":[' + items.reduce((accumulator, currentValue) => {
-                return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
-            }, "") + "]}";
-            await fileStream.write(itemsStr);
-
-            return [foundList, foundListColumnType, items];
+            await writeItemsIntoJSON(fileStream, foundList, connection);
         } catch (error) {
-            console.log(error);
             throw new InternalError(`Failed to get data: ${error.message}`);
         } finally {
             if (fileStream) {
