@@ -89,6 +89,30 @@ function convertToJSON(obj) {
     });
 }
 
+function updateJsonIdentation(jsonIdentation, level) {
+    jsonIdentation.level = level;
+    jsonIdentation.text = "\n";
+    for (let i = 0; i < jsonIdentation.level; i++) {
+        jsonIdentation.text += "  ";
+    }
+}
+
+function identString(str, jsonIdentation) {
+    return str.split("").reduce((accumulator, currentValue) => {
+        if ("{[".indexOf(currentValue) >= 0) {
+            updateJsonIdentation(jsonIdentation, jsonIdentation.level+1);
+            return accumulator + currentValue + jsonIdentation.text;
+        } else if ("}]".indexOf(currentValue) >= 0) {
+            updateJsonIdentation(jsonIdentation, jsonIdentation.level-1);
+            return accumulator + jsonIdentation.text + currentValue;
+        } else if (",".indexOf(currentValue) >= 0) {
+            return accumulator + currentValue + jsonIdentation.text;
+        }
+
+        return accumulator + currentValue;
+    }, "");
+}
+
 async function getListHeaderData(listID, connection) {
     const foundList = await List.findByID(listID, connection);
 
@@ -100,23 +124,23 @@ async function getListHeaderData(listID, connection) {
     return [foundList, foundListColumnType];
 }
 
-async function writeListHeaderData(fileStream, data) {
+async function writeListHeaderData(fileStream, data, jsonIdentation) {
     const { list: foundList, columnType: foundListColumnType } = data;
 
     const listStr = '{"list":' + convertToJSON(foundList.toBaseObject());
-    await fileStream.write(listStr);
+    await fileStream.write(identString(listStr, jsonIdentation));
 
     const listColumnTypeStr = ',"customColumnsType":[' + foundListColumnType.reduce((accumulator, currentValue) => {
         return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
     }, "") + "],";
-    await fileStream.write(listColumnTypeStr);
+    await fileStream.write(identString(listColumnTypeStr, jsonIdentation));
 }
 
-async function writeItemsIntoJSON(fileStream, list, connection) {
+async function writeItemsIntoJSON(fileStream, list, connection, jsonIdentation) {
     const itemsCount = await Item.getCount(list, connection);
     const numberOfPages = Math.ceil(Number(itemsCount) / Pagination.ITEM_PER_PAGES);
 
-    await fileStream.write('"items":[');
+    await fileStream.write(identString('"items":[', jsonIdentation));
     for (let i = 0; i < numberOfPages; i++) {
         const pageNumber = i+1;
         const foundItems = (await Item.findFromList(list, pageNumber, null, connection))[0];
@@ -128,9 +152,9 @@ async function writeItemsIntoJSON(fileStream, list, connection) {
             foundItems.reduce((accumulator, currentValue) => (
                 accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject())
             ), "");
-        await fileStream.write(itemsStr);
+        await fileStream.write(identString(itemsStr, jsonIdentation));
     }
-    await fileStream.write("]}");
+    await fileStream.write(identString("]}", jsonIdentation));
 }
 
 module.exports = {

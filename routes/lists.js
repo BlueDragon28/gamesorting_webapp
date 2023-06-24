@@ -413,8 +413,9 @@ router.get("/lists/:listID/download-json",
             fileStream = new FileStream(foundList.name);
             await fileStream.open();
 
-            await writeListHeaderData(fileStream, {list: foundList, columnType: foundListColumnType});
-            await writeItemsIntoJSON(fileStream, foundList, connection);
+            const jsonIndentation = { level: 0, text: "\n" };
+            await writeListHeaderData(fileStream, {list: foundList, columnType: foundListColumnType}, jsonIndentation);
+            await writeItemsIntoJSON(fileStream, foundList, connection, jsonIndentation);
         } catch (error) {
             throw new InternalError(`Failed to get data: ${error.message}`);
         } finally {
