@@ -413,7 +413,7 @@ router.get("/lists/:listID/download-json",
             fileStream = new FileStream(foundList.name);
             await fileStream.open();
 
-            const jsonIndentation = { level: 0, text: "\n" };
+            const jsonIndentation = { level: 0, text: "\n", isInsideDoubleQuote: false };
             await writeListHeaderData(fileStream, {list: foundList, columnType: foundListColumnType}, jsonIndentation);
             await writeItemsIntoJSON(fileStream, foundList, connection, jsonIndentation);
         } catch (error) {

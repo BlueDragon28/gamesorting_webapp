@@ -99,14 +99,20 @@ function updateJsonIdentation(jsonIdentation, level) {
 
 function identString(str, jsonIdentation) {
     return str.split("").reduce((accumulator, currentValue) => {
-        if ("{[".indexOf(currentValue) >= 0) {
+        if (jsonIdentation.isInsideDoubleQuote) {
+            if (currentValue === '"') {
+                jsonIdentation.isInsideDoubleQuote = false;
+            }
+        } else if ("{[".indexOf(currentValue) >= 0) {
             updateJsonIdentation(jsonIdentation, jsonIdentation.level+1);
             return accumulator + currentValue + jsonIdentation.text;
         } else if ("}]".indexOf(currentValue) >= 0) {
             updateJsonIdentation(jsonIdentation, jsonIdentation.level-1);
             return accumulator + jsonIdentation.text + currentValue;
-        } else if (",".indexOf(currentValue) >= 0) {
+        } else if (currentValue === ",") {
             return accumulator + currentValue + jsonIdentation.text;
+        } else if (currentValue === '"') {
+            jsonIdentation.isInsideDoubleQuote = true;
         }
 
         return accumulator + currentValue;
