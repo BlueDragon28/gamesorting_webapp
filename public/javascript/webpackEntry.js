@@ -13,6 +13,7 @@ import "./customColumns/customColumnsList";
 import "./customColumns/updateCustomColumns";
 import "./collections/lists/sorting/sorting-page-edit.js";
 import "./collections/lists/items/searchBox";
+import "./collections/lists/download/download";
 
 // CSS
 import "../styles/starability-basic.min.css";
