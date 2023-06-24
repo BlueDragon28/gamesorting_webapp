@@ -98,6 +98,10 @@ function updateJsonIdentation(jsonIdentation, level) {
 }
 
 function identString(str, jsonIdentation) {
+    if (jsonIdentation.isMinimized) {
+        return str;
+    }
+
     return str.split("").reduce((accumulator, currentValue) => {
         if (jsonIdentation.isInsideDoubleQuote) {
             if (currentValue === '"') {

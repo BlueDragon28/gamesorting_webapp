@@ -414,7 +414,8 @@ router.get("/lists/:listID/download-json",
     checkListAuth, 
     wrapAsync(async (req, res) => {
 
-    const { collectionID, listID } = req.params;
+    const { listID } = req.params;
+    const isMinimized = req.query.isMinimized === "true" ? true : false;
 
     const fileStream = await existingOrNewConnection(null, async function(connection) {
         let fileStream;
@@ -424,7 +425,7 @@ router.get("/lists/:listID/download-json",
             fileStream = new FileStream(foundList.name);
             await fileStream.open();
 
-            const jsonIndentation = { level: 0, text: "\n", isInsideDoubleQuote: false };
+            const jsonIndentation = { level: 0, text: "\n", isInsideDoubleQuote: false, isMinimized };
             await writeListHeaderData(fileStream, {list: foundList, columnType: foundListColumnType}, jsonIndentation);
             await writeItemsIntoJSON(fileStream, foundList, connection, jsonIndentation);
         } catch (error) {
