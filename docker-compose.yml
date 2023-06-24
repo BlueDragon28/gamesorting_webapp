@@ -1,7 +1,7 @@
 services:
   gamesorting_webapp:
     image: node:18
-    command: sh -c "npm install --save-dev && NODE_ENV=production npm run dev"
+    command: sh -c "apt update && apt install -y zip && npm install --save-dev && NODE_ENV=production npm run dev"
     working_dir: /app
     ports:
       - 8080:8080
@@ -11,6 +11,7 @@ services:
     volumes:
       - /opt/gamesorting_webapp/app-config:/config_file
       - .:/app
+      - gamesorting_app_client_tmp_data:/app/clientData
     
     depends_on:
       gamesorting_redis:
@@ -50,3 +51,4 @@ services:
 volumes:
   gamesorting_mariadb_data:
   gamesorting_redis_data:
+  gamesorting_app_client_tmp_data:
