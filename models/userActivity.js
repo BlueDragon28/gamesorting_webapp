@@ -97,7 +97,7 @@ class UserActivity {
 
             const queryStatement =
                 "SELECT UserActivityID, UserID, Type, Time FROM userActivity " +
-                `WHERE (Time >= ${begin}) AND (Time <= ${end})`;
+                `WHERE (Time >= ${begin}) AND (Time < ${end})`;
 
             try {
                 const queryResult = await connection.query(queryStatement);
@@ -128,7 +128,7 @@ class UserActivity {
             const queryStatement = 
                 "SELECT COUNT(*) AS uniqueUsers FROM " +
                 "(SELECT UserID FROM userActivity " +
-                `WHERE (Time >= ${begin}) AND (Time <= ${end}) AND (UserID IS NOT NULL) ` +
+                `WHERE (Time >= ${begin}) AND (Time < ${end}) AND (UserID IS NOT NULL) ` +
                 "GROUP BY UserID) AS users";
 
             try {

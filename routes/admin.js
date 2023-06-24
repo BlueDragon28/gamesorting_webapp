@@ -47,7 +47,7 @@ function divideActivitiesByDays(activities) {
         };
 
         for (const activity of activities) {
-            if (activity.time >= startTime && activity.time <= endTime) {
+            if (activity.time >= startTime && activity.time < endTime) {
                 day.activities++;
             }
         }
