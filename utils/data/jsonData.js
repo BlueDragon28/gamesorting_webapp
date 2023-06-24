@@ -113,6 +113,8 @@ function identString(str, jsonIdentation) {
             return accumulator + currentValue + jsonIdentation.text;
         } else if (currentValue === '"') {
             jsonIdentation.isInsideDoubleQuote = true;
+        } else if (currentValue === ":") {
+            return accumulator + currentValue + " ";
         }
 
         return accumulator + currentValue;
