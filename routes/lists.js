@@ -399,7 +399,10 @@ router.delete("/lists/:listID", checkListAuth, isUserPasswordValid, wrapAsync(as
         });
 }));
 
-router.get("/lists/:listID/download", wrapAsync(async (req, res) => {
+router.get("/lists/:listID/download", 
+    checkListAuth,
+    wrapAsync(async (req, res) => {
+
     const { listID } = req.params;
 
     const foundList = await List.findByID(listID);
