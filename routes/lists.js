@@ -399,6 +399,17 @@ router.delete("/lists/:listID", checkListAuth, isUserPasswordValid, wrapAsync(as
         });
 }));
 
+router.get("/lists/:listID/download", wrapAsync(async (req, res) => {
+    const { listID } = req.params;
+
+    const foundList = await List.findByID(listID);
+    if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+        throw new ValueError(404, "Cannot find this list");
+    }
+
+    res.render("collections/lists/download/downloadIndex", { list: foundList });
+}));
+
 router.get("/lists/:listID/download-json", 
     checkListAuth, 
     wrapAsync(async (req, res) => {
