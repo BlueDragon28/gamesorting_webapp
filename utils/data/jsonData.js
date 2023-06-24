@@ -153,7 +153,7 @@ async function writeItemsIntoJSON(fileStream, list, connection, jsonIdentation) 
         const pageNumber = i+1;
         const foundItems = (await Item.findFromList(list, pageNumber, null, connection))[0];
         for (const item of foundItems) {
-            foundItems.customData = await CustomRowsItems.findFromItem(item.id, connection);
+            item.customData = await CustomRowsItems.findFromItem(item.id, connection);
         }
 
         const itemsStr = (i > 0 ? "," : "") + 
