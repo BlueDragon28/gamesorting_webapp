@@ -28,7 +28,6 @@ const {
     writeListHeaderData, 
     writeItemsIntoJSON 
 } = require("../utils/data/jsonData");
-const { CustomRowsItems } = require("../models/customUserData");
 const { compressZip, streamZip} = require("../utils/data/zipCompression");
 const path = require("node:path");
 const { rm } = require("node:fs/promises")
@@ -66,9 +65,8 @@ router.get("/lists/:listID",
         Pagination.parseSearchOptions,
         wrapAsync(async (req, res) => {
 
-    const { collectionID, listID } = req.params;
+    const { listID } = req.params;
     const pageNumber = req.query.pn;
-    const isReverse = req.query.reverse === "true" ? true : false;
     const searchParams = req.session.searchParams;
 
     const [list, items, pagination] = await existingOrNewConnection(null, async function(connection) {
@@ -337,7 +335,7 @@ router.post("/lists",
 Edit list
 */
 router.put("/lists/:listID", checkListAuth, validation.item({ name: true }), wrapAsync(async (req, res) => {
-    const { collectionID, listID } = req.params;
+    const { listID } = req.params;
     const { name } = req.body;
 
     const list = await List.findByID(listID);
