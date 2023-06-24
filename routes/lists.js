@@ -409,11 +409,6 @@ router.get("/lists/:listID/download-json",
         let fileStream;
         try {
             const [foundList, foundListColumnType] = await getListHeaderData(listID, connection);
-            const items = (await Item.findFromList(foundList, 0, null, connection))[0];
-
-            for (const item of items) {
-                item.customData = await CustomRowsItems.findFromItem(item.id, connection);
-            }
 
             fileStream = new FileStream(foundList.name);
             await fileStream.open();
