@@ -9,11 +9,9 @@
 
     const baseUrl = `/collections/${list.parentCollection.id}/lists/${list.id}`;
 
-    function prepareJsonUrl(query) {
+    function prepareJsonUrl(isMinimized) {
         const downloadUrl = `${baseUrl}/download-json`;
         const queryString = new URLSearchParams();
-        const { type, isMinimized } = query;
-        queryString.append("type", type);
         queryString.append("isMinimized", isMinimized);
         return `${downloadUrl}?${queryString.toString()}`;
     }
@@ -25,10 +23,7 @@
         const isJSONMinimized = minimizedCheckboxInput.checked;
 
         if (downloadType === "JSON") {
-            const downloadUrl = prepareJsonUrl({
-                type: downloadType,
-                isMinimized: isJSONMinimized
-            });
+            const downloadUrl = prepareJsonUrl(isJSONMinimized);
             window.location = downloadUrl;
         }
     }
