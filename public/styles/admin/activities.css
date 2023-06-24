@@ -4,6 +4,11 @@
     align-items: center;
 }
 
+.inner-chart-content {
+    height: 40px;
+    flex-grow: 1;
+}
+
 .chart-line {
     content: "";
     display: block;
