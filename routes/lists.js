@@ -22,7 +22,12 @@ const bigint = require("../utils/numbers/bigint");
 const Pagination = require("../utils/sql/pagination");
 const { isListMaxLimitMiddleware, isCustomColumnsLimitMiddleware } = require("../utils/validation/limitNumberElements");
 const { ListSorting } = require("../models/listSorting");
-const { FileStream, convertToJSON } = require("../utils/data/jsonData");
+const { 
+    FileStream, 
+    getListHeaderData, 
+    writeListHeaderData, 
+    writeItemsIntoJSON 
+} = require("../utils/data/jsonData");
 const { CustomRowsItems } = require("../models/customUserData");
 const { compressZip, streamZip} = require("../utils/data/zipCompression");
 const path = require("node:path");
@@ -393,50 +398,6 @@ router.delete("/lists/:listID", checkListAuth, isUserPasswordValid, wrapAsync(as
             message: successMessage        
         });
 }));
-
-async function getListHeaderData(listID, connection) {
-    const foundList = await List.findByID(listID, connection);
-
-    if (!foundList instanceof List || !foundList.isValid()) {
-        throw new Error("Invalid list");
-    }
-
-    const foundListColumnType = await ListColumnType.findFromList(foundList, connection);
-    return [foundList, foundListColumnType];
-}
-
-async function writeListHeaderData(fileStream, data) {
-    const { list: foundList, columnType: foundListColumnType } = data;
-
-    const listStr = '{"list":' + convertToJSON(foundList.toBaseObject());
-    await fileStream.write(listStr);
-
-    const listColumnTypeStr = ',"customColumnsType":[' + foundListColumnType.reduce((accumulator, currentValue) => {
-        return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
-    }, "") + "],";
-    await fileStream.write(listColumnTypeStr);
-}
-
-async function writeItemsIntoJSON(fileStream, list, connection) {
-    const itemsCount = await Item.getCount(list, connection);
-    const numberOfPages = Math.ceil(Number(itemsCount) / Pagination.ITEM_PER_PAGES);
-
-    await fileStream.write('"items":[');
-    for (let i = 0; i < numberOfPages; i++) {
-        const pageNumber = i+1;
-        const foundItems = (await Item.findFromList(list, pageNumber, null, connection))[0];
-        for (const item of foundItems) {
-            foundItems.customData = await CustomRowsItems.findFromItem(item.id, connection);
-        }
-
-        const itemsStr = (i > 0 ? "," : "") + 
-            foundItems.reduce((accumulator, currentValue) => (
-                accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject())
-            ), "");
-        await fileStream.write(itemsStr);
-    }
-    await fileStream.write("]}");
-}
 
 router.get("/lists/:listID/download-json", 
     checkListAuth, 

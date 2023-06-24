@@ -2,6 +2,11 @@ const path = require("path");
 const { mkdir, open, rm } = require("node:fs/promises");
 const { existsSync } = require("node:fs");
 const { v4: uuid } = require("uuid")
+const { List } = require("../../models/lists");
+const { ListColumnType } = require("../../models/listColumnsType");
+const { Item } = require("../../models/items");
+const { CustomRowsItems } = require("../../models/customUserData");
+const Pagination = require("../sql/pagination");
 
 const rootDir = path.join(__dirname, "../../");
 const dataDir = path.join(rootDir, "clientData");
@@ -84,7 +89,53 @@ function convertToJSON(obj) {
     });
 }
 
+async function getListHeaderData(listID, connection) {
+    const foundList = await List.findByID(listID, connection);
+
+    if (!foundList instanceof List || !foundList.isValid()) {
+        throw new Error("Invalid list");
+    }
+
+    const foundListColumnType = await ListColumnType.findFromList(foundList, connection);
+    return [foundList, foundListColumnType];
+}
+
+async function writeListHeaderData(fileStream, data) {
+    const { list: foundList, columnType: foundListColumnType } = data;
+
+    const listStr = '{"list":' + convertToJSON(foundList.toBaseObject());
+    await fileStream.write(listStr);
+
+    const listColumnTypeStr = ',"customColumnsType":[' + foundListColumnType.reduce((accumulator, currentValue) => {
+        return accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject());
+    }, "") + "],";
+    await fileStream.write(listColumnTypeStr);
+}
+
+async function writeItemsIntoJSON(fileStream, list, connection) {
+    const itemsCount = await Item.getCount(list, connection);
+    const numberOfPages = Math.ceil(Number(itemsCount) / Pagination.ITEM_PER_PAGES);
+
+    await fileStream.write('"items":[');
+    for (let i = 0; i < numberOfPages; i++) {
+        const pageNumber = i+1;
+        const foundItems = (await Item.findFromList(list, pageNumber, null, connection))[0];
+        for (const item of foundItems) {
+            foundItems.customData = await CustomRowsItems.findFromItem(item.id, connection);
+        }
+
+        const itemsStr = (i > 0 ? "," : "") + 
+            foundItems.reduce((accumulator, currentValue) => (
+                accumulator + (accumulator.length > 0 ? "," : "") + convertToJSON(currentValue.toBaseObject())
+            ), "");
+        await fileStream.write(itemsStr);
+    }
+    await fileStream.write("]}");
+}
+
 module.exports = {
     FileStream,
-    convertToJSON
+    getListHeaderData,
+    writeListHeaderData,
+    writeItemsIntoJSON
 };
