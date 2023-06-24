@@ -413,10 +413,13 @@ router.get("/lists/:listID/download",
 
 router.get("/lists/:listID/download-json", 
     checkListAuth, 
+    searchOptionsValidation,
+    Pagination.parseSearchOptions,
     wrapAsync(async (req, res) => {
 
     const { listID } = req.params;
     const isMinimized = req.query.isMinimized === "true" ? true : false;
+    const searchParams = req.session.searchParams;
 
     const fileStream = await existingOrNewConnection(null, async function(connection) {
         let fileStream;
@@ -428,7 +431,7 @@ router.get("/lists/:listID/download-json",
 
             const jsonIndentation = { level: 0, text: "\n", isInsideDoubleQuote: false, isMinimized };
             await writeListHeaderData(fileStream, {list: foundList, columnType: foundListColumnType}, jsonIndentation);
-            await writeItemsIntoJSON(fileStream, foundList, connection, jsonIndentation);
+            await writeItemsIntoJSON(fileStream, foundList, connection, jsonIndentation, searchParams);
         } catch (error) {
             throw new InternalError(`Failed to get data: ${error.message}`);
         } finally {

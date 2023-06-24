@@ -148,14 +148,14 @@ async function writeListHeaderData(fileStream, data, jsonIdentation) {
     await fileStream.write(identString(listColumnTypeStr, jsonIdentation));
 }
 
-async function writeItemsIntoJSON(fileStream, list, connection, jsonIdentation) {
-    const itemsCount = await Item.getCount(list, connection);
+async function writeItemsIntoJSON(fileStream, list, connection, jsonIdentation, searchOptions) {
+    const itemsCount = await Item.getCount(list, connection, searchOptions);
     const numberOfPages = Math.ceil(Number(itemsCount) / Pagination.ITEM_PER_PAGES);
 
     await fileStream.write(identString('"items":[', jsonIdentation));
     for (let i = 0; i < numberOfPages; i++) {
         const pageNumber = i+1;
-        const foundItems = (await Item.findFromList(list, pageNumber, null, connection))[0];
+        const foundItems = (await Item.findFromList(list, pageNumber, null, connection, searchOptions))[0];
         for (const item of foundItems) {
             item.customData = await CustomRowsItems.findFromItem(item.id, connection);
         }
