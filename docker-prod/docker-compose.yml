@@ -8,6 +8,7 @@ services:
       - ENV_VAR_FILE=/config_file/env.txt
     volumes:
       - /opt/gamesorting_webapp/app-config:/config_file
+      - gamesorting_app_client_tmp_data:/app/clientData
     restart: always
     
     depends_on:
@@ -50,3 +51,4 @@ services:
 volumes:
   gamesorting_mariadb_data:
   gamesorting_redis_data:
+  gamesorting_app_client_tmp_data:

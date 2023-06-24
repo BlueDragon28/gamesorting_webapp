@@ -4,6 +4,8 @@ FROM node:18
 
 WORKDIR /app
 
+RUN apt update && apt install -y zip
+
 COPY ./package.json .
 RUN npm install --save-prod
 
