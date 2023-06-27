@@ -1,3 +1,4 @@
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 
 // Store the last event handler set

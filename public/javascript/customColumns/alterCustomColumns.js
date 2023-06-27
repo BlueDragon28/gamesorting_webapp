@@ -1,3 +1,4 @@
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { setError, hideError } from "../users/userModalErrorCard.js";
 import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
 

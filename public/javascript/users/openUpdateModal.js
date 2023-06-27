@@ -1,3 +1,4 @@
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import submitEmail from "./submitEmail.js";
 import submitPassword from "./submitPassword.js";
 import { hideError, setError } from "./userModalErrorCard.js";

@@ -9,7 +9,7 @@ module.exports = {
         filename: "public-js.bundle.1.0.0.js"
     },
     resolve: {
-        roots: [path.resolve(__dirname, "public")]
+        roots: [path.resolve(__dirname, "public"), path.resolve(__dirname, "node_modules")]
     },
     devtool: false,
     module: {

@@ -1,3 +1,4 @@
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
 const warningDomModal = document.getElementById("cookiesWarningModal");
 const acceptButton = document.getElementById("accept-essential-cookies-button");
 
