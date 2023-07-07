@@ -114,7 +114,7 @@ describe("collection dabase manipulation", function() {
     });
 
     it("save a duplicate item", async function() {
-        const [,error] = await itemQuery(async () => new Item("Battlefield 4", null, list).save());
+        const [,error] = await itemQuery(async () => new Item("Game 1", null, list).save());
 
         expect(error).not.toBe(undefined);
     });
@@ -126,7 +126,7 @@ describe("collection dabase manipulation", function() {
         expect(booksList instanceof List).toBe(true);
 
         [,error] = 
-            await itemQuery(async () => new Item("Battlefield 4", null, booksList).save());
+            await itemQuery(async () => new Item("Game 1", null, booksList).save());
         expect(error).toBe(undefined);
     });
 
@@ -191,7 +191,7 @@ describe("collection dabase manipulation", function() {
     });
 
     it("update item to a duplicate value", async function() {
-        const updatedItem = new List("Battlefield 4", null, list);
+        const updatedItem = new List("Game 1", null, list);
         updatedItem.id = item.id;
         const [,error] = await itemQuery(async () => updatedItem.save());
         expect(error).not.toBe(undefined);

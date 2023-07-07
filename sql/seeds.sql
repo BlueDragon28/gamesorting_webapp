@@ -21,15 +21,15 @@ DELETE FROM items;
 
 INSERT INTO items(ItemID, ListID, Name)
 VALUES
-    (1, 1, "Battlefield 4"),
-    (2, 1, "SnowRunner"),
+    (1, 1, "Game 1"),
+    (2, 1, "Game 2"),
 
-    (3, 2, "DragonSpell"),
-    (4, 2, "Raisin Dragons"),
+    (3, 2, "Book 1"),
+    (4, 2, "Book 2"),
 
-    (5, 3, "Frozen II"),
-    (6, 3, "Raya and the Last Dragon"),
-    (7, 3, "The Passion of the Christ");
+    (5, 3, "Movie 1"),
+    (6, 3, "Movie 2"),
+    (7, 3, "Movie 3");
 
 -- Insert data into listRowsType
 DELETE FROM listColumnsType;
@@ -49,22 +49,22 @@ DELETE FROM customRowsItems;
 
 INSERT INTO customRowsItems(CustomRowItemsID, ItemID, ListColumnTypeID, Value)
 VALUES
-    (1, 1, 1, "Action"),
-    (2, 2, 1, "Trucks"),
+    (1, 1, 1, "Categories 1"),
+    (2, 2, 1, "Categories 2"),
 
-    (3, 3, 2, "Fantasy"),
-    (4, 4, 2, "Fantasy"),
+    (3, 3, 2, "Author 1"),
+    (4, 4, 2, "Author 2"),
 
-    (5, 5, 3, "Disney"),
-    (6, 6, 3, "Disney"),
-    (7, 7, 3, "Mel Gibson");
+    (5, 5, 3, "Productor 1"),
+    (6, 6, 3, "Productor 2"),
+    (7, 7, 3, "Productor 3");
 
 DELETE FROM users;
 
 INSERT INTO users(UserID, Username, Email, Password)
 VALUES
-    (1, "Some user", "some@email.com", "$2a$12$bNG5j/sssJaBmlY21hpChOq.pc5q0A18Byj0jclPt4JgRDtdTWIf."),
-    (2, "BlueDragon28", "dragon@sisu.com", "$2a$12$dyYOCKe0BHbk4Xl/lGuztuthifqdPIMOX93P1wXOeO7hQ32/1eSTi");
+    (1, "Some user", "some@email.com", "$2a$12$shkfCBthDbpxTRmK2AhPA.KUdm0wHJ7BT1RteDxCh5JDy00SWbaOS"),
+    (2, "BlueDragon28", "email@prodiver.com", "$2a$12$shkfCBthDbpxTRmK2AhPA.KUdm0wHJ7BT1RteDxCh5JDy00SWbaOS");
 
 
 DELETE FROM usersLostPassword;
