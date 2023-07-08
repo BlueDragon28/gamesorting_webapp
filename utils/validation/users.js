@@ -5,6 +5,7 @@ const Joi = require("./extendedJoi");
 let usernameValidation = Joi.string().trim().forbidHTML().required();
 let emailValidation = Joi.string().trim().email().forbidHTML().required();
 let passwordValidation = Joi.string().trim().forbidHTML().required();
+let emptyValidation = Joi.string().min(0).max(0).required()
 
 if (process.env.NODE_ENV === "production") {
     usernameValidation = usernameValidation.min(7);
@@ -27,6 +28,7 @@ function makeRegisterUserValidation() {
 
 function makeLoginUserValidation() {
     return Joi.object({
+        emptySet: emptyValidation,
         username: usernameValidation,
         password: passwordValidation
     }).required();
