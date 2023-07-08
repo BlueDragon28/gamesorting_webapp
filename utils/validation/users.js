@@ -20,6 +20,7 @@ function checkIfUserValid(user) {
 
 function makeRegisterUserValidation() {
     return Joi.object({
+        emptySet: emptyValidation,
         username: usernameValidation,
         email: emailValidation,
         password: passwordValidation
