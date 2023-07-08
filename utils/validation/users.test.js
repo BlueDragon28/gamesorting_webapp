@@ -9,6 +9,7 @@ const joiDeleteUser = validation.deleteUser();
 
 it("test register user", function() {
     let result = joiUser.validate({
+        emptySet: "",
         username: "username12345",
         email: "my@email.com",
         password: "12345"
@@ -16,6 +17,7 @@ it("test register user", function() {
     expect(result.error).toBe(undefined);
 
     result = joiUser.validate({
+        emptySet: "",
         username: "",
         email: "my@email.com",
         password: "12345"
@@ -23,6 +25,7 @@ it("test register user", function() {
     expect(result.error).not.toBe(undefined);
 
     result = joiUser.validate({
+        emptySet: "",
         username: "username12345",
         email: "",
         password: "12345"
@@ -30,6 +33,7 @@ it("test register user", function() {
     expect(result.error).not.toBe(undefined);
 
     result = joiUser.validate({
+        emptySet: "",
         username: "username12345",
         email: "my@email.com",
         password: ""
@@ -37,6 +41,7 @@ it("test register user", function() {
     expect(result.error).not.toBe(undefined);
 
     result = joiUser.validate({
+        emptySet: "",
         username: "username12345",
         password: "12345"
     });
@@ -45,24 +50,28 @@ it("test register user", function() {
 
 it("test login user", function() {
     let result = joiLogin.validate({
+        emptySet: "",
         username: "username123",
         password: "12345"
     });
     expect(result.error).toBe(undefined);
 
     result = joiLogin.validate({
+        emptySet: "",
         username: "",
         password: "12345"
     });
     expect(result.error).not.toBe(undefined);
 
     result = joiLogin.validate({
+        emptySet: "",
         username: "username123",
         password: ""
     });
     expect(result.error).not.toBe(undefined);
 
     result = joiLogin.validate({
+        emptySet: "",
         username: "username123",
     });
     expect(result.error).not.toBe(undefined);
