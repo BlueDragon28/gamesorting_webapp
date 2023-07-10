@@ -478,6 +478,7 @@ router.get("/lists/:listID/upload",
 const uploadJSONDir = path.join(dataDir, "uploadJSON");
 
 router.post("/lists/:listID/upload-json",
+    checkListAuth,
     multer({ dest: uploadJSONDir }).single("file"),
     wrapAsync(async (req, res) => {
         const { listID } = req.params;
