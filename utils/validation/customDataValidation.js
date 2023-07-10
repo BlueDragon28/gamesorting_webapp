@@ -46,7 +46,7 @@ Validate the custom data with a column type of string
 function makeCustomDataStringValidation() {
     return Joi.object({
         Value: Joi.alternatives().try(
-            Joi.string().trim().max(300, "utf8").min(1, "utf8"),
+            Joi.string().trim().max(300, "utf8").min(1, "utf8").forbidHTML(),
             Joi.string().trim().min(0).max(0)
         ),
         columnType: Joi.object({
