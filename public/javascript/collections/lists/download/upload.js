@@ -24,7 +24,6 @@
         }
 
         console.log("Everything is good");
-        event.preventDefault();
     }
 
     formElement.addEventListener("submit", submitForm);

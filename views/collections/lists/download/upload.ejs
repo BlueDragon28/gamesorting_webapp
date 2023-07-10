@@ -10,7 +10,7 @@
                 Then make a JSON file using the same pattern that the download one. If you want to add custom data column, use a negatif number as ID.
                 If you add lists, do not add an ID at all. Do not compress it to zip.</p>
 
-                <form id="upload-file-form" action="#" method="POST">
+                <form id="upload-file-form" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/upload-json" method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label class="form-label" for="upload-file-type">Type</label>
                         <select class="form-select" name="type" id="upload-file-type">

@@ -173,5 +173,7 @@ module.exports = {
     FileStream,
     getListHeaderData,
     writeListHeaderData,
-    writeItemsIntoJSON
+    writeItemsIntoJSON,
+    jsonDir,
+    dataDir
 };

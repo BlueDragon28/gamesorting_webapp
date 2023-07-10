@@ -26,11 +26,14 @@ const {
     FileStream, 
     getListHeaderData, 
     writeListHeaderData, 
-    writeItemsIntoJSON 
+    writeItemsIntoJSON,
+    dataDir
 } = require("../utils/data/jsonData");
 const { compressZip, streamZip} = require("../utils/data/zipCompression");
 const path = require("node:path");
 const { rm } = require("node:fs/promises")
+const multer = require("multer");
+const fsPromise = require("node:fs/promises")
 
 const router = express.Router({ mergeParams: true });
 
@@ -470,6 +473,25 @@ router.get("/lists/:listID/upload",
         res.render("collections/lists/download/upload.ejs", {
             list: foundList
         });
+    }));
+
+const uploadJSONDir = path.join(dataDir, "uploadJSON");
+
+router.post("/lists/:listID/upload-json",
+    multer({ dest: uploadJSONDir }).single("file"),
+    wrapAsync(async (req, res) => {
+        const { listID } = req.params;
+
+        const foundList = await List.findByID(listID);
+        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+            throw new ValueError(404, "List not found!");
+        }
+
+        console.log("body:", req.body);
+        fileData = await fsPromise.readFile(req.file.path, { encoding: "utf8" });
+        console.log("file:", fileData);
+
+        res.redirect(`/collections/${foundList.parentCollection.id}/lists/${foundList.id}/upload`);
     }));
 
 router.use(parseCelebrateError);
