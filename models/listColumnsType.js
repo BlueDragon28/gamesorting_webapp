@@ -220,6 +220,37 @@ class ListColumnType {
         });
     }
 
+    static async findFromName(name, list, connection) {
+        if (typeof name !== "string" || !name.length ||
+            !list || !list instanceof List || !list.isValid()) {
+            throw new ValueError(400, "Invalid name or list");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                `SELECT ListColumnTypeID, Name, Type FROM listColumnsType WHERE Name = "${sqlString(name)}" AND ListID = ${list.id}`;
+
+            try {
+                const queryResult = await connection.query(queryStatement);
+
+                if (!queryResult.length) {
+                    return null;
+                }
+
+                const foundColumnType = new ListColumnType(queryResult[0].Name, queryResult[0].Type, list);
+                foundColumnType.id = queryResult[0].ListColumnTypeID;
+
+                if (!foundColumnType.isValid()) {
+                    return null
+                }
+
+                return foundColumnType;
+            } catch (error) {
+                throw new SqlError(`Failed to get column type by name: ${error.message}`);
+            }
+        });
+    }
+
     static async findFromList(list, connection) {
         if (!list || !list instanceof List || !list.isValid()) {
             throw new ValueError(400, "Invalid list");

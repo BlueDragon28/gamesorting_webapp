@@ -33,7 +33,7 @@ const { compressZip, streamZip} = require("../utils/data/zipCompression");
 const path = require("node:path");
 const { rm } = require("node:fs/promises")
 const multer = require("multer");
-const fsPromise = require("node:fs/promises")
+const jsonData = require("../utils/data/parseJSON");
 
 const router = express.Router({ mergeParams: true });
 
@@ -482,15 +482,33 @@ router.post("/lists/:listID/upload-json",
     multer({ dest: uploadJSONDir }).single("file"),
     wrapAsync(async (req, res) => {
         const { listID } = req.params;
+        const { type } = req.body;
+        const { file } = req;
 
-        const foundList = await List.findByID(listID);
-        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
-            throw new ValueError(404, "List not found!");
+        if (type !== "JSON") {
+            throw new ValueError(400, "Invalid request");
         }
 
-        console.log("body:", req.body);
-        fileData = await fsPromise.readFile(req.file.path, { encoding: "utf8" });
-        console.log("file:", fileData);
+        if (!file) {
+            throw new ValueError(400, "No file provided");
+        }
+
+        const [foundList] = await existingOrNewConnection(null, async function(connection) {
+            const foundList = await List.findByID(listID, connection);
+            if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+                throw new ValueError(404, "List not found!");
+            }
+
+            const foundListObject = await jsonData.findListInfo(file.path);
+
+            if (foundListObject.id != foundList.id) {
+                throw new ValueError(400, "list.id is not the same as the current list");
+            }
+
+            const customColumnsData = await jsonData.findCustomColumnsAndValidateThem(file.path, foundList, connection);
+
+            return [foundList];
+        });
 
         res.redirect(`/collections/${foundList.parentCollection.id}/lists/${foundList.id}/upload`);
     }));
