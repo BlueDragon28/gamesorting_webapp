@@ -1,0 +1,37 @@
+<% layout("layouts/boilerplate.ejs") -%> 
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title fs-4">Upload to <%= list.name %></h1>
+
+                <p>To upload to this list, you must first select the type you want to upload.
+                Then make a JSON file using the same pattern that the download one. If you want to add custom data column, use a negatif number as ID.
+                If you add lists, do not add an ID at all. Do not compress it to zip.</p>
+
+                <form id="upload-file-form" action="#" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label" for="upload-file-type">Type</label>
+                        <select class="form-select" name="type" id="upload-file-type">
+                            <option value="JSON">JSON</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="upload-file-file">File to upload</label>
+                        <input class="form-control" type="file" name="file" id="upload-file-file" accept="application/json">
+                    </div>
+
+                    <button class="btn btn-success w-100 mb-2" type="submit">Upload</button>
+                    <a class="btn btn-secondary w-100" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>">Go back</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const list = <%- JSON.stringify(list, (key, value) => typeof(value) === "bigint" ? value.toString() : value) %>
+</script>
+
+<script type="module" src="/javascript/collections/lists/download/upload.js"></script>

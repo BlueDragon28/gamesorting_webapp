@@ -457,6 +457,21 @@ router.get("/lists/:listID/download-json",
     }
 }));
 
+router.get("/lists/:listID/upload", 
+    checkListAuth,
+    wrapAsync(async (req, res) => {
+        const { listID } = req.params;
+
+        const foundList = await List.findByID(listID);
+        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+            throw new ValueError(404, "List not found!");
+        }
+
+        res.render("collections/lists/download/upload.ejs", {
+            list: foundList
+        });
+    }));
+
 router.use(parseCelebrateError);
 router.use(returnHasJSONIfNeeded);
 router.use(errorsWithPossibleRedirect("Cannot find this list"));
