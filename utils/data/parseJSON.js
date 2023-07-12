@@ -6,6 +6,7 @@ const Joi = require("../validation/extendedJoi");
 const { ListColumnType } = require("../../models/listColumnsType");
 const { rejects } = require("node:assert");
 const { Item } = require("../../models/items");
+const { CustomRowsItems } = require("../../models/customUserData");
 
 // Found the list key inside the json file and return it
 function findListInfo(filePath) {
@@ -71,25 +72,17 @@ async function validateCustomColumnsData(customColumns, list, connection) {
     const validatedCustomColumns = [];
 
     for (const item of customColumns) {
-        if (item.id <= 0) {
-            try {
-                const resultItem = await saveCustomColumnsItem(item, list, connection);
-                validatedCustomColumns.push(resultItem);
-            } catch {}
-            continue;
-        }
-
         const foundCustomColumns = await ListColumnType.findByID(item.id, connection);
 
         if (foundCustomColumns && foundCustomColumns.parentList.id === list.id) {
-            validatedCustomColumns.push({...item, readID: item.id});
+            validatedCustomColumns.push({...item, realID: item.id});
             continue;
         }
 
         const customColumnsByName = await ListColumnType.findFromName(item.name, list, connection);
 
         if (customColumnsByName) {
-            validatedCustomColumns.push({...item, readID: customColumnsByName.id});
+            validatedCustomColumns.push({...item, realID: customColumnsByName.id});
             continue;
         }
 
@@ -160,8 +153,8 @@ const validateItem = Joi.object({
     customData: Joi.array().items(Joi.object({
         id: Joi.number().required(),
         value: Joi.string().trim().max(300, "utf8").forbidHTML().required(),
-        itemID: Joi.number(),
-        columnTypeID: Joi.number()
+        itemID: Joi.number().required(),
+        columnTypeID: Joi.number().required()
     })).required()
 }).required();
 
@@ -170,6 +163,32 @@ async function queryOrNull(func) {
         return func();
     } catch (err) {
         return null;
+    }
+}
+
+async function saveCustomDataIntoAnItem(item, savedItem, list, customColumns, connection) {
+    const customDatas = item.customData;
+
+    for (const customData of customDatas) {
+        const headerCustomColumn = customColumns.find(row => row.id === customData.columnTypeID);
+
+        if (!headerCustomColumn) {
+            continue;
+        }
+
+        let savedCustomColumn = savedItem.customData?.find(row => row.columnTypeID == headerCustomColumn.realID);
+
+        if (!savedCustomColumn) {
+            savedCustomColumn = new CustomRowsItems(undefined, savedItem.id, headerCustomColumn.realID);
+        }
+
+        savedCustomColumn.value = customData.value;
+
+        try {
+            await savedCustomColumn.save(connection);
+        } catch (err) {
+            console.log(err);
+        }
     }
 }
 
@@ -198,6 +217,8 @@ async function validateItemsAndSaveThem(item, list, customColumns, connection) {
     }
 
     if (!savedItem) return;
+
+    await saveCustomDataIntoAnItem(item, savedItem, list, customColumns, connection);
 }
 
 function findItemsAndValidateThem(filePath, list, customColumns, connection) {

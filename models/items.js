@@ -338,6 +338,11 @@ class Item {
                 const foundItem = queryResult[0];
                 const item = new Item(foundItem.Name, foundItem.URL, list);
                 item.rating = foundItem.Rating;
+                item.id = foundItem.ItemID;
+
+                const foundCustomData = await CustomRowsItems.findFromItem(item.id, connection);
+                item.customData = foundCustomData;
+
                 return item;
             } catch (error) {
                 throw new SqlError(`Failed to get item from name ${error.message}`);
