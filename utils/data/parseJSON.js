@@ -73,30 +73,28 @@ async function validateCustomColumnsData(customColumns, list, connection) {
             try {
                 const resultItem = await saveCustomColumnsItem(item, list, connection);
                 validatedCustomColumns.push(resultItem);
-            } catch (err) {}
+            } catch {}
             continue;
         }
 
         const foundCustomColumns = await ListColumnType.findByID(item.id, connection);
 
-        if (!foundCustomColumns) {
-            const foundByName = await ListColumnType.findFromName(item.name, list, connection);
-
-            if (!foundByName) {
-                try {
-                    const resultItem = await saveCustomColumnsItem(item, list, connection)
-                    validatedCustomColumns.push(resultItem);
-                } catch (err) {}
-            } else {
-                validatedCustomColumns.push({...item, realID: foundByName.id});
-            }
-
+        if (foundCustomColumns && foundCustomColumns.parentList.id === list.id) {
+            validatedCustomColumns.push({...item, readID: item.id});
             continue;
         }
 
-        if (foundCustomColumns.parentList.id === list.id) {
-            validatedCustomColumns.push({...item, realID: item.id});
+        const customColumnsByName = await ListColumnType.findFromName(item.name, list, connection);
+
+        if (customColumnsByName) {
+            validatedCustomColumns.push({...item, readID: customColumnsByName.id});
+            continue;
         }
+
+        try {
+            const resultItem = await saveCustomColumnsItem(item, list, connection);
+            validatedCustomColumns.push(resultItem);
+        } catch {}
     }
 
     return validatedCustomColumns;
