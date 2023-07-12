@@ -7,7 +7,7 @@
                 <h1 class="card-title fs-4">Upload to <%= list.name %></h1>
 
                 <p>To upload to this list, you must first select the type you want to upload.
-                Then make a JSON file using the same pattern that the download one. If you want to add custom data column, use a negatif number as ID.
+                Then make a JSON file using the same pattern than the download one. If you want to add custom data column, use a negatif number as ID.
                 If you add lists, do not add an ID at all. Do not compress it to zip.</p>
 
                 <form id="upload-file-form" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/upload-json" method="POST" enctype="multipart/form-data">
