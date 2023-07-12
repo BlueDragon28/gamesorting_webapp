@@ -507,6 +507,8 @@ router.post("/lists/:listID/upload-json",
 
             const customColumnsData = await jsonData.findCustomColumnsAndValidateThem(file.path, foundList, connection);
 
+            await jsonData.findItemsAndValidateThem(file.path, foundList, customColumnsData, connection);
+
             return [foundList];
         });
 

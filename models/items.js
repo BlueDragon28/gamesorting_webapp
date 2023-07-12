@@ -311,6 +311,40 @@ class Item {
         });
     }
 
+    static async findFromName(name, list, connection) {
+        if (typeof name !== "string") {
+            return null;
+        }
+
+        const trimmedName = name.trim();
+
+        if (!trimmedName.length || 
+                !list || !list instanceof List || !list.isValid()) {
+
+            return null;
+        }
+
+        return existingOrNewConnection(connection, async function(connection) {
+            const queryString = 
+                "SELECT ListID, ItemID, Name, URL, Rating " +
+                "FROM items " +
+                `WHERE Name = "${sqlString(name)}" AND ListID = ${list.id}`;
+
+            try {
+                const queryResult = await connection.query(queryString);
+                if (!queryResult.length) {
+                    return null
+                }
+                const foundItem = queryResult[0];
+                const item = new Item(foundItem.Name, foundItem.URL, list);
+                item.rating = foundItem.Rating;
+                return item;
+            } catch (error) {
+                throw new SqlError(`Failed to get item from name ${error.message}`);
+            }
+        });
+    }
+
     static async deleteFromID(id, connection) {
         id = bigint.toBigInt(id);
         if (!bigint.isValid(id)) {

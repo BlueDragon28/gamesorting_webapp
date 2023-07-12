@@ -4,6 +4,8 @@ const JSONStream = require("JSONStream");
 const { ValueError } = require("../errors/exceptions");
 const Joi = require("../validation/extendedJoi");
 const { ListColumnType } = require("../../models/listColumnsType");
+const { rejects } = require("node:assert");
+const { Item } = require("../../models/items");
 
 // Found the list key inside the json file and return it
 function findListInfo(filePath) {
@@ -140,7 +142,105 @@ function findCustomColumnsAndValidateThem(filePath, list, connection) {
     });
 }
 
+const validateItem = Joi.object({
+    id: Joi.number().required(),
+    name: Joi.string().trim().max(300, "utf8").forbidHTML().required(),
+    url: Joi.alternatives().try(
+        Joi.string().trim().max(10000, "utf8").uri({
+            scheme: [
+                "http",
+                "https"
+            ],
+            allowQuerySquareBrackets: true,
+        }).required(),
+        Joi.string().trim().max(0).min(0).required()
+    ).required(),
+    rating: Joi.number().min(0).max(5).required(),
+    parentListID: Joi.number(),
+    customData: Joi.array().items(Joi.object({
+        id: Joi.number().required(),
+        value: Joi.string().trim().max(300, "utf8").forbidHTML().required(),
+        itemID: Joi.number(),
+        columnTypeID: Joi.number()
+    })).required()
+}).required();
+
+async function queryOrNull(func) {
+    try {
+        return func();
+    } catch (err) {
+        return null;
+    }
+}
+
+async function validateItemsAndSaveThem(item, list, customColumns, connection) {
+    let savedItem;
+
+    if (item.id <= 0) {
+        savedItem = new Item(item.name, item.url, list);
+        savedItem.rating = item.rating;
+        await savedItem.save(connection);
+    } else {
+        const foundItemByID = await queryOrNull(() => Item.findByID(item.id, connection));
+
+        if (foundItemByID && foundItemByID.parentList.id === list.id) {
+            savedItem = foundItemByID;
+        } else {
+            const foundItemByName = await queryOrNull(() => Item.findFromName(item.name, list, connection));
+            if (foundItemByName) {
+                savedItem = foundItemByName;
+            } else {
+                savedItem = new Item(item.name, item.url, list);
+                savedItem.rating = item.rating;
+                await savedItem.save(connection);
+            }
+        }
+    }
+
+    if (!savedItem) return;
+}
+
+function findItemsAndValidateThem(filePath, list, customColumns, connection) {
+    return new Promise((resolve, reject) => {
+        open(filePath)
+            .then(fileHandle => {
+                const fileStream = fileHandle.createReadStream({encoding: "utf8"});
+                const jsonStream = fileStream.pipe(JSONStream.parse("items.*"));
+
+                const awaitHandles = [];
+
+                jsonStream.on("data", function(data) {
+                    awaitHandles.push((async () => {
+                        const result = validateItem.validate(data);
+                        if (result.error) {
+                            return;
+                        }
+                        await validateItemsAndSaveThem(result.value, list, customColumns, connection);
+                    })());
+                });
+                jsonStream.on("error", function() {
+                    reject(new ValueError(400, "Failed to parse stream"));
+                    fileStream.close();
+                    fileHandle.close();
+                });
+                jsonStream.on("end", function() {
+                    fileStream.close();
+                    fileHandle.close();
+
+                    (async () => {
+                        for (const awaitItem of awaitHandles) {
+                            await awaitItem;
+                        }
+                        console.log("finishing!");
+                    })()
+                        .then(() => resolve());
+                });
+            });
+    });
+}
+
 module.exports = {
     findListInfo,
-    findCustomColumnsAndValidateThem
+    findCustomColumnsAndValidateThem,
+    findItemsAndValidateThem
 };
