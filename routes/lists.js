@@ -512,6 +512,9 @@ router.post("/lists/:listID/upload-json",
             return [foundList];
         });
 
+        await rm(file.path);
+
+        req.flash("success", "Successfully uploaded JSON file");
         res.redirect(`/collections/${foundList.parentCollection.id}/lists/${foundList.id}/upload`);
     }));
 
