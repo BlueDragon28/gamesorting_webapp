@@ -236,13 +236,13 @@ function findItemsAndValidateThem(filePath, list, customColumns, connection) {
                 const awaitHandles = [];
 
                 jsonStream.on("data", function(data) {
-                    awaitHandles.push((async () => {
+                    awaitHandles.push(async () => {
                         const result = validateItem.validate(data);
                         if (result.error) {
                             return;
                         }
                         await validateItemsAndSaveThem(result.value, list, customColumns, connection);
-                    })());
+                    });
                 });
                 jsonStream.on("error", function() {
                     reject(new ValueError(400, "Failed to parse stream"));
@@ -255,7 +255,7 @@ function findItemsAndValidateThem(filePath, list, customColumns, connection) {
 
                     (async () => {
                         for (const awaitItem of awaitHandles) {
-                            await awaitItem;
+                            await awaitItem();
                         }
                         console.log("finishing!");
                     })()
