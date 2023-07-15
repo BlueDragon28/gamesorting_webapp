@@ -1,3 +1,5 @@
+import { makeAlertCard } from "../../../runtimeFlash/runtimeFlashHandler.js";
+
 (function() {
     const formElement = document.getElementById("upload-file-form");
     const fileInputElement = document.getElementById("upload-file-file");
@@ -9,22 +11,22 @@
     function submitForm(event) {
         const files = fileInputElement.files;
         
-        if (!files.length) {
-            console.log("You must add a file!");
+        if (!files.length || !this.checkValidity()) {
             event.preventDefault();
+            event.stopPropagation();
+            this.classList.add("was-validated");
             return;
         }
 
         const file = files[0];
 
-        if (file.size > 1000000) { // 1 MB
-            console.log("The file is too big");
+        if (file.size > 2000000) { // 2 MB
             event.preventDefault();
-            return;
+            event.stopPropagation();
+            makeAlertCard("error", "ERROR: File size must not be more than 2MB")
         }
-
-        console.log("Everything is good");
     }
 
     formElement.addEventListener("submit", submitForm);
 })();
+

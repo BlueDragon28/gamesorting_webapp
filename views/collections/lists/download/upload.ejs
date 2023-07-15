@@ -9,16 +9,22 @@
                 <p>To upload to this list, you must first select the type you want to upload.
                 Then make a JSON file using the same pattern than the download one. Do not compress it into zip.</p>
 
-                <form id="upload-file-form" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/upload-json" method="POST" enctype="multipart/form-data">
+                <form id="upload-file-form" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/upload-json" method="POST" enctype="multipart/form-data" novalidate>
                     <div class="mb-3">
                         <label class="form-label" for="upload-file-type">Type</label>
-                        <select class="form-select" name="type" id="upload-file-type">
+                        <select class="form-select" name="type" id="upload-file-type" required>
                             <option value="JSON">JSON</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="upload-file-file">File to upload</label>
-                        <input class="form-control" type="file" name="file" id="upload-file-file" accept="application/json">
+                        <input class="form-control" type="file" name="file" id="upload-file-file" accept="application/json" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            You need to set a file and it need to be 2MB max!
+                        </div>
                     </div>
 
                     <button class="btn btn-success w-100 mb-2" type="submit">Upload</button>
