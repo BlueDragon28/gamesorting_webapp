@@ -186,9 +186,7 @@ async function saveCustomDataIntoAnItem(item, savedItem, list, customColumns, co
 
         try {
             await savedCustomColumn.save(connection);
-        } catch (err) {
-            console.log(err);
-        }
+        } catch {}
     }
 }
 
@@ -198,7 +196,11 @@ async function validateItemsAndSaveThem(item, list, customColumns, connection) {
     if (item.id <= 0) {
         savedItem = new Item(item.name, item.url, list);
         savedItem.rating = item.rating;
-        await savedItem.save(connection);
+        try {
+            await savedItem.save(connection);
+        } catch {
+            return;
+        }
     } else {
         const foundItemByID = await queryOrNull(() => Item.findByID(item.id, connection));
 
@@ -211,7 +213,11 @@ async function validateItemsAndSaveThem(item, list, customColumns, connection) {
             } else {
                 savedItem = new Item(item.name, item.url, list);
                 savedItem.rating = item.rating;
-                await savedItem.save(connection);
+                try {
+                    await savedItem.save(connection);
+                } catch {
+                    return;
+                }
             }
         }
     }
