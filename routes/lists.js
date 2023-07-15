@@ -501,8 +501,8 @@ router.post("/lists/:listID/upload-json",
 
             const foundListObject = await jsonData.findListInfo(file.path);
 
-            if (foundListObject.id != foundList.id) {
-                throw new ValueError(400, "list.id is not the same as the current list");
+            if (!foundListObject?.name) {
+                throw new ValueError(400, "List as no name!");
             }
 
             const customColumnsData = await jsonData.findCustomColumnsAndValidateThem(file.path, foundList, connection);
