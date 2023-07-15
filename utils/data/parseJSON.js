@@ -4,7 +4,6 @@ const JSONStream = require("JSONStream");
 const { ValueError } = require("../errors/exceptions");
 const Joi = require("../validation/extendedJoi");
 const { ListColumnType } = require("../../models/listColumnsType");
-const { rejects } = require("node:assert");
 const { Item } = require("../../models/items");
 const { CustomRowsItems } = require("../../models/customUserData");
 
@@ -46,7 +45,7 @@ function findListInfo(filePath) {
 }
 
 const validateCustomColumns = Joi.object({
-    id: Joi.number(),
+    id: Joi.number().required(),
     name: Joi.string().trim().min(1, "utf8").max(300, "utf8").forbidHTML().required(),
     type: Joi.alternatives().try(
         Joi.object({
@@ -57,7 +56,7 @@ const validateCustomColumns = Joi.object({
             min: Joi.number().required(),
             max: Joi.number().required()
         })
-    ),
+    ).required(),
     parentListID: Joi.number()
 });
 
@@ -153,7 +152,7 @@ const validateItem = Joi.object({
     customData: Joi.array().items(Joi.object({
         id: Joi.number().required(),
         value: Joi.string().trim().max(300, "utf8").forbidHTML().required(),
-        itemID: Joi.number().required(),
+        itemID: Joi.number(),
         columnTypeID: Joi.number().required()
     })).required()
 }).required();
