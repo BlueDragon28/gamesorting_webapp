@@ -19,8 +19,11 @@
     <button class="iconLinkButton" id="open-delete-list-modal-button" data-toggle="tooltip" title="Delete list"><img 
         src="/images/delete.svg" alt="Delete list icon"></button>
 
-    <a class="iconLinkButton" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/download"><img
+    <a class="iconLinkButton" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/download" data-toggle="tooltip" title="Download list"><img
         src="/images/download.svg" alt="Download icon"></a>
+
+    <a class="iconLinkButton reversed" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/upload" data-toggle="tooltip" title="Upload list"><img
+        src="/images/download.svg" alt="Upload icon"></a>
 
     <a class="iconLinkButton" data-toggle="tooltip" title="Sorting options"
         href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/sorting-options"><img
