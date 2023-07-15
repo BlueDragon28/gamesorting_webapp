@@ -19,6 +19,7 @@ import "./collections/lists/sorting/sorting-page-edit.js";
 import "./collections/lists/items/searchBox";
 import "./collections/lists/download/download";
 import "./coockiesWarning";
+import "./collections/lists/download/upload";
 
 // CSS
 import "../styles/starability-basic.min.css";
