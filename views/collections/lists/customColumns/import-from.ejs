@@ -1,0 +1,32 @@
+<% layout("layouts/boilerplate.ejs") -%>
+
+<%
+const dummyList = [];
+for (let i = 0; i < 30; i++) {
+    dummyList.push({ colName: `Col ${i}`, name: `List ${i}` });
+};
+%>
+
+<style>
+    .list-list {
+        max-height: 300px;
+        overflow-y: scroll;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title fs-4">Import custom columns from:</h1>
+                <ul class="list-group list-list">
+                    <% for (const list of dummyList) { %>
+                        <li class="list-group-item list-group-item-dark"><%= list.colName %>/<%=list.name %></li>
+                    <% } %>
+                </ul>
+                <button class="btn btn-success w-100 mt-3" type="button">Import</button>
+                <a class="btn btn-secondary w-100 mt-3" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/custom-columns">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>

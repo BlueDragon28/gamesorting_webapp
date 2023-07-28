@@ -152,6 +152,25 @@ router.get("/lists/:listID/sorting-options", checkListAuth, wrapAsync(async (req
     });
 }));
 
+router.get("/lists/:listID/import-custom-columns-from-list",
+        checkListAuth,
+    wrapAsync(async (req, res) => 
+{
+    const { listID } = req.params;
+
+    const [list] = await existingOrNewConnection(null, async function(connection) {
+        const foundList = await List.findByID(listID, connection);
+
+        if (!foundList?.isValid()) {
+            throw new ValueError(404, "Could not find valid list");
+        }
+
+        return [foundList];
+    });
+
+    res.render("collections/lists/customColumns/import-from", { list });
+}));
+
 router.post("/lists/:listID/sorting-options", 
     checkListAuth, 
     wrapAsync(async (req, res, next) => 
