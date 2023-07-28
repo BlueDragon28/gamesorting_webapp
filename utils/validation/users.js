@@ -23,7 +23,8 @@ function makeRegisterUserValidation() {
         emptySet: emptyValidation,
         username: usernameValidation,
         email: emailValidation,
-        password: passwordValidation
+        password: passwordValidation,
+        retyped_password: passwordValidation.valid(Joi.ref("password"))
     }).required();
 }
 
