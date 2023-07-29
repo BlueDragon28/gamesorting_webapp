@@ -222,8 +222,9 @@ class List {
         });
     }
 
-    static async findAllListFromUserByName(user, name = "", connection = null) {
+    static async findAllListFromUserByName(user, name = "", currentList = null, connection = null) {
         if (!user || !user instanceof User || !user.isValid() ||
+                (currentList && (!currentList instanceof List || !currentList.isValid())) ||
                 typeof name !== "string") {
             throw new ValueError(400, "Invalid User or Search Value");
         }
@@ -234,13 +235,22 @@ class List {
                 "c.Name AS CNAME, l.ListID AS ListID, l.Name AS LNAME " +
                 "FROM lists l " +
                 "INNER JOIN collections c USING (CollectionID) " +
-                "WHERE c.UserID = ? AND l.Name LIKE ? " +
+                "WHERE c.UserID = ? " + 
+                    (currentList && "AND l.ListID != ? " || "") +
+                    " AND l.Name LIKE ? " +
                 "LIMIT ?";
+
+            const queryArgs = [
+                user.id,
+                ...(currentList && [currentList.id] || []),
+                `%${name.replaceAll(" ", "%")}%`, 
+                30
+            ];
 
             try {
                 const queryResult = await connection.query(
                     queryStatement, 
-                    [user.id, `%${name.replaceAll(" ", "%")}%`, 30]
+                    queryArgs
                 );
 
                 if (!queryResult.length) {
