@@ -189,7 +189,8 @@ router.get("/lists/:listID/import-custom-columns-from-list",
 
     res.render("collections/lists/customColumns/import-from", { 
         list, 
-        searchedLists 
+        searchedLists,
+        searchText: search
     });
 }));
 
