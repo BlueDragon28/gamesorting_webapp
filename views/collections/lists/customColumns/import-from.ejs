@@ -46,6 +46,11 @@
     </div>
 </div>
 
+<!-- Form used to send request to backend with the selected list -->
+<form class="d-none" id="search-lists-submit-list-id-form" action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/import-custom-columns-from-list" method="post">
+    <input type="hidden" name="importListID" id="search-lists-submit-list-id-input">
+</form>
+
 <div class="modal fade" id="search-lists-accept-modal" tabindex="-1" aria-labelledby="searchListsAcceptModel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -66,7 +71,6 @@
 
 <script>
     const searchedLists = <%- JSON.stringify(searchedLists, (key, value) => typeof value === "bigint" ? value.toString() : value); %>;
-    const postAPIEndpoint = "/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/import-custom-columns-from-list";
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>

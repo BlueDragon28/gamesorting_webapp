@@ -7,6 +7,8 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
     const DOMConfirmModal = document.getElementById("search-lists-accept-modal");
     const modalListNameSpan = document.getElementById("search-lists-accept-modal-list-name");
     const modalAcceptButton = document.getElementById("search-lists-accept-modal-accept-button");
+    const submitIDForm = document.getElementById("search-lists-submit-list-id-form");
+    const submitIDFormField = document.getElementById("search-lists-submit-list-id-input");
 
     let selectedID = null;
 
@@ -15,7 +17,9 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
         !searchListForm ||
         !DOMConfirmModal ||
         !modalListNameSpan ||
-        !modalAcceptButton
+        !modalAcceptButton ||
+        !submitIDForm ||
+        !submitIDFormField
     ) {
         return;
     }
@@ -68,7 +72,8 @@ import { makeAlertCard } from "../runtimeFlash/runtimeFlashHandler.js";
     }
 
     function onUserAccept() {
-        console.log("user accepted");
+        submitIDFormField.value = selectedID;
+        submitIDForm.submit();
     }
 
     searchListForm.addEventListener("submit", onFormSubmit);
