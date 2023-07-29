@@ -237,13 +237,16 @@ class List {
                 "INNER JOIN collections c USING (CollectionID) " +
                 "WHERE c.UserID = ? " + 
                     (currentList && "AND l.ListID != ? " || "") +
-                    " AND l.Name LIKE ? " +
+                    " AND (l.Name LIKE ? OR c.Name LIKE ?) " +
                 "LIMIT ?";
+
+            const searchText = `%${name.replaceAll(" ", "%")}%`;
 
             const queryArgs = [
                 user.id,
                 ...(currentList && [currentList.id] || []),
-                `%${name.replaceAll(" ", "%")}%`, 
+                searchText, 
+                searchText,
                 30
             ];
 

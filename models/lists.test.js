@@ -335,6 +335,16 @@ describe("collection dabase manipulation", function() {
             expect(item instanceof List).toBe(true);
             expect(item.isValid()).toBe(true);
         }
+
+        const [foundListByCollectionName, errorFoundList5] =
+            await listQuery(() => List.findAllListFromUserByName(user, "col1"));
+        expect(errorFoundList5).toBe(undefined);
+        expect(Array.isArray(foundListByCollectionName)).toBe(true);
+        expect(foundListByCollectionName.length).toBe(2);
+        for (const item of foundListByCollectionName) {
+            expect(item instanceof List).toBe(true);
+            expect(item.isValid()).toBe(true);
+        }
     });
 });
 
