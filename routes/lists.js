@@ -34,6 +34,7 @@ const path = require("node:path");
 const { rm } = require("node:fs/promises")
 const multer = require("multer");
 const jsonData = require("../utils/data/parseJSON");
+const { User } = require("../models/users");
 
 const router = express.Router({ mergeParams: true });
 
@@ -157,18 +158,39 @@ router.get("/lists/:listID/import-custom-columns-from-list",
     wrapAsync(async (req, res) => 
 {
     const { listID } = req.params;
+    const { search = "" } = req.query;
 
-    const [list] = await existingOrNewConnection(null, async function(connection) {
+    const [list, searchedLists] = await existingOrNewConnection(null, async function(connection) {
+        const user = await User.findByID(req.session.user.id, connection);
+
+        if (!user?.isValid()) {
+            throw new ValueError(404, "Could not find this user");
+        }
+
         const foundList = await List.findByID(listID, connection);
 
         if (!foundList?.isValid()) {
             throw new ValueError(404, "Could not find valid list");
         }
 
-        return [foundList];
+        const searchedLists = await List.findAllListFromUserByName(
+            user,
+            search,
+            foundList,
+            connection
+        );
+
+        if (!Array.isArray(searchedLists)) {
+            throw new ValueError("Failed to search for lists");
+        }
+
+        return [foundList, searchedLists];
     });
 
-    res.render("collections/lists/customColumns/import-from", { list });
+    res.render("collections/lists/customColumns/import-from", { 
+        list, 
+        searchedLists 
+    });
 }));
 
 router.post("/lists/:listID/sorting-options", 
