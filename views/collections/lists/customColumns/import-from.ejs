@@ -28,11 +28,15 @@
                         </div>
                     </div>
                 </form>
+                <% if (searchedLists.length) { %>
                 <ul class="list-group list-list">
                     <% for (const searchedList of searchedLists) { %>
                         <li class="list-group-item list-group-item-dark"><%= searchedList.parentCollection.name %>/<%= searchedList.name %></li>
                     <% } %>
                 </ul>
+                <% } else { %>
+                    <p class="mx-0 my-1">No list found!</p>
+                <% } %>
                 <button class="btn btn-success w-100 mt-3" type="button">Import</button>
                 <a class="btn btn-secondary w-100 mt-3" href="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/custom-columns">Cancel</a>
             </div>
