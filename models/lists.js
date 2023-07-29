@@ -1,4 +1,5 @@
 const bigint = require("../utils/numbers/bigint");
+const { User } = require("./users");
 const { Collection } = require("./collections");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
 const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
@@ -219,6 +220,58 @@ class List {
                 throw new SqlError(`Failed to get all lists: ${error.message}`);
             }
         });
+    }
+
+    static async findAllListFromUserByName(user, name = "", connection = null) {
+        if (!user || !user instanceof User || !user.isValid() ||
+                typeof name !== "string") {
+            throw new ValueError(400, "Invalid User or Search Value");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                "SELECT c.CollectionID AS CollectionID, c.UserID as UserID, " + 
+                "c.Name AS CNAME, l.ListID AS ListID, l.Name AS LNAME " +
+                "FROM lists l " +
+                "INNER JOIN collections c USING (CollectionID) " +
+                "WHERE c.UserID = ? AND l.Name LIKE ? " +
+                "LIMIT ?";
+
+            try {
+                const queryResult = await connection.query(
+                    queryStatement, 
+                    [user.id, `%${name.replaceAll(" ", "%")}%`, 30]
+                );
+
+                if (!queryResult.length) {
+                    return [];
+                }
+
+                return List.parseFoundListsFromUser(queryResult);
+            } catch (error) {
+                throw new SqlError(`Failed to query lists: ${error.message}`);
+            }
+        });
+    }
+
+    static parseFoundListsFromUser(queryResult) {
+        const listOfLists = [];
+
+        for (const queryList of queryResult) {
+            const collection = new Collection(queryList.UserID, queryList.CNAME);
+            collection.id = queryList.CollectionID;
+
+            const list = new List(queryList.LNAME, collection);
+            list.id = queryList.ListID;
+
+            if (!collection.isValid() || !list.isValid()) {
+                throw new SqlError("Failed to retrieve list from name");
+            }
+
+            listOfLists.push(list);
+        }
+
+        return listOfLists;
     }
 
     static async deleteFromID(id, connection) {

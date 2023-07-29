@@ -4,6 +4,7 @@ const seeds = require("../sql/seeds");
 const { Collection } = require("./collections");
 const { List } = require("./lists");
 const Pagination = require("../utils/sql/pagination");
+const { User } = require("./users");
 
 let collection;
 
@@ -259,6 +260,71 @@ describe("collection dabase manipulation", function() {
         expect(lists[0].length).toBe(14);
         expect(lists[1].numberOfPages).toBe(2);
         expect(lists[1].currentPage).toBe(2);
+    });
+
+    it("find list by name from multiple connection", async function() {
+        let [user, error] = await listQuery(async () => {
+            const user = new User("abcdef", "abc@de.com", "12345", false);
+            await user.save();
+            return user;
+        });
+        expect(error).toBe(undefined);
+        expect(user instanceof User).toBe(true);
+
+        let [col, errorCol] = await listQuery(async () => {
+            const col1 = new Collection(user.id, "col1");
+            await col1.save();
+            const col2 = new Collection(user.id, "col2");
+            await col2.save();
+            return [col1, col2];
+        });
+        expect(errorCol).toBe(undefined);
+        expect(col[0] instanceof Collection).toBe(true);
+        expect(col[1] instanceof Collection).toBe(true);
+
+        let [lists, errorLists] = await listQuery(async () => {
+            const list1 = new List("list1", col[0]);
+            await list1.save();
+            const list2 = new List("list2", col[0]);
+            await list2.save();
+            const list3 = new List("list3 exemple", col[1]);
+            await list3.save();
+            return [list1, list2, list3];
+        });
+        expect(errorLists).toBe(undefined);
+        for (const list of lists) {
+            expect(list instanceof List).toBe(true);
+        }
+
+        const [foundListWithoutSearchName, errorFoundList1] =
+            await listQuery(() => List.findAllListFromUserByName(user));
+        expect(errorFoundList1).toBe(undefined);
+        expect(Array.isArray(foundListWithoutSearchName)).toBe(true);
+        expect(foundListWithoutSearchName.length).toBe(3);
+        for (const item of foundListWithoutSearchName) {
+            expect(item instanceof List).toBe(true);
+            expect(item.isValid()).toBe(true);
+        }
+
+        const [foundListWithListName, errorFoundList2] =
+            await listQuery(() => List.findAllListFromUserByName(user, "list"));
+        expect(errorFoundList2).toBe(undefined);
+        expect(Array.isArray(foundListWithListName)).toBe(true);
+        expect(foundListWithListName.length).toBe(3);
+        for (const item of foundListWithListName) {
+            expect(item instanceof List).toBe(true);
+            expect(item.isValid()).toBe(true);
+        }
+
+        const [foundListWithExempleName, errorFoundList3] =
+            await listQuery(() => List.findAllListFromUserByName(user, "exemple"));
+        expect(errorFoundList3).toBe(undefined);
+        expect(Array.isArray(foundListWithExempleName)).toBe(true);
+        expect(foundListWithExempleName.length).toBe(1);
+        for (const item of foundListWithExempleName) {
+            expect(item instanceof List).toBe(true);
+            expect(item.isValid()).toBe(true);
+        }
     });
 });
 
