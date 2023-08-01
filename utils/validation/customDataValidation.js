@@ -115,9 +115,20 @@ async function parseColumnsType(req, res, next) {
     next();
 }
 
+function validateImportCustomColumns() {
+    const celebrateValidation = {
+        [Segments.BODY]: Joi.object({
+            importListID: Joi.number().min(1).required()
+        }).required()
+    };
+
+    return celebrate(celebrateValidation);
+}
+
 module.exports = {
     parseColumnsType: wrapAsync(parseColumnsType),
     validate,
+    validateImportCustomColumns,
     _: {
         columnDataValidation: columnDataAndTypeValidation
     }

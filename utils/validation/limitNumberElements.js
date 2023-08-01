@@ -98,9 +98,26 @@ async function isCustomColumnsLimitMiddleware(req, res, next) {
     next();
 }
 
+async function isCustomColumnsLimitReachedMiddleware(req, res, next) {
+    const { listID } = req.params;
+
+    const [count, isUserBypassingRestriction] =
+        await existingOrNewConnection(null, async function(connection) {
+        
+        return getCountAndUserRestriction(req, listID, ListColumnType, connection);
+    });
+
+    if (count >= CUSTOM_COLUMNS_LIMIT && !isUserBypassingRestriction) {
+        throw new LimitError(`You have reached the limit of ${CUSTOM_COLUMNS_LIMIT} custom columns.`);
+    }
+
+    next()
+}
+
 module.exports = {
     isCollectionMaxLimitMiddleware: wrapAsync(isCollectionMaxLimitMiddleware),
     isListMaxLimitMiddleware: wrapAsync(isListMaxLimitMiddleware),
     isItemLaxLimitMiddleware: wrapAsync(isItemLaxLimitMiddleware),
     isCustomColumnsLimitMiddleware: wrapAsync(isCustomColumnsLimitMiddleware),
+    isCustomColumnsLimitReachedMiddleware: wrapAsync(isCustomColumnsLimitReachedMiddleware)
 }

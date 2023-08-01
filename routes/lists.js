@@ -4,7 +4,7 @@ const { List } = require("../models/lists");
 const { Item } = require("../models/items");
 const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
-const { InternalError, ValueError } = require("../utils/errors/exceptions");
+const { InternalError, ValueError, AuthorizationError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const { listColumnsValidation, validateDeleteColumn, validateUpdateColumn } = require("../utils/validation/listColumnsValidation");
 const { searchOptionsValidation } = require("../utils/validation/searchOptionsValidation");
@@ -20,7 +20,7 @@ const { trimColumns, checkForDuplicate, checkForDuplicateWithCurrentColumns, ret
     require("../utils/data/listCustomColumnsMiddlewares");
 const bigint = require("../utils/numbers/bigint");
 const Pagination = require("../utils/sql/pagination");
-const { isListMaxLimitMiddleware, isCustomColumnsLimitMiddleware } = require("../utils/validation/limitNumberElements");
+const { isListMaxLimitMiddleware, isCustomColumnsLimitMiddleware, isCustomColumnsLimitReachedMiddleware } = require("../utils/validation/limitNumberElements");
 const { ListSorting } = require("../models/listSorting");
 const { 
     FileStream, 
@@ -35,6 +35,8 @@ const { rm } = require("node:fs/promises")
 const multer = require("multer");
 const jsonData = require("../utils/data/parseJSON");
 const { User } = require("../models/users");
+const { validateImportCustomColumns } = require("../utils/validation/customDataValidation");
+const { importFromList } = require("../utils/sql/importFrom");
 
 const router = express.Router({ mergeParams: true });
 
@@ -276,6 +278,29 @@ router.post("/lists/:listID/custom-columns",
         res.set("Content-type", "application/json")
             .send({ type: "SUCCESS", message});
 }));
+
+router.post("/lists/:listID/import-custom-columns-from-list",
+    checkListAuth,
+    isCustomColumnsLimitReachedMiddleware,
+    validateImportCustomColumns(),
+    wrapAsync(async (req, res) => {
+
+        const { listID } = req.params;
+        const { importListID } = req.body;
+
+        await existingOrNewConnection(null, async function(connection) {
+            await importFromList(
+                listID, 
+                importListID,
+                req.session.user.id,
+                connection
+            );
+        });
+
+        res.redirect(`${req.baseUrl}/`+
+            `${req.url.slice(0, req.url.lastIndexOf("/"))}/custom-columns`);
+    })
+);
 
 router.delete("/lists/:listID/custom-column",
         checkListAuth,
