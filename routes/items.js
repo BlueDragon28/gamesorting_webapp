@@ -1,4 +1,5 @@
 const express = require("express");
+const { User } = require("../models/users");
 const { List } = require("../models/lists");
 const { ListColumnType } = require("../models/listColumnsType");
 const { CustomRowsItems } = require("../models/customUserData");
@@ -127,6 +128,48 @@ router.get("/items/:itemID/edit", checkItemAuth, customDataEjsHelper, wrapAsync(
     }
 
     res.render("collections/lists/items/edit", { item, listColumnsType });
+}));
+
+router.get("/items/:itemID/move-to", checkItemAuth, wrapAsync(async (req, res) => {
+    const { listID, itemID } = req.params;
+    const { search = "" } = req.query;
+    
+    const [item, list, searchedLists] = await existingOrNewConnection(null, async function(connection) {
+        const user = await User.findByID(req.session.user.id, connection);
+        if (!user?.isValid()) {
+            throw new ValueError(404, "Could not find this user");
+        }
+
+        const list = await List.findByID(listID, connection);
+        if (!list?.isValid()) {
+            throw new ValueError(404, "Could not find valid list");
+        }
+
+        const item = await Item.findByID(itemID, connection);
+        if (!item?.isValid()) {
+            throw new ValueError(404, "Could not find valid item");
+        }
+
+        const searchedLists = await List.findAllListFromUserByName(
+            user,
+            search,
+            list,
+            connection
+        );
+
+        if (!Array.isArray(searchedLists)) {
+            throw new ValueError("Failed to search for lists");
+        }
+        
+        return [item, list, searchedLists];
+    });
+
+    res.render("collections/lists/items/move-to.ejs", {
+        item,
+        list,
+        searchedLists,
+        searchText: search
+    });
 }));
 
 /*
