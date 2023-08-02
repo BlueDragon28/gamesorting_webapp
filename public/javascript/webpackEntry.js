@@ -20,6 +20,7 @@ import "./collections/lists/items/searchBox";
 import "./collections/lists/download/download";
 import "./coockiesWarning";
 import "./collections/lists/download/upload";
+import './customColumns/importCustomColumns';
 
 // CSS
 import "../styles/starability-basic.min.css";
@@ -33,3 +34,4 @@ import "../styles/interactionButtons/interactionButtons.css";
 import "../styles/text.css";
 import "../styles/sorting-styles.css";
 import "../styles/searchBox.css";
+import '../styles/list-items.css';
