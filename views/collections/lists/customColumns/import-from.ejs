@@ -5,17 +5,9 @@
         <div class="card">
             <div class="card-body">
                 <h1 class="card-title fs-4">Import custom columns from:</h1>
-                <form class="my-3 " action="/collections/<%= list.parentCollection.id %>/lists/<%= list.id %>/import-custom-columns-from-list">
-                    <div class="d-flex">
-                        <div class="flex-fill">
-                            <input class="form-control mx-0" type="text" name="search" placeholder="Search" value="<%= searchText %>">
-                        </div>
-                        <div class="px-2">
-                            <button class="btn btn-success search-btn m-0" type="submit"><img 
-                            src="/images/search.svg" alt="Search lists icon"></button>
-                        </div>
-                    </div>
-                </form>
+                <%- include("../../../partials/search-form.ejs", {
+                searchEndpoint: `/collections/${list.parentCollection.id}/lists/${list.id}/import-custom-columns-from-list`
+                }) %>
                 <% if (searchedLists.length) { %>
                 <form id="search-lists-form" action="">
                     <ul id="search-lists-ul" class="list-group list-list">
