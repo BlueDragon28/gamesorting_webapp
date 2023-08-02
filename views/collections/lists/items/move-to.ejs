@@ -5,6 +5,11 @@
         <div class="card">
             <div class="card-body">
                 <h1 class="card-title fs-4">Move <%= list.name %> to:</h1>
+                <%- include("../../../partials/search-form.ejs", {
+                    searchEndpoint: `/collections/${item.parentList.parentCollection.id}/lists/${item.parentList.id}/items/${item.id}/move-to`
+                }) %>
+
+                <a class="btn btn-secondary" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>">Go back</a>
             </div>
         </div>
     </div>
