@@ -9,7 +9,17 @@
                     searchEndpoint: `/collections/${item.parentList.parentCollection.id}/lists/${item.parentList.id}/items/${item.id}/move-to`
                 }) %>
 
-                <a class="btn btn-secondary" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>">Go back</a>
+                <form id="search-lists-form" action="">
+                    <%- include("../../../partials/search-list-items.ejs", {
+                        searchListUlID: "search-lists-ul",
+                        searchListItemPrefixID: "search-lists-select-button-",
+                        searchedListsItems: searchedLists
+                    }) %>
+
+                    <button class="btn btn-primary w-100 mt-3" type="submit">Move to</button>
+                </form>
+
+                <a class="btn btn-secondary w-100 mt-3" href="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>">Go back</a>
             </div>
         </div>
     </div>
