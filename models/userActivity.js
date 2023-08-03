@@ -1,6 +1,6 @@
 const bigint = require("../utils/numbers/bigint");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
-const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 
 class UserActivity {
     static expirationHours = 30 * 24; // Expiration after 30 days.
@@ -50,7 +50,7 @@ class UserActivity {
 
     async #_createUserActivity(connection) {
         const userID = this.userID ? this.userID : undefined;
-        const type = typeof this.type === "string" ? sqlString(this.type) : undefined;
+        const type = typeof this.type === "string" ? this.type : undefined;
 
         const queryStatement = 
             "INSERT INTO userActivity(" +
@@ -58,12 +58,18 @@ class UserActivity {
                 `${this.type ? "Type," : ""}` +
                 "Time) " +
             "VALUES (" +
-                `${userID ? userID.toString() + "," : ""}` +
-                `${type ? '"' +  type + '"' + "," : ""}` +
-                `${this.time})`;
+                `${userID ? "?," : ""}` +
+                `${type ? "?," : ""}` +
+                "?)";
+
+        const queryArgs = [
+            ...(userID && [userID.toString()] || []),
+            ...(type && [type] || []),
+            this.time,
+        ];
 
         try {
-            const queryResult = await connection.query(queryStatement);
+            const queryResult = await connection.query(queryStatement, queryArgs);
 
             this.id = queryResult.insertId;
 
@@ -97,10 +103,15 @@ class UserActivity {
 
             const queryStatement =
                 "SELECT UserActivityID, UserID, Type, Time FROM userActivity " +
-                `WHERE (Time >= ${begin}) AND (Time < ${end})`;
+                "WHERE (Time >= ?) AND (Time < ?)";
+
+            const queryArgs = [
+                begin,
+                end,
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 return UserActivity.#parseUserActivityQuery(queryResult);
             } catch (error) {
@@ -128,11 +139,16 @@ class UserActivity {
             const queryStatement = 
                 "SELECT COUNT(*) AS uniqueUsers FROM " +
                 "(SELECT UserID FROM userActivity " +
-                `WHERE (Time >= ${begin}) AND (Time < ${end}) AND (UserID IS NOT NULL) ` +
+                "WHERE (Time >= ?) AND (Time < ?) AND (UserID IS NOT NULL) " +
                 "GROUP BY UserID) AS users";
 
+            const queryArgs = [
+                begin,
+                end,
+            ];
+
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return 0;
@@ -162,10 +178,14 @@ class UserActivity {
             const oldestTime = timeNow - timelaps;
 
             const queryStatement = 
-                `DELETE FROM userActivity WHERE Time < ${oldestTime}`;
+                "DELETE FROM userActivity WHERE Time < ?";
+            
+            const queryArgs = [
+                oldestTime
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
                 return queryResult?.affectedRows;
             } catch (error) {
                 throw new SqlError(`Failed to delete user activity from timelaps: ${error.message}`);
