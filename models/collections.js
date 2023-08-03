@@ -1,6 +1,6 @@
 const bigint = require("../utils/numbers/bigint");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
-const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 const Pagination = require("../utils/sql/pagination");
 
 class Collection {
@@ -70,10 +70,11 @@ class Collection {
             return false;
         }
 
-        const queryStatement = `SELECT COUNT(1) AS count FROM collections WHERE CollectionID = ${this.id}`
+        const queryStatement = "SELECT COUNT(1) AS count FROM collections WHERE CollectionID = ?";
+        const queryArgs = [this.id];
 
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -87,10 +88,15 @@ class Collection {
 
     async #_createCollection(connection) {
         const queryStatement = 
-            `INSERT INTO collections(UserID, Name) VALUES (${this.userID}, "${sqlString(this.name)}")`;
+            "INSERT INTO collections(UserID, Name) VALUES (?, ?)";
+
+        const queryArgs = [
+            this.userID,
+            this.name
+        ];
 
         try {
-            const queryResult = await connection.query(queryStatement);
+            const queryResult = await connection.query(queryStatement, queryArgs);
 
             this.id = queryResult.insertId;
 
@@ -108,10 +114,15 @@ class Collection {
 
     async #_updateCollection(connection) {
         const queryStatement = 
-            `UPDATE collections SET Name = "${sqlString(this.name)}" WHERE CollectionID = ${this.id}`;
+            "UPDATE collections SET Name = ? WHERE CollectionID = ?";
+
+        const queryArgs = [
+            this.name,
+            this.id
+        ];
 
         try {
-            const result = await connection.query(queryStatement);
+            const result = await connection.query(queryStatement, queryArgs);
         } catch (error) {
             throw new SqlError(`Failed to update collection: ${error.message}`);
         }
@@ -120,12 +131,18 @@ class Collection {
     async #_isDuplicate(connection) {
         const queryStatement = 
             "SELECT COUNT(1) as count FROM collections " +
-            `WHERE Name = "${sqlString(this.name)}" AND CollectionID != ${this.id ? this.id : -1} ` +
-            `AND UserID = ${this.userID} ` +
+            "WHERE Name = ? AND CollectionID != ? " +
+            "AND UserID = ? " +
             "LIMIT 1";
 
+        const queryArgs = [
+            this.name,
+            this.id ? this.id : -1,
+            this.userID
+        ];
+
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -143,10 +160,14 @@ class Collection {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
                 "SELECT UserID, CollectionID, Name FROM collections " + 
-                `INNER JOIN users USING (UserID) WHERE CollectionID = ${id}`;
+                "INNER JOIN users USING (UserID) WHERE CollectionID = ?";
+
+            const queryArgs = [
+                id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -182,15 +203,23 @@ class Collection {
 
             let queryStatement = 
                 "SELECT UserID, CollectionID, Name FROM collections INNER JOIN users USING (UserID) " +
-                `WHERE UserID = ${userID} `;
+                "WHERE UserID = ? ";
+
+            const queryArgs = [
+                userID
+            ];
 
             if (pageNumber !== 0) {
                 queryStatement += 
-                    `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
+                    "LIMIT ? OFFSET ? ";
+                queryArgs.push(
+                    Pagination.ITEM_PER_PAGES,
+                    Pagination.calcOffset(pageNumber)
+                );
             }
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return [[], pagination];
@@ -211,10 +240,14 @@ class Collection {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `DELETE FROM collections WHERE CollectionID = ${id}`;
+                "DELETE FROM collections WHERE CollectionID = ?";
+
+            const queryArgs = [
+                id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (queryResult.affectedRows === 0) {
                     throw ValueError(400, "Invalid Collection ID");
@@ -236,10 +269,15 @@ class Collection {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement =
                 "SELECT COUNT(*) AS count FROM collections INNER JOIN users USING (UserID) " +
-                `WHERE UserID = ${userID} AND CollectionID = ${collectionID}`;
+                "WHERE UserID = ? AND CollectionID = ?";
+            
+            const queryArgs = [
+                userID,
+                collectionID
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 return queryResult[0].count > 0;
             } catch (error) {
@@ -257,10 +295,14 @@ class Collection {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `SELECT COUNT(*) as count FROM collections WHERE UserID = ${userID}`;
+                "SELECT COUNT(*) as count FROM collections WHERE UserID = ?";
+
+            const queryArgs = [
+                userID
+            ];
 
             try {
-                const queryResult = (await connection.query(queryStatement))[0];
+                const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
                 return queryResult.count;
             } catch (error) {
