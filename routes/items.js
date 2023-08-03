@@ -7,7 +7,7 @@ const { Item } = require("../models/items");
 const { deleteItem } = require("../utils/data/deletionHelper");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const bigint = require("../utils/numbers/bigint");
-const { InternalError, ValueError, AuthorizationError } = require("../utils/errors/exceptions");
+const { InternalError, ValueError, AuthorizationError, SqlError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const customDataValidation = require("../utils/validation/customDataValidation");
 const { 
@@ -18,6 +18,8 @@ const {
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkListAuth, checkItemAuth } = require("../utils/users/authorization");
 const { isItemLaxLimitMiddleware, isCustomColumnsLimitReachedMiddleware } = require("../utils/validation/limitNumberElements");
+const { moveItemTo } = require("../utils/sql/moveTo");
+const { importFromList } = require("../utils/sql/importFrom");
 
 const router = express.Router({ mergeParams: true });
 
@@ -284,8 +286,32 @@ router.post("/items/:itemID/move-to",
         const { listID, itemID } = req.params;
         const { moveToListID } = req.body;
 
-        console.log(`listID: ${listID}, itemID: ${itemID}`);
-        console.log("moveToListID:", moveToListID);
+        await existingOrNewConnection(null, async function(connection) {
+            try {
+                const item = await Item.findByID(itemID, connection);
+
+                if (!item || !item instanceof Item || !item.isValid()) {
+                    throw new ValueError(404, "Failed to find this list");
+                }
+
+                const [moveToList, list, newColumnsID] = await importFromList(
+                    moveToListID,
+                    listID,
+                    req.session.user.id,
+                    connection
+                );
+
+                await moveItemTo(list, moveToList, item, newColumnsID, connection);
+            } catch (err) {
+                if (err instanceof ValueError || err instanceof SqlError ||
+                        err instanceof InternalError) {
+
+                    throw err;
+                }
+
+                throw new InternalError("Oups, something went wrong");
+            }
+        });
 
         res.send("Hello");
     })

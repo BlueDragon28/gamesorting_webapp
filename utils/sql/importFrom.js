@@ -13,7 +13,7 @@ async function importList(toList, columnType, connection) {
         connection
     );
     if (findColumnFromName) return {
-        fromID: findColumnFromName.id,
+        fromID: columnType.id,
         toID: findColumnFromName.id
     };
 
