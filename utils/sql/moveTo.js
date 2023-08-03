@@ -1,6 +1,7 @@
 const { List } = require("../../models/lists");
 const { Item } = require("../../models/items");
 const { CustomRowsItems } = require("../../models/customUserData");
+const { ValueError } = require("../errors/exceptions");
 
 function findColumnsID(customRow, newColumnsID) {
     const filteredList = 
@@ -30,6 +31,12 @@ async function moveItemTo(fromList, toList, item, newColumnsID, connection) {
             !item || !item instanceof Item || !item.isValid()) {
 
         throw new ValueError(400, "Invalid lists/item provided");
+    }
+
+    const foundItemByName = await Item.findFromName(item.name, toList, connection);
+
+    if (foundItemByName instanceof Item) {
+        throw new ValueError(400, "An item with this name already exists in the destination list");
     }
 
     const newItem = new Item(item.name, item.url, toList);
