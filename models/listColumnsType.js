@@ -1,7 +1,7 @@
 const bigint = require("../utils/numbers/bigint");
 const { List } = require("./lists");
 const { SqlError, ValueError, InternalError } = require("../utils/errors/exceptions");
-const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 
 function toJSON(json) {
     return JSON.stringify(json, function(key, value) {
@@ -114,10 +114,14 @@ class ListColumnType {
             return false;
         }
 
-        const queryStatement = `SELECT COUNT(1) AS count FROM listColumnsType WHERE ListColumnTypeID = ${this.id}`
+        const queryStatement = "SELECT COUNT(1) AS count FROM listColumnsType WHERE ListColumnTypeID = ?";
+
+        const queryArgs = [
+            this.id
+        ];
 
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -128,11 +132,16 @@ class ListColumnType {
     async #_isDuplicate(connection) {
         const queryStatement = 
             "SELECT COUNT(1) as count FROM listColumnsType " +
-            `WHERE Name = "${sqlString(this.name)}" AND ListID = ${this.parentList.id ? this.parentList.id : -1} ` +
+            "WHERE Name = ? AND ListID = ? " +
             "LIMIT 1";
 
+        const queryArgs = [
+            this.name,
+            this.parentList.id ? this.parentList.id : -1,
+        ];
+
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -146,10 +155,16 @@ class ListColumnType {
 
     async #_createListColumnType(connection) {
         const queryStatement = "INSERT INTO listColumnsType(ListID, Name, Type) VALUES " + 
-            `(${this.parentList.id}, "${sqlString(this.name)}", "${sqlString(toJSON(this.type))}")`;
+            "(?, ?, ?)";
+
+        const queryArgs = [
+            this.parentList.id,
+            this.name,
+            toJSON(this.type),
+        ];
 
         try {
-            const queryResult = await connection.query(queryStatement);
+            const queryResult = await connection.query(queryStatement, queryArgs);
 
             this.id = queryResult.insertId;
 
@@ -167,11 +182,16 @@ class ListColumnType {
 
     async #_updateListColumnType(connection) {
         let queryStatement = 
-            `UPDATE listColumnsType SET Name = "${sqlString(this.name)}" ` +
-            `WHERE ListColumnTypeID = ${this.id}`;
+            "UPDATE listColumnsType SET Name = ? " +
+            "WHERE ListColumnTypeID = ?";
+
+        const queryArgs = [
+            this.name,
+            this.id,
+        ];
 
         try {
-            const result = await connection.query(queryStatement);
+            const result = await connection.query(queryStatement, queryArgs);
 
             if (result.affectedRows === 0) {
                 throw new SqlError("Invalid List Column ID");
@@ -190,12 +210,15 @@ class ListColumnType {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                "SELECT l.ListID AS ListID, ct.ListColumnTypeID AS ListColumnTypeID, ct.Name AS Name," +
-                "ct.Type AS Type FROM listColumnsType ct INNER JOIN lists l USING (ListID) " +
-                `WHERE ListColumnTypeID = ${id}`;
+                "SELECT ListID, ListColumnTypeID, Name, Type " +
+                "FROM listColumnsType WHERE ListColumnTypeID = ?";
+
+            const queryArgs = [
+                id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -228,10 +251,15 @@ class ListColumnType {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `SELECT ListColumnTypeID, Name, Type FROM listColumnsType WHERE Name = "${sqlString(name)}" AND ListID = ${list.id}`;
+                "SELECT ListColumnTypeID, Name, Type FROM listColumnsType WHERE Name = ? AND ListID = ?";
+
+            const queryArgs = [
+                name,
+                list.id,
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -258,10 +286,14 @@ class ListColumnType {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `SELECT ListColumnTypeID, Name, Type FROM listColumnsType WHERE ListID = ${list.id};`;
+                "SELECT ListColumnTypeID, Name, Type FROM listColumnsType WHERE ListID = ?;";
+
+            const queryArgs = [
+                list.id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return [];
@@ -285,10 +317,14 @@ class ListColumnType {
                 "SELECT l.ListColumnTypeID AS ListColumnTypeID, l.Name AS Name, l.Type AS Type " +
                 "FROM listColumnsType l " +
                 "INNER JOIN customRowsItems USING (ListColumnTypeID) " +
-                `WHERE CustomRowItemsID = ${userDataID}`;
+                "WHERE CustomRowItemsID = ?";
+
+            const queryArgs = [
+                userDataID
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return [];
@@ -309,10 +345,14 @@ class ListColumnType {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `DELETE FROM listColumnsType WHERE ListID = ${listID}`;
+                `DELETE FROM listColumnsType WHERE ListID = ?`;
+
+            const queryArgs = [
+                listID
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
             } catch (error) {
                 throw new SqlError(`Failed to delete columns type from list id: ${error.message}`);
             }
@@ -329,8 +369,12 @@ class ListColumnType {
             const queryStatement =
                 `DELETE FROM listColumnsType WHERE ListColumnTypeID = ${customListID}`;
 
+            const queryArgs = [
+                customListID
+            ];
+
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (queryResult.affectedRows === 0) {
                     throw new ValueError(400, "Invalid List");
@@ -350,8 +394,12 @@ class ListColumnType {
             const queryStatement = 
                 `SELECT COUNT(*) AS count FROM listColumnsType WHERE ListID = ${listID}`;
 
+            const queryArgs = [
+                listID
+            ];
+
             try {
-                const queryResult = (await connection.query(queryStatement))[0];
+                const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
                 return queryResult.count;
             } catch (error) {
