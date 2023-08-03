@@ -1,7 +1,7 @@
 const bigint = require("../utils/numbers/bigint");
 const { List } = require("./lists");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
-const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 
 
 class ListSorting {
@@ -73,10 +73,14 @@ class ListSorting {
         }
 
         const queryStatement =
-            `SELECT ListSortingID FROM listSorting WHERE ListID = ${this.parentList.id}`;
+            "SELECT ListSortingID FROM listSorting WHERE ListID = ?";
+
+        const queryArgs = [
+            this.parentList.id
+        ];
 
         try {
-            const queryResult = await connection.query(queryStatement);
+            const queryResult = await connection.query(queryStatement, queryArgs);
             const isExisting = queryResult.length > 0;
 
             if (isExisting) {
@@ -96,10 +100,19 @@ class ListSorting {
     async #_createItem(connection) {
         const queryStatement =
             `INSERT INTO listSorting(ListID, Type ${typeof this.reverseOrder === "boolean" ? ", ReverseOrder" : ""}) ` +
-            `VALUES (${this.parentList.id}, \"${sqlString(this.type)}\"${typeof this.reverseOrder === "boolean" ? ", " + (this.reverseOrder ? "TRUE" : "FALSE") : ""})`;
+            `VALUES (?, ? ${typeof this.reverseOrder === "boolean" ? ", ?" : ""})`;
+
+        const queryArgs = [
+            this.parentList.id,
+            this.type,
+        ];
+
+        if (typeof this.reverseOrder === "boolean") {
+            queryArgs.push(this.reverseOrder);
+        }
 
         try {
-            const queryResult = await connection.query(queryStatement);
+            const queryResult = await connection.query(queryStatement, queryArgs);
 
             this.id = queryResult.insertId;
 
@@ -117,12 +130,21 @@ class ListSorting {
 
     async #_updateItem(connection) {
         let queryStatement =
-            `UPDATE listSorting SET Type = \"${sqlString(this.type)}\" ` +
-            `${typeof this.reverseOrder === "boolean" ? `, ReverseOrder = ${this.reverseOrder ? "TRUE" : "FALSE"}` : ""} ` +
-            `WHERE ListSortingID = ${this.id}`;
+            "UPDATE listSorting SET Type = ? " +
+            `${typeof this.reverseOrder === "boolean" ? `, ReverseOrder = ?` : ""} ` +
+            "WHERE ListSortingID = ?";
+
+        const queryArgs = [
+            this.type,
+        ];
+
+        if (typeof this.reverseOrder === "boolean") {
+            queryArgs.push(this.reverseOrder);
+        }
+        queryArgs.push(this.id);
 
         try {
-            const queryResult = await connection.query(queryStatement);
+            const queryResult = await connection.query(queryStatement, queryArgs);
         } catch (error) {
             throw new SqlError(`Failed to update list sorting element: ${error.message}`);
         }
@@ -136,10 +158,14 @@ class ListSorting {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
                 "SELECT ListSortingID, ListID, ReverseOrder, Type FROM listSorting " +
-                `WHERE ListID = ${list.id}`;
+                "WHERE ListID = ?";
+
+            const queryArgs = [
+                list.id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -159,10 +185,14 @@ class ListSorting {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `DELETE FROM listSorting WHERE ListID = ${list.id}`;
+                "DELETE FROM listSorting WHERE ListID = ?";
+
+            const queryArgs = [
+                list.id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 return queryResult.affectedRows;
             } catch (error) {
@@ -178,10 +208,14 @@ class ListSorting {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement =
-                `SELECT COUNT(*) AS count FROM listSorting WHERE ListID = ${list.id}`;
+                "SELECT COUNT(*) AS count FROM listSorting WHERE ListID = ?";
+
+            const queryArgs = [
+                list.id
+            ];
 
             try {
-                const queryResult = (await connection.query(queryStatement))[0];
+                const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
                 return queryResult?.count;
             } catch (error) {
