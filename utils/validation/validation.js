@@ -112,11 +112,22 @@ function validateItem(itemToValidate) {
     return celebrate(bodyValidation(itemValidation(itemToValidate)));
 }
 
+function validateMoveItemTo() {
+    const celebrateValidation = {
+        [Segments.BODY]: Joi.object({
+            moveToListID: Joi.number().min(1).required()
+        }).required()
+    };
+
+    return celebrate(celebrateValidation);
+}
+
 module.exports = {
     id: validateID(),
     item: function(itemToValidate) {
         return validateItem(itemToValidate);
     },
+    validateMoveItemTo,
     _: {
         validateID: function() {
             return paramsValidation(idValidation());

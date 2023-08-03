@@ -26,7 +26,7 @@
 </div>
 
 <form class="d-none" id="search-lists-submit-list-id-form" action="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>/move-to" method="post">
-    <input type="hidden" name="importListID" id="search-lists-submit-list-id-input">
+    <input type="hidden" name="moveToListID" id="search-lists-submit-list-id-input">
 </form>
 
 <div class="modal fade" id="search-lists-accept-modal" tabindex="-1" aria-labelledby="searchListsAcceptModel" aria-hidden="true">

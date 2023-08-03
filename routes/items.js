@@ -17,7 +17,7 @@ const {
 } = require("../utils/errors/celebrateErrorsMiddleware");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { checkListAuth, checkItemAuth } = require("../utils/users/authorization");
-const { isItemLaxLimitMiddleware } = require("../utils/validation/limitNumberElements");
+const { isItemLaxLimitMiddleware, isCustomColumnsLimitReachedMiddleware } = require("../utils/validation/limitNumberElements");
 
 const router = express.Router({ mergeParams: true });
 
@@ -275,6 +275,21 @@ router.put("/items/:itemID", checkItemAuth, parseCustomColumnsData,
     req.flash("success", "Successfully updated an item");
     res.redirect(`${req.baseUrl}/items/${itemID}`);
 }));
+
+router.post("/items/:itemID/move-to", 
+    checkItemAuth,
+    isCustomColumnsLimitReachedMiddleware,
+    validation.validateMoveItemTo(),
+    wrapAsync(async (req, res) => {
+        const { listID, itemID } = req.params;
+        const { moveToListID } = req.body;
+
+        console.log(`listID: ${listID}, itemID: ${itemID}`);
+        console.log("moveToListID:", moveToListID);
+
+        res.send("Hello");
+    })
+);
 
 /*
 Delete an item from a list
