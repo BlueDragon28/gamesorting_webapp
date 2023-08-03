@@ -6,8 +6,6 @@ const { ValueError } = require("../errors/exceptions");
 function findColumnsID(customRow, newColumnsID) {
     const filteredList = 
         newColumnsID.filter(columnID => columnID.fromID === customRow.columnTypeID);
-    console.log("newColumnsID", newColumnsID);
-    console.log(customRow);
     return filteredList.length ? filteredList[0] : null;
 }
 
