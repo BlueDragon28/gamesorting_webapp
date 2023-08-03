@@ -39,7 +39,10 @@ async function importFromList(toListID, fromListID, userID, connection) {
         throw new ValueError(404, "Cannot import from an non existing list");
     }
 
-    if (fromList.parentCollection.userID != userID) {
+    if (
+        fromList.parentCollection.userID != userID ||
+        toList.parentCollection.userID != userID
+    ) {
         throw new AuthorizationError("This list is not yours");
     }
 
