@@ -12,7 +12,8 @@ it("test register user", function() {
         emptySet: "",
         username: "username12345",
         email: "my@email.com",
-        password: "12345"
+        password: "12345",
+        retyped_password: "12345"
     });
     expect(result.error).toBe(undefined);
 
@@ -20,7 +21,8 @@ it("test register user", function() {
         emptySet: "",
         username: "",
         email: "my@email.com",
-        password: "12345"
+        password: "12345",
+        retyped_password: "12345"
     });
     expect(result.error).not.toBe(undefined);
 
@@ -28,7 +30,8 @@ it("test register user", function() {
         emptySet: "",
         username: "username12345",
         email: "",
-        password: "12345"
+        password: "12345",
+        retyped_password: "12345"
     });
     expect(result.error).not.toBe(undefined);
 
@@ -36,14 +39,24 @@ it("test register user", function() {
         emptySet: "",
         username: "username12345",
         email: "my@email.com",
-        password: ""
+        password: "",
+        retyped_password: "12345"
     });
     expect(result.error).not.toBe(undefined);
 
     result = joiUser.validate({
         emptySet: "",
         username: "username12345",
-        password: "12345"
+        password: "12345",
+        retyped_password: "12345"
+    });
+    expect(result.error).not.toBe(undefined);
+
+    result = joiUser.validate({
+        emptySet: "",
+        username: "username12345",
+        password: "12345",
+        retyped_password: "6789A"
     });
     expect(result.error).not.toBe(undefined);
 });
