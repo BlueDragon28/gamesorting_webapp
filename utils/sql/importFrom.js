@@ -12,7 +12,10 @@ async function importList(toList, columnType, connection) {
         toList,
         connection
     );
-    if (findColumnFromName) return;
+    if (findColumnFromName) return {
+        fromID: findColumnFromName.id,
+        toID: findColumnFromName.id
+    };
 
     const newColumn = new ListColumnType(
         columnType.name,
@@ -20,6 +23,10 @@ async function importList(toList, columnType, connection) {
         toList
     );
     await newColumn.save(connection);
+    return {
+        fromID: columnType.id,
+        toID: newColumn.id
+    };
 }
 
 async function importFromList(toListID, fromListID, userID, connection) {
@@ -48,11 +55,12 @@ async function importFromList(toListID, fromListID, userID, connection) {
 
     const fromCustomColumns = await ListColumnType.findFromList(fromList, connection);
     
+    const newColumnID = []
     for (const column of fromCustomColumns) {
-        await importList(toList, column, connection);
+        newColumnID.push(await importList(toList, column, connection));
     }
 
-    return [toList, fromList];
+    return [toList, fromList, newColumnID];
 }
 
 module.exports = {
