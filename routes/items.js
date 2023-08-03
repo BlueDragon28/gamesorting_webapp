@@ -304,7 +304,7 @@ router.post("/items/:itemID/move-to",
                 const newItem = await moveItemTo(list, moveToList, item, newColumnsID, connection);
 
                 if (!makeACopy) {
-                    await item.delete(connection);
+                    await deleteItem(item.id, connection);
                 }
 
                 return newItem;
