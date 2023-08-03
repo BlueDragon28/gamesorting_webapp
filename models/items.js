@@ -117,6 +117,11 @@ class Item {
         }
     }
 
+    async delete(connection) {
+        if (!this.id) return;
+        return await Item.deleteFromID(this.id, connection);
+    }
+
     async exists(connection) {
         if (!this.id) {
             return false;
