@@ -286,7 +286,7 @@ router.post("/items/:itemID/move-to",
         const { listID, itemID } = req.params;
         const { moveToListID } = req.body;
 
-        await existingOrNewConnection(null, async function(connection) {
+        const newItem = await existingOrNewConnection(null, async function(connection) {
             try {
                 const item = await Item.findByID(itemID, connection);
 
@@ -301,7 +301,7 @@ router.post("/items/:itemID/move-to",
                     connection
                 );
 
-                await moveItemTo(list, moveToList, item, newColumnsID, connection);
+                return await moveItemTo(list, moveToList, item, newColumnsID, connection);
             } catch (err) {
                 if (err instanceof ValueError || err instanceof SqlError ||
                         err instanceof InternalError) {
@@ -313,7 +313,7 @@ router.post("/items/:itemID/move-to",
             }
         });
 
-        res.send("Hello");
+        res.redirect(`${req.baseUrl}/items/${newItem.id}`);
     })
 );
 

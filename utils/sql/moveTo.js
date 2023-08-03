@@ -46,6 +46,8 @@ async function moveItemTo(fromList, toList, item, newColumnsID, connection) {
     for (const customRow of item.customData) {
         await newCustomRow(newItem, customRow, newColumnsID, connection);
     }
+
+    return newItem;
 }
 
 module.exports = {
