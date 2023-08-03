@@ -284,7 +284,7 @@ router.post("/items/:itemID/move-to",
     validation.validateMoveItemTo(),
     wrapAsync(async (req, res) => {
         const { listID, itemID } = req.params;
-        const { moveToListID } = req.body;
+        const { moveToListID, makeACopy } = req.body;
 
         const newItem = await existingOrNewConnection(null, async function(connection) {
             try {
@@ -301,7 +301,13 @@ router.post("/items/:itemID/move-to",
                     connection
                 );
 
-                return await moveItemTo(list, moveToList, item, newColumnsID, connection);
+                const newItem = await moveItemTo(list, moveToList, item, newColumnsID, connection);
+
+                if (!makeACopy) {
+                    await item.delete(connection);
+                }
+
+                return newItem;
             } catch (err) {
                 if (err instanceof ValueError || err instanceof SqlError ||
                         err instanceof InternalError) {

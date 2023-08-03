@@ -115,7 +115,8 @@ function validateItem(itemToValidate) {
 function validateMoveItemTo() {
     const celebrateValidation = {
         [Segments.BODY]: Joi.object({
-            moveToListID: Joi.number().min(1).required()
+            moveToListID: Joi.number().min(1).required(),
+            makeACopy: Joi.boolean().required()
         }).required()
     };
 

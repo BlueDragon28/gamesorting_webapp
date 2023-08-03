@@ -16,6 +16,11 @@
                         searchedListsItems: searchedLists
                     }) %>
 
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" name="" id="make-copy-to-new-list" checked>
+                        <label for="make-copy-to-new-list" class="form-check-label">Create a copy</label>
+                    </div>
+
                     <button class="btn btn-primary w-100 mt-3" type="submit">Move to</button>
                 </form>
 
@@ -27,6 +32,7 @@
 
 <form class="d-none" id="search-lists-submit-list-id-form" action="/collections/<%= item.parentList.parentCollection.id %>/lists/<%= item.parentList.id %>/items/<%= item.id %>/move-to" method="post">
     <input type="hidden" name="moveToListID" id="search-lists-submit-list-id-input">
+    <input type="hidden" name="makeACopy" id="move-item-to-new-list-make-copy" value="true">
 </form>
 
 <div class="modal fade" id="search-lists-accept-modal" tabindex="-1" aria-labelledby="searchListsAcceptModel" aria-hidden="true">
@@ -50,3 +56,5 @@
 <script>
     const searchedLists = <%- JSON.stringify(searchedLists, (key, value) => typeof value === "bigint" ? value.toString() : value); %>;
 </script>
+
+<script src="/javascript/collections/lists/items/moveItemsMakeCopy.js"></script>
