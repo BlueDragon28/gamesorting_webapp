@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const bigint = require("../utils/numbers/bigint");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
-const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 const Pagination = require("../utils/sql/pagination");
 
 class User {
@@ -104,9 +104,14 @@ class User {
     }
 
     async #_exists(connection) {
-        const queryStatement = `SELECT COUNT(UserID) as count FROM users WHERE UserID = ${this.id ? this.id : -1}`;
+        const queryStatement = "SELECT COUNT(UserID) as count FROM users WHERE UserID = ?";
+
+        const queryArgs = [
+            this.id ? this.id : -1
+        ];
+
         try {
-            const foundUser = (await connection.query(queryStatement))[0];
+            const foundUser = (await connection.query(queryStatement, queryArgs))[0];
 
             return foundUser.count > 0;
         } catch (error) {
@@ -121,15 +126,19 @@ class User {
 
     async #_createUser(connection) {
         const queryStatement = 
-            `INSERT INTO users (Username, Email, Password` +
-            `${this.bypassRestriction === true ? ", BypassRestriction" : ""} ` +
-            `${typeof this.isAdmin === "boolean" ? ", IsAdmin" : ""} ) ` +
-            `VALUES ("${sqlString(this.username)}", "${sqlString(this.email)}", ` + 
-            `"${sqlString(this.#hashPassword)}" ${this.bypassRestriction === true ? ", TRUE" : ""}` +
-            `${typeof this.isAdmin === "boolean" ? "," + this.isAdmin : ""})`;
+            "INSERT INTO users (Username, Email, Password, BypassRestriction, IsAdmin) " +
+            "VALUES (?, ?, ?, ?, ?)";
+
+        const queryArgs = [
+            this.username,
+            this.email,
+            this.#hashPassword,
+            this.bypassRestriction === true ? true : false,
+            this.isAdmin === true ? true : false
+        ];
 
         try {
-            const result = await connection.query(queryStatement);
+            const result = await connection.query(queryStatement, queryArgs);
 
             this.id = result.insertId;
 
@@ -148,14 +157,23 @@ class User {
     async #_updateUser(connection) {
         const queryStatement = 
             "UPDATE users SET " +
-            `Username = "${sqlString(this.username)}", Email = "${sqlString(this.email)}", ` +
-            `Password = "${sqlString(this.#hashPassword)}", ` +
-            `BypassRestriction = ${this.bypassRestriction === true ? "TRUE" : "FALSE"}, ` +
-            `IsAdmin = ${this.isAdmin === true ? "TRUE" : "FALSE"} ` +
-            `WHERE UserID = ${this.id}`;
+            "Username = ?, Email = ?, " +
+            "Password = ?, " +
+            "BypassRestriction = ?, " +
+            "IsAdmin = ? " +
+            "WHERE UserID = ?";
+
+        const queryArgs = [
+            this.username,
+            this.email,
+            this.#hashPassword,
+            this.bypassRestriction === true && true || false,
+            this.isAdmin === true && true || false,
+            this.id,
+        ];
 
         try {
-            const result = await connection.query(queryStatement);
+            const result = await connection.query(queryStatement, queryArgs);
         } catch (error) {
             throw new SqlError(`Failed to update a user: ${error.message}`);
         }
@@ -168,12 +186,18 @@ class User {
 
         const queryStatement = 
             "SELECT COUNT(1) AS count FROM users WHERE " +
-            `(Username = "${this.username}" OR Email = "${sqlString(this.email)}") ` +
-            `AND UserID != ${this.id ? this.id : -1} ` + 
+            "(Username = ? OR Email = ?) " +
+            "AND UserID != ? " + 
             "LIMIT 1";
 
+        const queryArgs = [
+            this.username,
+            this.email,
+            this.id ? this.id : -1,
+        ];
+
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -190,10 +214,15 @@ class User {
             const queryStatement = 
                 "SELECT UserID, Username, Email, Password, BypassRestriction, IsAdmin " +
                 "FROM users " +
-                `WHERE Username = "${sqlString(username)}" OR Email = "${sqlString(username)}"`;
+                "WHERE Username = ? OR Email = ?";
+
+            const queryArgs = [
+                username,
+                username,
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -220,10 +249,14 @@ class User {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `SELECT UserID, Username, Email, Password, BypassRestriction, IsAdmin FROM users WHERE UserID = ${userID}`;
+                "SELECT UserID, Username, Email, Password, BypassRestriction, IsAdmin FROM users WHERE UserID = ?";
+
+            const queryArgs = [
+                userID
+            ];
             
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -262,10 +295,15 @@ class User {
 
             const queryStatement =
                 "SELECT UserID, Username, Email, Password, BypassRestriction, IsAdmin FROM users " +
-                `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`;
+                "LIMIT ? OFFSET ?";
+
+            const queryArgs = [
+                Pagination.ITEM_PER_PAGES,
+                Pagination.calcOffset(pageNumber),
+            ];
             
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return [[], pagination];
@@ -285,10 +323,14 @@ class User {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement =
-                `DELETE FROM users WHERE UserID = ${userID}`;
+                "DELETE FROM users WHERE UserID = ?";
+
+            const queryArgs = [
+                userID
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (queryResult.affectedRows === 0) {
                     throw ValueError(400, "Invalid User ID");
