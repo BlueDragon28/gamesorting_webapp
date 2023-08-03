@@ -1,0 +1,6 @@
+<ul id="<%= searchListUlID %>" class="list-group list-list">
+    <% for (const searchedList of searchedListsItems) { %>
+        <button type="button" id="<%= searchListItemPrefixID %><%= searchedList.id %>" class="list-group-item list-group-item-dark list-group-item-action"><%= searchedList.parentCollection.name %>/<%= searchedList.name %></button>
+    <% } %>
+</ul>
+

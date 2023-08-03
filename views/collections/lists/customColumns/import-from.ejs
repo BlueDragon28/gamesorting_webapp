@@ -10,11 +10,11 @@
                 }) %>
                 <% if (searchedLists.length) { %>
                 <form id="search-lists-form" action="">
-                    <ul id="search-lists-ul" class="list-group list-list">
-                        <% for (const searchedList of searchedLists) { %>
-                            <button type="button" id="search-lists-select-button-<%= searchedList.id %>" class="list-group-item list-group-item-dark list-group-item-action"><%= searchedList.parentCollection.name %>/<%= searchedList.name %></button>
-                        <% } %>
-                    </ul>
+                    <%- include("../../../partials/search-list-items.ejs", {
+                        searchListUlID: "search-lists-ul",
+                        searchListItemPrefixID: "search-lists-select-button-",
+                        searchedListsItems: searchedLists
+                    }) %>
                     <% } else { %>
                         <p class="mx-0 my-1">No list found!</p>
                     <% } %>
