@@ -2,7 +2,7 @@ const { User } = require("./users");
 const bigint = require("../utils/numbers/bigint");
 const { v4: uuid, validate: uuidValidate } = require("uuid");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
-const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 const { AES_unique: AES } = require("../utils/data/encryption");
 
 class UserLostPassword {
@@ -111,11 +111,16 @@ class UserLostPassword {
 
         const queryStatement =
             "INSERT INTO usersLostPassword(UserID, Token, Time) " +
-            `VALUES (${this.parentUser.id}, "${AES.encrypt(this.token)}", ${this.time.valueOf()})`;
+            "VALUES (?, ?, ?)";
 
+        const queryArgs = [
+            this.parentUser.id,
+            AES.encrypt(this.token),
+            this.time.valueOf(),
+        ];
 
         try {
-            const result = await connection.query(queryStatement);
+            const result = await connection.query(queryStatement, queryArgs);
 
             this.id = result.insertId;
 
@@ -136,10 +141,14 @@ class UserLostPassword {
             const queryStatement = 
                 "SELECT UserLostID, UserID, Token, Time " +
                 "FROM usersLostPassword " +
-                `WHERE Token = "${AES.encrypt(token)}"`;
+                "WHERE Token = ?";
+
+            const queryArgs = [
+                AES.encrypt(token),
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -169,10 +178,14 @@ class UserLostPassword {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `DELETE FROM usersLostPassword WHERE UserLostID = "${lostUserID}"`;
+                "DELETE FROM usersLostPassword WHERE UserLostID = ?";
+
+            const queryArgs = [
+                lostUserID,
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (queryResult.affectedRows === 0) {
                     throw ValueError(400, "Invalid ID");
@@ -189,10 +202,14 @@ class UserLostPassword {
 
             const queryStatement = 
                 "DELETE FROM usersLostPassword " +
-                `WHERE Time < ${expiredMaxDate}`;
+                "WHERE Time < ?";
+
+            const queryArgs = [
+                expiredMaxDate,
+            ];
 
             try {
-                await connection.query(queryStatement);
+                await connection.query(queryStatement, queryArgs);
             } catch (error) {
                 throw new SqlError(`Failed to delete expired token: ${error.message}`);
             }
