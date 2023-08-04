@@ -2,7 +2,7 @@ const bigint = require("../utils/numbers/bigint");
 const { User } = require("./users");
 const { Collection } = require("./collections");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
-const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 const Pagination = require("../utils/sql/pagination");
 
 class List {
@@ -84,10 +84,14 @@ class List {
             return false;
         }
 
-        const queryStatement = `SELECT COUNT(1) AS count FROM lists WHERE ListID = ${this.id}`
+        const queryStatement = "SELECT COUNT(1) AS count FROM lists WHERE ListID = ?";
+
+        const queryArgs = [
+            this.id
+        ];
 
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -100,11 +104,15 @@ class List {
     }
 
     async #_createList(connection) {
-        const queryStatement = `INSERT INTO lists(CollectionID, Name) VALUES (${this.parentCollection.id}, ` +
-            `"${sqlString(this.name)}")`;
+        const queryStatement = "INSERT INTO lists(CollectionID, Name) VALUES (?, ?)";
+
+        const queryArgs = [
+            this.parentCollection.id,
+            this.name,
+        ];
 
         try {
-            const queryResult = await connection.query(queryStatement);
+            const queryResult = await connection.query(queryStatement, queryArgs);
 
             this.id = queryResult.insertId;
 
@@ -122,10 +130,15 @@ class List {
 
     async #_updateList(connection) {
         const queryStatement = 
-            `UPDATE lists SET Name = "${sqlString(this.name)}" WHERE ListID = ${this.id}`;
+            "UPDATE lists SET Name = ? WHERE ListID = ?";
+
+        const queryArgs = [
+            this.name, 
+            this.id
+        ];
 
         try {
-            const result = await connection.query(queryStatement);
+            const result = await connection.query(queryStatement, queryArgs);
         } catch (error) {
             throw new SqlError(`Failed to update list: ${error.message}`);
         }
@@ -134,12 +147,18 @@ class List {
     async #_isDuplicate(connection) {
         const queryStatement = 
             "SELECT COUNT(1) as count FROM lists " +
-            `WHERE Name = "${sqlString(this.name)}" AND ListID != ${this.id ? this.id : -1} ` +
-            `AND CollectionID = ${this.parentCollection.id} ` +
+            "WHERE Name = ? AND ListID != ? " +
+            "AND CollectionID = ? " +
             "LIMIT 1";
 
+        const queryArgs = [
+            this.name,
+            this.id ? this.id : -1,
+            this.parentCollection.id,
+        ];
+
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -158,10 +177,14 @@ class List {
             const queryStatement = 
                 "SELECT c.CollectionID AS CollectionID, l.ListID AS ListID, l.Name AS Name FROM lists l " + 
                 "INNER JOIN collections c USING (CollectionID) " +
-                `WHERE ListID = ${id}`;
+                `WHERE ListID = ?`;
+            
+            const queryArgs = [
+                id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -201,15 +224,23 @@ class List {
             }
 
             let queryStatement = 
-                `SELECT ListID, Name FROM lists WHERE CollectionID = ${collection.id} `;
+                "SELECT ListID, Name FROM lists WHERE CollectionID = ? ";
+
+            const queryArgs = [
+                collection.id,
+            ];
 
             if (pageNumber !== 0) {
                 queryStatement += 
-                    `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(pageNumber)}`
+                    "LIMIT ? OFFSET ? ";
+                queryArgs.push(
+                    Pagination.ITEM_PER_PAGES,
+                    Pagination.calcOffset(pageNumber)
+                );
             }
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return [[], pagination];
@@ -295,10 +326,14 @@ class List {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `DELETE FROM lists WHERE ListID = ${id}`;
+                "DELETE FROM lists WHERE ListID = ?";
+
+            const queryArgs = [
+                id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (queryResult.affectedRows === 0) {
                     throw ValueError(400, "Invalid List ID");
@@ -320,10 +355,15 @@ class List {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement =
                 "SELECT COUNT(*) AS count FROM lists INNER JOIN collections USING (CollectionID) " + 
-                `INNER JOIN users USING (UserID) WHERE UserID = ${userID} AND ListID = ${listID}`;
+                `INNER JOIN users USING (UserID) WHERE UserID = ? AND ListID = ?`;
+
+            const queryArgs = [
+                userID,
+                listID,
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 return queryResult[0].count > 0;
             } catch (error) {
@@ -340,10 +380,14 @@ class List {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
                 "SELECT COUNT(*) AS count FROM lists " + 
-                `WHERE CollectionID = ${collection.id}`;
+                "WHERE CollectionID = ?";
+
+            const queryArgs = [
+                collection.id
+            ];
                 
             try {
-                const queryResult = (await connection.query(queryStatement))[0];
+                const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
                 return queryResult.count;
             } catch (error) {

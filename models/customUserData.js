@@ -1,6 +1,6 @@
 const bigint = require("../utils/numbers/bigint");
-const { SqlError, ValueError, InternalError } = require("../utils/errors/exceptions");
-const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { SqlError, ValueError } = require("../utils/errors/exceptions");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 
 class CustomRowsItems {
     id;
@@ -88,10 +88,14 @@ class CustomRowsItems {
             return false;
         }
 
-        const queryStatement = `SELECT COUNT(1) AS count FROM customRowsItems WHERE CustomRowItemsID = ${this.id}`
+        const queryStatement = "SELECT COUNT(1) AS count FROM customRowsItems WHERE CustomRowItemsID = ?";
+
+        const queryArgs = [
+            this.id
+        ];
 
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -104,11 +108,17 @@ class CustomRowsItems {
     }
 
     async #_createCustomRowItem(connection) {
-        const queryStatement = `INSERT INTO customRowsItems(ItemID, ListColumnTypeID, Value) ` +
-            `VALUES (${this.itemID}, ${this.columnTypeID}, "${sqlString(this.value)}")`;
+        const queryStatement = "INSERT INTO customRowsItems(ItemID, ListColumnTypeID, Value) " +
+            "VALUES (?, ?, ?)";
+
+        const queryArgs = [
+            this.itemID,
+            this.columnTypeID,
+            this.value
+        ];
 
         try {
-            const queryResult = await connection.query(queryStatement);
+            const queryResult = await connection.query(queryStatement, queryArgs);
 
             this.id = queryResult.insertId;
 
@@ -126,10 +136,15 @@ class CustomRowsItems {
 
     async #_updateCustomRowItem(connection) {
         const queryStatement = 
-            `UPDATE customRowsItems SET Value = "${sqlString(this.value)}" WHERE CustomRowItemsID = ${this.id} `;
+            "UPDATE customRowsItems SET Value = ? WHERE CustomRowItemsID = ? ";
+
+        const queryArgs = [
+            this.value,
+            this.id
+        ];
 
         try {
-            const result = await connection.query(queryStatement);
+            const result = await connection.query(queryStatement, queryArgs);
         } catch (error) {
             throw new SqlError(`Failed to update custom data: ${error.message}`);
         }
@@ -146,10 +161,14 @@ class CustomRowsItems {
             const queryStatement = 
                 "SELECT CustomRowItemsID, ItemID, ListColumnTypeID, Value " +
                 "FROM customRowsItems " + 
-                `WHERE CustomRowItemsID = ${id}`;
+                "WHERE CustomRowItemsID = ?";
+
+            const queryArgs = [
+                id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -178,10 +197,14 @@ class CustomRowsItems {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
                 `SELECT CustomRowItemsID, ItemID, ListColumnTypeID, Value FROM customRowsItems ` +
-                `WHERE ItemID = ${itemID};`;
+                "WHERE ItemID = ?";
+
+            const queryArgs = [
+                itemID
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return [];
@@ -202,10 +225,14 @@ class CustomRowsItems {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement =
                 "SELECT CustomRowItemsID, ItemID, ListColumnTypeID, Value FROM customRowsItems " +
-                `WHERE ListColumnTypeID = ${listColumnID}`;
+                `WHERE ListColumnTypeID = ?`;
+
+            const queryArgs = [
+                listColumnID
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return [];
@@ -226,10 +253,14 @@ class CustomRowsItems {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `DELETE FROM customRowsItems WHERE CustomRowItemsID = ${id}`;
+                "DELETE FROM customRowsItems WHERE CustomRowItemsID = ?";
+
+            const queryArgs = [
+                id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (queryResult.affectedRows === 0) {
                     throw new ValueError(400, "Invalid Custom Row Data ID");

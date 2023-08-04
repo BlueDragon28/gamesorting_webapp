@@ -3,10 +3,10 @@ const { List } = require("./lists");
 const { ListSorting, isValidListSorting } = require("./listSorting");
 const { CustomRowsItems } = require("./customUserData");
 const { SqlError, ValueError } = require("../utils/errors/exceptions");
-const { sqlString, existingOrNewConnection } = require("../utils/sql/sql");
+const { existingOrNewConnection } = require("../utils/sql/sql");
 const Pagination = require("../utils/sql/pagination");
 
-function addSearchOptions(searchOptions) {
+function addSearchOptions(searchOptions, queryArgs) {
     if (!searchOptions || typeof searchOptions.exactMatch !== "boolean" ||
             typeof searchOptions.regex !== "boolean" ||
             typeof searchOptions.text !== "string" || !searchOptions.text.length) {
@@ -19,11 +19,14 @@ function addSearchOptions(searchOptions) {
     const { exactMatch, regex, text } = searchOptions;
 
     if (exactMatch) {
-        searchStatement = ` AND Name = "${sqlString(text)}"`;
+        searchStatement = " AND Name = ?";
+        queryArgs.push(text);
     } else if (regex) {
-        searchStatement = ` AND Name RLIKE "${sqlString(text)}"`
+        searchStatement = " AND Name RLIKE ?";
+        queryArgs.push(text);
     } else {
-        searchStatement = ` AND Name LIKE "%${sqlString(text)}%"`
+        searchStatement = " AND Name LIKE ?";
+        queryArgs.push(`%${text}%`);
     }
 
     return searchStatement;
@@ -156,10 +159,14 @@ class Item {
             return false;
         }
 
-        const queryStatement = `SELECT COUNT(1) AS count FROM items WHERE ItemID = ${this.id}`
+        const queryStatement = "SELECT COUNT(1) AS count FROM items WHERE ItemID = ?";
+
+        const queryArgs = [
+            this.id
+        ];
 
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -173,12 +180,25 @@ class Item {
 
     async #_createItem(connection) {
         const queryStatement = `INSERT INTO items(ListID, Name ${this.url.length > 0 ? ", URL" : ""} ${this.rating > 0 ? ", Rating" : ""}) ` +
-            `VALUES (${this.parentList.id}, "${sqlString(this.name)}" ` +
-            ` ${this.url.length > 0 ? ", \"" + sqlString(this.url) + "\"": ""}` + 
-            ` ${this.rating > 0 ? ", " + this.rating: ""})`;
+            "VALUES (?, ? " +
+            ` ${this.url.length > 0 ? ", ?": ""}` + 
+            ` ${this.rating > 0 ? ", ?" : ""})`;
+
+        const queryArgs = [
+            this.parentList.id,
+            this.name,
+        ];
+
+        if (this.url.length > 0) {
+            queryArgs.push(this.url);
+        }
+
+        if (this.rating > 0) {
+            queryArgs.push(this.rating);
+        }
 
         try {
-            const queryResult = await connection.query(queryStatement);
+            const queryResult = await connection.query(queryStatement, queryArgs);
 
             this.id = queryResult.insertId;
 
@@ -186,6 +206,7 @@ class Item {
                 throw new Error("Invalid ID");
             }
         } catch (error) {
+            console.log(error);
             throw new SqlError(`Failed to insert a item: ${error.message}`);
         }
     }
@@ -196,16 +217,23 @@ class Item {
 
     async #_updateItem(connection) {
         let queryStatement = 
-            `UPDATE items SET Name = "${sqlString(this.name)}", Rating = ${this.rating}`;
+            "UPDATE items SET Name = ?, Rating = ?";
+
+        const queryArgs = [
+            this.name,
+            this.rating,
+        ];
 
         if (typeof this.url === "string") {
-            queryStatement += `, URL = \"${sqlString(this.url)}\" `;
+            queryStatement += ", URL = ? ";
+            queryArgs.push(this.url);
         }
 
-        queryStatement += `WHERE ItemID = ${this.id}`;
+        queryStatement += "WHERE ItemID = ?";
+        queryArgs.push(this.id);
 
         try {
-            const result = await connection.query(queryStatement);
+            const result = await connection.query(queryStatement, queryArgs);
         } catch (error) {
             throw new SqlError(`Failed to update item: ${error.message}`);
         }
@@ -214,12 +242,18 @@ class Item {
     async #_isDuplicate(connection) {
         const queryStatement = 
             "SELECT COUNT(1) as count FROM items " +
-            `WHERE Name = "${sqlString(this.name)}" AND ItemID != ${this.id ? this.id : -1} ` +
-            `AND ListID = ${this.parentList.id} ` +
+            "WHERE Name = ? AND ItemID != ? " +
+            "AND ListID = ? " +
             "LIMIT 1";
 
+        const queryArgs = [
+            this.name,
+            this.id ? this.id : -1,
+            this.parentList.id,
+        ];
+
         try {
-            const queryResult = (await connection.query(queryStatement))[0];
+            const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
             return queryResult.count > 0;
         } catch (error) {
@@ -239,10 +273,14 @@ class Item {
                 "SELECT l.ListID AS ListID, i.ItemID AS ItemID, i.Name AS Name, i.URL AS URL, i.Rating AS Rating " + 
                 "FROM items i " +
                 "INNER JOIN lists l USING (ListID) " +
-                `WHERE ItemID = ${id}`;
+                "WHERE ItemID = ?";
+
+            const queryArgs = [
+                id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return null;
@@ -292,18 +330,27 @@ class Item {
                 throw new ValueError(400, "Invalid page number");
             }
 
+            const queryArgs = [
+                list.id,
+            ]
+
             let queryStatement = 
-                `SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ${list.id} ` + 
-                addSearchOptions(searchOptions) + 
+                "SELECT ItemID, Name, URL, Rating FROM items WHERE ListID = ? " + 
+                addSearchOptions(searchOptions, queryArgs) + 
                 " ORDER BY " +
                 applyListSorting(foundListSorting);
 
             if (pageNumber !== 0) {
-                queryStatement += `LIMIT ${Pagination.ITEM_PER_PAGES} OFFSET ${Pagination.calcOffset(validPageNumber)}`;
+                queryStatement += "LIMIT ? OFFSET ? ";
+
+                queryArgs.push(
+                    Pagination.ITEM_PER_PAGES,
+                    Pagination.calcOffset(validPageNumber),
+                );
             }
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (!queryResult.length) {
                     return [[], pagination];
@@ -333,10 +380,15 @@ class Item {
             const queryString = 
                 "SELECT ListID, ItemID, Name, URL, Rating " +
                 "FROM items " +
-                `WHERE Name = "${sqlString(name)}" AND ListID = ${list.id}`;
+                "WHERE Name = ? AND ListID = ?";
+
+            const queryArgs = [
+                name, 
+                list.id,
+            ];
 
             try {
-                const queryResult = await connection.query(queryString);
+                const queryResult = await connection.query(queryString, queryArgs);
                 if (!queryResult.length) {
                     return null
                 }
@@ -363,10 +415,14 @@ class Item {
 
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement = 
-                `DELETE FROM items WHERE ItemID = ${id}`;
+                "DELETE FROM items WHERE ItemID = ?";
+
+            const queryArgs = [
+                id
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 if (queryResult.affectedRows === 0) {
                     throw new ValueError(400, "Invalid Item ID");
@@ -389,10 +445,15 @@ class Item {
             const queryStatement =
                 "SELECT COUNT(*) AS count FROM items INNER JOIN lists USING (ListID) " + 
                 "INNER JOIN collections USING (CollectionID) " + 
-                `INNER JOIN users USING (UserID) WHERE UserID = ${userID} AND ItemID = ${itemID}`;
+                "INNER JOIN users USING (UserID) WHERE UserID = ? AND ItemID = ?";
+
+            const queryArgs = [
+                userID, 
+                itemID,
+            ];
 
             try {
-                const queryResult = await connection.query(queryStatement);
+                const queryResult = await connection.query(queryStatement, queryArgs);
 
                 return queryResult[0].count > 0;
             } catch (error) {
@@ -407,12 +468,16 @@ class Item {
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
+            const queryArgs = [
+                list.id,
+            ];
+
             const queryStatement =
                 "SELECT COUNT(*) AS count FROM items " +
-                `WHERE ListID = ${list.id}` + addSearchOptions(searchOptions);
-            
+                `WHERE ListID = ${list.id}` + addSearchOptions(searchOptions, queryArgs);
+
             try {
-                const queryResult = (await connection.query(queryStatement))[0];
+                const queryResult = (await connection.query(queryStatement, queryArgs))[0];
 
                 return queryResult.count;
             } catch (error) {
