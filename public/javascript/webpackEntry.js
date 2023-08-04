@@ -21,6 +21,7 @@ import "./collections/lists/download/download";
 import "./coockiesWarning";
 import "./collections/lists/download/upload";
 import './customColumns/importCustomColumns';
+import "./collections/lists/items/moveItemsMakeCopy";
 
 // CSS
 import "../styles/starability-basic.min.css";
