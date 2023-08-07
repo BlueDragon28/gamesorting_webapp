@@ -55,7 +55,7 @@ app.use(methodOverride("_method")); // Allow the use of http verb not supported 
 
 const sessionStore = new Session();
 
-const secureCookie = false; //process.env.NODE_ENV === "production";
+const secureCookie = process.env.NODE_ENV === "production";
 let sessionSecret; 
 if (process.env.NODE_ENV !== "production") {
     sessionSecret = "mytestsecret";
