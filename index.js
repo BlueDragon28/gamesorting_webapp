@@ -22,9 +22,7 @@ const usersRouter = require("./routes/users");
 const adminRouter = require("./routes/admin");
 const contactRouter = require("./routes/contact");
 const methodOverride = require("method-override");
-const { default: RedisStore } = require("connect-redis");
 const session = require("express-session");
-const { createClient } = require("redis");
 const flash = require("connect-flash");
 const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
@@ -34,6 +32,7 @@ const { activate: activateTask, deactivate: deactiveTask } = require("./utils/au
 const { registerActivityMiddleware } = require("./utils/automaticTasks/activitiesHandling");
 const checkIfUserAdmin = require("./utils/users/checkIsUserAdmin");
 const { getEnvValueFromFile, isFileBased } = require("./utils/loadingEnvVariable");
+const { Session } = require("./models/session");
 
 mariadb.openPool();
 
@@ -54,15 +53,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
 
-const redisClient = createClient({
-    url: process.env.REDIS_URL
-});
-redisClient.connect().catch(console.err);
-
-const redisStore = new RedisStore({
-    client: redisClient,
-    prefix: "gamesorting_webapp"
-});
+const sessionStore = new Session();
 
 const secureCookie = false; //process.env.NODE_ENV === "production";
 let sessionSecret; 
@@ -83,7 +74,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
-    store: redisStore,
+    store: sessionStore,
     cookie: {
         secure: secureCookie,
         httpOnly: true,
@@ -147,7 +138,6 @@ async function closeServer() {
     server.close();
     await deactiveTask();
     await mariadb.closePool();
-    await redisClient.disconnect();
 
     if (process.env.NODE_ENV !== "production") {
         console.log("server has been closed!");
