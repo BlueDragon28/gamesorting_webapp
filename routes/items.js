@@ -286,7 +286,7 @@ router.post("/items/:itemID/move-to",
         const { listID, itemID } = req.params;
         const { moveToListID, makeACopy } = req.body;
 
-        const newItem = await existingOrNewConnection(null, async function(connection) {
+        existingOrNewConnection(null, async function(connection) {
             try {
                 const item = await Item.findByID(itemID, connection);
 
@@ -317,9 +317,15 @@ router.post("/items/:itemID/move-to",
 
                 throw new InternalError("Oups, something went wrong");
             }
-        });
-
-        res.redirect(`${req.baseUrl}/items/${newItem.id}`);
+        })
+            .then(newItem => {
+                req.flash("success", "Successfully moved item");
+                res.redirect(`${req.baseUrl}/items/${newItem.id}`)
+            })
+            .catch(err => {
+                req.flash("error", "Failed to move item");
+                req.redirect(`${req.bareUrl}`);
+            });
     })
 );
 
