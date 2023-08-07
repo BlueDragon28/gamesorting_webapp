@@ -29,6 +29,7 @@ const flash = require("connect-flash");
 const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
 const mariadb = require("./sql/connection");
+const { applyRevisions } = require("./sql/revisions");
 const { activate: activateTask, deactivate: deactiveTask } = require("./utils/automaticTasks/automaticTask");
 const { registerActivityMiddleware } = require("./utils/automaticTasks/activitiesHandling");
 const checkIfUserAdmin = require("./utils/users/checkIsUserAdmin");
@@ -131,8 +132,16 @@ app.use((err, req, res, next) => {
     res.status(statusCode).send("<p>" + message + (stack ? ("<br>" + stack) : "") + "</p>");
 });
 
-const server = http.createServer(app);
-server.listen(process.env.LISTENING_PORT);
+let server;
+
+applyRevisions()
+    .then(() => {
+        server = http.createServer(app);
+        server.listen(process.env.LISTENING_PORT);
+        activateTask();
+    })
+    .catch(err => console.log(err));
+
 
 async function closeServer() {
     server.close();
@@ -148,4 +157,3 @@ async function closeServer() {
 process.on("SIGINT", closeServer);
 process.on("SIGTERM", closeServer);
 
-activateTask();
