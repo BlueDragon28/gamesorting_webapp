@@ -288,14 +288,26 @@ router.post("/lists/:listID/import-custom-columns-from-list",
         const { listID } = req.params;
         const { importListID } = req.body;
 
-        await existingOrNewConnection(null, async function(connection) {
-            await importFromList(
-                listID, 
-                importListID,
-                req.session.user.id,
-                connection
-            );
+        const isSuccess = await existingOrNewConnection(null, async function(connection) {
+            try {
+                await importFromList(
+                    listID, 
+                    importListID,
+                    req.session.user.id,
+                    connection
+                );
+
+                return true;
+            } catch (err) {
+                return false;
+            }
         });
+
+        if (isSuccess) {
+            req.flash("success", "Successfully import custom columns");
+        } else {
+            req.flash("error", "Failed to import custom columns");
+        }
 
         res.redirect(`${req.baseUrl}/`+
             `${req.url.slice(0, req.url.lastIndexOf("/"))}/custom-columns`);
