@@ -1,8 +1,0 @@
--- Hold the sorting options of the users
-DROP TABLE IF EXISTS listSorting;
-
-CREATE TABLE IF NOT EXISTS listSorting(
-    ListSortingID BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    ListID BIGINT UNSIGNED NOT NULL,
-    Type VARCHAR(100) DEFAULT NULL
-);
