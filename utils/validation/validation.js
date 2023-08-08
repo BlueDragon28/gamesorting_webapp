@@ -22,7 +22,7 @@ String Validation
 */
 const nameValidation = Joi.string().trim().max(300, "utf8").forbidHTML().required();
 const uriValidation = Joi.alternatives().try(
-    Joi.string().trim().max(10000, "utf8").uri({
+    Joi.string().trim().max(10000, "utf8").forbidHTML().uri({
         scheme: [
             "http",
             "https"
