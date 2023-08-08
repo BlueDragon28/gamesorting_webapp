@@ -4,7 +4,8 @@ const Joi = require("./extendedJoi");
 const ColumnType = {
     str: "@String",
     int: "@Int",
-    stars: "@Stars"
+    stars: "@Stars",
+    href: "@Href"
 }
 
 function makeListColumnValidation() {

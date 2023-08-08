@@ -55,6 +55,8 @@ import { openDeleteModal } from "./deleteColumns.js";
             return parseIntTypeToHtml(columnType);
         } else if (columnType.type === "@Stars") {
             return "";
+        } else if (columnType.type === "@Href") {
+            return "";
         }
 
         return "";
@@ -129,6 +131,7 @@ import { openDeleteModal } from "./deleteColumns.js";
         switch (type) {
         case "@String":
         case "@Stars":
+        case "@Href":
         {
             return {
                 type
