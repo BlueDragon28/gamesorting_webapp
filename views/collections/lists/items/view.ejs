@@ -35,6 +35,8 @@ function getColumnType(columnTypeID) {
                                     <div class="text-muted me-1"><%= columnType.name %>:</div>
                                     <div class="starability-result" data-rating="<%= customData.value %>"></div>
                                 </div>
+                            <% } else if (columnType.type.type === "@Href") { %>
+                                <p class="text-muted"><%= columnType.name %>: <a href="<%= customData.value %>"><%= customData.value %></a></p>
                             <% } else { %>
                                 <p class="text-muted"><%= columnType.name %>: <%= customData.value %></p>
                             <% } %>

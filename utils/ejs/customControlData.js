@@ -4,7 +4,8 @@ Helpers functions to help choose the type of custom input control on the ejs tem
 
 let Types = {
     STRING: "text",
-    INT: "number"
+    INT: "number",
+    HREF: "url"
 };
 
 function decryptType(type) {
@@ -14,6 +15,8 @@ function decryptType(type) {
         return Types.STRING;
     case "@Int":
         return Types.INT;
+    case "@Href":
+        return Types.HREF;
     }
 }
 

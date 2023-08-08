@@ -55,6 +55,23 @@ function makeCustomDataStringValidation() {
     }).unknown().required();
 }
 
+function makeCustomDataHRefValidation() {
+    return Joi.object({
+        Value: Joi.alternatives().try(
+            Joi.string().trim().max(300, "utf8").min(1, "utf8").forbidHTML().uri({
+                scheme: [
+                    "http",
+                    "https"
+                ]
+            }),
+            Joi.string().trim().min(0).max(0)
+        ),
+        columnType: Joi.object({
+            type: Joi.string().pattern(/@Href/).required()
+        }).unknown().required()
+    }).unknown().required();
+}
+
 /*
 Validate the custom data with a column type of int
 */
@@ -84,6 +101,7 @@ function makeCustomDataStarsValidation() {
 function columnDataAndTypeValidation() {
     return Joi.alternatives().try(
         makeCustomDataStringValidation(),
+        makeCustomDataHRefValidation(),
         makeCustomDataNumberValidation(),
         makeCustomDataStarsValidation()
     );
