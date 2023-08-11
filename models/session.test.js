@@ -121,3 +121,42 @@ it("touch a session", async function() {
     expect(result).toBeFalsy();
     expect(error).toBeFalsy();
 });
+
+it("Remove expired sessions", async function() {
+    await sessionQuery(() => {
+        return sessionResponse((func) => {
+            session.clear(err => func(null, err));
+        })
+    });
+    await sessionQuery(() => {
+        return sessionResponse((func) => {
+            session.set(
+                "1", 
+                {cookie:{expires:new Date().toISOString()}},
+                err => func(null, err)
+            );
+        });
+    });
+    await sessionQuery(() => {
+        return sessionResponse((func) => {
+            const date = new Date();
+            date.setDate(date.getDate() + 3);
+            session.set(
+                "2",
+                {cookie:{expires:date.toISOString()}},
+                err => func(null, err)
+            );
+        });
+    });
+
+    const [,error] = await sessionQuery(() => Session.removeExpiredSessions());
+    expect(error).toBeFalsy();
+
+    const [count, countError] = await sessionQuery(() => {
+        return sessionResponse((func) => {
+            session.length((err, length) => func(length, err));
+        });
+    });
+    expect(countError).toBeFalsy();
+    expect(count).toBe(1);
+});

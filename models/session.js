@@ -1,5 +1,6 @@
 const { Store } = require("express-session");
 const { existingOrNewConnection } = require("../utils/sql/sql");
+const { SqlError } = require("../utils/errors/exceptions");
 
 class Session extends Store {
     static _tableName = "session";
@@ -173,6 +174,24 @@ class Session extends Store {
             expire = now + Session._oneDay;
         }
         return expire;
+    }
+
+    static async removeExpiredSessions(connection) {
+        await existingOrNewConnection(connection, async function(connection) {
+            const now = new Date().getTime();
+
+            const queryStatement =
+                "DELETE FROM session WHERE ? > Expire";
+            const queryArgs = [
+                now
+            ];
+
+            try {
+                await connection.query(queryStatement, queryArgs);
+            } catch (err) {
+                throw new SqlError(`Failed to delete expired sessions: ${err.message}`)
+            }
+        });
     }
 }
 
