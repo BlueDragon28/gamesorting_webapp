@@ -65,7 +65,8 @@ async function applyRevisionFileIfNotAlreadyApplied(revisionFile, connection) {
 
 async function applyRevisions() {
     const sqlFiles = await getAllSqlFiles(revisionsDir);
-    sqlFiles.sort();
+    console.log(sqlFiles.sort((a, b) => 
+        a.name < b.name ? -1 : a.name === b.name ? 0 : 1));
 
     await existingOrNewConnection(null, async function(connection) {
         await addRevisionsTableIfNotExisting(connection);
