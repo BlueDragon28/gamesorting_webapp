@@ -14,8 +14,6 @@ services:
       - gamesorting_app_client_tmp_data:/app/clientData
     
     depends_on:
-      gamesorting_redis:
-        condition: service_healthy
       gamesorting_mariadb:
         condition: service_healthy
   
@@ -36,19 +34,6 @@ services:
       timeout: 20s
       retries: 10
   
-  gamesorting_redis:
-    image: redis:alpine
-    volumes:
-      - gamesorting_redis_data:/data
-    command: redis-server --save 60 1 --loglevel warning
-
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 3s
-      timeout: 30s
-      retries: 10
-
 volumes:
   gamesorting_mariadb_data:
-  gamesorting_redis_data:
   gamesorting_app_client_tmp_data:
