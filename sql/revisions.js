@@ -21,7 +21,7 @@ async function getAllSqlFiles(sqlDir) {
             path.extname(dirent.name) === ".sql"
         ) {
             sqlFiles.push({
-                path: dirent.path,
+                path: path.join(sqlDir, dirent.name),
                 name: dirent.name
             });
         }
