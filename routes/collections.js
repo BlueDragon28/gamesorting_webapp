@@ -58,6 +58,21 @@ router.get("/collections_lists_list", wrapAsync(async function(req, res) {
     });
 }));
 
+router.get("/lists/:listID", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id;
+    const { listID } = req.params;
+
+    const [lists] = await existingOrNewConnection(null, async function(connection) {
+        const lists = await List.findFromUser(userID, connection);
+        return [lists];
+    });
+
+    res.render("partials/htmx/collections/collections_lists_selection", {
+        lists,
+        listID,
+    });
+}));
+
 /*
 Validate collectionID on each route asking for collection id
 */

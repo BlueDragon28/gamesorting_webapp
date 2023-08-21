@@ -6,9 +6,10 @@
                 <button 
                     type="button" 
                     class="list-group-item list-group-item-action <%= selectedID == list.id  ? 'active' : ''%>"
-                    hx-get="/collections/collections_lists_list?selectedID=<%= list.id %>"
-                    hx-target="#collections-lists-list-outer-column"
+                    hx-get="/collections/lists/<%= list.id %>"
+                    hx-target="#collections-lists-global-row"
                     hx-swap="outerHTML"
+                    hx-push-url="true"
                 ><%= 
                     list.parentCollection.name %>/<%=
                     list.name %>
