@@ -4,12 +4,5 @@
 
 <div id="collections-lists-global-row" class="row h-100">
     <%- include("./collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
-    <div class="col-8 m-0 p-0">
-        <div class="card h-100">
-            <div class="card-header">Items</div>
-            <div class="card-body d-flex justify-content-center align-items-center">
-                <div>No Items</div>
-            </div>
-        </div>
-    </div>
+    <%- include("./items/unknown_item.ejs") %>
 </div>
