@@ -1,13 +1,15 @@
 <div class="col-4 m-0 p-0">
     <div class="card h-100">
         <div class="card-header">Collections/Lists</div>
-        <ul class="list-group list-group-flush">
+        <div id="collections-lists-list-button" class="list-group list-group-flush h-100">
             <% for (const list of lists) { %>
-                <li class="list-group-item"><%= 
+                <button type="button" class="list-group-item list-group-item-action"><%= 
                     list.parentCollection.name %>/<%=
                     list.name %>
-                </li>
+                </button>
             <% } %>
-        </ul>
+        </div>
     </div>
 </div>
+
+<script src="/javascript/htmx/collections/collections_lists_list.js" defer></script>
