@@ -1,3 +1,4 @@
+<% if (!htmx.isHTMX) { %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +9,8 @@
     <title>GameSorting</title>
 </head>
 <body class="d-flex flex-column min-vh-100">
+<% } %>
+
     <%- include("../partials/coockiesWarningDialog") %>
 
     <header class="sticky-top mb-3">
@@ -28,5 +31,8 @@
             <%- JSON.stringify(flashMessages) %>
     </script>
     <script src="/dist/public-js.bundle.1.3.0.js"></script>
+
+<% if (!htmx.isHTMX) { %>
 </body>
 </html>
+<% } %>
