@@ -91,7 +91,6 @@ app.use(function(req, res, next) {
     res.locals.currentUser = req.session.user;
     res.locals.activeLink = "";
     res.locals.htmx = req.htmx.generateLocals();
-    console.log(res.locals.htmx);
     next();
 });
 app.use(checkIfUserAdmin);
