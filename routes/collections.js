@@ -63,6 +63,12 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     let { listID } = req.params;
 
+    if (!req.htmx.isHTMX || req.htmx.isBoosted) {
+        return res.render("partials/htmx/collections/collections_lists_selection", {
+            originalUrl: req.originalUrl
+        });
+    }
+
     const [lists, items] = await existingOrNewConnection(null, async function(connection) {
         const lists = await List.findFromUser(userID, connection);
 
