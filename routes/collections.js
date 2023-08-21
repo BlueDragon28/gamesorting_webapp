@@ -22,10 +22,6 @@ const { isCollectionMaxLimitMiddleware } = require("../utils/validation/limitNum
 
 const router = express.Router();
 
-/*
-Validate collectionID on each route asking for collection id
-*/
-router.use("/:collectionID", validation.id);
 
 /*
 Check if the user is logged in
@@ -46,6 +42,25 @@ Entry to see the collections list
 router.get("/", function(req, res) {
     res.render("collections/collectionsHTMXIndex.ejs");
 });
+
+router.get("/collections_lists_list", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id;
+
+    const [lists] = await existingOrNewConnection(null, async function(connection) {
+        const lists = await List.findFromUser(userID, connection);
+        return [lists];
+    });
+
+    res.render("partials/htmx/collections/collections_lists_list", {
+        lists
+    });
+}));
+
+/*
+Validate collectionID on each route asking for collection id
+*/
+router.use("/:collectionID", validation.id);
+
 // router.get("/", Pagination.parsePageNumberMiddleware, wrapAsync(async (req, res) => {
 //     const userID = req.session.user.id;
 //     const pageNumber = req.query.pn;

@@ -1,0 +1,13 @@
+<div class="col-4 m-0 p-0">
+    <div class="card h-100">
+        <div class="card-header">Collections/Lists</div>
+        <ul class="list-group list-group-flush">
+            <% for (const list of lists) { %>
+                <li class="list-group-item"><%= 
+                    list.parentCollection.name %>/<%=
+                    list.name %>
+                </li>
+            <% } %>
+        </ul>
+    </div>
+</div>

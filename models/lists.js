@@ -298,6 +298,42 @@ class List {
         });
     }
 
+    static async findFromUser(userID, connection = null) {
+        if (!userID || !bigint.isValid(userID)) {
+            throw new ValueError(400, "Invalid User");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                `SELECT c.CollectionID AS CollectionID, c.UserID AS UserID, 
+                c.Name AS CNAME, l.ListID AS ListID, l.Name AS LNAME 
+                FROM lists l 
+                INNER JOIN collections c USING (CollectionID) 
+                WHERE c.UserID = ? 
+                ORDER BY CNAME ASC 
+                LIMIT ?`;
+            const queryArgs = [
+                userID,
+                Pagination.ITEM_PER_PAGES
+            ];
+
+            try {
+                const queryResult = await connection.query(
+                    queryStatement,
+                    queryArgs
+                );
+
+                if (!queryResult.length) {
+                    return [];
+                }
+
+                return List.parseFoundListsFromUser(queryResult);
+            } catch (error) {
+                throw new SqlError(`Failed to query lists: ${error.message}`);
+            }
+        });
+    }
+
     static parseFoundListsFromUser(queryResult) {
         const listOfLists = [];
 
