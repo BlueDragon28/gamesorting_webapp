@@ -33,6 +33,7 @@ const { registerActivityMiddleware } = require("./utils/automaticTasks/activitie
 const checkIfUserAdmin = require("./utils/users/checkIsUserAdmin");
 const { getEnvValueFromFile, isFileBased } = require("./utils/loadingEnvVariable");
 const { Session } = require("./models/session");
+const { checkIfHTMX } = require("./utils/htmx/htmx");
 
 mariadb.openPool();
 
@@ -52,6 +53,8 @@ if (process.env.NODE_ENV !== "production") {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // parse body
 app.use(methodOverride("_method")); // Allow the use of http verb not supported by web browsers
+app.use(checkIfHTMX);
+
 
 const sessionStore = new Session();
 
@@ -87,6 +90,7 @@ app.use(parseFlashMessage);
 app.use(function(req, res, next) {
     res.locals.currentUser = req.session.user;
     res.locals.activeLink = "";
+    res.locals.htmx = req.htmx.generateLocals();
     next();
 });
 app.use(checkIfUserAdmin);
