@@ -1,0 +1,17 @@
+<div class="col-8 m-0 p-0">
+    <div class="card h-100">
+        <div class="card-header">Items</div>
+        <div class="list-group list-group-flush">
+            <% for (const item of items) { %>
+                <button 
+                    class="list-group-item list-group-item-action d-flex flex-row"
+                >
+                    <div class="flex-fill three-dot-text text-start"><%= item.name %></div>
+                    <% if (typeof item.rating === "number") { %>
+                    <div class="starability-result starsSize" data-rating="<%= item.rating%>">Rated: <%= item.rating %> star<%= item.rating > 1 ? 's' : '' %></div>
+                    <% } %>
+                </button>
+            <% } %>
+        </div>
+    </div>
+</div>

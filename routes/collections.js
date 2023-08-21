@@ -4,6 +4,7 @@ The routes of the collections
 const express = require("express");
 const { Collection } = require("../models/collections");
 const { List } = require("../models/lists");
+const { Item } = require("../models/items");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, AuthorizationError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
@@ -60,15 +61,26 @@ router.get("/collections_lists_list", wrapAsync(async function(req, res) {
 
 router.get("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
-    const { listID } = req.params;
+    let { listID } = req.params;
 
-    const [lists] = await existingOrNewConnection(null, async function(connection) {
+    const [lists, items] = await existingOrNewConnection(null, async function(connection) {
         const lists = await List.findFromUser(userID, connection);
-        return [lists];
+
+        const selectedList = await List.findByID(listID, connection);
+        let items = [];
+
+        if (selectedList.parentCollection.userID == userID) {
+            items = (await Item.findFromList(selectedList, undefined, undefined, connection, null))[0];
+        } else {
+            listID = undefined;
+        }
+        
+        return [lists, items];
     });
 
     res.render("partials/htmx/collections/collections_lists_selection", {
         lists,
+        items,
         listID,
     });
 }));
