@@ -43,18 +43,21 @@ router.use(function(req, res, next) {
 /*
 Entry to see the collections list
 */
-router.get("/", Pagination.parsePageNumberMiddleware, wrapAsync(async (req, res) => {
-    const userID = req.session.user.id;
-    const pageNumber = req.query.pn;
-
-    const [collections, pagination] = await Collection.findFromUserID(userID, pageNumber);
-
-    if (!collections || !Array.isArray(collections)) {
-        throw new InternalError("Failed To Query Collections");
-    }
-
-    res.render("collections/collectionsIndex.ejs", { collections, pagination });
-}));
+router.get("/", function(req, res) {
+    res.render("collections/collectionsHTMXIndex.ejs");
+});
+// router.get("/", Pagination.parsePageNumberMiddleware, wrapAsync(async (req, res) => {
+//     const userID = req.session.user.id;
+//     const pageNumber = req.query.pn;
+// 
+//     const [collections, pagination] = await Collection.findFromUserID(userID, pageNumber);
+// 
+//     if (!collections || !Array.isArray(collections)) {
+//         throw new InternalError("Failed To Query Collections");
+//     }
+// 
+//     res.render("collections/collectionsIndex.ejs", { collections, pagination });
+// }));
 
 /*
 Form to create a new collection
