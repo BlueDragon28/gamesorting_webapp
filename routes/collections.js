@@ -45,6 +45,7 @@ router.get("/", function(req, res) {
 
 router.get("/collections_lists_list", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
+    const { selectedID } = req.query;
 
     const [lists] = await existingOrNewConnection(null, async function(connection) {
         const lists = await List.findFromUser(userID, connection);
@@ -52,7 +53,8 @@ router.get("/collections_lists_list", wrapAsync(async function(req, res) {
     });
 
     res.render("partials/htmx/collections/collections_lists_list", {
-        lists
+        lists,
+        selectedID,
     });
 }));
 
