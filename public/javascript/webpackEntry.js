@@ -1,6 +1,7 @@
 // import bootstrap to bundle
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "htmx.org/dist/htmx.min.js";
 
 import "./checkFormValidation";
 import "./runtimeFlash/serverFlashes";
