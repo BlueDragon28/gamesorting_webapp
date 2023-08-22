@@ -88,12 +88,17 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
         
         return [lists, items];
     });
+    const questionMarkPost = req.originalUrl.indexOf("?");
+    const originalUrl = req.originalUrl.substring(
+        0, 
+        questionMarkPost >= 0 ? questionMarkPost : req.originalUrl.length
+    );
 
     res.render("partials/htmx/collections/collections_lists_selection", {
         lists,
         items,
         listID,
-        originalUrl: req.originalUrl.substring(req.originalUrl.indexOf("?")),
+        originalUrl,
         onlyItems,
     });
 }));

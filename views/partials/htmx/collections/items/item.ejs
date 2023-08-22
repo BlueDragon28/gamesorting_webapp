@@ -21,6 +21,7 @@ function getColumnType(columnTypeID) {
                         hx-get="/collections/lists/<%= item.parentList.id %>?onlyItems=true"
                         hx-target="#item-detail-card"
                         hx-swap="outerHTML"
+                        hx-push-url="/collections/lists/<%= item.parentList.id %>"
                     >&lt;</div>
                     <%= item.name %>
                 </div>
