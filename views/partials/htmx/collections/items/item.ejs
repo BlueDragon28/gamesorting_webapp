@@ -1,7 +1,3 @@
-<% if (!htmx.isHTMX || (htmx.isHTMX && htmx.isBoosted)) { %>
-<% layout("layouts/boilerplate.ejs") -%>
-<% } %>
-
 <%
 function getColumnType(columnTypeID) {
     for (let item of listColumnsType) {
@@ -12,7 +8,7 @@ function getColumnType(columnTypeID) {
 }
 %>
 
-<% if (!htmx.isHTMX || htmx.isBoosted) { %>
+<% if (fullPageLoad) { %>
 <div id="collections-lists-global-row" class="row h-100">
     <%- include("../collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
 <% } %>
@@ -53,6 +49,6 @@ function getColumnType(columnTypeID) {
         </div>
     <% } %>
     
-<% if (!htmx.isHTMX || htmx.isBoosted) { %>
+<% if (fullPageLoad) { %>
 </div>
 <% } %>

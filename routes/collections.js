@@ -98,8 +98,36 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
 router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID, itemID } = req.params;
+    const { fullPageLoad } = req.query;
 
-    if (req.htmx.isHTMX && !req.htmx.isBoosted) {
+    if (req.htmx.isHTMX && fullPageLoad === "true") {
+        const [lists, item, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
+            const lists = await List.findFromUser(userID, connection);
+
+            const selectedList = await List.findByID(listID, connection);
+            if (selectedList.parentCollection.userID != userID) {
+                return [lists, null];
+            }
+
+            const currentItem = await Item.findByID(itemID, connection);
+            if (currentItem.parentList.id !== selectedList.id) {
+                return [lists, null];
+            }
+
+            const listColumnsType = await ListColumnType.findFromList(currentItem.parentList, connection);
+
+            return [lists, currentItem, listColumnsType];
+        });
+
+        return res.render("partials/htmx/collections/items/item", {
+            lists,
+            item,
+            listID,
+            listColumnsType,
+            fullPageLoad: true,
+        });
+
+    } else if (req.htmx.isHTMX && !req.htmx.isBoosted && !fullPageLoad) {
         const [item, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
             const currentItem = await Item.findByID(itemID, connection);
             if (currentItem.parentList.parentCollection.userID != userID) {
@@ -113,34 +141,14 @@ router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
 
         return res.render("partials/htmx/collections/items/item", {
             item,
-            listColumnsType
+            listColumnsType,
+            fullPageLoad: false,
+        });
+    } else {
+        res.render("partials/htmx/collections/items/item_loadpage", {
+            originalUrl: req.originalUrl
         });
     }
-
-    const [lists, item, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
-        const lists = await List.findFromUser(userID, connection);
-
-        const selectedList = await List.findByID(listID, connection);
-        if (selectedList.parentCollection.userID != userID) {
-            return [lists, null];
-        }
-
-        const currentItem = await Item.findByID(itemID, connection);
-        if (currentItem.parentList.id !== selectedList.id) {
-            return [lists, null];
-        }
-
-        const listColumnsType = await ListColumnType.findFromList(currentItem.parentList, connection);
-
-        return [lists, currentItem, listColumnsType];
-    });
-
-    res.render("partials/htmx/collections/items/item", {
-        lists,
-        item,
-        listID,
-        listColumnsType,
-    });
 }))
 
 /*

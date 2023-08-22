@@ -1,0 +1,26 @@
+<% if (!htmx.isHTMX || (htmx.isHTMX && htmx.isBoosted)) { %>
+<% layout("layouts/boilerplate.ejs") -%>
+<% } %>
+
+<div class="row h-100"
+    hx-get="<%= originalUrl %>?fullPageLoad=true"
+    hx-swap="outerHTML"
+    hx-trigger="load"
+>
+    <div class="col-4 m-0 p-0">
+        <div class="card h-100">
+            <div class="card-header">Collections/Lists</div>
+            <div class="h-100 d-flex flex-row justify-content-center align-items-center">
+                <div>Collections/Lists</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-8 m-0 p-0">
+        <div class="card h-100">
+            <div class="card-header">Item</div>
+            <div class="h-100 d-flex flex-row justify-content-center align-items-center">
+                <div>Items</div>
+            </div>
+        </div>
+    </div>
+</div>
