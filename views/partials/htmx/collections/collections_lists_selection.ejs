@@ -8,14 +8,14 @@
     hx-swap="outerHTML"
     hx-trigger="load">
     <%- include("./partials/collections_lists_empty.ejs") %>
-    <%- include("./items/unknown_item.ejs") %>
+    <%- include("./partials/items_empty.ejs") %>
 </div>
 <% } else { %>
 
 <div id="collections-lists-global-row" class="row h-100">
     <%- include("./collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
     <% if (!items.length) { %>
-    <%- include("./items/unknown_item.ejs") %>
+    <%- include("./partials/items_empty.ejs") %>
     <% } else { %>
     <%- include("./items/items.ejs", { items: items, baseUrl: originalUrl }) %>
     <% } %>

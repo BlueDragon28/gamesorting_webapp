@@ -1,4 +1,10 @@
-<div class="col-8 m-0 p-0">
+<div class="col-8 m-0 p-0"
+    <% if (typeof endpointUrl === "string" && endpointUrl.length) { %>
+        hx-get="<%= endpointUrl %>"
+        hx-trigger="load"
+        hx-swap="outerHTML"
+    <% } %>
+>
     <div class="card h-100">
         <div class="card-header">Items</div>
         <div class="card-body d-flex justify-content-center align-items-center">
