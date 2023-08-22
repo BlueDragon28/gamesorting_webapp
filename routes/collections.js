@@ -61,9 +61,9 @@ router.get("/collections_lists_list", wrapAsync(async function(req, res) {
 }));
 
 router.get("/lists/:listID", wrapAsync(async function(req, res) {
-    try {
     const userID = req.session.user.id;
     let { listID } = req.params;
+    const onlyItems = req.query.onlyItems === "true";
 
     if (!req.htmx.isHTMX || req.htmx.isBoosted) {
         return res.render("partials/htmx/collections/collections_lists_selection", {
@@ -72,7 +72,10 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
     }
 
     const [lists, items] = await existingOrNewConnection(null, async function(connection) {
-        const lists = await List.findFromUser(userID, connection);
+        let lists = undefined;
+        if (!onlyItems) {
+            lists = await List.findFromUser(userID, connection);
+        }
 
         const selectedList = await List.findByID(listID, connection);
         let items = [];
@@ -90,9 +93,9 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
         lists,
         items,
         listID,
-        originalUrl: req.originalUrl,
+        originalUrl: req.originalUrl.substring(req.originalUrl.indexOf("?")),
+        onlyItems,
     });
-        } catch (e) { console.log(e) }
 }));
 
 router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {

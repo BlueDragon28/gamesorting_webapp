@@ -14,9 +14,16 @@ function getColumnType(columnTypeID) {
 <% } %>
 
     <% if (item) { %>
-        <div class="col-8 m-0 p-0">
+        <div id="item-detail-card" class="col-8 m-0 p-0">
             <div class="card h-100">
-                <div class="card-header"><%= item.name %></div>
+                <div class="card-header">
+                    <div class="btn btn-outline-secondary p-0 px-1 m-0 h-100" style="font-size: 0.75rem;"
+                        hx-get="/collections/lists/<%= item.parentList.id %>?onlyItems=true"
+                        hx-target="#item-detail-card"
+                        hx-swap="outerHTML"
+                    >&lt;</div>
+                    <%= item.name %>
+                </div>
                 <div class="list-group list-group-flush">
                     <% if (item.url) { %>
                         <div class="list-group-item">URL: <a class="card-link" href="<%= item.url %>"><%= item.url %></a></div>

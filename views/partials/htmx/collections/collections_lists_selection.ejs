@@ -12,13 +12,17 @@
 </div>
 <% } else { %>
 
+<% if (typeof onlyItems !== "boolean" || !onlyItems) { %>
 <div id="collections-lists-global-row" class="row h-100">
     <%- include("./collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
+<% } %>
     <% if (!items.length) { %>
     <%- include("./partials/items_empty.ejs") %>
     <% } else { %>
     <%- include("./items/items.ejs", { items: items, baseUrl: originalUrl }) %>
     <% } %>
+<% if (typeof onlyItems !== "boolean" || !onlyItems) { %>
 </div>
+<% } %>
 
 <% } %>
