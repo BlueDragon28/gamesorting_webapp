@@ -26,7 +26,7 @@
     <% if (!items.length) { %>
     <%- include("./items/unknown_item.ejs") %>
     <% } else { %>
-    <%- include("./items/items.ejs", { items: items }) %>
+    <%- include("./items/items.ejs", { items: items, baseUrl: originalUrl }) %>
     <% } %>
 </div>
 

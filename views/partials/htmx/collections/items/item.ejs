@@ -1,0 +1,31 @@
+<% if (!htmx.isHTMX || (htmx.isHTMX && htmx.isBoosted)) { %>
+<% layout("layouts/boilerplate.ejs") -%>
+<% } %>
+
+<% if (!htmx.isHTMX || htmx.isBoosted) { %>
+<div id="collections-lists-global-row" class="row h-100">
+    <%- include("../collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
+<% } %>
+
+    <% if (item) { %>
+        <div class="col-8 m-0 p-0">
+            <div class="card h-100">
+                <div class="card-header"><%= item.name %></div>
+                <div class="list-group list-group-flush">
+                    <% if (item.url) { %>
+                        <div class="list-group-item">URL: <a class="card-link" href="<%= item.url %>"><%= item.url %></a></div>
+                    <% } %>
+
+                    <% if (item.rating) { %>
+                        <div class="list-group-item d-flex flex-row align-items-center">
+                            <div class="me-2">Rating:</div> <div class="starability-result" data-rating="<%= item.rating%>">Rated: <%= item.rating %> star<%= item.rating > 1 ? 's' : '' %></div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    <% } %>
+    
+<% if (!htmx.isHTMX || htmx.isBoosted) { %>
+</div>
+<% } %>

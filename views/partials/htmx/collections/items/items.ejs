@@ -1,10 +1,14 @@
-<div class="col-8 m-0 p-0">
+<div id="collections-items-list-row" class="col-8 m-0 p-0">
     <div class="card h-100">
         <div class="card-header">Items</div>
         <div class="list-group list-group-flush">
             <% for (const item of items) { %>
                 <button 
                     class="list-group-item list-group-item-action d-flex flex-row"
+                    hx-get="<%= baseUrl %>/item/<%= item.id %>"
+                    hx-target="#collections-items-list-row"
+                    hx-swap="outerHTML"
+                    hx-push-url="true"
                 >
                     <div class="flex-fill three-dot-text text-start"><%= item.name %></div>
                     <% if (typeof item.rating === "number") { %>

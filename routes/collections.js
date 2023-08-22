@@ -60,6 +60,7 @@ router.get("/collections_lists_list", wrapAsync(async function(req, res) {
 }));
 
 router.get("/lists/:listID", wrapAsync(async function(req, res) {
+    try {
     const userID = req.session.user.id;
     let { listID } = req.params;
 
@@ -88,8 +89,52 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
         lists,
         items,
         listID,
+        originalUrl: req.originalUrl,
     });
+        } catch (e) { console.log(e) }
 }));
+
+router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id;
+    const { listID, itemID } = req.params;
+
+    if (req.htmx.isHTMX && !req.htmx.isBoosted) {
+        const [item] = await existingOrNewConnection(null, async function(connection) {
+            const currentItem = await Item.findByID(itemID, connection);
+            if (currentItem.parentList.parentCollection.userID != userID) {
+                return [null];
+            }
+
+            return [currentItem];
+        });
+
+        return res.render("partials/htmx/collections/items/item", {
+            item
+        });
+    }
+
+    const [lists, item] = await existingOrNewConnection(null, async function(connection) {
+        const lists = await List.findFromUser(userID, connection);
+
+        const selectedList = await List.findByID(listID, connection);
+        if (selectedList.parentCollection.userID != userID) {
+            return [lists, null];
+        }
+
+        const currentItem = await Item.findByID(itemID, connection);
+        if (currentItem.parentList.id !== selectedList.id) {
+            return [lists, null];
+        }
+
+        return [lists, currentItem];
+    });
+
+    res.render("partials/htmx/collections/items/item", {
+        lists,
+        item,
+        listID
+    });
+}))
 
 /*
 Validate collectionID on each route asking for collection id
