@@ -7,16 +7,7 @@
     hx-get="<%= originalUrl %>"
     hx-swap="outerHTML"
     hx-trigger="load">
-    <div class="col-4 m-0 p-0">
-        <div class="card h-100">
-            <div class="card-header">
-                Collections/Lists
-            </div>
-            <div class="card-body d-flex justify-content-center align-items-center">
-                <div>No Collections</div>
-            </div>
-        </div>
-    </div>
+    <%- include("./partials/collections_lists_empty.ejs") %>
     <%- include("./items/unknown_item.ejs") %>
 </div>
 <% } else { %>
