@@ -5,6 +5,7 @@ const express = require("express");
 const { Collection } = require("../models/collections");
 const { List } = require("../models/lists");
 const { Item } = require("../models/items");
+const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, AuthorizationError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
@@ -99,21 +100,24 @@ router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
     const { listID, itemID } = req.params;
 
     if (req.htmx.isHTMX && !req.htmx.isBoosted) {
-        const [item] = await existingOrNewConnection(null, async function(connection) {
+        const [item, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
             const currentItem = await Item.findByID(itemID, connection);
             if (currentItem.parentList.parentCollection.userID != userID) {
                 return [null];
             }
 
-            return [currentItem];
+            const listColumnsType = await ListColumnType.findFromList(currentItem.parentList, connection);
+
+            return [currentItem, listColumnsType];
         });
 
         return res.render("partials/htmx/collections/items/item", {
-            item
+            item,
+            listColumnsType
         });
     }
 
-    const [lists, item] = await existingOrNewConnection(null, async function(connection) {
+    const [lists, item, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
         const lists = await List.findFromUser(userID, connection);
 
         const selectedList = await List.findByID(listID, connection);
@@ -126,13 +130,16 @@ router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
             return [lists, null];
         }
 
-        return [lists, currentItem];
+        const listColumnsType = await ListColumnType.findFromList(currentItem.parentList, connection);
+
+        return [lists, currentItem, listColumnsType];
     });
 
     res.render("partials/htmx/collections/items/item", {
         lists,
         item,
-        listID
+        listID,
+        listColumnsType,
     });
 }))
 

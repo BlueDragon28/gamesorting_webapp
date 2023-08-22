@@ -2,6 +2,16 @@
 <% layout("layouts/boilerplate.ejs") -%>
 <% } %>
 
+<%
+function getColumnType(columnTypeID) {
+    for (let item of listColumnsType) {
+        if (item.id === columnTypeID) {
+            return item;
+        }
+    }
+}
+%>
+
 <% if (!htmx.isHTMX || htmx.isBoosted) { %>
 <div id="collections-lists-global-row" class="row h-100">
     <%- include("../collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
@@ -19,6 +29,23 @@
                     <% if (item.rating) { %>
                         <div class="list-group-item d-flex flex-row align-items-center">
                             <div class="me-2">Rating:</div> <div class="starability-result" data-rating="<%= item.rating%>">Rated: <%= item.rating %> star<%= item.rating > 1 ? 's' : '' %></div>
+                        </div>
+                    <% } %>
+
+                    <% for (let customData of item.customData) { %>
+                        <% const columnType = getColumnType(customData.columnTypeID); %>
+
+                        <div class="list-group-item">
+                            <% if (columnType.type.type === "@Stars") { %>
+                                <div class="d-flex flex-row justify-content-start align-items-center">
+                                    <div class="me-1"><%= columnType.name %>:</div>
+                                    <div class="starability-result" data-rating="<%= customData.value %>"></div>
+                                </div>
+                            <% } else if (columnType.type.type === "@Href") {%>
+                                <div><%= columnType.name %>: <a href="<%= customData.value %>"><%= customData.value %></a></div>
+                            <% } else { %>
+                                <div><%= columnType.name %>: <%= customData.value %></div>
+                            <% } %>
                         </div>
                     <% } %>
                 </div>
