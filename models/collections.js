@@ -232,6 +232,44 @@ class Collection {
         });
     }
 
+    static async findByName(userID, name, connection) {
+        if (!bigint.isValid(userID) || typeof name !== "string") {
+            throw new ValueError(400, "Invalid UserID or Collection Name");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                `SELECT UserID, CollectionID, Name FROM collections 
+                WHERE UserID = ? AND Name = ?`;
+            const queryArgs = [
+                userID,
+                name,
+            ];
+
+            try {
+                const queryResult = await connection.query(queryStatement, queryArgs);
+
+                if (!queryResult.length) {
+                    return null;
+                }
+
+                const collection = new Collection(
+                    queryResult[0].UserID, 
+                    queryResult[0].Name,
+                );
+                collection.id = queryResult[0].CollectionID;
+
+                if (!collection.isValid()) {
+                    return null;
+                }
+
+                return collection;
+            } catch (err) {
+                throw new SqlError(`Failed to get collection by name: ${err.message}`);
+            }
+        });
+    }
+
     static async deleteFromID(id, connection) {
         id = bigint.toBigInt(id);
         if (!bigint.isValid(id)) {

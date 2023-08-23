@@ -247,5 +247,22 @@ describe("collection dabase manipulation", function() {
         expect(collections[1].numberOfPages).toBe(2);
         expect(collections[1].currentPage).toBe(2);
     });
+
+    it("test find collection by exact match", async function() {
+        const collectionName = "Collection To Find";
+
+        await collectionQuery(() => new Collection(2, collectionName).save());
+
+        const [foundCollection, error] = 
+            await collectionQuery(() => Collection.findByName(2, collectionName));
+        expect(error).toBe(undefined);
+        expect(foundCollection).not.toBe(null);
+        expect(foundCollection.name).toBe(collectionName);
+
+        const [notFoundCollection, actualError] =
+            await collectionQuery(() => Collection.findByName(2, `${collectionName}t`));
+        expect(actualError).toBe(undefined);
+        expect(notFoundCollection).toBe(null);
+    });
 });
 
