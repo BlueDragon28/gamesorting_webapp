@@ -60,6 +60,10 @@ router.get("/collections_lists_list", wrapAsync(async function(req, res) {
     });
 }));
 
+router.get("/new", wrapAsync(async function(req, res) {
+    res.render("partials/htmx/collections/new_collection_list_form");
+}));
+
 router.get("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     let { listID } = req.params;

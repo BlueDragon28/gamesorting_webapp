@@ -7,7 +7,15 @@
                     <%- include("../icons/vertical_three_dots.ejs") %>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><div class="dropdown-item">Action</div></li>
+                    <li>
+                        <div class="dropdown-item"
+                            hx-get="/collections/new"
+                            hx-target="#collections-lists-list-outer-column"
+                            hx-swap="outerHTML"
+                        >
+                            New
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
