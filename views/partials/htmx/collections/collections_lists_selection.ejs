@@ -12,16 +12,35 @@
 </div>
 <% } else { %>
 
-<% if (typeof onlyItems !== "boolean" || !onlyItems) { %>
+<%
+const includeOuter = 
+    (typeof onlyItems !== "boolean" || !onlyItems) &&
+    (typeof onlyList !== "boolean" || !onlyList);
+
+const includeList =
+    (typeof onlyItems !== "boolean" || !onlyItems) &&
+    (typeof onlyList !== "boolean" || onlyList);
+
+const includeItems =
+    (typeof onlyItem !== "boolean" || onlyItems) &&
+    (typeof onlyList !== "boolean" || !onlyList);
+%>
+
+<% if (includeOuter) { %>
 <div id="collections-lists-global-row" class="row h-100">
+<% } %>
+<% if (includeList) { %>
     <%- include("./collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
 <% } %>
+
+<% if (includeItems) { %>
     <% if (!items.length) { %>
     <%- include("./partials/items_empty.ejs") %>
     <% } else { %>
     <%- include("./items/items.ejs", { items: items, baseUrl: originalUrl }) %>
     <% } %>
-<% if (typeof onlyItems !== "boolean" || !onlyItems) { %>
+<% } %>
+<% if (includeOuter) { %>
 </div>
 <% } %>
 

@@ -2,6 +2,11 @@
     <div class="card h-100">
         <div class="card-header">
             <div class="btn btn-outline-secondary p-0 px-1 m-0 h-100" style="font-size: 0.75rem;"
+                <% if (typeof returnUrl === "string" && returnUrl.length) { %>
+                    hx-get="<%= returnUrl %>?onlyList=true"
+                    hx-target="#collection-list-form-card"
+                    hx-swap="outerHTML"
+                <% } %>
             >
             &lt;</div>
             New Collection/List

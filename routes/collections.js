@@ -61,13 +61,28 @@ router.get("/collections_lists_list", wrapAsync(async function(req, res) {
 }));
 
 router.get("/new", wrapAsync(async function(req, res) {
-    res.render("partials/htmx/collections/new_collection_list_form");
+    const { currentUrl } = req.htmx;
+
+    let returnUrl = currentUrl.substring(
+        currentUrl.indexOf("/collections"),
+        currentUrl.indexOf("?") !== -1 ?
+            currentUrl.indexOf("?") : currentUrl.length
+    );
+
+    if (returnUrl === "/collections") {
+        returnUrl = "/collections/collections_lists_list";
+    }
+
+    res.render("partials/htmx/collections/new_collection_list_form", {
+        returnUrl
+    });
 }));
 
 router.get("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     let { listID } = req.params;
-    const onlyItems = req.query.onlyItems === "true";
+    const onlyItems = req.query.onlyItems === "true" ? true : undefined;
+    const onlyList = req.query.onlyList === "true" ? true : undefined;
 
     if (!req.htmx.isHTMX || req.htmx.isBoosted) {
         return res.render("partials/htmx/collections/collections_lists_selection", {
@@ -85,7 +100,9 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
         let items = [];
 
         if (selectedList.parentCollection.userID == userID) {
-            items = (await Item.findFromList(selectedList, undefined, undefined, connection, null))[0];
+            if (!onlyList) {
+                items = (await Item.findFromList(selectedList, undefined, undefined, connection, null))[0];
+            }
         } else {
             listID = undefined;
         }
@@ -104,6 +121,7 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
         listID,
         originalUrl,
         onlyItems,
+        onlyList,
     });
 }));
 
