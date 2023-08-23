@@ -21,7 +21,10 @@ const { checkCollectionAuth } = require("../utils/users/authorization");
 const bigint = require("../utils/numbers/bigint");
 const Pagination = require("../utils/sql/pagination");
 const { isCollectionMaxLimitMiddleware } = require("../utils/validation/limitNumberElements");
-const { validateCollectionListName } = require("../utils/validation/htmx/collections_lists");
+const { 
+    validateCollectionListName,
+    validateAndCreateCollectionsList,
+} = require("../utils/validation/htmx/collections_lists");
 
 const router = express.Router();
 
@@ -193,29 +196,12 @@ router.post("/lists", wrapAsync(async function(req, res) {
     ] = validateCollectionListName(collectionListName);
 
     if (!errorMessage) {
-        await existingOrNewConnection(null, async function(connection) {
-            let collection = await Collection.findByName(userID, collectionName, connection);
-
-            if (!collection) {
-                collection = new Collection(userID, collectionName);
-                await collection.save(connection);
-            }
-
-            let list = await List.findByNameFromCollection(collection, listName, connection);
-            if (list != null) {
-                errorMessage = `The list ${listName} already exists`;
-                return;
-            }
-
-            list = new List(listName, collection);
-
-            if (!list.isValid()) {
-                errorMessage = "Oups: something went wrong with the list creation";
-                return;
-            }
-
-            await list.save(connection);
-        });
+        let [
+            validationErrorMessage,
+            collection,
+            list,
+        ] = await validateAndCreateCollectionsList(userID, collectionName, listName);
+        errorMessage = validationErrorMessage;
     }
 
     res.render("partials/htmx/collections/new_collection_list_form", {

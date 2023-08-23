@@ -1,3 +1,7 @@
+const { existingOrNewConnection } = require("../../sql/sql");
+const { Collection } = require("../../../models/collections");
+const { List } = require("../../../models/lists");
+
 function validateCollectionListName(collectionListName) {
     let [collectionName,listName] = collectionListName.split("/");
     collectionName = collectionName?.trim();
@@ -24,6 +28,36 @@ function validateCollectionListName(collectionListName) {
     return [collectionName, listName, errorMessage];
 }
 
+async function validateAndCreateCollectionsList(userID, collectionName, listName, connection) {
+    return await existingOrNewConnection(connection, async function(connection) {
+        let errorMessage = undefined;
+        let collection = await Collection.findByName(userID, collectionName, connection);
+
+        if (!collection) {
+            collection = new Collection(userID, collectionName);
+            await collection.save(connection);
+        }
+
+        let list = await List.findByNameFromCollection(collection, listName, connection);
+        if (list != null) {
+            errorMessage = `The list ${listName} already exists`;
+            return [errorMessage];
+        }
+
+        list = new List(listName, collection);
+
+        if (!list.isValid()) {
+            errorMessage = "Oups: something went wrong with the list creation";
+            return [errorMessage];
+        }
+
+        await list.save(connection);
+
+        return [errorMessage, collection, list];
+    });
+}
+
 module.exports = {
     validateCollectionListName,
+    validateAndCreateCollectionsList,
 };
