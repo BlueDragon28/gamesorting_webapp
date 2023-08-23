@@ -310,7 +310,7 @@ class List {
                 FROM lists l 
                 INNER JOIN collections c USING (CollectionID) 
                 WHERE c.UserID = ? 
-                ORDER BY CNAME ASC 
+                ORDER BY CNAME ASC, LNAME ASC
                 LIMIT ?`;
             const queryArgs = [
                 userID,
