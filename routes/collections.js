@@ -202,6 +202,12 @@ router.post("/lists", wrapAsync(async function(req, res) {
             list,
         ] = await validateAndCreateCollectionsList(userID, collectionName, listName);
         errorMessage = validationErrorMessage;
+
+        if (!errorMessage) {
+            return res.status(204).set({
+                "HX-Location": `{"path":"/collections/lists/${list.id}","target":"#collections-lists-global-row","swap":"outerHTML"}`
+            }).send(null);
+        }
     }
 
     res.render("partials/htmx/collections/new_collection_list_form", {
