@@ -346,5 +346,22 @@ describe("collection dabase manipulation", function() {
             expect(item.isValid()).toBe(true);
         }
     });
+
+    it("find a collection by exact name", async function() {
+        const listName = "List Name To Search";
+
+        await listQuery(() => new List(listName, collection).save());
+
+        const [foundList, notError] = 
+            await listQuery(() => List.findByNameFromCollection(collection, listName));
+        expect(notError).toBe(undefined);
+        expect(foundList instanceof List).toBe(true);
+        expect(foundList.name).toBe(listName);
+
+        const [notFoundList, actualError] =
+            await listQuery(() => List.findByNameFromCollection(collection, `${listName}d`));
+        expect(actualError).toBe(undefined);
+        expect(notFoundList).toBe(null);
+    });
 });
 

@@ -334,6 +334,42 @@ class List {
         });
     }
 
+    static async findByNameFromCollection(collection, name, connection) {
+        if (!collection || !collection instanceof Collection || !collection.isValid() ||
+            typeof name !== "string") {
+            throw ValueError(400, "Invalid collection or name");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = `
+                SELECT CollectionID, ListID, Name FROM lists
+                WHERE CollectionID = ? AND Name = ?`;
+            const queryArgs = [
+                collection.id,
+                name,
+            ];
+
+            try {
+                const queryResult = await connection.query(queryStatement, queryArgs);
+
+                if (!queryResult.length) {
+                    return null;
+                }
+
+                const foundList = new List(queryResult[0].Name, collection);
+                foundList.id = queryResult[0].ListID;
+
+                if (!foundList.isValid()) {
+                    return null;
+                }
+
+                return foundList;
+            } catch (err) {
+                throw new SqlError(`Failed to get list by name ${err.message}`);
+            }
+        });
+    }
+
     static parseFoundListsFromUser(queryResult) {
         const listOfLists = [];
 
