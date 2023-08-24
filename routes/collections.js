@@ -129,6 +129,35 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
     });
 }));
 
+router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id;
+    const { listID } = req.params;
+    const { destinationId } = req.query;
+
+    const [errorMessage, list] = await existingOrNewConnection(null, async function(connection) {
+        const foundList = await List.findByID(listID, connection);
+
+        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+            return ["Could not find this list"];
+        } else if (foundList.parentCollection.userID != userID) {
+            return ["You do not own this list"];
+        } else if (!destinationId || !destinationId?.length) {
+            return ["You failed to provide destinationId"];
+        }
+
+        return [null, foundList];
+    });
+
+    if (!errorMessage) {
+        res.render("partials/htmx/modals/deleteListModal.ejs", {
+            list,
+            destinationId,
+        });
+    } else {
+        res.send("oups");
+    }
+}));
+
 router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID, itemID } = req.params;
