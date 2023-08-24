@@ -132,7 +132,7 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
 router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;
-    const { destinationId } = req.query;
+    let { destinationId } = req.query;
 
     const [errorMessage, list] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
@@ -154,7 +154,9 @@ router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
             destinationId,
         });
     } else {
-        res.send("oups");
+        res.render("partials/htmx/modals/errorModal.ejs", {
+            errorMessage,
+        });
     }
 }));
 
