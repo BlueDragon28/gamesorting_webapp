@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/dist/app.1.3.0.css">
+    <script src="/dist/public-js.bundle.1.3.0.js" defer></script>
     <title>GameSorting</title>
 </head>
 <body class="d-flex flex-column vh-100" data-bs-theme="dark">
@@ -26,11 +27,10 @@
 
     <%- include("../partials/footer") %> 
 
-    <script>
+    <!-- <script>
         const serverFlashMessages = 
             <%- JSON.stringify(flashMessages) %>
-    </script>
-    <script src="/dist/public-js.bundle.1.3.0.js"></script>
+    </script> -->
 
 <% if (!htmx.isHTMX) { %>
 </body>
