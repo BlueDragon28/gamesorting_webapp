@@ -9,6 +9,7 @@ const styleSrcUrls = [
 const scriptSrcUrls = [
     "'self'",
     "'unsafe-inline'",
+    "'unsafe-eval'",
     "https://cdn.jsdelivr.net"
 ]
 
