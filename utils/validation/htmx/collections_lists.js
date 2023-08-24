@@ -1,11 +1,12 @@
 const { existingOrNewConnection } = require("../../sql/sql");
 const { Collection } = require("../../../models/collections");
 const { List } = require("../../../models/lists");
+const { sanitizeText } = require("../../../utils/validation/sanitizeText");
 
 function validateCollectionListName(collectionListName) {
     let [collectionName,listName] = collectionListName.split("/");
-    collectionName = collectionName?.trim();
-    listName = listName?.trim();
+    collectionName = sanitizeText(collectionName?.trim());
+    listName = sanitizeText(listName?.trim());
 
     let errorMessage = undefined;
 
@@ -25,7 +26,11 @@ function validateCollectionListName(collectionListName) {
         errorMessage = "List name must be at least 3 characters";
     }
 
-    return [collectionName, listName, errorMessage];
+    return [
+        collectionName, 
+        listName, 
+        errorMessage,
+    ];
 }
 
 async function validateAndCreateCollectionsList(userID, collectionName, listName, connection) {
