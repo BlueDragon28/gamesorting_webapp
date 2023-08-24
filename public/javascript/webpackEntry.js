@@ -1,5 +1,6 @@
 // import bootstrap to bundle
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
+window.bootstrap = bootstrap;
 import "bootstrap/dist/css/bootstrap.min.css";
 import "htmx.org/dist/htmx.min.js";
 import "alpinejs/dist/cdn";
