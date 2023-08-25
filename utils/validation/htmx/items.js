@@ -41,8 +41,32 @@ function validateStar(name, value) {
     return [error, validatedValue];
 }
 
+function validateItemHeader(name, url, rating, errorMessages) {
+    var [error, validatedName] = validateText("Name", name);
+    if (error) {
+        errorMessages.name = error;
+    }
+
+    var [error, validatedUrl] = validateURL("URL", url);
+    if (error) {
+        errorMessages.url = error;
+    }
+
+    var [error, validatedStar] = validateStar("Rating", rating);
+    if (error) {
+        errorMessages.rating = error;
+    }
+
+    return [
+        validatedName,
+        validatedUrl,
+        validatedStar,
+    ];
+}
+
 module.exports = {
     validateText,
     validateURL,
     validateStar,
+    validateItemHeader,
 };
