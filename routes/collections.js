@@ -345,7 +345,7 @@ router.post("/lists/:listID",
         );
 
         const [returnError, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
-            const foundList = await List.findByID(userID, connection);
+            const foundList = await List.findByID(listID, connection);
 
             if (!foundList || !foundList instanceof List || !foundList.isValid()) {
                 return ["Failed to retrieve custom columns"];
