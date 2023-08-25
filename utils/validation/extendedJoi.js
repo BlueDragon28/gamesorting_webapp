@@ -1,5 +1,6 @@
 const { Joi } = require("celebrate");
 const sanitizeHTML = require("sanitize-html");
+const { sanitizeText } = require("./sanitizeText");
 
 function revertEscapedEntities(str) {
     return str.replaceAll(/&amp;/g, "&")
@@ -32,6 +33,20 @@ function htmlSanitizeExtension(joi) {
     };
 }
 
-const customJoi = Joi.extend(htmlSanitizeExtension);
+function sanitize(Joi) {
+    return {
+        type: "string",
+        base: Joi.string(),
+        rules: {
+            sanitize: {
+                validate(value, helpers) {
+                    return sanitizeText(value);
+                }
+            }
+        }
+    };
+}
+
+const customJoi = Joi.extend(htmlSanitizeExtension).extend(sanitize);
 
 module.exports = customJoi;
