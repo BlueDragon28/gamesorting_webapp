@@ -160,6 +160,37 @@ router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
     }
 }));
 
+router.delete("/lists/:listID", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id;
+    const { listID } = req.params;
+
+    const [errorMessage, list, collection] = await existingOrNewConnection(null, async function(connection) {
+        const foundList = await List.findByID(listID, connection);
+
+        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+            return ["Could not find this list"];
+        } else if (foundList.parentCollection.userID != userID) {
+            return ["You do not own this list"];
+        } 
+
+        const parentCollection = foundList.parentCollection;;
+        await foundList.delete(connection);
+        if (await List.getCount(parentCollection, connection) === 0n) {
+            await parentCollection.delete(connection);
+        }
+
+        return [null, foundList, parentCollection];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.status(500).send();
+    }
+
+    req.flash("success", `${collection.name}/${list.name} successfully deleted`);
+    res.status(200).send();
+}));
+
 router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID, itemID } = req.params;

@@ -53,6 +53,11 @@ class List {
         }
     }
 
+    async delete(connection) {
+        if (!this.isValid() || !this.id) return;
+        return await List.deleteFromID(this.id, connection);
+    }
+
     async exists(connection) {
         if (!this.id) {
             return false;

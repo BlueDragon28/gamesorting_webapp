@@ -13,6 +13,7 @@
                 <button type="button" class="btn btn-danger"
                     hx-delete="/collections/lists/<%= list.id %>"
                     hx-target="#<%= destinationId %>"
+                    hx-swap="outerHTML"
                     data-bs-dismiss="modal"
                 >Delete</button>
             </div>

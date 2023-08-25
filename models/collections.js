@@ -49,6 +49,12 @@ class Collection {
         }
     }
 
+    async delete(connection) {
+        if (!this.isValid() || !this.id) return;
+
+        return await Collection.deleteFromID(this.id, connection);
+    }
+
     async exists(connection) {
         if (!this.id) {
             return false;
