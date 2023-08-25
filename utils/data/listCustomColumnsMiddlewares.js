@@ -1,6 +1,8 @@
 const { List } = require("../../models/lists");
 const { ListColumnType } = require("../../models/listColumnsType");
 const { existingOrNewConnection } = require("../sql/sql");
+const bigint = require("../numbers/bigint");
+const { sanitizeText } = require("../validation/sanitizeText");
 
 function isUserEnteredTwoColumnWithSameName(newColumns) {
     for (let i = 0; i < newColumns.length; i++) {
@@ -61,9 +63,36 @@ async function checkForDuplicateWithCurrentColumns(req, res, next) {
     next();
 }
 
+function parseCustomColumnsData(req, res, next) {
+    if (!req.body.customColumns) {
+        req.body.customColumns = [];
+    }
+
+    const customColumnsData = [];
+
+    for (let [strID, value] of Object.entries(req.body.customColumns)) {
+        const id = bigint.toBigInt(strID.split("_")[1]);
+
+        if (!bigint.isValid(id)) {
+            throw new ValueError(400, "Invalid ListColumnTypeID");
+        }
+
+        const columnIDName = req.method === "POST" ? "ListColumnTypeID" : "CustomRowItemsID";
+
+        customColumnsData.push({
+            [columnIDName]: id.toString(),
+            Value: sanitizeText(value),
+        });
+    }
+
+    req.body.customColumns = customColumnsData;
+    next();
+}
+
 module.exports = {
     checkForDuplicate,
     trimColumns,
     retrievePreviousColumns,
-    checkForDuplicateWithCurrentColumns
+    checkForDuplicateWithCurrentColumns,
+    parseCustomColumnsData,
 }

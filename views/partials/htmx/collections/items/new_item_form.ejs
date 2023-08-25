@@ -1,3 +1,8 @@
+<% 
+    const isErrorObj = typeof errorMessages === "object"; 
+    const isExistingValues = typeof existingValues === "object";
+%>
+
 <div id="collections-items-list-row" class="col-8 m-0 p-0">
     <div class="card h-100">
         <div class="card-header">
@@ -10,11 +15,19 @@
             >&lt;</div>
             New Item
         </div>
-        <form class="card-body d-flex flex-column justify-content-center align-items-center">
+        <form class="card-body d-flex flex-column justify-content-center align-items-center"
+            hx-post="/collections/lists/<%= listID %>"
+            hx-target="#collections-items-list-row"
+            hx-swap="outerHTML"
+        >
             <h3 class="display-7 my-2">Creating Item</h3>
             <div class="form-floating w-100 my-2">
-                <input class="form-control" type="text" name="name" id="new-item-name" placeholder="">
+                <% const isItemNameError = isErrorObj && errorMessages?.name; %>
+                <input class="form-control <%= isItemNameError ? 'is-invalid' : '' %>" type="text" name="name" id="new-item-name" placeholder="" value="<%= isExistingValues ? existingValues.name : '' %>">
                 <label for="new-item-name">Item Name</label>
+                <% if (isItemNameError) { %>
+                    <div class="invalid-feedback"><%= errorMessages?.name %></div>
+                <% } %>
             </div>
 
             <div class="form-floating w-100 my-2">

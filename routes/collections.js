@@ -26,6 +26,8 @@ const {
     validateAndCreateCollectionsList,
 } = require("../utils/validation/htmx/collections_lists");
 const { getCustomControlType } = require("../utils/ejs/customControlData");
+const { parseCustomColumnsData } = require("../utils/data/listCustomColumnsMiddlewares");
+const { validateText } = require("../utils/validation/htmx/items");
 
 const router = express.Router();
 
@@ -321,6 +323,49 @@ router.post("/lists", wrapAsync(async function(req, res) {
         inputValue: collectionListName,
     });
 }));
+
+router.post("/lists/:listID", 
+    parseCustomColumnsData, 
+    wrapAsync(async function(req, res) {
+        const userID = req.session.user.id;
+        const { listID } = req.params;
+        const { name, url, rating, customColumns } = req.body;
+
+        const errorMessages = {};
+
+        let [error, validateValue] = validateText("Name", name);
+
+        if (error) {
+            errorMessages.name = error;
+        }
+
+        const [returnError, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
+            const foundList = await List.findByID(userID, connection);
+
+            if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+                return ["Failed to retrieve custom columns"];
+            } else if (foundList.parentCollection.userID != userID) {
+                return ["You do not own this collection"];
+            }
+
+            const listColumnsType = await ListColumnType.findFromList(foundList, connection);
+
+            return [null, listColumnsType];
+        });
+
+        res.render("partials/htmx/collections/items/new_item_form.ejs", {
+            listID,
+            listColumnsType,
+            errorMessages,
+            existingValues: {
+                name,
+                url,
+                rating,
+                customColumns,
+            }
+        });
+    })
+);
 
 /*
 Validate collectionID on each route asking for collection id
