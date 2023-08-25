@@ -15,7 +15,17 @@ function validateText(name, value) {
     const schema = Joi.object({
         [name]: textValidation,
     }).required();
-    const { error, validatedValue } = schema.validate({
+    const { error, value: validatedValue } = schema.validate({
+        [name]: value,
+    });
+    return [error, validatedValue];
+}
+
+function validateURL(name, value) {
+    const schema = Joi.object({
+        [name]: uriValidation,
+    }).required();
+    const { error, value: validatedValue } = schema.validate({
         [name]: value,
     });
     return [error, validatedValue];
@@ -23,4 +33,5 @@ function validateText(name, value) {
 
 module.exports = {
     validateText,
+    validateURL,
 };

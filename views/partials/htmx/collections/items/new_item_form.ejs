@@ -31,8 +31,12 @@
             </div>
 
             <div class="form-floating w-100 my-2">
-                <input class="form-control" type="url" name="url" id="new-item-url" placeholder="">
+                <% const isItemUrlError = isErrorObj && errorMessages?.url; %>
+                <input class="form-control <%= isItemUrlError ? 'is-invalid' : '' %>" type="url" name="url" id="new-item-url" placeholder="" value="<%= isExistingValues ? existingValues.url : '' %>">
                 <label for="new-item-url">Item Url</label>
+                <% if (isItemUrlError) { %>
+                    <div class="invalid-feedback"><%= errorMessages?.url %></div>
+                <% } %>
             </div>
 
             <div class="card w-100 my-2">
