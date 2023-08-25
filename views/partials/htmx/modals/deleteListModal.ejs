@@ -11,7 +11,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-danger"
-                    hx-delete="/collections/lists/<%= list.id %>"
+                    hx-delete="/collections/lists/<%= list.id %>?selectedID=<%= selectedID %>"
                     hx-target="#<%= destinationId %>"
                     hx-swap="outerHTML"
                     data-bs-dismiss="modal"

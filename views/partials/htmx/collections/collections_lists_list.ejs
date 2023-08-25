@@ -45,7 +45,7 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <div class="dropdown-item"
-                                    hx-get="/collections/lists/<%= list.id %>/delete-modal?destinationId=button-list-<%= list.id %>"
+                                    hx-get="/collections/lists/<%= list.id %>/delete-modal?destinationId=button-list-<%= list.id %>&selectedID=<%= selectedID %>"
                                     hx-target="#modal-content-section"
                                     hx-push-url="false"
                                     hx-swap="innerHTML"

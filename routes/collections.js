@@ -132,7 +132,7 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
 router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;
-    let { destinationId } = req.query;
+    let { destinationId, selectedID } = req.query;
 
     const [errorMessage, list] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
@@ -152,6 +152,7 @@ router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
         res.render("partials/htmx/modals/deleteListModal.ejs", {
             list,
             destinationId,
+            selectedID,
         });
     } else {
         res.render("partials/htmx/modals/errorModal.ejs", {
@@ -163,6 +164,7 @@ router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
 router.delete("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;
+    const { selectedID } = req.query;
 
     const [errorMessage, list, collection] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
@@ -185,9 +187,16 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
     if (errorMessage) {
         req.flash("error", errorMessage);
         return res.status(500).send();
-    }
+    } 
 
     req.flash("success", `${collection.name}/${list.name} successfully deleted`);
+
+    if (selectedID === list.id.toString()) {
+        return res.status(204).set({
+            "HX-Location": "/collections",
+        }).send();
+    }
+
     res.status(200).send();
 }));
 
