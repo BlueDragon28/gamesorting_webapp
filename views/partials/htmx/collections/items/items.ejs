@@ -1,6 +1,21 @@
 <div id="collections-items-list-row" class="col-8 m-0 p-0">
     <div class="card h-100">
-        <div class="card-header">Items</div>
+        <div class="card-header d-flex flex-row justify-content-between align-items-center">
+            <div>Items</div>
+            <div class="dropdown h-100">
+                <button type="button" class="btn btn-outline-secondary p-0 px-1 m-0 h-100" style="font-size: 0.75rem;" data-bs-toggle="dropdown" aria-expanded="false">
+                    <%- include("../../icons/vertical_three_dots.ejs") %>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <div class="dropdown-item"
+                        >
+                            New
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <div class="list-group list-group-flush">
             <% for (const item of items) { %>
                 <button 
