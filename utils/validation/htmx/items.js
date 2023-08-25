@@ -6,7 +6,7 @@ const uriValidation = Joi.alternatives().try(
     Joi.string().sanitize().trim().max(10000).uri({
         scheme: [
             "http",
-            "htpps",
+            "https",
         ],
     }).required(),
     Joi.string().trim().max(0).min(0).required(),
