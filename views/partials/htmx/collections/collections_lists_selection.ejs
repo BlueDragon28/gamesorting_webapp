@@ -35,9 +35,9 @@ const includeItems =
 
 <% if (includeItems) { %>
     <% if (!items.length) { %>
-    <%- include("./partials/items_empty.ejs") %>
+    <%- include("./partials/items_empty.ejs", { selectedID: listID }) %>
     <% } else { %>
-    <%- include("./items/items.ejs", { items: items, baseUrl: originalUrl }) %>
+    <%- include("./items/items.ejs", { items: items, baseUrl: originalUrl, selectedID: listID }) %>
     <% } %>
 <% } %>
 <% if (includeOuter) { %>
