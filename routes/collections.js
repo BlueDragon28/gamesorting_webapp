@@ -25,6 +25,7 @@ const {
     validateCollectionListName,
     validateAndCreateCollectionsList,
 } = require("../utils/validation/htmx/collections_lists");
+const { getCustomControlType } = require("../utils/ejs/customControlData");
 
 const router = express.Router();
 
@@ -39,6 +40,11 @@ Activate the Collections navlink
 */
 router.use(function(req, res, next) {
     res.locals.activeLink = "Collections";
+    next();
+});
+
+router.use(function(req, res, next) {
+    res.locals.getCustomControlType = getCustomControlType;
     next();
 });
 
@@ -165,8 +171,27 @@ router.get("/lists/:listID/new", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;
 
+    const [errorMessage, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
+        const foundList = await List.findByID(listID, connection);
+
+        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+            return ["Could not find this list"];
+        } else if (foundList.parentCollection.userID != userID) {
+            return ["You do not own this list"];
+        }
+
+        const listColumnsType = await ListColumnType.findFromList(foundList, connection);
+        return [null, listColumnsType];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.status(500).send();
+    }
+
     res.render("partials/htmx/collections/items/new_item_form.ejs", {
         listID,
+        listColumnsType,
     });
 }))
 
