@@ -165,7 +165,9 @@ router.get("/lists/:listID/new", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;
 
-    res.render("partials/htmx/collections/items/new_item_form.ejs");
+    res.render("partials/htmx/collections/items/new_item_form.ejs", {
+        listID,
+    });
 }))
 
 router.delete("/lists/:listID", wrapAsync(async function(req, res) {
