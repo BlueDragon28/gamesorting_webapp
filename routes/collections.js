@@ -27,7 +27,7 @@ const {
 } = require("../utils/validation/htmx/collections_lists");
 const { getCustomControlType } = require("../utils/ejs/customControlData");
 const { parseCustomColumnsData } = require("../utils/data/listCustomColumnsMiddlewares");
-const { validateText, validateURL } = require("../utils/validation/htmx/items");
+const { validateText, validateURL, validateStar } = require("../utils/validation/htmx/items");
 
 const router = express.Router();
 
@@ -334,15 +334,18 @@ router.post("/lists/:listID",
         const errorMessages = {};
 
         var [error, validatedName] = validateText("Name", name);
-
         if (error) {
             errorMessages.name = error;
         }
 
         var [error, validatedUrl] = validateURL("URL", url);
-
         if (error) {
             errorMessages.url = error;
+        }
+
+        var [error, validatedStar] = validateStar("Rating", rating);
+        if (error) {
+            errorMessages.rating = error;
         }
 
         const [returnError, listColumnsType] = await existingOrNewConnection(null, async function(connection) {

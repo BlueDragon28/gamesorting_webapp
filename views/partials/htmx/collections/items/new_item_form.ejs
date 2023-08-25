@@ -39,18 +39,24 @@
                 <% } %>
             </div>
 
-            <div class="card w-100 my-2">
+            <% const isItemRatingError = isErrorObj && errorMessages?.rating; %>
+            <div class="my-2 w-100">
+            <div class="card <%= isItemRatingError ? 'border-danger':'' %> w-100">
                 <div class="card-body">
                     <div class="mb-4 starability-basic">
                         <div class="form-label">Hello</div>
-                        <input type="radio" name="rating" id="no-rate" checked value="0">
+                        <input type="radio" name="rating" id="no-rate" <%= isExistingValues ? (existingValues.rating === "0" ? 'checked' : '') : 'checked' %> value="0">
                         <% for (let i = 0; i < 5; i++) { %>
-                            <input type="radio" name="rating" id="first-rate<%= i+1 %>" value="<%= i %>">
+                            <input type="radio" name="rating" id="first-rate<%= i+1 %>" value="<%= i+1 %>" <%= isExistingValues && existingValues.rating === (i+1).toString() ? 'checked' : '' %>>
                             <label for="first-rate<%= i+1 %>"><%= i+1 %> Star</label>
                         <% } %>
 
                     </div>
                 </div>
+            </div>
+            <% if (isItemRatingError) { %>
+                <div class="w-100 invalid-feedback d-block" style="font-size: 0.85rem;"><%= errorMessages?.rating %></div>
+            <% } %>
             </div>
 
             <% for (let customColumn of listColumnsType) { %>

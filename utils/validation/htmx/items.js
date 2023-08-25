@@ -31,7 +31,18 @@ function validateURL(name, value) {
     return [error, validatedValue];
 }
 
+function validateStar(name, value) {
+    const schema = Joi.object({
+        [name]: Joi.number().min(0).max(5).required(),
+    });
+    const { error, value: validatedValue } = schema.validate({
+        [name]: value,
+    });
+    return [error, validatedValue];
+}
+
 module.exports = {
     validateText,
     validateURL,
+    validateStar,
 };
