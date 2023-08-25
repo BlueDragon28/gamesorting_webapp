@@ -145,6 +145,7 @@ function validateImportCustomColumns() {
 
 module.exports = {
     parseColumnsType: wrapAsync(parseColumnsType),
+    columnDataAndTypeValidation,
     validate,
     validateImportCustomColumns,
     _: {

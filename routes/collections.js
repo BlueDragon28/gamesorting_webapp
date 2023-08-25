@@ -27,7 +27,8 @@ const {
 } = require("../utils/validation/htmx/collections_lists");
 const { getCustomControlType } = require("../utils/ejs/customControlData");
 const { parseCustomColumnsData } = require("../utils/data/listCustomColumnsMiddlewares");
-const { validateText, validateURL, validateStar, validateItemHeader } = require("../utils/validation/htmx/items");
+const { validateText, validateURL, validateStar, validateItemHeader, validateCustomColumns } = require("../utils/validation/htmx/items");
+const customDataValidation = require("../utils/validation/customDataValidation");
 
 const router = express.Router();
 
@@ -326,6 +327,7 @@ router.post("/lists", wrapAsync(async function(req, res) {
 
 router.post("/lists/:listID", 
     parseCustomColumnsData, 
+    customDataValidation.parseColumnsType,
     wrapAsync(async function(req, res) {
         const userID = req.session.user.id;
         const { listID } = req.params;
@@ -343,6 +345,8 @@ router.post("/lists/:listID",
             rating,
             errorMessages,
         );
+
+        const validatedCustomColumns = validateCustomColumns(customColumns, errorMessages);
 
         const [returnError, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
             const foundList = await List.findByID(listID, connection);

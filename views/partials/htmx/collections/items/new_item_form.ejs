@@ -61,6 +61,9 @@
 
             <% for (let customColumn of listColumnsType) { %>
                 <% let customColumnID = `customColumn_${customColumn.id}`; %>
+                <% const isCustomRowError = isErrorObj && errorMessages[customColumn.id]; %>
+                <% const customColumnValue = isExistingValues &&
+                    existingValues?.customColumns.filter(c => c.ListColumnTypeID == customColumn.id || c.CustomRowItemsID == customColumn.id)[0];%>
                 <div class="my-2 w-100 <%= customColumn.type.type === '@Stars' ? 'starability-basic' : 'form-floating' %>">
                     <% const customColumnName = `customColumns[${customColumnID}]`; %>
                     <% if (customColumn.type.type === "@Stars") { %>
@@ -71,8 +74,11 @@
                             <label for="<%= customColumnName %>-rate<%= indexStar+1 %>"><%= indexStar+1 %> Star</label>
                         <% } %>
                     <% } else { %>
-                        <input class="form-control" <%- getCustomControlType(customColumn) %> name="<%= customColumnName %>" id="<%= customColumnID %>" placeholder="">
+                        <input class="form-control <%= isCustomRowError ? 'is-invalid' : '' %>" <%- getCustomControlType(customColumn) %> name="<%= customColumnName %>" id="<%= customColumnID %>" placeholder="" value="<%= customColumnValue ? customColumnValue.Value : '' %>">
                         <label for="<%= customColumnID %>"><%= customColumn.name %></label>
+                        <% if (isCustomRowError) { %>
+                            <div class="invalid-feedback"><%= errorMessages[customColumn.id] %></div>
+                        <% } %>
                     <% } %>
                 </div>
             <% } %>

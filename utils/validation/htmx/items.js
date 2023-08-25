@@ -1,3 +1,4 @@
+const { columnDataAndTypeValidation } = require("../customDataValidation");
 const Joi = require("../extendedJoi");
 
 const textValidation = Joi.string().sanitize().trim().min(3).max(300).required();
@@ -41,6 +42,12 @@ function validateStar(name, value) {
     return [error, validatedValue];
 }
 
+function validateCustomColumn(customColumn) {
+    const schema = columnDataAndTypeValidation();
+    const { error, value: validatedCustomColumn } = schema.validate(customColumn);
+    return [error, validatedCustomColumn];
+}
+
 function validateItemHeader(name, url, rating, errorMessages) {
     var [error, validatedName] = validateText("Name", name);
     if (error) {
@@ -64,9 +71,27 @@ function validateItemHeader(name, url, rating, errorMessages) {
     ];
 }
 
+function validateCustomColumns(customColumns, errorMessages) {
+    const validatedCustomColumns = [];
+    for (let customColumn of customColumns) {
+        const [error, validatedCustomColumn] = 
+            validateCustomColumn(customColumn);
+
+        if (error) {
+            errorMessages[
+                customColumn.ListColumnTypeID || 
+                customColumn.CustomRowItemsID
+            ] = error;
+        }
+        validatedCustomColumns.push(validatedCustomColumn);
+    }
+    return validatedCustomColumns;
+}
+
 module.exports = {
     validateText,
     validateURL,
     validateStar,
     validateItemHeader,
+    validateCustomColumns,
 };
