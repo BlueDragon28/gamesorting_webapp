@@ -33,7 +33,10 @@ function getColumnType(columnTypeID) {
                         <ul class="dropdown-menu">
                             <li>
                                 <div class="dropdown-item"
-                                    hx-delete="/collections/lists/<%= item.parentList.id %>/item/<%= item.id %>"
+                                    hx-get="/collections/lists/<%= item.parentList.id %>/item/<%= item.id %>/delete-modal?destinationId=item-detail-card"
+                                    hx-target="#modal-content-section"
+                                    hx-push-url="false"
+                                    hx-swap="innerHTML"
                                 >
                                     Delete
                                 </div>

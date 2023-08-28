@@ -298,6 +298,37 @@ router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
     }
 }));
 
+router.get("/lists/:listID/item/:itemID/delete-modal", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id;
+    const { listID, itemID } = req.params;
+    const { destinationId } = req.query;
+
+    const [errorMessage, item] = await existingOrNewConnection(null, async function(connection) {
+        const foundItem = await Item.findByID(itemID, connection);
+
+        if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
+            return ["Could not find this item"];
+        } else if (foundItem.parentList.parentCollection.userID != userID) {
+            return ["You do not own this item"];
+        } else if (!destinationId) {
+            return ["You failed to provide destinationId"];
+        }
+
+        return [null, foundItem];
+    });
+
+    if (!errorMessage) {
+        res.render("partials/htmx/modals/deleteItemModal.ejs", {
+            item,
+            destinationId,
+        });
+    } else {
+        res.render("partials/htmx/modals/errorModal.ejs", {
+            errorMessage
+        });
+    }
+}));
+
 router.post("/lists", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { collection_list_name: collectionListName } = req.body;
