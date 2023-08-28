@@ -7,7 +7,7 @@ const { List } = require("../models/lists");
 const { Item } = require("../models/items");
 const { ListColumnType } = require("../models/listColumnsType");
 const wrapAsync = require("../utils/errors/wrapAsync");
-const { InternalError, AuthorizationError } = require("../utils/errors/exceptions");
+const { InternalError, AuthorizationError, ValueError } = require("../utils/errors/exceptions");
 const validation = require("../utils/validation/validation");
 const { 
     parseCelebrateError, 
@@ -361,6 +361,10 @@ router.post("/lists/:listID",
 
             return [null, listColumnsType];
         });
+
+        if (returnError) {
+            throw new ValueError(400, "Invalid Request");
+        }
 
         res.render("partials/htmx/collections/items/new_item_form.ejs", {
             listID,
