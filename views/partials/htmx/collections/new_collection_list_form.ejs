@@ -5,7 +5,7 @@ const isNotValidation = typeof justValidation !== "boolean" || !justValidation;
 
 <% if (isNotValidation) { %>
 <div id="collection-list-form-card" class="col-4 m-0 p-0">
-    <div class="card h-100 border-end-0 rounded-0">
+    <div class="card h-100 border-end-0 border-start-0 rounded-0">
         <div class="card-header d-flex flex-row flex-start align-items-center">
             <div class="btn p-0 py-1 px-1"
                 <% if (typeof returnUrl === "string" && returnUrl.length) { %>
