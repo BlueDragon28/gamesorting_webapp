@@ -421,6 +421,33 @@ router.post("/lists/:listID",
     })
 );
 
+router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID, itemID } = req.params;
+
+    const [errorMessage] = await existingOrNewConnection(null, async function(connection) {
+        const foundItem = await Item.findByID(itemID, connection);
+
+        if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
+            return ["Item do not exists"];
+        } else if (foundItem.parentList.parentCollection.userID.toString() !== userID) {
+            return ["You do not own this item"];
+        }
+
+        await foundItem.delete(connection);
+        return [null];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        res.status(400).send();
+    } else {
+        res.status(204).set({
+            "HX-Location": `{"path":"/collections/lists/${listID}?onlyItems=true","target":"#item-detail-card","swap":"outerHTML"}`
+        }).send();
+    }
+}));
+
 /*
 Validate collectionID on each route asking for collection id
 */

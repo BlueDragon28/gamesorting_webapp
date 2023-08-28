@@ -16,14 +16,30 @@ function getColumnType(columnTypeID) {
     <% if (item) { %>
         <div id="item-detail-card" class="col-8 m-0 p-0">
             <div class="card h-100">
-                <div class="card-header">
-                    <div class="btn btn-outline-secondary p-0 px-1 m-0 h-100" style="font-size: 0.75rem;"
-                        hx-get="/collections/lists/<%= item.parentList.id %>?onlyItems=true"
-                        hx-target="#item-detail-card"
-                        hx-swap="outerHTML"
-                        hx-push-url="/collections/lists/<%= item.parentList.id %>"
-                    >&lt;</div>
-                    <%= item.name %>
+                <div class="card-header d-flex flex-row justify-content-between align-items-center">
+                    <div class="h-100">
+                        <div class="btn btn-outline-secondary p-0 px-1 m-0 h-100" style="font-size: 0.75rem;"
+                            hx-get="/collections/lists/<%= item.parentList.id %>?onlyItems=true"
+                            hx-target="#item-detail-card"
+                            hx-swap="outerHTML"
+                            hx-push-url="/collections/lists/<%= item.parentList.id %>"
+                            >&lt;</div>
+                        <%= item.name %>
+                    </div>
+                    <div class="dropdown h-100">
+                        <button type="button" class="btn btn-outline-secondary p-0 px-1 m-0 h-100" style="font-size: 0.75rem;" data-bs-toggle="dropdown" aria-expanded="false">
+                            <%- include("../../icons/vertical_three_dots.ejs") %>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div class="dropdown-item"
+                                    hx-delete="/collections/lists/<%= item.parentList.id %>/item/<%= item.id %>"
+                                >
+                                    Delete
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="list-group list-group-flush">
                     <% if (item.url) { %>
