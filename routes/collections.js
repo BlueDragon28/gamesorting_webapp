@@ -394,7 +394,8 @@ router.post("/lists/:listID",
         });
 
         if (returnError) {
-            throw new ValueError(400, "Invalid Request");
+            req.flash("error", `ERROR: ${returnError}`);
+            return res.status(400).send();
         }
 
         res.render("partials/htmx/collections/items/new_item_form.ejs", {
