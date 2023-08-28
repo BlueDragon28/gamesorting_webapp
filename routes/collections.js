@@ -353,7 +353,7 @@ router.post("/lists/:listID",
 
         const validatedCustomColumns = validateCustomColumns(customColumns, errorMessages);
 
-        const [returnError, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
+        const [returnError, listColumnsType, list] = await existingOrNewConnection(null, async function(connection) {
             const foundList = await List.findByID(listID, connection);
 
             if (!foundList || !foundList instanceof List || !foundList.isValid()) {
@@ -390,7 +390,10 @@ router.post("/lists/:listID",
 
             if (errorMessage) {
                 errorMessages.globalError = errorMessage;
+                return [null, listColumnsType];
             }
+
+            return [null, listColumnsType, foundList];
         });
 
         if (returnError) {
@@ -398,17 +401,23 @@ router.post("/lists/:listID",
             return res.status(400).send();
         }
 
-        res.render("partials/htmx/collections/items/new_item_form.ejs", {
-            listID,
-            listColumnsType,
-            errorMessages,
-            existingValues: {
-                name,
-                url,
-                rating,
-                customColumns,
-            }
-        });
+        if (Object.keys(errorMessages).length) {
+            return res.render("partials/htmx/collections/items/new_item_form.ejs", {
+                listID,
+                listColumnsType,
+                errorMessages,
+                existingValues: {
+                    name,
+                    url,
+                    rating,
+                    customColumns,
+                }
+            });
+        } else {
+            return res.status(204).set({
+                "HX-Location": `{"path":"/collections/lists/${list.id}?onlyItems=true", "target":"#collections-items-list-row","swap":"outerHTML"}`,
+            }).send();
+        }
     })
 );
 
