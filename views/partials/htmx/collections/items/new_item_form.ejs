@@ -5,8 +5,8 @@
 
 <div id="collections-items-list-row" class="col-8 m-0 p-0">
     <div class="card h-100">
-        <div class="card-header">
-            <div class="btn btn-outline-secondary p-0 px-1 m-0 h-100" style="font-size: 0.75rem;"
+        <div class="card-header d-flex flex-row flex-start align-items-center">
+            <div class="btn py-1 px-1"
                 <% const endpoint = `/collections/lists/${listID}`; %>
                 hx-get="<%= endpoint %>?onlyItems=true"
                 hx-target="#collections-items-list-row"

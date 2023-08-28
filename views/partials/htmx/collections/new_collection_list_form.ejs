@@ -6,8 +6,8 @@ const isNotValidation = typeof justValidation !== "boolean" || !justValidation;
 <% if (isNotValidation) { %>
 <div id="collection-list-form-card" class="col-4 m-0 p-0">
     <div class="card h-100">
-        <div class="card-header">
-            <div class="btn btn-outline-secondary p-0 px-1 m-0 h-100" style="font-size: 0.75rem;"
+        <div class="card-header d-flex flex-row flex-start align-items-center">
+            <div class="btn p-0 py-1 px-1"
                 <% if (typeof returnUrl === "string" && returnUrl.length) { %>
                     hx-get="<%= returnUrl %>?onlyList=true"
                     hx-target="#collection-list-form-card"
