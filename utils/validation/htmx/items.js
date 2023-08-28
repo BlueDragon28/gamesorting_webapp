@@ -104,17 +104,14 @@ async function isItemDuplicate(name, list, connection, id=null) {
 }
 
 async function saveItem(name, url, rating, customColumns, parentList, connection) {
-    console.log("trying to save");
     const newItem = new Item(name, url, parentList);
     newItem.rating = rating;
 
     if (!newItem.isValid()) {
-        console.log("oups: invalid");
         return "Invalid list";
     }
 
     await newItem.save(connection);
-    console.log("saved");
 
     for (const customColumn of customColumns) {
         const customUserData = new CustomRowsItems(
@@ -127,7 +124,6 @@ async function saveItem(name, url, rating, customColumns, parentList, connection
             await customUserData.save(connection);
         }
     }
-    console.log("custom items saved");
 
     return null;
 }
