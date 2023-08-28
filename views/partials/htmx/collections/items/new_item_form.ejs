@@ -21,6 +21,9 @@
             hx-swap="outerHTML"
         >
             <h3 class="display-7 my-2">Creating Item</h3>
+            <% if (isErrorObj && errorMessages.globalError) { %>
+                <p class="text-centered text-danger mt-2"><%= errorMessages.globalError %></p>
+            <% } %>
             <div class="form-floating w-100 my-2">
                 <% const isItemNameError = isErrorObj && errorMessages?.name; %>
                 <input class="form-control <%= isItemNameError ? 'is-invalid' : '' %>" type="text" name="name" id="new-item-name" placeholder="" value="<%= isExistingValues ? existingValues.name : '' %>">

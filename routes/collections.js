@@ -27,7 +27,12 @@ const {
 } = require("../utils/validation/htmx/collections_lists");
 const { getCustomControlType } = require("../utils/ejs/customControlData");
 const { parseCustomColumnsData } = require("../utils/data/listCustomColumnsMiddlewares");
-const { validateText, validateURL, validateStar, validateItemHeader, validateCustomColumns } = require("../utils/validation/htmx/items");
+const { 
+    validateItemHeader, 
+    validateCustomColumns,
+    isItemDuplicate,
+    saveItem,
+} = require("../utils/validation/htmx/items");
 const customDataValidation = require("../utils/validation/customDataValidation");
 
 const router = express.Router();
@@ -359,7 +364,33 @@ router.post("/lists/:listID",
 
             const listColumnsType = await ListColumnType.findFromList(foundList, connection);
 
-            return [null, listColumnsType];
+            if (Object.keys(errorMessages).length) {
+                return [null, listColumnsType];
+            }
+
+            const isDuplicate = await isItemDuplicate(
+                validatedName.Name,
+                foundList,
+                connection,
+            );
+
+            if (isDuplicate) {
+                errorMessages.name = `ValidationError: "${validatedName.Name}" already exists`;
+                return [null, listColumnsType];
+            }
+
+            const errorMessage = await saveItem(
+                validatedName.Name,
+                validatedUrl.URL,
+                validatedRating.Rating,
+                validatedCustomColumns,
+                foundList,
+                connection
+            );
+
+            if (errorMessage) {
+                errorMessages.globalError = errorMessage;
+            }
         });
 
         if (returnError) {

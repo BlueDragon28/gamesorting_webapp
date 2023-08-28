@@ -1,5 +1,7 @@
 const { columnDataAndTypeValidation } = require("../customDataValidation");
 const Joi = require("../extendedJoi");
+const { Item } = require("../../../models/items");
+const { CustomRowsItems } = require("../../../models/customUserData");
 
 const textValidation = Joi.string().sanitize().trim().min(3).max(300).required();
 const uriValidation = Joi.alternatives().try(
@@ -88,10 +90,54 @@ function validateCustomColumns(customColumns, errorMessages) {
     return validatedCustomColumns;
 }
 
+async function isItemDuplicate(name, list, connection, id=null) {
+    const foundItem = await Item.findFromName(name, list, connection);
+
+    if (foundItem instanceof Item) {
+        if (typeof id === "bigint" && foundItem.id === id) {
+            return false;
+        }
+        return true;
+    }
+
+    return false;
+}
+
+async function saveItem(name, url, rating, customColumns, parentList, connection) {
+    console.log("trying to save");
+    const newItem = new Item(name, url, parentList);
+    newItem.rating = rating;
+
+    if (!newItem.isValid()) {
+        console.log("oups: invalid");
+        return "Invalid list";
+    }
+
+    await newItem.save(connection);
+    console.log("saved");
+
+    for (const customColumn of customColumns) {
+        const customUserData = new CustomRowsItems(
+            customColumn.Value,
+            newItem.id,
+            customColumn.ListColumnTypeID
+        );
+
+        if (customUserData.isValid()) {
+            await customUserData.save(connection);
+        }
+    }
+    console.log("custom items saved");
+
+    return null;
+}
+
 module.exports = {
     validateText,
     validateURL,
     validateStar,
     validateItemHeader,
     validateCustomColumns,
+    isItemDuplicate,
+    saveItem,
 };
