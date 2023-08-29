@@ -1,6 +1,7 @@
 <%
 const isError = typeof errorMessage === "string" && errorMessage.length > 0;
 const isNotValidation = typeof justValidation !== "boolean" || !justValidation;
+const isEditing = typeof editing === "boolean" && editing;
 %>
 
 <% if (isNotValidation) { %>
@@ -18,10 +19,18 @@ const isNotValidation = typeof justValidation !== "boolean" || !justValidation;
             New Collection/List
         </div>
         <form class="card-body d-flex flex-column justify-content-center align-items-center h-100"
+            <% if (isEditing) { %>
+            hx-post="/collections/lists/<%= list.id %>"
+            <% } else { %>
             hx-post="/collections/lists"
+            <% } %>
         >
 <% } %>
-            <h3 class="display-7 my-2">Creating Collection/List</h3>
+            <% if (isEditing) { %>
+                <h3 class="display-7 my-2">Editing <%= list.parentCollection.name %>/<%= list.name %></h3>
+            <% } else { %>
+                <h3 class="display-7 my-2">Creating Collection/List</h3>
+            <% } %>
             <p class="my-2">Ex: My Collection / My List</p>
             <div class="form-floating w-100 my-2 ">
                 <input class="form-control <%= isError ? 'is-invalid' : '' %>" type="text" name="collection_list_name" id="form-collection-list-input" placeholder="" value="<%= typeof inputValue === 'string' ? inputValue : '' %>">
@@ -33,7 +42,11 @@ const isNotValidation = typeof justValidation !== "boolean" || !justValidation;
                 <% } %>
             </div>
             <button type="submit" class="btn btn-outline-secondary w-100 my-2"
-            >Create</button>
+            <% if (isEditing) { %>
+                >Editing</button>
+            <% } else { %>
+                >Create</button>
+            <% } %>
 <% if (isNotValidation) { %>
         </form>
     </div>

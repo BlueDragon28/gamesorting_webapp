@@ -143,6 +143,35 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
     });
 }));
 
+router.get("/lists/:listID/edit", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+
+    const [errorMessage, list] = await existingOrNewConnection(null, async function(connection) {
+        const foundList = await List.findByID(listID, connection);
+
+        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+            return ["Failed to find this list"];
+        } else if (foundList.parentCollection.userID.toString() !== userID) {
+            return ["You do not own this list"];
+        }
+
+        return [null, foundList];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        res.status(400).send();
+    }
+
+    res.render("partials/htmx/collections/new_collection_list_form.ejs", {
+        editing: true,
+        list,
+        returnUrl: `/collections/lists/${list.id}`,
+        inputValue: `${list.parentCollection.name}/${list.name}`,
+    });
+}));
+
 router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;

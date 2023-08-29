@@ -53,6 +53,16 @@
                                     Delete
                                 </div>
                             </li>
+                            <li>
+                                <div class="dropdown-item"
+                                    hx-get="/collections/lists/<%= list.id %>/edit"
+                                    hx-target="#collections-lists-list-outer-column"
+                                    hx-push-url="false"
+                                    hx-swap="outerHTML"
+                                >
+                                    Editing
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>
