@@ -20,7 +20,7 @@ const isEditing = typeof editing === "boolean" && editing;
         </div>
         <form class="card-body d-flex flex-column justify-content-center align-items-center h-100"
             <% if (isEditing) { %>
-            hx-post="/collections/lists/<%= list.id %>"
+            hx-put="/collections/lists/<%= list.id %>"
             <% } else { %>
             hx-post="/collections/lists"
             <% } %>

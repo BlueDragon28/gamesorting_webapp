@@ -62,7 +62,62 @@ async function validateAndCreateCollectionsList(userID, collectionName, listName
     });
 }
 
+async function validateAndUpdateCollectionList(userID, listID, collectionName, listName, connection=null) {
+    return await existingOrNewConnection(connection, async function(connection) {
+        const list = await List.findByID(listID, connection);
+        const collection = list.parentCollection;
+
+        if (collection.userID.toString() !== userID) {
+            return ["You do not own this collection/list", list.parentCollection, list];
+        }
+
+        if (collectionName === collection.name && listName === list.name) {
+            return ["You didn't changed the name", list.parentCollection, list];
+        }
+
+        let newCollection = undefined;
+        if (collectionName === collection.name) {
+            newCollection = collection;
+        } else {
+            const foundCollection = await Collection.findByName(
+                userID, 
+                collectionName,
+                connection,
+            );
+            if (!(foundCollection instanceof Collection)) {
+                newCollection = new Collection(userID, collectionName);
+            } else {
+                newCollection = foundCollection;
+            }
+        }
+
+        if (listName !== list.name) {
+            const foundList = await List.findByNameFromCollection(
+                newCollection, 
+                listName,
+                connection,
+            );
+
+            if (foundList && foundList instanceof List) {
+                return ["List already exists", list.parentCollection, list];
+            }
+        }
+
+        const newList = list;
+        newList.parentCollection = newCollection;
+        newList.name = listName;
+
+        if (collection.name !== newCollection.name) {
+            await newCollection.save(connection);
+        }
+        await newList.save(connection);
+
+        return [null, newCollection, newList];
+    });
+}
+
 module.exports = {
     validateCollectionListName,
     validateAndCreateCollectionsList,
+    validateAndUpdateCollectionList,
 };

@@ -24,6 +24,7 @@ const { isCollectionMaxLimitMiddleware } = require("../utils/validation/limitNum
 const { 
     validateCollectionListName,
     validateAndCreateCollectionsList,
+    validateAndUpdateCollectionList,
 } = require("../utils/validation/htmx/collections_lists");
 const { getCustomControlType } = require("../utils/ejs/customControlData");
 const { parseCustomColumnsData } = require("../utils/data/listCustomColumnsMiddlewares");
@@ -480,6 +481,52 @@ router.post("/lists/:listID",
         }
     })
 );
+
+router.put("/lists/:listID", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { collection_list_name: collectionListName } = req.body;
+    let foundList;
+
+    let [
+        collectionName,
+        listName,
+        errorMessage,
+    ] = validateCollectionListName(collectionListName);
+
+    if (!errorMessage) {
+        let [
+            validationErrorMessage,
+            collection,
+            list,
+        ] = await validateAndUpdateCollectionList(
+            userID,
+            listID,
+            collectionName,
+            listName,
+        );
+        errorMessage = validationErrorMessage;
+        foundList = list;
+
+        if (!errorMessage) {
+            return res.status(204).set({
+                "HX-Location": `{"path":"/collections/lists/${list.id}","target":"#collections-lists-global-row","swap":"outerHTML"}`
+            }).send();
+        }
+    } else {
+        await existingOrNewConnection(null, async function(connection) {
+            foundList = await List.findByID(userID, connection);
+        });
+    }
+
+    res.render("partials/htmx/collections/new_collection_list_form", {
+        errorMessage,
+        justValidation: true,
+        inputValue: collectionListName,
+        editing: true,
+        list: foundList,
+    });
+}));
 
 router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id.toString();
