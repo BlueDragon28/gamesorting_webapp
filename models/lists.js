@@ -135,9 +135,10 @@ class List {
 
     async #_updateList(connection) {
         const queryStatement = 
-            "UPDATE lists SET Name = ? WHERE ListID = ?";
+            "UPDATE lists SET CollectionID = ?, Name = ? WHERE ListID = ?";
 
         const queryArgs = [
+            this.parentCollection.id,
             this.name, 
             this.id
         ];
