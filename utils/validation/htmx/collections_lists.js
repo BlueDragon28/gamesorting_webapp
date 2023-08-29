@@ -112,8 +112,20 @@ async function validateAndUpdateCollectionList(userID, listID, collectionName, l
         }
         await newList.save(connection);
 
+        if (collection.name !== newCollection.name) {
+            await deleteCollectionIfAlone(collection, connection);
+        }
+
         return [null, newCollection, newList];
     });
+}
+
+async function deleteCollectionIfAlone(collection, connection) {
+    const listsCount = await List.getCount(collection, connection);
+
+    if (listsCount === 0n) {
+        await collection.delete(connection);
+    }
 }
 
 module.exports = {
