@@ -645,7 +645,19 @@ router.put("/lists/:listID/item/:itemID",
 
             const listColumnsType = await ListColumnType.findFromList(foundList, connection);
 
-            if (Object.keys(errorMessages).length || Objects.keys(customColumnsErrorMessages).lenght) {
+            if (Object.keys(errorMessages).length) {
+                return [null, listColumnsType, foundList, foundItem];
+            }
+
+            const isDuplicate = await isItemDuplicate(
+                validatedName.Name,
+                foundList,
+                connection,
+                foundItem.id,
+            );
+
+            if (isDuplicate) {
+                errorMessages.name = `ValidationError: "${validatedName.Name}" already exists`;
                 return [null, listColumnsType, foundList, foundItem];
             }
 
