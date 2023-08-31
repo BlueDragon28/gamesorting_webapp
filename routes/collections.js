@@ -681,24 +681,31 @@ router.put("/lists/:listID/item/:itemID",
         });
 
         if (returnError) {
-            return res.send(`ERROR: ${returnError}`);
+            req.flash("error", `ERROR: ${returnError}`);
+            return res.status(400).send();
         }
 
-        return res.render("partials/htmx/collections/items/new_item_form.ejs", {
-            listID,
-            itemID,
-            listColumnsType,
-            errorMessages,
-            list,
-            item,
-            editing: true,
-            existingValues: {
-                name,
-                url,
-                rating,
-                customColumns,
-            },
-        });
+        if (Object.keys(errorMessages).length) {
+            return res.render("partials/htmx/collections/items/new_item_form.ejs", {
+                listID,
+                itemID,
+                listColumnsType,
+                errorMessages,
+                list,
+                item,
+                editing: true,
+                existingValues: {
+                    name,
+                    url,
+                    rating,
+                    customColumns,
+                },
+            });
+        } else {
+            res.status(204).set({
+                "HX-Location": `{"path":"/collections/lists/${list.id}/item/${item.id}","target":"#collections-items-list-row","swap":"outerHTML"}`,
+            }).send();
+        }
     })
 );
 
