@@ -383,8 +383,10 @@ router.get("/lists/:listID/item/:itemID/edit", wrapAsync(async function(req, res
 
     res.render("partials/htmx/collections/items/new_item_form.ejs", {
         listID,
+        itemID,
         listColumnsType,
         list,
+        editing: true,
     });
 }));
 

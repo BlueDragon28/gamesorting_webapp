@@ -1,17 +1,24 @@
 <% 
     const isErrorObj = typeof errorMessages === "object"; 
     const isExistingValues = typeof existingValues === "object";
+    const isEditing = typeof editing === "boolean" && editing;
 %>
 
 <div id="collections-items-list-row" class="col-8 m-0 p-0">
     <div class="card h-100 border-end-0 rounded-0">
         <div class="card-header d-flex flex-row flex-start align-items-center">
             <div class="btn py-1 px-1"
-                <% const endpoint = `/collections/lists/${listID}`; %>
-                hx-get="<%= endpoint %>?onlyItems=true"
+                <% if (isEditing) { %>
+                    <% const endpoint = `/collections/lists/${listID}/item/${itemID}`; %>
+                    hx-get="<%= endpoint %>"
+                    hx-push-url="false"
+                <% } else { %>
+                    <% const endpoint = `/collections/lists/${listID}`; %>
+                    hx-get="<%= endpoint %>?onlyItems=true"
+                    hx-push-url="<%= endpoint %>"
+                <% } %>
                 hx-target="#collections-items-list-row"
                 hx-swap="outerHTML"
-                hx-push-url="<%= endpoint %>"
             >&lt;</div>
             New Item
         </div>
