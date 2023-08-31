@@ -33,6 +33,16 @@ function getColumnType(columnTypeID) {
                         <ul class="dropdown-menu">
                             <li>
                                 <div class="dropdown-item"
+                                    hx-get="/collections/lists/<%= item.parentList.id %>/item/<%= item.id %>/edit"
+                                    hx-target="#item-detail-card"
+                                    hx-push-url="false"
+                                    hx-swap="outerHTML"
+                                >
+                                    Edit
+                                </div>
+                            </li>
+                            <li>
+                                <div class="dropdown-item"
                                     hx-get="/collections/lists/<%= item.parentList.id %>/item/<%= item.id %>/delete-modal?destinationId=item-detail-card"
                                     hx-target="#modal-content-section"
                                     hx-push-url="false"
