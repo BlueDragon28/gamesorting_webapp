@@ -620,6 +620,11 @@ router.put("/lists/:listID/item/:itemID",
             errorMessages
         );
 
+        const validatedCustomColumns = validateCustomColumns(
+            customColumns,
+            errorMessages,
+        );
+
         const [
             returnError, 
             listColumnsType, 
@@ -640,9 +645,11 @@ router.put("/lists/:listID/item/:itemID",
 
             const listColumnsType = await ListColumnType.findFromList(foundList, connection);
 
-            if (Object.keys(errorMessages).length) {
+            if (Object.keys(errorMessages).length || Objects.keys(customColumnsErrorMessages).lenght) {
                 return [null, listColumnsType, foundList, foundItem];
             }
+
+            return [null, listColumnsType, foundList, foundItem];
         });
 
         if (returnError) {
@@ -661,10 +668,11 @@ router.put("/lists/:listID/item/:itemID",
                 name,
                 url,
                 rating,
-                customColumns: [],
+                customColumns,
             },
         });
-}));
+    })
+);
 
 router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id.toString();
