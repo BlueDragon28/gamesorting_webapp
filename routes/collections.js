@@ -33,6 +33,7 @@ const {
     validateCustomColumns,
     isItemDuplicate,
     saveItem,
+    updateItem,
 } = require("../utils/validation/htmx/items");
 const customDataValidation = require("../utils/validation/customDataValidation");
 
@@ -659,6 +660,21 @@ router.put("/lists/:listID/item/:itemID",
             if (isDuplicate) {
                 errorMessages.name = `ValidationError: "${validatedName.Name}" already exists`;
                 return [null, listColumnsType, foundList, foundItem];
+            }
+
+            const errorMessage = await updateItem(
+                validatedName.Name,
+                validatedUrl.URL,
+                validatedRating.Rating,
+                validatedCustomColumns,
+                listColumnsType,
+                foundList,
+                foundItem,
+                connection,
+            );
+
+            if (errorMessage) {
+                return [errorMessage];
             }
 
             return [null, listColumnsType, foundList, foundItem];

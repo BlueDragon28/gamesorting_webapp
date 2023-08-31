@@ -129,6 +129,59 @@ async function saveItem(name, url, rating, customColumns, parentList, connection
     return null;
 }
 
+async function updateItem(
+    name, 
+    url, 
+    rating, 
+    customColumns, 
+    listColumnsType, 
+    parentList, 
+    item, 
+    connection
+) {
+    const updatedItem = item;
+    updatedItem.name = name;
+    updatedItem.url = url;
+    updatedItem.rating = rating;
+
+    if (!updatedItem.isValid()) {
+        return "Invalid item";
+    }
+
+    await updatedItem.save(connection);
+
+    const customData = [];
+    for (const columnType of listColumnsType) {
+        const foundCustomRow = item.customData.find(row => row.columnTypeID === columnType.id);
+        if (foundCustomRow) {
+            customData.push(foundCustomRow);
+        }
+    }
+
+    for (const customColumn of customColumns) {
+        let foundCustomData;
+        if (customColumn.CustomRowItemsID > 0) {
+            foundCustomData = customData.find(data => data.id == customColumn.CustomRowItemsID);
+        } else {
+            foundCustomData = new CustomRowsItems(undefined, item.id, -customColumn.CustomRowItemsID);
+        }
+
+        if (!foundCustomData) {
+            continue;
+        }
+
+        foundCustomData.value = customColumn.Value;
+
+        if (foundCustomData.isValid()) {
+            await foundCustomData.save(connection);
+        } else {
+            await foundCustomData.delete(connection);
+        }
+    }
+
+    return null;
+}
+
 module.exports = {
     validateText,
     validateURL,
@@ -137,4 +190,5 @@ module.exports = {
     validateCustomColumns,
     isItemDuplicate,
     saveItem,
+    updateItem,
 };
