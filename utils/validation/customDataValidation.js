@@ -34,6 +34,7 @@ async function getType(customColumns) {
             }
 
             customColumn.columnType = columnType.Type || columnType.type;
+            customColumn.baseListColumnTypeID = columnType.ListColumnTypeID;
         }
 
         return customColumns;
