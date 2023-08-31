@@ -15,8 +15,10 @@
     const isErrorObj = typeof errorMessages === "object"; 
     const isExistingValues = typeof existingValues === "object";
     const isEditing = typeof editing === "boolean" && editing;
+    const isNotValidation = typeof justValidation !== "boolean" || !justValidation;
 %>
 
+<% if (isNotValidation) { %>
 <div id="collections-items-list-row" class="col-8 m-0 p-0">
     <div class="card h-100 border-end-0 rounded-0">
         <div class="card-header d-flex flex-row flex-start align-items-center">
@@ -41,9 +43,9 @@
             <% } else { %>
                 hx-post="/collections/lists/<%= listID %>"
             <% } %>
-            hx-target="#collections-items-list-row"
-            hx-swap="outerHTML"
+            hx-swap="innerHTML"
         >
+<% } %>
             <h3 class="display-7 my-2">Creating Item</h3>
             <% if (isErrorObj && errorMessages.globalError) { %>
                 <p class="text-centered text-danger mt-2"><%= errorMessages.globalError %></p>
@@ -97,6 +99,8 @@
             }) %>
             
             <button class="btn btn-outline-secondary w-100 my-2" type="submit">Create</button>
+<% if (isNotValidation) { %>
         </form>
     </div>
 </div>
+<% } %>
