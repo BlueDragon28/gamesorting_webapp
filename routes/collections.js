@@ -407,6 +407,17 @@ router.get("/lists/:listID/item/:itemID/edit", wrapAsync(async function(req, res
         customColumns: [],
     };
 
+    for (const columnType of listColumnsType) {
+        const customData = item.customData.filter(data => data.columnTypeID === columnType.id)[0];
+
+        if (customData) {
+            existingValues.customColumns.push({
+                CustomRowItemsID: customData.columnTypeID,
+                Value: customData.value,
+            });
+        }
+    }
+
     res.render("partials/htmx/collections/items/new_item_form.ejs", {
         listID,
         itemID,
