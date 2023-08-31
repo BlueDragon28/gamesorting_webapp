@@ -36,7 +36,11 @@
             New Item
         </div>
         <form class="card-body d-flex flex-column justify-content-center align-items-center"
-            hx-post="/collections/lists/<%= listID %>"
+            <% if (isEditing) { %>
+                hx-put="/collections/lists/<%= listID %>/item/<%= itemID %>"
+            <% } else { %>
+                hx-post="/collections/lists/<%= listID %>"
+            <% } %>
             hx-target="#collections-items-list-row"
             hx-swap="outerHTML"
         >
