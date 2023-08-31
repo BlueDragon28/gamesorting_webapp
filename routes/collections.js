@@ -363,7 +363,12 @@ router.get("/lists/:listID/item/:itemID/edit", wrapAsync(async function(req, res
     const userID = req.session.user.id.toString();
     const { listID, itemID } = req.params;
 
-    const [errorMessage, list, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
+    const [
+        errorMessage, 
+        list, 
+        listColumnsType,
+        item,
+    ] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
 
         if (!foundList || !(foundList instanceof List) || !foundList.isValid()) {
@@ -373,7 +378,21 @@ router.get("/lists/:listID/item/:itemID/edit", wrapAsync(async function(req, res
         }
 
         const listColumnsType = await ListColumnType.findFromList(foundList, connection);
-        return [null, foundList, listColumnsType];
+
+        const foundItem = await Item.findByID(itemID, connection);
+
+        if (!foundItem || !(foundItem instanceof Item) || !foundItem.isValid()) {
+            return ["Could not find this item"];
+        } else if (foundItem.parentList.id !== foundList.id) {
+            return ["This item is not owned by this list"];
+        }
+
+        return [
+            null, 
+            foundList, 
+            listColumnsType, 
+            foundItem
+        ];
     });
 
     if (errorMessage) {
@@ -381,12 +400,21 @@ router.get("/lists/:listID/item/:itemID/edit", wrapAsync(async function(req, res
         return res.status(500).send();
     }
 
+    const existingValues = {
+        name: item.name,
+        url: item.url,
+        rating: item.rating.toString(),
+        customColumns: [],
+    };
+
     res.render("partials/htmx/collections/items/new_item_form.ejs", {
         listID,
         itemID,
         listColumnsType,
         list,
+        item,
         editing: true,
+        existingValues,
     });
 }));
 
