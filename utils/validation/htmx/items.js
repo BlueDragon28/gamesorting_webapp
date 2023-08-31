@@ -82,6 +82,7 @@ function validateCustomColumns(customColumns, errorMessages) {
         if (error) {
             errorMessages[
                 customColumn.ListColumnTypeID || 
+                customColumn.baseListColumnTypeID ||
                 customColumn.CustomRowItemsID
             ] = error;
         }
