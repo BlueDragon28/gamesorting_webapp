@@ -681,7 +681,7 @@ router.put("/lists/:listID/item/:itemID",
         });
 
         if (returnError) {
-            return res.send(`ERROR: ${returnError}`)
+            return res.send(`ERROR: ${returnError}`);
         }
 
         return res.render("partials/htmx/collections/items/new_item_form.ejs", {
