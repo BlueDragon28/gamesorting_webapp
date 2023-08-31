@@ -598,6 +598,74 @@ router.put("/lists/:listID", wrapAsync(async function(req, res) {
     });
 }));
 
+router.put("/lists/:listID/item/:itemID", 
+    parseCustomColumnsData,
+    customDataValidation.parseColumnsType,
+    wrapAsync(async function(req, res) {
+
+        const userID = req.session.user.id.toString();
+        const { listID, itemID } = req.params;
+        const { name, url, rating, customColumns } = req.body;
+
+        const errorMessages = {};
+
+        const [
+            validatedName,
+            validatedUrl,
+            validatedRating,
+        ] = validateItemHeader(
+            name,
+            url,
+            rating,
+            errorMessages
+        );
+
+        const [
+            returnError, 
+            listColumnsType, 
+            list, 
+            item
+        ] = await existingOrNewConnection(null, async function(connection) {
+            const foundItem = await Item.findByID(itemID, connection);
+            
+            if (!foundItem || !(foundItem instanceof Item) || !foundItem.isValid()) {
+                return ["Failed to retrieve this item"];
+            }
+
+            const foundList = foundItem.parentList;
+            
+            if (foundList.parentCollection.userID.toString() !== userID) {
+                return ["You do not own this item"];
+            }
+
+            const listColumnsType = await ListColumnType.findFromList(foundList, connection);
+
+            if (Object.keys(errorMessages).length) {
+                return [null, listColumnsType, foundList, foundItem];
+            }
+        });
+
+        if (returnError) {
+            return res.send(`ERROR: ${returnError}`)
+        }
+
+        return res.render("partials/htmx/collections/items/new_item_form.ejs", {
+            listID,
+            itemID,
+            listColumnsType,
+            errorMessages,
+            list,
+            item,
+            editing: true,
+            existingValues: {
+                name,
+                url,
+                rating,
+                customColumns: [],
+            },
+        });
+}));
+
 router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id.toString();
     const { listID, itemID } = req.params;
