@@ -1,4 +1,17 @@
 <% 
+    function getCustomColumn(columnTypeID) {
+        for (let customRow of item.customData) {
+            if (customRow.columnTypeID === columnTypeID) {
+                return customRow;
+            }
+        }
+
+        return {
+            id: -columnTypeID,
+            value: ""
+        };
+    }
+
     const isErrorObj = typeof errorMessages === "object"; 
     const isExistingValues = typeof existingValues === "object";
     const isEditing = typeof editing === "boolean" && editing;
@@ -69,30 +82,14 @@
             <% } %>
             </div>
 
-            <% for (let customColumn of listColumnsType) { %>
-                <% let customColumnID = `customColumn_${customColumn.id}`; %>
-                <% const isCustomRowError = isErrorObj && errorMessages[customColumn.id]; %>
-                <% const customColumnValue = isExistingValues &&
-                    existingValues?.customColumns.filter(c => c.ListColumnTypeID == customColumn.id || c.CustomRowItemsID == customColumn.id)[0];%>
-                <div class="my-2 w-100 <%= customColumn.type.type === '@Stars' ? 'starability-basic' : 'form-floating' %>">
-                    <% const customColumnName = `customColumns[${customColumnID}]`; %>
-                    <% if (customColumn.type.type === "@Stars") { %>
-                        <div class="form-label"><%= customColumn.name %></div>
-                        <input type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-no-rate" checked value="0">
-                        <% for (let indexStar = 0; indexStart < 5; indexStar++) { %>
-                            <input class="first-rate<%= indexStar+1 %>" type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-rate<%= indexStar+1 %>" value="<%= indexStar+1 %>">
-                            <label for="<%= customColumnName %>-rate<%= indexStar+1 %>"><%= indexStar+1 %> Star</label>
-                        <% } %>
-                    <% } else { %>
-                        <input class="form-control <%= isCustomRowError ? 'is-invalid' : '' %>" <%- getCustomControlType(customColumn) %> name="<%= customColumnName %>" id="<%= customColumnID %>" placeholder="" value="<%= customColumnValue ? customColumnValue.Value : '' %>">
-                        <label for="<%= customColumnID %>"><%= customColumn.name %></label>
-                        <% if (isCustomRowError) { %>
-                            <div class="invalid-feedback"><%= errorMessages[customColumn.id] %></div>
-                        <% } %>
-                    <% } %>
-                </div>
-            <% } %>
-
+            <%- include("./new_custom_columns_fields.ejs", {
+                listColumnsType,
+                isErrorObj: isErrorObj,
+                errorMessages: isErrorObj ? errorMessages : undefined,
+                getCustomControlType,
+                isExistingValues,
+            }) %>
+            
             <button class="btn btn-outline-secondary w-100 my-2" type="submit">Create</button>
         </form>
     </div>
