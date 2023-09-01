@@ -36,6 +36,7 @@ const {
     updateItem,
 } = require("../utils/validation/htmx/items");
 const customDataValidation = require("../utils/validation/customDataValidation");
+const { isListOwned } = require("../utils/validation/authorization");
 
 const router = express.Router();
 
@@ -232,7 +233,53 @@ router.get("/lists/:listID/new", wrapAsync(async function(req, res) {
         listID,
         listColumnsType,
     });
-}))
+}));
+
+router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { only_custom_columns: onlyCustomColumns } = req.query;
+
+    const questionMarkPos = req.originalUrl.indexOf("?");
+    const originalUrl = req.originalUrl.substring(
+        0, 
+        questionMarkPos >= 0 ? questionMarkPos : req.originalUrl.length
+    );
+
+    if (!req.htmx.isHTMX || (req.htmx.isHTMX && req.htmx.isBoosted)) {
+        return res.render("partials/htmx/collections/custom_columns/custom_columns_details.ejs", {
+            loadingPage: true,
+            originalUrl,
+        });
+    }
+
+    const [
+        errorMessage, 
+        listColumnsType, 
+        lists
+    ] = await existingOrNewConnection(null, async function(connection) {
+        const selectedList = await List.findByID(listID, connection);
+
+        let errorMessage = isListOwned(selectedList, userID);
+        if (errorMessage) return errorMessage;
+
+        const listColumnsType = await ListColumnType.findFromList(selectedList, connection);
+
+        let lists = null;
+        if (!onlyCustomColumns) {
+            lists = await List.findFromUser(userID, connection);
+        }
+
+        return [null, listColumnsType, lists];
+    });
+
+    res.render("partials/htmx/collections/custom_columns/custom_columns_details.ejs", {
+        onlyItems: onlyCustomColumns === "true",
+        lists,
+        listColumnsType,
+        listID,
+    });
+}));
 
 router.delete("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;

@@ -1,0 +1,32 @@
+<% if (!htmx.isHTMX || (htmx.isHTMX && htmx.isBoosted)) { %>
+<% layout("layouts/boilerplate.ejs") -%>
+<% } %>
+
+<% if (typeof loadingPage === "boolean" && loadingPage) { %>
+<div id="collections-lists-global-row" class="row h-100"
+    hx-get="<%= originalUrl %>"
+    hx-swap="outerHTML"
+    hx-trigger="load"
+>
+
+    <%- include("../partials/collections_lists_empty.ejs") %>
+    <%- include("../partials/items_empty.ejs") %>
+</div>
+<% } else {
+const includeOnlyItems = typeof onlyItems === "boolean" && onlyItems;
+%>
+
+<% if (!includeOnlyItems) { %>
+<div id="collections-lists-global-row" class="row h-100">
+    <%- include("../collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
+<% } %>
+
+<%- include("./partials/details.ejs", { listColumnsType }) %>
+
+<% if (!includeOnlyItems) { %>
+</div>
+<% } %>
+
+
+
+<% } %>

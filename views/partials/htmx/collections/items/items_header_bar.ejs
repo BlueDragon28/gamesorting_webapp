@@ -14,7 +14,16 @@
                 >
                     New
                 </div>
-
+            </li>
+            <li>
+                <div class="dropdown-item"
+                    hx-get="/collections/lists/<%= selectedID %>/custom-columns?only_custom_columns=true"
+                    hx-target="#collections-items-list-row"
+                    hx-swap="outerHTML"
+                    hx-push-url="/collections/lists/<%= selectedID %>/custom-columns"
+                >
+                    Custom Columns
+                </div>
             </li>
         </ul>
     </div>
