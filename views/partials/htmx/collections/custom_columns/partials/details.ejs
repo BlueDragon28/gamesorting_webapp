@@ -11,8 +11,22 @@
                 Custom Columns
             </div>
         </div>
-        <div class="card-body d-flex justify-content-center align-items-center">
-            <div>Custom Columns</div>
+        <div class="d-flex flex-column h-100">
+            <div class="list-group list-group-flush flex-fill">
+                <% for (columnType of listColumnsType) { %>
+                    <div class="list-group-item d-flex flex-row align-items-center" 
+                        style="height: 3.18rem; text-overflox: elipsis;"
+                    >
+                        <%= columnType.name %> | Type: <%= columnType.type.type %>
+                        <% if (columnType.type.type === "@Int") { %>
+                            <br>Min: <%= columnType.type.min %>, Max: <%= columnType.type.max %>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+            <div class="p-3 border-end-0 rounded-0 flex-shrink">
+                footer
+            </div>
         </div>
     </div>
 </div>
