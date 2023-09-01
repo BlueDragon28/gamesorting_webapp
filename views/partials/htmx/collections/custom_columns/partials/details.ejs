@@ -1,7 +1,13 @@
 <div id="collections-items-list-row" class="col-8 m-0 p-0">
     <div class="card h-100 border-end-0 rounded-0">
-        <div class="card-header">
-            <div style="height: 2.1rem;">
+        <div class="card-header d-flex flex-row flex-start align-items-center">
+            <div class="btn px-1 py-1"
+                hx-get="/collections/lists/<%= selectedID %>?onlyItems=true"
+                hx-target="#collections-items-list-row"
+                hx-swap="outerHTML"
+                hx-push-url="/collections/lists/<%= selectedID %>"
+                >&lt;</div>
+            <div>
                 Custom Columns
             </div>
         </div>

@@ -21,7 +21,7 @@ const includeOnlyItems = typeof onlyItems === "boolean" && onlyItems;
     <%- include("../collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
 <% } %>
 
-<%- include("./partials/details.ejs", { listColumnsType }) %>
+<%- include("./partials/details.ejs", { listColumnsType, selectedID: listID }) %>
 
 <% if (!includeOnlyItems) { %>
 </div>
