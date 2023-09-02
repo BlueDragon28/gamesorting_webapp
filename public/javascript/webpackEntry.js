@@ -25,6 +25,7 @@ import "alpinejs/dist/cdn";
 //import "./collections/lists/download/upload";
 //import './customColumns/importCustomColumns';
 //import "./collections/lists/items/moveItemsMakeCopy";
+import "./htmx/mutation-observer";
 
 // CSS
 import "../styles/starability-basic.min.css";

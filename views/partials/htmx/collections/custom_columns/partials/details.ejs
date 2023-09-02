@@ -29,7 +29,7 @@
                     <input class="form-control" type="text" name="name" placeholder="">
                     <label>Column Name</label>
                 </div>
-                <div class="form-floating w-100 my-2">
+                <div class="form-floating w-100 my-2" gm-custom-columns-select-type="true">
                     <select class="form-select" name="type">
                         <option value="@String">String</option>
                         <option value="@Int">Int</option>
@@ -38,13 +38,15 @@
                     </select>
                     <label>Column Type</label>
                 </div>
-                <div class="form-floating w-100 my-2">
-                    <input class="form-control" type="number" name="min" placeholder="">
-                    <label>Min</label>
-                </div>
-                <div class="form-floating w-100 my-2">
-                    <input class="form-control" type="number" name="max" placeholder="">
-                    <label>Max</label>
+                <div class="d-none">
+                    <div class="form-floating w-100 my-2">
+                        <input class="form-control" type="number" name="min" placeholder="">
+                        <label>Min</label>
+                    </div>
+                    <div class="form-floating w-100 my-2">
+                        <input class="form-control" type="number" name="max" placeholder="">
+                        <label>Max</label>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-outline-secondary w-100 my-2">Create</button>
             </form>
