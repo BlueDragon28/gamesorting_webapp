@@ -16,12 +16,17 @@
 const includeOnlyItems = typeof onlyItems === "boolean" && onlyItems;
 %>
 
-<% if (!includeOnlyItems) { %>
+<% if (!includeOnlyItems && !onlyList) { %>
 <div id="collections-lists-global-row" class="row h-100">
+<% } %>
+
+<% if (!includeOnlyItems || onlyList) { %>
     <%- include("../collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
 <% } %>
 
+<% if (includeOnlyItems || !onlyList) { %>
 <%- include("./partials/details.ejs", { listColumnsType, selectedID: listID }) %>
+<% } %>
 
 <% if (!includeOnlyItems) { %>
 </div>

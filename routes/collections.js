@@ -238,7 +238,10 @@ router.get("/lists/:listID/new", wrapAsync(async function(req, res) {
 router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
     const userID = req.session.user.id.toString();
     const { listID } = req.params;
-    const { only_custom_columns: onlyCustomColumns } = req.query;
+    const { 
+        only_custom_columns: onlyCustomColumns,
+        onlyList,
+    } = req.query;
 
     const questionMarkPos = req.originalUrl.indexOf("?");
     const originalUrl = req.originalUrl.substring(
@@ -266,7 +269,7 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
         const listColumnsType = await ListColumnType.findFromList(selectedList, connection);
 
         let lists = null;
-        if (!onlyCustomColumns) {
+        if (onlyCustomColumns !== "true") {
             lists = await List.findFromUser(userID, connection);
         }
 
@@ -280,6 +283,7 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
 
     res.render("partials/htmx/collections/custom_columns/custom_columns_details.ejs", {
         onlyItems: onlyCustomColumns === "true",
+        onlyList: onlyList === "true",
         lists,
         listColumnsType,
         listID,
