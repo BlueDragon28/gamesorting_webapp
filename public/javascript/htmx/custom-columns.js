@@ -10,5 +10,6 @@ export function addListenerToMinMaxInput(element) {
                 minMaxBlock.classList.add("d-none");
             }
         });
+        selectInputBlock.removeAttribute("gm-custom-columns-select-type");
     }
 }
