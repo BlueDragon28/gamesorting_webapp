@@ -1,3 +1,11 @@
+<%
+isValidation = typeof isValidation === "boolean" && isValidation;
+if (typeof existingValues !== "object") {
+    existingValues = {};
+}
+%>
+
+<% if (!isValidation) { %>
 <div id="collections-items-list-row" class="col-8 m-0 p-0">
     <div class="card h-100 border-end-0 rounded-0">
         <div class="card-header d-flex flex-row flex-start align-items-center">
@@ -24,32 +32,49 @@
                     </div>
                 <% } %>
             </div>
-            <form class="p-3 border-end-0 rounded-0 flex-shrink border-top">
+            <form class="p-3 border-end-0 rounded-0 flex-shrink border-top"
+                hx-post="/collections/lists/<%= selectedID %>/custom-columns"
+                hx-swap="innerHTML"
+                hx-push-url="false"
+            >
+<% } %>
                 <div class="form-floating w-100 my-2">
-                    <input class="form-control" type="text" name="name" placeholder="">
+                    <input class="form-control" id="custom-column-name-input" type="text" name="name" placeholder=""
+                        value="<%= existingValues.name || '' %>">
                     <label>Column Name</label>
                 </div>
                 <div class="form-floating w-100 my-2" gm-custom-columns-select-type="true">
-                    <select class="form-select" name="type">
-                        <option value="@String">String</option>
-                        <option value="@Int">Int</option>
-                        <option value="@Stars">Stars</option>
-                        <option value="@Href">URL</option>
+                    <%
+                        const availableOptions = [
+                            ["@String", "String"],
+                            ["@Int", "Int"],
+                            ["@Stars", "Stars"],
+                            ["@Href", "URL"],
+                        ];
+                    %>
+                    <select class="form-select" id="custom-column-type-select" name="type">
+                        <% for (const [type, name] of availableOptions) { %>
+                        <option value="<%= type %>" <%= existingValues.type === type ? "selected" : "" %>><%= name %></option>
+                        <% } %>
                     </select>
                     <label>Column Type</label>
                 </div>
-                <div class="d-none">
+                <div class="<%= existingValues.type === '@Int' ? '' : 'd-none' %>">
                     <div class="form-floating w-100 my-2">
-                        <input class="form-control" type="number" name="min" placeholder="">
+                        <input class="form-control" id="custom-column-min-select" type="number" name="min" placeholder=""
+                        value="<%= existingValues.min || '' %>">
                         <label>Min</label>
                     </div>
                     <div class="form-floating w-100 my-2">
-                        <input class="form-control" type="number" name="max" placeholder="">
+                        <input class="form-control" id="custom-column-max-select" type="number" name="max" placeholder=""
+                            value="<%= existingValues.max || '' %>">
                         <label>Max</label>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-outline-secondary w-100 my-2">Create</button>
+<% if (!isValidation) { %>
             </form>
         </div>
     </div>
 </div>
+<% } %>
