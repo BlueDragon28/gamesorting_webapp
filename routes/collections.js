@@ -273,6 +273,11 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
         return [null, listColumnsType, lists];
     });
 
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.status(400).send();
+    }
+
     res.render("partials/htmx/collections/custom_columns/custom_columns_details.ejs", {
         onlyItems: onlyCustomColumns === "true",
         lists,
