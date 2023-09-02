@@ -24,9 +24,30 @@
                     </div>
                 <% } %>
             </div>
-            <div class="p-3 border-end-0 rounded-0 flex-shrink border-top">
-                footer
-            </div>
+            <form class="p-3 border-end-0 rounded-0 flex-shrink border-top">
+                <div class="form-floating w-100 my-2">
+                    <input class="form-control" type="text" name="name" placeholder="">
+                    <label>Column Name</label>
+                </div>
+                <div class="form-floating w-100 my-2">
+                    <select class="form-select" name="type">
+                        <option value="@String">String</option>
+                        <option value="@Int">Int</option>
+                        <option value="@Stars">Stars</option>
+                        <option value="@Href">URL</option>
+                    </select>
+                    <label>Column Type</label>
+                </div>
+                <div class="form-floating w-100 my-2">
+                    <input class="form-control" type="number" name="min" placeholder="">
+                    <label>Min</label>
+                </div>
+                <div class="form-floating w-100 my-2">
+                    <input class="form-control" type="number" name="max" placeholder="">
+                    <label>Max</label>
+                </div>
+                <button type="submit" class="btn btn-outline-secondary w-100 my-2">Create</button>
+            </form>
         </div>
     </div>
 </div>
