@@ -1,3 +1,4 @@
+const { ListColumnType } = require("../../../models/listColumnsType");
 const Joi = require("../extendedJoi");
 const { 
     textValidation, 
@@ -18,7 +19,7 @@ function validateType(name, value) {
     const { error, value: validatedValue } = schema.validate({
         [name]: value,
     });
-    return [error, validatedValue];
+    return [error, validatedValue[name]];
 }
 
 function validateMinMax(nameMin, nameMax, min, max) {
@@ -30,7 +31,7 @@ function validateMinMax(nameMin, nameMax, min, max) {
         [nameMin]: min.length ? min : -2147483648,
         [nameMax]: max.length ? max : 2147483647,
     });
-    return [error, validatedValue];
+    return [error, validatedValue[nameMin], validatedValue[nameMax]];
 }
 
 function validateCustomColumn(values, errorMessages) {
@@ -56,13 +57,30 @@ function validateCustomColumn(values, errorMessages) {
 
     return [
         error,
-        validatedName,
+        validatedName["Column Name"],
         validatedType,
         validatedMin, 
         validatedMax,
     ];
 }
 
+async function isColumnDuplicated(name, list, connection, id=null) {
+    const foundListColumnType = await ListColumnType.findFromName(
+        name,
+        list,
+        connection,
+    );
+
+    if (foundListColumnType instanceof ListColumnType) {
+        if (typeof id === "bigint" && foundListColumnType.id === id) {
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
+
 module.exports = {
     validateCustomColumn,
+    isColumnDuplicated,
 };

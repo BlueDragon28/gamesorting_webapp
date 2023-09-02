@@ -28,6 +28,7 @@ const {
 } = require("../utils/validation/htmx/collections_lists");
 const {
     validateCustomColumn,
+    isColumnDuplicated,
 } = require("../utils/validation/htmx/custom-columns");
 const { getCustomControlType } = require("../utils/ejs/customControlData");
 const { parseCustomColumnsData } = require("../utils/data/listCustomColumnsMiddlewares");
@@ -692,6 +693,21 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
             selectedList, 
             connection
         );
+
+        if (Object.keys(errorMessages).length) {
+            return [null, listColumnsType];
+        }
+
+        const isDuplicate = await isColumnDuplicated(
+            validatedName,
+            selectedList,
+            connection,
+        );
+
+        if (isDuplicate) {
+            errorMessages.name = `ValidationError: "${validatedName}" already exists`;
+            return [null, listColumnsType];
+        }
 
         return [null, listColumnsType];
     });
