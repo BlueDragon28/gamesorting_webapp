@@ -1,5 +1,9 @@
 export function addListenerToMinMaxInput(element) {
-    const selectInputBlock = element.querySelector("[gm-custom-columns-select-type=\"true\"]")
+    console.log("found modification in DOM");
+    const selectInputBlock = element.hasAttribute("gm-custom-columns-select-type") ?
+        element : 
+        element.querySelector("[gm-custom-columns-select-type=\"true\"]");
+    console.log(selectInputBlock);
     if (selectInputBlock) {
         const selectInput = selectInputBlock.querySelector("select");
         selectInput.addEventListener("change", function(event) {
