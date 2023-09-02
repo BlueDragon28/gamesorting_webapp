@@ -731,18 +731,24 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
         return res.status(400).send();
     }
 
-    res.render("partials/htmx/collections/custom_columns/partials/details.ejs", {
-        isValidation: true,
-        selectedID: listID,
-        existingValues: {
-            name,
-            type,
-            min,
-            max
-        },
-        errorMessages,
-        hasErrors: Object.keys(errorMessages).length > 0,
-    });
+    if (Object.keys(errorMessages).length) {
+        res.render("partials/htmx/collections/custom_columns/partials/details.ejs", {
+            isValidation: true,
+            selectedID: listID,
+            existingValues: {
+                name,
+                type,
+                min,
+                max
+            },
+            errorMessages,
+            hasErrors: Object.keys(errorMessages).length > 0,
+        });
+    } else {
+        res.status(204).set({
+            "HX-Location": `{"path":"/collections/lists/${listID}/custom-columns?only_custom_columns=true","target":"#collections-items-list-row","swap":"outerHTML"}`,
+        }).send();
+    }
 }));
 
 router.put("/lists/:listID/item/:itemID", 
