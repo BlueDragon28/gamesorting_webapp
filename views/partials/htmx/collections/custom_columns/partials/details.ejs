@@ -1,5 +1,6 @@
 <%
 isValidation = typeof isValidation === "boolean" && isValidation;
+hasErrors = typeof hasErrors === "boolean" && hasErrors;
 if (typeof existingValues !== "object") {
     existingValues = {};
 }
@@ -39,9 +40,14 @@ if (typeof existingValues !== "object") {
             >
 <% } %>
                 <div class="form-floating w-100 my-2">
-                    <input class="form-control" id="custom-column-name-input" type="text" name="name" placeholder=""
+                    <input class="form-control <%= hasErrors && errorMessages.name ? 'is-invalid' : '' %>" id="custom-column-name-input" type="text" name="name" placeholder=""
                         value="<%= existingValues.name || '' %>">
                     <label>Column Name</label>
+                    <% if (hasErrors && errorMessages.name) { %>
+                    <div class="invalid-feedback">
+                        <%= errorMessages.name %>
+                    </div>
+                    <% } %>
                 </div>
                 <div class="form-floating w-100 my-2" gm-custom-columns-select-type="true">
                     <%
@@ -52,23 +58,38 @@ if (typeof existingValues !== "object") {
                             ["@Href", "URL"],
                         ];
                     %>
-                    <select class="form-select" id="custom-column-type-select" name="type">
+                    <select class="form-select <%= hasErrors && errorMessages.type ? 'is-invalid' : '' %>" id="custom-column-type-select" name="type">
                         <% for (const [type, name] of availableOptions) { %>
                         <option value="<%= type %>" <%= existingValues.type === type ? "selected" : "" %>><%= name %></option>
                         <% } %>
                     </select>
                     <label>Column Type</label>
+                    <% if (hasErrors && errorMessages.type) { %>
+                    <div class="invalid-feedback">
+                        <%= errorMessages.name %>
+                    </div>
+                    <% } %>
                 </div>
                 <div class="<%= existingValues.type === '@Int' ? '' : 'd-none' %>">
                     <div class="form-floating w-100 my-2">
-                        <input class="form-control" id="custom-column-min-select" type="number" name="min" placeholder=""
+                        <input class="form-control <%= hasErrors && errorMessages.integer ? 'is-invalid' : '' %>" id="custom-column-min-select" type="number" name="min" placeholder=""
                         value="<%= existingValues.min || '' %>">
                         <label>Min</label>
+                        <% if (hasErrors && errorMessages.integer) { %>
+                        <div class="invalid-feedback">
+                            <%= errorMessages.integer %>
+                        </div>
+                        <% } %>
                     </div>
                     <div class="form-floating w-100 my-2">
-                        <input class="form-control" id="custom-column-max-select" type="number" name="max" placeholder=""
+                        <input class="form-control <%= hasErrors && errorMessages.integer ? 'is-invalid' : '' %>" id="custom-column-max-select" type="number" name="max" placeholder=""
                             value="<%= existingValues.max || '' %>">
                         <label>Max</label>
+                        <% if (hasErrors && errorMessages.integer) { %>
+                        <div class="invalid-feedback">
+                            <%= errorMessages.integer %>
+                        </div>
+                        <% } %>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-outline-secondary w-100 my-2">Create</button>

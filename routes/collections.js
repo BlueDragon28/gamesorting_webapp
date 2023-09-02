@@ -26,6 +26,9 @@ const {
     validateAndCreateCollectionsList,
     validateAndUpdateCollectionList,
 } = require("../utils/validation/htmx/collections_lists");
+const {
+    validateCustomColumn,
+} = require("../utils/validation/htmx/custom-columns");
 const { getCustomControlType } = require("../utils/ejs/customControlData");
 const { parseCustomColumnsData } = require("../utils/data/listCustomColumnsMiddlewares");
 const { 
@@ -661,6 +664,21 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
     const { listID } = req.params;
     const { name, type, min, max } = req.body;
 
+    const errorMessages = {};
+
+    const [
+        error,
+        validatedName,
+        validatedType,
+        validatedMin,
+        validatedMax,
+    ] = validateCustomColumn({
+        name,
+        type,
+        min,
+        max,
+    }, errorMessages);
+
     const [
         errorMessage,
         listColumnsType,
@@ -692,6 +710,8 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
             min,
             max
         },
+        errorMessages,
+        hasErrors: Object.keys(errorMessages).length > 0,
     });
 }));
 

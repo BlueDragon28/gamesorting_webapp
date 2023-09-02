@@ -191,4 +191,6 @@ module.exports = {
     isItemDuplicate,
     saveItem,
     updateItem,
+    textValidation,
+    uriValidation,
 };
