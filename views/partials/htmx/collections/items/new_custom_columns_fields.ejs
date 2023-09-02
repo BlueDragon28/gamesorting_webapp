@@ -8,9 +8,9 @@
         <% const customColumnName = `customColumns[${customColumnID}]`; %>
         <% if (customColumn.type.type === "@Stars") { %>
             <div class="form-label"><%= customColumn.name %></div>
-            <input type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-no-rate" checked value="0">
+            <input type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-no-rate" <%= customColumnValue ? customColumnValue.Value === "0" ? "checked" : "" : "checked" %> value="0">
             <% for (let indexStar = 0; indexStar < 5; indexStar++) { %>
-                <input class="first-rate<%= indexStar+1 %>" type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-rate<%= indexStar+1 %>" value="<%= indexStar+1 %>">
+                <input class="first-rate<%= indexStar+1 %>" type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-rate<%= indexStar+1 %>" value="<%= indexStar+1 %>" <%= customColumnValue && customColumnValue.Value === (indexStar+1).toString() ? "checked" : "" %>>
                 <label for="<%= customColumnName %>-rate<%= indexStar+1 %>"><%= indexStar+1 %> Star</label>
             <% } %>
         <% } else { %>
