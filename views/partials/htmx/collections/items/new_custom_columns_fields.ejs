@@ -2,14 +2,14 @@
     <% const customRowData = isEditing ? getCustomColumn(customColumn.id) : undefined %>
     <% let customColumnID = `customColumn_${customRowData ? customRowData.id : customColumn.id}`; %>
     <% const isCustomRowError = isErrorObj && errorMessages[customColumn.id]; %>
-    <% const customColumnValue = isExistingValues &&
+    <% const customColumnValue = typeof isExistingValues === "object" &&
         existingValues?.customColumns.filter(c => c.ListColumnTypeID == customColumn.id || c.baseListColumnTypeID == customColumn.id || c.CustomRowItemsID == customColumn.id || -c.CustomRowItemsID == customColumn.id)[0];%>
     <div class="my-2 w-100 <%= customColumn.type.type === '@Stars' ? 'starability-basic' : 'form-floating' %>">
         <% const customColumnName = `customColumns[${customColumnID}]`; %>
         <% if (customColumn.type.type === "@Stars") { %>
             <div class="form-label"><%= customColumn.name %></div>
             <input type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-no-rate" checked value="0">
-            <% for (let indexStar = 0; indexStart < 5; indexStar++) { %>
+            <% for (let indexStar = 0; indexStar < 5; indexStar++) { %>
                 <input class="first-rate<%= indexStar+1 %>" type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-rate<%= indexStar+1 %>" value="<%= indexStar+1 %>">
                 <label for="<%= customColumnName %>-rate<%= indexStar+1 %>"><%= indexStar+1 %> Star</label>
             <% } %>
