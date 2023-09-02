@@ -80,7 +80,39 @@ async function isColumnDuplicated(name, list, connection, id=null) {
     return false;
 }
 
+async function saveCustomColumn(
+    validatedName,
+    validatedType,
+    validatedMin,
+    validatedMax,
+    list,
+    connection,
+) {
+    const type = {
+        type: validatedType,
+    }
+
+    if (validatedType === "@Int") {
+        type.min = validatedMin;
+        type.max = validatedMax;
+    }
+
+    const listColumnType = new ListColumnType(
+        validatedName,
+        type,
+        list,
+    );
+
+    if (!listColumnType.isValid()) {
+        return "Invalid List Column Type";
+    }
+    await listColumnType.save(connection);
+
+    return null;
+}
+
 module.exports = {
     validateCustomColumn,
     isColumnDuplicated,
+    saveCustomColumn,
 };
