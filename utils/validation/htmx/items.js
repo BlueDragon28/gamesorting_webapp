@@ -170,7 +170,7 @@ async function updateItem(
             continue;
         }
 
-        foundCustomData.value = customColumn.Value;
+        foundCustomData.value = customColumn.Value.toString();
 
         if (foundCustomData.isValid()) {
             await foundCustomData.save(connection);
