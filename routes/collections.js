@@ -264,7 +264,7 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
         const selectedList = await List.findByID(listID, connection);
 
         let errorMessage = isListOwned(selectedList, userID);
-        if (errorMessage) return errorMessage;
+        if (errorMessage) return [errorMessage];
 
         const listColumnsType = await ListColumnType.findFromList(selectedList, connection);
 
@@ -653,6 +653,45 @@ router.put("/lists/:listID", wrapAsync(async function(req, res) {
         inputValue: collectionListName,
         editing: true,
         list: foundList,
+    });
+}));
+
+router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { name, type, min, max } = req.body;
+
+    const [
+        errorMessage,
+        listColumnsType,
+    ] = await existingOrNewConnection(null, async function(connection) {
+        const selectedList = await List.findByID(listID, connection);
+
+        let errorMessage = isListOwned(selectedList, userID);
+        if (errorMessage) return [errorMessage];
+
+        const listColumnsType = await ListColumnType.findFromList(
+            selectedList, 
+            connection
+        );
+
+        return [null, listColumnsType];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.status(400).send();
+    }
+
+    res.render("partials/htmx/collections/custom_columns/partials/details.ejs", {
+        isValidation: true,
+        selectedID: listID,
+        existingValues: {
+            name,
+            type,
+            min,
+            max
+        },
     });
 }));
 
