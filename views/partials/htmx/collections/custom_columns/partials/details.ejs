@@ -26,9 +26,9 @@ if (typeof existingValues !== "object") {
                     <div class="list-group-item d-flex flex-row align-items-center" 
                         style="height: 3.18rem; text-overflox: elipsis;"
                     >
-                        <%= columnType.name %> | Type: <%= columnType.type.type %>
-                        <% if (columnType.type.type === "@Int") { %>
-                            <br>Min: <%= columnType.type.min %>, Max: <%= columnType.type.max %>
+                        <%= columnType.name %> | Type: <%= columnType.type.type %><% 
+                            if (columnType.type.type === "@Int") { 
+                        %>, Min: <%= columnType.type.min %>, Max: <%= columnType.type.max %>
                         <% } %>
                     </div>
                 <% } %>
