@@ -295,6 +295,47 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
     });
 }));
 
+router.get("/lists/:listID/custom-columns/delete-modal", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { listColumnsTypeID } = req.query;
+
+    const [errorMessage, list, listColumnType] = await existingOrNewConnection(null, async function(connection) {
+        const listColumnType = await ListColumnType.findByID(listColumnsTypeID, connection);
+
+        if (
+            !listColumnType || 
+            !(listColumnType instanceof ListColumnType) || 
+            !listColumnType.isValid()
+        ) {
+            return ["Could not find the list column type"];
+        }
+
+        const foundList = listColumnType.parentList;
+
+        const errorMessage = isListOwned(foundList, userID)
+        if (errorMessage) {
+            return [errorMessage];
+        }
+
+        if (foundList.id.toString() !== listID) {
+            return ["The custom columns is not part of this list"];
+        }
+
+        return [null, foundList, listColumnType];
+    });
+
+    if (!errorMessage) {
+        res.render("partials/htmx/modals/deleteListColumnTypeModal.ejs", {
+            listColumnType
+        })
+    } else {
+        res.render("partials/htmx/modals/errorModal.ejs", {
+            errorMessage,
+        });
+    }
+}));
+
 router.delete("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;
