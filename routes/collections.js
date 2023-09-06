@@ -14,7 +14,10 @@ const {
     errorsWithPossibleRedirect, 
     returnHasJSONIfNeeded 
 } = require("../utils/errors/celebrateErrorsMiddleware");
-const { deleteCollection } = require("../utils/data/deletionHelper");
+const { 
+    deleteCollection,
+    deleteCustomDatasFromListColumnType,
+} = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn, isUserPasswordValid } = require("../utils/users/authentification");
 const { checkCollectionAuth } = require("../utils/users/authorization");
@@ -790,6 +793,44 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
             "HX-Location": `{"path":"/collections/lists/${listID}/custom-columns?only_custom_columns=true","target":"#collections-items-list-row","swap":"outerHTML"}`,
         }).send();
     }
+}));
+
+router.delete("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { listColumnTypeID } = req.query;
+
+    const [errorMessage, listColumnType] = await existingOrNewConnection(null, async function(connection) {
+        const listColumnType = await ListColumnType.findByID(listColumnTypeID, connection);
+
+        if (!listColumnType || !(listColumnType instanceof ListColumnType) || !listColumnType.isValid()) {
+            return ["Could not find list column type"];
+        }
+
+        const foundList = listColumnType.parentList;
+        const errorMessage = isListOwned(foundList, userID);
+        if (errorMessage) {
+            return [errorMessage];
+        }
+
+        if (foundList.id.toString() !== listID) {
+            return ["The custom column is not own by this list"];
+        }
+
+        await deleteCustomDatasFromListColumnType(listColumnType.id, connection);
+        await listColumnType.delete(connection);
+
+        return [null, listColumnType];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.status(500).send();
+    }
+
+    res.status(204).set({
+        "HX-Trigger": "update-list-columns-type-list",
+    }).send();
 }));
 
 router.put("/lists/:listID/item/:itemID", 
