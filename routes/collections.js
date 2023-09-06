@@ -777,24 +777,24 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
         return res.status(400).send();
     }
 
-    if (Object.keys(errorMessages).length) {
-        res.render("partials/htmx/collections/custom_columns/partials/details.ejs", {
-            isValidation: true,
-            selectedID: listID,
-            existingValues: {
-                name,
-                type,
-                min,
-                max
-            },
-            errorMessages,
-            hasErrors: Object.keys(errorMessages).length > 0,
+    // if (Object.keys(errorMessages).length) {
+    if (!Object.keys(errorMessages).length) {
+        res.set({
+            "HX-Trigger": "update-list-columns-type-list",
         });
-    } else {
-        res.status(204).set({
-            "HX-Location": `{"path":"/collections/lists/${listID}/custom-columns?only_custom_columns=true","target":"#collections-items-list-row","swap":"outerHTML"}`,
-        }).send();
     }
+    res.render("partials/htmx/collections/custom_columns/partials/details.ejs", {
+        isValidation: true,
+        selectedID: listID,
+        existingValues: {
+            name,
+            type,
+            min,
+            max
+        },
+        errorMessages,
+        hasErrors: Object.keys(errorMessages).length > 0,
+    });
 }));
 
 router.delete("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
