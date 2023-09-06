@@ -161,10 +161,9 @@ router.get("/lists/:listID/edit", wrapAsync(async function(req, res) {
     const [errorMessage, list] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
 
-        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
-            return ["Failed to find this list"];
-        } else if (foundList.parentCollection.userID.toString() !== userID) {
-            return ["You do not own this list"];
+        const errors = isListOwned(foundList, userID);
+        if (errors) {
+            return [errors];
         }
 
         return [null, foundList];
@@ -191,10 +190,9 @@ router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
     const [errorMessage, list] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
 
-        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
-            return ["Could not find this list"];
-        } else if (foundList.parentCollection.userID != userID) {
-            return ["You do not own this list"];
+        const errors = isListOwned(foundList, userID.toString());
+        if (errors) {
+            return [errors];
         } else if (!destinationId || !destinationId?.length) {
             return ["You failed to provide destinationId"];
         }
@@ -222,10 +220,9 @@ router.get("/lists/:listID/new", wrapAsync(async function(req, res) {
     const [errorMessage, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
 
-        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
-            return ["Could not find this list"];
-        } else if (foundList.parentCollection.userID != userID) {
-            return ["You do not own this list"];
+        const errors = isListOwned(foundList, userID.toString());
+        if (errors) {
+            return [errors];
         }
 
         const listColumnsType = await ListColumnType.findFromList(foundList, connection);
@@ -349,11 +346,10 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
     const [errorMessage, list, collection] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
 
-        if (!foundList || !foundList instanceof List || !foundList.isValid()) {
-            return ["Could not find this list"];
-        } else if (foundList.parentCollection.userID != userID) {
-            return ["You do not own this list"];
-        } 
+        const errors = isListOwned(foundList, userID.toString());
+        if (errors) {
+            return [errors];
+        }
 
         const parentCollection = foundList.parentCollection;;
         await foundList.delete(connection);
@@ -444,7 +440,7 @@ router.get("/lists/:listID/item/:itemID/delete-modal", wrapAsync(async function(
     const [errorMessage, item] = await existingOrNewConnection(null, async function(connection) {
         const foundItem = await Item.findByID(itemID, connection);
 
-        if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
+        if (!foundItem || !(foundItem instanceof Item) || !foundItem.isValid()) {
             return ["Could not find this item"];
         } else if (foundItem.parentList.parentCollection.userID != userID) {
             return ["You do not own this item"];
@@ -479,10 +475,9 @@ router.get("/lists/:listID/item/:itemID/edit", wrapAsync(async function(req, res
     ] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
 
-        if (!foundList || !(foundList instanceof List) || !foundList.isValid()) {
-            return ["Could not find this list"];
-        } else if (foundList.parentCollection.userID.toString() !== userID) {
-            return ["You do not own this list"];
+        const errors = isListOwned(foundList, userID);
+        if (errors) {
+            return [errors];
         }
 
         const listColumnsType = await ListColumnType.findFromList(foundList, connection);
@@ -595,10 +590,9 @@ router.post("/lists/:listID",
         const [returnError, listColumnsType, list] = await existingOrNewConnection(null, async function(connection) {
             const foundList = await List.findByID(listID, connection);
 
-            if (!foundList || !foundList instanceof List || !foundList.isValid()) {
-                return ["Failed to retrieve custom columns"];
-            } else if (foundList.parentCollection.userID != userID) {
-                return ["You do not own this collection"];
+            const errors = isListOwned(foundList, userID.toString());
+            if (errors) {
+                return [errors];
             }
 
             const listColumnsType = await ListColumnType.findFromList(foundList, connection);
