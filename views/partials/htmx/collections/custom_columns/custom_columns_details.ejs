@@ -14,18 +14,19 @@
 </div>
 <% } else {
 const includeOnlyItems = typeof onlyItems === "boolean" && onlyItems;
+const onlyInner = typeof onlyInnerItems === "boolean" && onlyInnerItems;
 %>
 
-<% if (!includeOnlyItems && !onlyList) { %>
+<% if (!includeOnlyItems && !onlyList && !onlyInner) { %>
 <div id="collections-lists-global-row" class="row h-100">
 <% } %>
 
-<% if (!includeOnlyItems || onlyList) { %>
+<% if ((!includeOnlyItems && !onlyInner) || onlyList) { %>
     <%- include("../collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
 <% } %>
 
-<% if (includeOnlyItems || !onlyList) { %>
-<%- include("./partials/details.ejs", { listColumnsType, selectedID: listID }) %>
+<% if (includeOnlyItems || onlyInner || !onlyList) { %>
+<%- include("./partials/details.ejs", { listColumnsType, selectedID: listID, onlyInner }) %>
 <% } %>
 
 <% if (!includeOnlyItems) { %>

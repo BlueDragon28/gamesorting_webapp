@@ -249,6 +249,7 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
     const { 
         only_custom_columns: onlyCustomColumns,
         onlyList,
+        only_inner_custom_columns: onlyInnerCustomColumns,
     } = req.query;
 
     const questionMarkPos = req.originalUrl.indexOf("?");
@@ -292,6 +293,7 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
     res.render("partials/htmx/collections/custom_columns/custom_columns_details.ejs", {
         onlyItems: onlyCustomColumns === "true",
         onlyList: onlyList === "true",
+        onlyInnerItems: onlyInnerCustomColumns === "true",
         lists,
         listColumnsType,
         listID,
