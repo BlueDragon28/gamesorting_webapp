@@ -126,11 +126,16 @@ router.get("/new", wrapAsync(async function(req, res) {
     });
 }));
 
-router.get("/lists/:listID", wrapAsync(async function(req, res) {
+router.get(
+    "/lists/:listID", 
+    parseCurrentPageHeader,
+    wrapAsync(async function(req, res) 
+{
     const userID = req.session.user.id;
     let { listID } = req.params;
     const onlyItems = req.query.onlyItems === "true" ? true : undefined;
     const onlyList = req.query.onlyList === "true" ? true : undefined;
+    const currentPage = req.currentPageNumber;
 
     if (!req.htmx.isHTMX || req.htmx.isBoosted) {
         return res.render("partials/htmx/collections/collections_lists_selection", {
@@ -142,7 +147,7 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
         let lists = undefined;
         let pagination = undefined;
         if (!onlyItems) {
-            [lists, pagination] = await List.findFromUser(userID, connection);
+            [lists, pagination] = await List.findFromUser(userID, connection, currentPage);
         }
 
         const selectedList = await List.findByID(listID, connection);

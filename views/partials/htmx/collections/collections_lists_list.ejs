@@ -30,6 +30,9 @@
                     hx-target="#collections-lists-global-row"
                     hx-swap="outerHTML"
                     hx-push-url="true"
+                    <% if (typeof pagination === "object") { %>
+                        hx-headers='{"GS-currentPage":<%= pagination.currentPage %>}'
+                    <% } %>
                     x-data="{ open: false }"
                 >
                     <div class="button-list-<%= list.id %>">
