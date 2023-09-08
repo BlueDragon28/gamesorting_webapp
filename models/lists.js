@@ -312,7 +312,10 @@ class List {
         return await existingOrNewConnection(connection, async function(connection) {
             const numberOfItems = await List.getCountFromUser(userID, connection);
 
-            const pagination = new Pagination(pageNumber, numberOfItems);
+            const pagination = new Pagination(
+                Math.max(pageNumber, 1), 
+                numberOfItems
+            );
             if (!pagination.isValid) {
                 throw new ValueError(400, "Invalid page number");
             }

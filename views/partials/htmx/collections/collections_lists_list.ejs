@@ -75,11 +75,11 @@
                 <div class="text-body-secondary">Previous</div>
             <% } %>
             <% if (typeof pagination === "object") { %>
-                <div><%= Math.max(pagination.currentPage, 1) %> / <%= Math.max(pagination.numberOfPages, 1) %></div>
+                <div><%= pagination.currentPage %> / <%= pagination.numberOfPages %></div>
             <% } else { %>
                 <div>1 / 1</div>
             <% } %>
-            <% if (typeof pagination === "object" && Math.max(pagination.currentPage, 1) < Math.max(pagination.numberOfPages, 1)) { %>
+            <% if (typeof pagination === "object" && pagination.currentPage < pagination.numberOfPages) { %>
                 <button class="btn">Next</button>
             <% } else { %>
                 <div class="text-body-secondary">Next</div>
