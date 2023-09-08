@@ -74,12 +74,30 @@ router.get("/", function(req, res) {
     res.render("collections/collectionsHTMXIndex.ejs");
 });
 
-router.get("/collections_lists_list", wrapAsync(async function(req, res) {
+function parseCurrentPageHeader(req, res, next) {
+    const header = req.get("GS-currentPage");
+    try {
+        req.currentPageNumber = Math.max(Number(header), 1);
+        if (typeof req.currentPageNumber !== "number" || isNaN(req.currentPageNumber)) {
+            req.currentPageNumber = 1;
+        }
+    } catch {
+        req.currentPageNumber = 1;
+    }
+    next();
+}
+
+router.get(
+    "/collections_lists_list", 
+    parseCurrentPageHeader,
+    wrapAsync(async function(req, res) 
+{
     const userID = req.session.user.id;
     const { selectedID } = req.query;
+    let currentPage = req.currentPageNumber;
 
     const [lists, pagination] = await existingOrNewConnection(null, async function(connection) {
-        const [lists, pagination] = await List.findFromUser(userID, connection);
+        const [lists, pagination] = await List.findFromUser(userID, connection, currentPage);
         return [lists, pagination];
     });
 
