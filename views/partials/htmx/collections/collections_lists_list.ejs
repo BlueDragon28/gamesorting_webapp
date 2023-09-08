@@ -75,7 +75,11 @@
             <% if (typeof pagination === "object" && pagination.currentPage > 1) { %>
                 <button 
                     class="btn p-0 m-0 border-0"
-                    hx-get="/collections/collections_lists_list"
+                    <% if (typeof selectedID !== "undefined") { %>
+                        hx-get="/collections/lists/<%= selectedID %>?onlyList=true"
+                    <% } else { %>
+                        hx-get="/collections/collections_lists_list"
+                    <% } %>
                     hx-target="#collections-lists-list-outer-column"
                     hx-swap="outerHTML"
                     hx-headers='{"GS-currentPage":<%= pagination.currentPage-1 %>}'
@@ -91,7 +95,11 @@
             <% if (typeof pagination === "object" && pagination.currentPage < pagination.numberOfPages) { %>
                 <button 
                     class="btn p-0 m-0 border-0"
-                    hx-get="/collections/collections_lists_list"
+                    <% if (typeof selectedID !== "undefined") { %>
+                        hx-get="/collections/lists/<%= selectedID %>?onlyList=true"
+                    <% } else { %>
+                        hx-get="/collections/collections_lists_list"
+                    <% } %>
                     hx-target="#collections-lists-list-outer-column"
                     hx-swap="outerHTML"
                     hx-headers='{"GS-currentPage":<%= pagination.currentPage+1 %>}'
