@@ -186,9 +186,14 @@ router.get(
     });
 }));
 
-router.get("/lists/:listID/edit", wrapAsync(async function(req, res) {
+router.get(
+    "/lists/:listID/edit", 
+    parseCurrentPageHeader,
+    wrapAsync(async function(req, res) 
+{
     const userID = req.session.user.id.toString();
     const { listID } = req.params;
+    const currentPage = req.currentPageNumber;
 
     const [errorMessage, list] = await existingOrNewConnection(null, async function(connection) {
         const foundList = await List.findByID(listID, connection);
@@ -211,6 +216,7 @@ router.get("/lists/:listID/edit", wrapAsync(async function(req, res) {
         list,
         returnUrl: `/collections/lists/${list.id}`,
         inputValue: `${list.parentCollection.name}/${list.name}`,
+        currentPage,
     });
 }));
 
