@@ -304,12 +304,19 @@ class List {
         });
     }
 
-    static async findFromUser(userID, connection = null) {
+    static async findFromUser(userID, connection = null, pageNumber = 0) {
         if (!userID || !bigint.isValid(userID)) {
             throw new ValueError(400, "Invalid User");
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
+            const numberOfItems = await List.getCountFromUser(userID, connection);
+
+            const pagination = new Pagination(pageNumber, numberOfItems);
+            if (!pagination.isValid) {
+                throw new ValueError(400, "Invalid page number");
+            }
+
             const queryStatement =
                 `SELECT c.CollectionID AS CollectionID, c.UserID AS UserID, 
                 c.Name AS CNAME, l.ListID AS ListID, l.Name AS LNAME 
@@ -317,10 +324,12 @@ class List {
                 INNER JOIN collections c USING (CollectionID) 
                 WHERE c.UserID = ? 
                 ORDER BY CNAME ASC, LNAME ASC
-                LIMIT ?`;
+                LIMIT ? OFFSET ?`;
+
             const queryArgs = [
                 userID,
-                Pagination.ITEM_PER_PAGES
+                Pagination.ITEM_PER_PAGES,
+                Pagination.calcOffset(pageNumber),
             ];
 
             try {
@@ -330,10 +339,10 @@ class List {
                 );
 
                 if (!queryResult.length) {
-                    return [];
+                    return [[], pagination];
                 }
 
-                return List.parseFoundListsFromUser(queryResult);
+                return [List.parseFoundListsFromUser(queryResult), pagination];
             } catch (error) {
                 throw new SqlError(`Failed to query lists: ${error.message}`);
             }
@@ -470,6 +479,34 @@ class List {
                 return queryResult.count;
             } catch (error) {
                 throw new SqlError(`Failed to query number of items in lists: ${error.message}`);
+            }
+        });
+    }
+
+    static async getCountFromUser(userID, connection = null) {
+        if (!userID || !bigint.isValid(userID)) {
+            throw new ValueError(400, "Invalid User");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                `SELECT COUNT(*) AS count 
+                FROM lists l
+                INNER JOIN collections c USING (CollectionID) 
+                WHERE c.UserID = ?`;
+            const queryArgs = [
+                userID
+            ];
+
+            try {
+                const queryResult = (await connection.query(
+                    queryStatement,
+                    queryArgs,
+                ))[0];
+
+                return queryResult.count;
+            } catch (error) {
+                throw new SqlError(`Failed to query lists count form user: ${error.message}`);
             }
         });
     }

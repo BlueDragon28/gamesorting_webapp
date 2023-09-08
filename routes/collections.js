@@ -78,14 +78,15 @@ router.get("/collections_lists_list", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { selectedID } = req.query;
 
-    const [lists] = await existingOrNewConnection(null, async function(connection) {
-        const lists = await List.findFromUser(userID, connection);
-        return [lists];
+    const [lists, pagination] = await existingOrNewConnection(null, async function(connection) {
+        const [lists, pagination] = await List.findFromUser(userID, connection);
+        return [lists, pagination];
     });
 
     res.render("partials/htmx/collections/collections_lists_list", {
         lists,
         selectedID,
+        pagination,
     });
 }));
 
@@ -119,10 +120,11 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
         });
     }
 
-    const [lists, items] = await existingOrNewConnection(null, async function(connection) {
+    const [lists, items, pagination] = await existingOrNewConnection(null, async function(connection) {
         let lists = undefined;
+        let pagination = undefined;
         if (!onlyItems) {
-            lists = await List.findFromUser(userID, connection);
+            [lists, pagination] = await List.findFromUser(userID, connection);
         }
 
         const selectedList = await List.findByID(listID, connection);
@@ -136,7 +138,7 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
             listID = undefined;
         }
         
-        return [lists, items];
+        return [lists, items, pagination];
     });
     const questionMarkPost = req.originalUrl.indexOf("?");
     const originalUrl = req.originalUrl.substring(
@@ -151,6 +153,7 @@ router.get("/lists/:listID", wrapAsync(async function(req, res) {
         originalUrl,
         onlyItems,
         onlyList,
+        pagination,
     });
 }));
 
@@ -265,7 +268,8 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
     const [
         errorMessage, 
         listColumnsType, 
-        lists
+        lists,
+        pagination,
     ] = await existingOrNewConnection(null, async function(connection) {
         const selectedList = await List.findByID(listID, connection);
 
@@ -275,11 +279,12 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
         const listColumnsType = await ListColumnType.findFromList(selectedList, connection);
 
         let lists = null;
+        let pagination = undefined;
         if (onlyCustomColumns !== "true") {
-            lists = await List.findFromUser(userID, connection);
+            [lists, pagination] = await List.findFromUser(userID, connection);
         }
 
-        return [null, listColumnsType, lists];
+        return [null, listColumnsType, lists, pagination];
     });
 
     if (errorMessage) {
@@ -294,6 +299,7 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
         lists,
         listColumnsType,
         listID,
+        pagination,
     });
 }));
 
@@ -382,8 +388,8 @@ router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
     const { fullPageLoad } = req.query;
 
     if (req.htmx.isHTMX && fullPageLoad === "true") {
-        const [lists, item, listColumnsType] = await existingOrNewConnection(null, async function(connection) {
-            const lists = await List.findFromUser(userID, connection);
+        const [lists, item, listColumnsType, pagination] = await existingOrNewConnection(null, async function(connection) {
+            const [lists, pagination] = await List.findFromUser(userID, connection);
 
             const selectedList = await List.findByID(listID, connection);
             if (selectedList.parentCollection.userID != userID) {
@@ -397,7 +403,7 @@ router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
 
             const listColumnsType = await ListColumnType.findFromList(currentItem.parentList, connection);
 
-            return [lists, currentItem, listColumnsType];
+            return [lists, currentItem, listColumnsType, pagination];
         });
 
         return res.render("partials/htmx/collections/items/item", {
@@ -406,6 +412,7 @@ router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
             listID,
             listColumnsType,
             fullPageLoad: true,
+            pagination,
         });
 
     } else if (req.htmx.isHTMX && !req.htmx.isBoosted && !fullPageLoad) {
