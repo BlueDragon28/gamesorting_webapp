@@ -12,6 +12,9 @@
                             hx-get="/collections/new"
                             hx-target="#collections-lists-list-outer-column"
                             hx-swap="outerHTML"
+                            <% if (typeof pagination === "object") { %>
+                                hx-headers='{"GS-currentPage":<%= pagination.currentPage %>}'
+                            <% } %>
                         >
                             New
                         </div>
@@ -33,7 +36,6 @@
                     <% if (typeof pagination === "object") { %>
                         hx-headers='{"GS-currentPage":<%= pagination.currentPage %>}'
                     <% } %>
-                    x-data="{ open: false }"
                 >
                     <div class="button-list-<%= list.id %>">
                         <%= 

@@ -108,8 +108,13 @@ router.get(
     });
 }));
 
-router.get("/new", wrapAsync(async function(req, res) {
+router.get(
+    "/new", 
+    parseCurrentPageHeader,
+    wrapAsync(async function(req, res) 
+{
     const { currentUrl } = req.htmx;
+    const currentPage = req.currentPageNumber;
 
     let returnUrl = currentUrl.substring(
         currentUrl.indexOf("/collections"),
@@ -122,7 +127,8 @@ router.get("/new", wrapAsync(async function(req, res) {
     }
 
     res.render("partials/htmx/collections/new_collection_list_form", {
-        returnUrl
+        returnUrl,
+        currentPage,
     });
 }));
 
