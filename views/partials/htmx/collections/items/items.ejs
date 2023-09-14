@@ -1,7 +1,7 @@
 <div id="collections-items-list-row" class="col-8 m-0 p-0">
     <div class="card h-100 border-end-0 rounded-0">
         <%- include("./items_header_bar.ejs") %>
-        <div class="list-group list-group-flush">
+        <div class="list-group list-group-flush h-100">
             <% for (const item of items) { %>
                 <button 
                     class="list-group-item list-group-item-action d-flex flex-row align-items-center"
@@ -18,5 +18,8 @@
                 </button>
             <% } %>
         </div>
+        <%- include("../partials/pagination_footer.ejs", {
+            pagination: undefined,
+        }) %>
     </div>
 </div>
