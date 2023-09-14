@@ -1,0 +1,31 @@
+<div class="card-footer d-flex flex-row justify-content-between align-items-center" style="height: 3.18rem;">
+    <% if (typeof pagination === "object" && pagination.currentPage > 1) { %>
+        <button 
+            type="button"
+            class="btn p-0 m-0 border-0"
+            <% if (typeof previousHTMX === "string") { %>
+                <%- previousHTMX %>
+            <% } %>
+        >Previous</button>
+    <% } else { %>
+        <div class="text-body-secondary">Previous</div>
+    <% } %>
+
+    <% if (typeof pagination === "object") { %>
+        <div><%= pagination.currentPage %> / <%= pagination.numberOfPages %></div>
+    <% } else { %>
+        <div>1 / 1</div>
+    <% } %>
+
+    <% if (typeof pagination === "object" && pagination.currentPage < pagination.numberOfPages) { %>
+        <button 
+            type="button"
+            class="btn p-0 m-0 border-0"
+            <% if (typeof nextHTMX === "string") { %>
+                <%- nextHTMX %>
+            <% } %>
+        >Next</button>
+    <% } else { %>
+        <div class="text-body-secondary">Next</div>
+    <% } %>
+</div>
