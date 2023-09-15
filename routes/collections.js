@@ -148,7 +148,8 @@ router.get(
 {
     const userID = req.session.user.id;
     let { listID } = req.params;
-    const onlyItems = req.query.onlyItems === "true" ? true : undefined;
+    const onlyItems = req.query.onlyItems === "true" ? true : 
+                req.get("GS-onlyItems") === "true" ? true : undefined;
     const onlyList = req.query.onlyList === "true" ? true : undefined;
     const currentPage = req.currentPageNumber;
     const currentItemsPage = req.currentItemsPageNumber;
@@ -703,7 +704,7 @@ router.post("/lists/:listID",
             });
         } else {
             return res.status(204).set({
-                "HX-Location": `{"path":"/collections/lists/${list.id}?onlyItems=true", "target":"#collections-items-list-row","swap":"outerHTML"}`,
+                "HX-Location": `{"path":"/collections/lists/${list.id}", "target":"#collections-items-list-row","swap":"outerHTML","headers":{"GS-onlyItems":"true"}}`,
             }).send();
         }
     })
@@ -1016,7 +1017,7 @@ router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) 
         res.status(400).send();
     } else {
         res.status(204).set({
-            "HX-Location": `{"path":"/collections/lists/${listID}?onlyItems=true","target":"#item-detail-card","swap":"outerHTML"}`
+            "HX-Location": `{"path":"/collections/lists/${listID}","target":"#item-detail-card","swap":"outerHTML","headers":{"GS-onlyItems":"true"}}`,
         }).send();
     }
 }));
