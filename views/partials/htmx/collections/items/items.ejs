@@ -19,7 +19,19 @@
             <% } %>
         </div>
         <%- include("../partials/pagination_footer.ejs", {
-            pagination: undefined,
+            pagination: typeof itemsPagination === "object" ? itemsPagination : undefined,
+            previousHTMX: `
+                hx-get='/collections/lists/${selectedID}?onlyItems=true'
+                hx-target="#collections-items-list-row"
+                hx-swap="outerHTML"
+                hx-headers='{"GS-currentItemsPage":${itemsPagination.currentPage-1}}'
+            `,
+            nextHTMX: `
+                hx-get='/collections/lists/${selectedID}?onlyItems=true'
+                hx-target="#collections-items-list-row"
+                hx-swap="outerHTML"
+                hx-headers='{"GS-currentItemsPage":${itemsPagination.currentPage+1}}'
+            `,
         }) %>
     </div>
 </div>

@@ -76,6 +76,7 @@ router.get("/", function(req, res) {
 
 function parseCurrentPageHeader(req, res, next) {
     const header = req.get("GS-currentPage");
+    const itemsHeaderPage = req.get("GS-currentItemsPage");
     try {
         req.currentPageNumber = Math.max(Number(header), 1);
         if (typeof req.currentPageNumber !== "number" || isNaN(req.currentPageNumber)) {
@@ -83,6 +84,14 @@ function parseCurrentPageHeader(req, res, next) {
         }
     } catch {
         req.currentPageNumber = 1;
+    }
+    try {
+        req.currentItemsPageNumber = Math.max(Number(itemsHeaderPage), 1);
+        if (typeof req.currentItemsPageNumber !== "number" || isNaN(req.currentItemsPageNumber)) {
+            req.currentItemsPageNumber = 1;
+        }
+    } catch {
+        req.currentItemsPageNumber = 1;
     }
     next();
 }
@@ -142,6 +151,7 @@ router.get(
     const onlyItems = req.query.onlyItems === "true" ? true : undefined;
     const onlyList = req.query.onlyList === "true" ? true : undefined;
     const currentPage = req.currentPageNumber;
+    const currentItemsPage = req.currentItemsPageNumber;
 
     if (!req.htmx.isHTMX || req.htmx.isBoosted) {
         return res.render("partials/htmx/collections/collections_lists_selection", {
@@ -149,7 +159,7 @@ router.get(
         });
     }
 
-    const [lists, items, pagination] = await existingOrNewConnection(null, async function(connection) {
+    const [lists, items, pagination, itemsPagination] = await existingOrNewConnection(null, async function(connection) {
         let lists = undefined;
         let pagination = undefined;
         if (!onlyItems) {
@@ -158,16 +168,17 @@ router.get(
 
         const selectedList = await List.findByID(listID, connection);
         let items = [];
+        let itemsPagination = undefined;
 
         if (selectedList.parentCollection.userID == userID) {
             if (!onlyList) {
-                items = (await Item.findFromList(selectedList, undefined, undefined, connection, null))[0];
+                [items, itemsPagination] = await Item.findFromList(selectedList, currentItemsPage, undefined, connection, null);
             }
         } else {
             listID = undefined;
         }
         
-        return [lists, items, pagination];
+        return [lists, items, pagination, itemsPagination];
     });
     const questionMarkPost = req.originalUrl.indexOf("?");
     const originalUrl = req.originalUrl.substring(
@@ -183,6 +194,7 @@ router.get(
         onlyItems,
         onlyList,
         pagination,
+        itemsPagination,
     });
 }));
 
