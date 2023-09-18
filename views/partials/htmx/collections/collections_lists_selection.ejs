@@ -27,7 +27,7 @@ const includeItems =
 %>
 
 <% if (includeOuter) { %>
-<div id="collections-lists-global-row" class="row h-100">
+<div id="collections-lists-global-row" class="row overflow-hidden h-100">
 <% } %>
 <% if (includeList) { %>
     <%- include("./collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
