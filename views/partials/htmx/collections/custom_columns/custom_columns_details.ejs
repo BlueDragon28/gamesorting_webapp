@@ -18,7 +18,7 @@ const onlyInner = typeof onlyInnerItems === "boolean" && onlyInnerItems;
 %>
 
 <% if (!includeOnlyItems && !onlyList && !onlyInner) { %>
-<div id="collections-lists-global-row" class="row h-100">
+<div id="collections-lists-global-row" class="row h-100 overflow-hidden">
 <% } %>
 
 <% if ((!includeOnlyItems && !onlyInner) || onlyList) { %>
