@@ -19,8 +19,8 @@
 %>
 
 <% if (isNotValidation) { %>
-<div id="collections-items-list-row" class="col-8 m-0 p-0">
-    <div class="card h-100 border-end-0 rounded-0">
+<div id="collections-items-list-row" class="col-8 m-0 p-0 h-100 overflow-hidden">
+    <div class="card h-100 border-end-0 rounded-0 overflow-hidden">
         <div class="card-header d-flex flex-row flex-start align-items-center">
             <div class="btn py-1 px-1"
                 <% if (isEditing) { %>
@@ -37,7 +37,7 @@
             >&lt;</div>
             New Item
         </div>
-        <form class="card-body d-flex flex-column justify-content-center align-items-center"
+        <form class="card-body d-flex flex-column align-items-center overflow-auto"
             <% if (isEditing) { %>
                 hx-put="/collections/lists/<%= listID %>/item/<%= itemID %>"
             <% } else { %>
