@@ -10,6 +10,7 @@
                     hx-target="#collections-items-list-row"
                     hx-swap="outerHTML"
                     hx-push-url="true"
+                    hx-headers='{"GS-currentItemsPage":<%= itemsPagination.currentPage %>}'
                 >
                     <div class="flex-fill three-dot-text text-start"><%= item.name %></div>
                     <% if (typeof item.rating === "number") { %>

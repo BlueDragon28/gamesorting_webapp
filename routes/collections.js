@@ -430,10 +430,11 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
     res.status(200).send();
 }));
 
-router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
+router.get("/lists/:listID/item/:itemID", parseCurrentPageHeader, wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID, itemID } = req.params;
     const { fullPageLoad } = req.query;
+    const currentItemPage = req.currentItemsPageNumber;
 
     if (req.htmx.isHTMX && fullPageLoad === "true") {
         const [lists, item, listColumnsType, pagination] = await existingOrNewConnection(null, async function(connection) {
@@ -461,6 +462,7 @@ router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
             listColumnsType,
             fullPageLoad: true,
             pagination,
+            currentItemPage,
         });
 
     } else if (req.htmx.isHTMX && !req.htmx.isBoosted && !fullPageLoad) {
@@ -479,6 +481,7 @@ router.get("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) {
             item,
             listColumnsType,
             fullPageLoad: false,
+            currentItemPage,
         });
     } else {
         res.render("partials/htmx/collections/items/item_loadpage", {

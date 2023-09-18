@@ -23,6 +23,7 @@ function getColumnType(columnTypeID) {
                             hx-target="#item-detail-card"
                             hx-swap="outerHTML"
                             hx-push-url="/collections/lists/<%= item.parentList.id %>"
+                            hx-headers='{"GS-currentItemsPage":<%= typeof currentItemPage === "number" ? currentItemPage : 1 %>}'
                             >&lt;</div>
                         <%= item.name %>
                     </div>
