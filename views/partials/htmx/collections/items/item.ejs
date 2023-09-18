@@ -9,12 +9,12 @@ function getColumnType(columnTypeID) {
 %>
 
 <% if (fullPageLoad) { %>
-<div id="collections-lists-global-row" class="row h-100">
+<div id="collections-lists-global-row" class="row h-100 overflow-hidden">
     <%- include("../collections_lists_list.ejs", { lists: lists, selectedID: listID }) %>
 <% } %>
 
     <% if (item) { %>
-        <div id="item-detail-card" class="col-8 m-0 p-0">
+        <div id="item-detail-card" class="col-8 m-0 p-0 h-100 overflow-hidden">
             <div class="card h-100 border-end-0 rounded-0">
                 <div class="card-header d-flex flex-row justify-content-between align-items-center">
                     <div class="h-100 d-flex flex-row flex-start align-items-center">
@@ -55,7 +55,7 @@ function getColumnType(columnTypeID) {
                         </ul>
                     </div>
                 </div>
-                <div class="list-group list-group-flush">
+                <div class="list-group list-group-flush h-100 overflow-auto">
                     <% if (item.url) { %>
                         <div class="list-group-item d-flex align-items-center" style="height: 3.18rem;">URL: <a class="card-link" href="<%= item.url %>"><%= item.url %></a></div>
                     <% } %>
