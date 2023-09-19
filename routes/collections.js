@@ -44,7 +44,10 @@ const {
     updateItem,
 } = require("../utils/validation/htmx/items");
 const customDataValidation = require("../utils/validation/customDataValidation");
-const { isListOwned } = require("../utils/validation/authorization");
+const { 
+    isListOwned,
+    checkIfListColumnTypeOwned,
+} = require("../utils/validation/authorization");
 
 const router = express.Router();
 
@@ -356,30 +359,8 @@ router.get("/lists/:listID/custom-columns/delete-modal", wrapAsync(async functio
     const { listID } = req.params;
     const { listColumnsTypeID } = req.query;
 
-    const [errorMessage, list, listColumnType] = await existingOrNewConnection(null, async function(connection) {
-        const listColumnType = await ListColumnType.findByID(listColumnsTypeID, connection);
-
-        if (
-            !listColumnType || 
-            !(listColumnType instanceof ListColumnType) || 
-            !listColumnType.isValid()
-        ) {
-            return ["Could not find the list column type"];
-        }
-
-        const foundList = listColumnType.parentList;
-
-        const errorMessage = isListOwned(foundList, userID)
-        if (errorMessage) {
-            return [errorMessage];
-        }
-
-        if (foundList.id.toString() !== listID) {
-            return ["The custom columns is not part of this list"];
-        }
-
-        return [null, foundList, listColumnType];
-    });
+    const [errorMessage, list, listColumnType] = 
+        await checkIfListColumnTypeOwned(userID, listID, listColumnsTypeID);
 
     if (!errorMessage) {
         res.render("partials/htmx/modals/deleteListColumnTypeModal.ejs", {
