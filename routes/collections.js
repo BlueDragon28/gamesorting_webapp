@@ -388,6 +388,7 @@ router.get("/lists/:listID/custom-columns/edit-form", wrapAsync(async function(r
         res.render("partials/htmx/collections/custom_columns/partials/update_custom_column_form.ejs", {
             listColumnType,
             selectedID: listID,
+            existingName: listColumnType.name,
         });
     } else {
         res.set({
