@@ -48,6 +48,9 @@ const {
     isListOwned,
     checkIfListColumnTypeOwned,
 } = require("../utils/validation/authorization");
+const {
+    validateText,
+} = require("../utils/validation/htmx/items");
 
 const router = express.Router();
 
@@ -901,6 +904,72 @@ router.delete("/lists/:listID/custom-columns", wrapAsync(async function(req, res
     res.status(204).set({
         "HX-Trigger": "update-list-columns-type-list",
     }).send();
+}));
+
+router.put("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { listColumnTypeID } = req.query;
+    const { name: columnTypeName } = req.body;
+
+    let [validationError, { "Column Name": validatedName }] = 
+        validateText("Column Name", columnTypeName);
+
+    const [errorMessage, listColumnType] = await existingOrNewConnection(null, async function(connection) {
+        const [errorMessage, foundList, listColumnType] = 
+            await checkIfListColumnTypeOwned(userID, listID, listColumnTypeID, connection);
+
+        if (errorMessage) return [errorMessage];
+
+        if (validationError) {
+            return [null, listColumnType];
+        }
+
+        const isDuplicate = await isColumnDuplicated(
+            validatedName,
+            foundList,
+            connection,
+            listColumnType.id,
+        );
+
+        if (isDuplicate) {
+            validationError = `ValidationError: "${validatedName}" already exists`;
+            return [null, listColumnType];
+        }
+
+        if (validatedName !== listColumnType.name) {
+            listColumnType.name = validatedName;
+            await listColumnType.save(connection);
+        }
+
+        return [null, listColumnType];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.status(400).send();
+    }
+
+    if (validationError) {
+        res.render("partials/htmx/collections/custom_columns/partials/update_custom_column_form.ejs", {
+            isValidation: true,
+            listColumnType,
+            selectedID: listID,
+            existingName: columnTypeName,
+            nameValidationError: validationError,
+        });
+    } else {
+        res.set({
+            "HX-Trigger": "update-list-columns-type-list",
+            "HX-Reswap": "outerHTML",
+        }).render("partials/htmx/collections/custom_columns/partials/custom_column_edit_form.ejs", {
+            isValidationPhase: false,
+            selectedID: listID,
+            isErrors: false,
+            errorMessages: {},
+            existingFieldsValues: {},
+        });
+    }
 }));
 
 router.put("/lists/:listID/item/:itemID", 
