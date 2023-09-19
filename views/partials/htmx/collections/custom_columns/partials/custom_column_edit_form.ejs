@@ -1,5 +1,6 @@
 <% if (!isValidationPhase) { %>
-<form class="p-3 border-end-0 rounded-0 flex-shrink border-top"
+<form id="custom-columns-edit-form"
+    class="p-3 border-end-0 rounded-0 flex-shrink border-top"
     hx-post="/collections/lists/<%= selectedID %>/custom-columns"
     hx-swap="innerHTML"
     hx-push-url="false"
