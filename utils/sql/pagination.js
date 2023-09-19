@@ -1,7 +1,8 @@
 const { isNumber } = require("../numbers/number");
 
 class Pagination {
-    static ITEM_PER_PAGES = 15;
+    static ITEM_PER_PAGES = process.env.NODE_ENV === "test" ?
+        15 : 30;
 
     numberOfPages;
     currentPage;
