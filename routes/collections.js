@@ -373,6 +373,29 @@ router.get("/lists/:listID/custom-columns/delete-modal", wrapAsync(async functio
     }
 }));
 
+router.get("/lists/:listID/custom-columns/edit-form", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { listColumnsTypeID } = req.query;
+
+    const [errorMessage, list, listColumnType] = 
+        await checkIfListColumnTypeOwned(userID, listID, listColumnsTypeID);
+
+    if (!errorMessage) {
+        res.render("partials/htmx/collections/custom_columns/partials/update_custom_column_form.ejs", {
+            listColumnType,
+            selectedID: listID,
+        });
+    } else {
+        res.set({
+            "HX-Reswap": "innerHTML",
+            "HX-Retarget": "#modal-content-section",
+        }).render("partials/htmx/modals/errorModal.ejs", {
+            errorMessage: "Something Went Wrong",
+        });
+    }
+}));
+
 router.delete("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;

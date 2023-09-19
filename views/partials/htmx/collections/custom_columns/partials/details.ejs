@@ -46,6 +46,16 @@ if (typeof existingValues !== "object") {
                             <ul class="dropdown-menu">
                                 <li>
                                     <div class="dropdown-item"
+                                        hx-get="/collections/lists/<%= selectedID %>/custom-columns/edit-form?listColumnsTypeID=<%= columnType.id %>"
+                                        hx-target="#custom-columns-edit-form"
+                                        hx-push-url="false"
+                                        hx-swap="outerHTML"
+                                    >
+                                        Update
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="dropdown-item"
                                         hx-get="/collections/lists/<%= selectedID %>/custom-columns/delete-modal?listColumnsTypeID=<%= columnType.id %>"
                                         hx-target="#modal-content-section"
                                         hx-push-url="false"
