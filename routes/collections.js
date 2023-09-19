@@ -396,6 +396,18 @@ router.get("/lists/:listID/custom-columns/edit-form", wrapAsync(async function(r
     }
 }));
 
+router.get("/lists/:listID/custom-columns/new-form", function(req, res) {
+    const { listID } = req.params;
+
+    res.render("partials/htmx/collections/custom_columns/partials/custom_column_edit_form.ejs", {
+        isValidationPhase: false,
+        selectedID: listID,
+        isErrors: false,
+        errorMessages: {},
+        existingFieldsValues: {},
+    });
+});
+
 router.delete("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;

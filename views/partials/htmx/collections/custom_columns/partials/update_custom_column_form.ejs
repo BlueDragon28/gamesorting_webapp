@@ -9,5 +9,12 @@
     </div>
 
     <button type="submit" class="btn btn-outline-secondary w-100 my-2">Update</button>
-    <button type="button" class="btn btn-outline-secondary w-100 my-2">Cancel</button>
+    <button 
+        type="button" 
+        class="btn btn-outline-secondary w-100 my-2"
+        hx-get="/collections/lists/<%= selectedID %>/custom-columns/new-form"
+        hx-target="#custom-columns-edit-form"
+        hx-swap="outerHTML"
+        hx-push-url="false"
+    >Cancel</button>
 </form>
