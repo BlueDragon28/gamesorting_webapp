@@ -159,6 +159,7 @@ router.get(
     const onlyList = req.query.onlyList === "true" ? true : undefined;
     const currentPage = req.currentPageNumber;
     const currentItemsPage = req.currentItemsPageNumber;
+    const searchTerm = req.get("GS-searchTerm") ?? "";
 
     if (!req.htmx.isHTMX || req.htmx.isBoosted) {
         return res.render("partials/htmx/collections/collections_lists_selection", {
@@ -179,7 +180,17 @@ router.get(
 
         if (selectedList.parentCollection.userID == userID) {
             if (!onlyList) {
-                [items, itemsPagination] = await Item.findFromList(selectedList, currentItemsPage, undefined, connection, null);
+                [items, itemsPagination] = await Item.findFromList(
+                    selectedList, 
+                    currentItemsPage, 
+                    undefined, 
+                    connection, 
+                    {
+                        exactMatch: false,
+                        regex: false,
+                        text: searchTerm,
+                    },
+                );
             }
         } else {
             listID = undefined;
