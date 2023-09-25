@@ -2,7 +2,8 @@
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
 window.bootstrap = bootstrap;
 import "bootstrap/dist/css/bootstrap.min.css";
-import "htmx.org/dist/htmx.min.js";
+import htmx from "htmx.org";
+window.htmx = htmx;
 import "alpinejs/dist/cdn";
 
 //import "./checkFormValidation";
