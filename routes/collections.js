@@ -213,6 +213,7 @@ router.get(
         onlyList,
         pagination,
         itemsPagination,
+        searchTerm,
     });
 }));
 
