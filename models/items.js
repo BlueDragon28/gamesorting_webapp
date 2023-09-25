@@ -474,7 +474,7 @@ class Item {
 
             const queryStatement =
                 "SELECT COUNT(*) AS count FROM items " +
-                `WHERE ListID = ${list.id}` + addSearchOptions(searchOptions, queryArgs);
+                "WHERE ListID = ?" + addSearchOptions(searchOptions, queryArgs);
 
             try {
                 const queryResult = (await connection.query(queryStatement, queryArgs))[0];
