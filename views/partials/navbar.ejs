@@ -12,6 +12,12 @@
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
+                <% if (activeLink === 'Collections') { %>
+                    <div class="d-flex" id="search-box">
+                        <input type="search" class="form-control me-2" placeholder="Search" aria-label="Search">
+                        <button id="search-box-button" class="btn btn-outline-success" type="button">Search</button>
+                    </div>
+                <% } %>
                 <% if (currentUser) { %>
                     <% if (isUserAdmin) { %>
                         <li class="nav-item">
