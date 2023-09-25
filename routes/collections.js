@@ -467,6 +467,7 @@ router.get("/lists/:listID/item/:itemID", parseCurrentPageHeader, wrapAsync(asyn
     const { listID, itemID } = req.params;
     const { fullPageLoad } = req.query;
     const currentItemPage = req.currentItemsPageNumber;
+    const itemsListSearchTerm = req.get("GS-searchTerm") ?? "";
 
     if (req.htmx.isHTMX && fullPageLoad === "true") {
         const [lists, item, listColumnsType, pagination] = await existingOrNewConnection(null, async function(connection) {
@@ -514,6 +515,7 @@ router.get("/lists/:listID/item/:itemID", parseCurrentPageHeader, wrapAsync(asyn
             listColumnsType,
             fullPageLoad: false,
             currentItemPage,
+            itemsListSearchTerm,
         });
     } else {
         res.render("partials/htmx/collections/items/item_loadpage", {

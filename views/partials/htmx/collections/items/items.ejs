@@ -14,7 +14,8 @@ const itemSearchTerm = typeof searchTerm === "string" ? searchTerm : undefined;
                     hx-target="#collections-items-list-row"
                     hx-swap="outerHTML"
                     hx-push-url="true"
-                    hx-headers=`{"GS-currentItemsPage":<%= itemsPagination.currentPage %>}`
+                    hx-headers='{"GS-currentItemsPage":<%= itemsPagination.currentPage %><%=
+                        itemSearchTerm ? `,"GS-searchTerm":"${itemSearchTerm}"` : "" %>}'
                 >
                     <div class="flex-fill three-dot-text text-start"><%= item.name %></div>
                     <% if (typeof item.rating === "number") { %>
