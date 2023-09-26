@@ -1,0 +1,6 @@
+hx-get="<%= baseUrl %>"
+hx-trigger="update-items-list from:body"
+hx-swap="outerHTML"
+hx-headers='{"GS-onlyItems":"true","GS-currentItemsPage":"<%= itemsPagination.currentPage %>"<%=
+                    typeof itemSearchTerm === "string" ? `,"GS-searchTerm":"${itemSearchTerm}"` : "" %>}'
+hx-push-url="false"

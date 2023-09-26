@@ -3,6 +3,11 @@
         hx-get="<%= endpointUrl %>"
         hx-trigger="load"
         hx-swap="outerHTML"
+    <% } else if (typeof baseUrl !== "undefined") { %>
+        <%- include("../items/update-items-list-signal.ejs", {
+            baseUrl,
+            itemSearchTerm: typeof searchTerm === "string" ? searchTerm : undefined,
+        }) %>
     <% } %>
 >
     <div class="card h-100 border-end-0 rounded-0">

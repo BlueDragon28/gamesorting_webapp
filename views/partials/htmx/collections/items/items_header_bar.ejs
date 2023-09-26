@@ -1,11 +1,14 @@
-<div class="card-header d-flex flex-row justify-content-between align-items-center">
+<div class="card-header d-flex flex-row justify-content-between align-items-center"
+>
     <div>Items</div>
     <% if (typeof selectedID === "string" && selectedID.length ) { %>
     <div class="d-flex flex-row align-items-center">
         <button type="button" class="iconLinkButton <%= 
                 itemsPagination.reverseOrder ? 'reversed' : '' %>"
-            hx-post="<%= baseUrl %>/switch-list-order"
-            hx-push-url="false"
+            <% if (typeof baseUrl !== "undefined") { %>
+                hx-post="<%= baseUrl %>/switch-list-order"
+                hx-push-url="false"
+            <% } %>
         >
             <img class="revert-color" src="/images/crescendoOrder.svg">
         </button>

@@ -3,12 +3,10 @@ const itemSearchTerm = typeof searchTerm === "string" ? searchTerm : undefined;
 %>
 
 <div id="collections-items-list-row" class="col-8 m-0 p-0 overflow-hidden h-100"
-    hx-get="<%= baseUrl %>"
-    hx-trigger="update-items-list from:body"
-    hx-swap="outerHTML"
-    hx-headers='{"GS-onlyItems":"true","GS-currentItemsPage":"<%= itemsPagination.currentPage %>"<%=
-                        itemSearchTerm ? `,"GS-searchTerm":"${itemSearchTerm}"` : "" %>}'
-    hx-push-url="false"
+    <%- include("./update-items-list-signal.ejs", {
+        baseUrl,
+        itemSearchTerm,
+    }) %>
 >
     <div class="card h-100 border-end-0 rounded-0 overflow-hidden">
         <%- include("./items_header_bar.ejs") %>
