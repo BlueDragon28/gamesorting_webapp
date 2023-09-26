@@ -51,6 +51,7 @@ const {
 const {
     validateText,
 } = require("../utils/validation/htmx/items");
+const { ListSorting } = require("../models/listSorting");
 
 const router = express.Router();
 
@@ -239,7 +240,7 @@ router.get(
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        res.status(400).send();
+        return res.status(400).send();
     }
 
     res.render("partials/htmx/collections/new_collection_list_form.ejs", {
@@ -746,6 +747,39 @@ router.post("/lists/:listID",
         }
     })
 );
+
+router.post("/lists/:listID/switch-list-order", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+
+    const [errorMessage] = await existingOrNewConnection(null, async function(connection) {
+        const foundList = await List.findByID(listID, connection);
+
+        let errors = isListOwned(foundList, userID);
+        if (errors) {
+            return [errors];
+        }
+
+        let foundListSorting = await ListSorting.findByList(foundList, connection);
+        if (!foundListSorting) {
+            foundListSorting = new ListSorting("no-order", foundList, false);
+        } else {
+            foundListSorting.reverseOrder = !foundListSorting.reverseOrder;
+        }
+        await foundListSorting.save(connection);
+
+        return [null];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.status(400).send();
+    }
+
+    res.set({
+        "HX-Trigger": "update-items-list",
+    }).status(204).send();
+}))
 
 router.put("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id.toString();

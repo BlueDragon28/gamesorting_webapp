@@ -3,7 +3,10 @@
     <% if (typeof selectedID === "string" && selectedID.length ) { %>
     <div class="d-flex flex-row align-items-center">
         <button type="button" class="iconLinkButton <%= 
-                itemsPagination.reversed ? 'reversed' : '' %>">
+                itemsPagination.reverseOrder ? 'reversed' : '' %>"
+            hx-post="<%= baseUrl %>/switch-list-order"
+            hx-push-url="false"
+        >
             <img class="revert-color" src="/images/crescendoOrder.svg">
         </button>
         <div class="dropdown h-100">
