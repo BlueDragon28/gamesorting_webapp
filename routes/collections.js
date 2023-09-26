@@ -762,7 +762,7 @@ router.post("/lists/:listID/switch-list-order", wrapAsync(async function(req, re
 
         let foundListSorting = await ListSorting.findByList(foundList, connection);
         if (!foundListSorting) {
-            foundListSorting = new ListSorting("no-order", foundList, false);
+            foundListSorting = new ListSorting("no-order", foundList, true);
         } else {
             foundListSorting.reverseOrder = !foundListSorting.reverseOrder;
         }
