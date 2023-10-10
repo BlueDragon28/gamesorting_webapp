@@ -1,3 +1,10 @@
+<%
+const listSortingSelectionIndex = typeof listSorting === "undefined" ?
+    null :
+    listSorting.type === "order-by-name" ? 1 :
+    listSorting.type === "order-by-rating" ? 2 : 0;
+%>
+
 <div class="card-header d-flex flex-row justify-content-between align-items-center"
 >
     <div>Items</div>
@@ -6,21 +13,13 @@
         <div class="dropdown h-100">
             <button type="button" class="btn p-0 py-1" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</button>
             <ul class="dropdown-menu">
-                <li>
-                    <div class="dropdown-item">
-                        No sorting
-                    </div>
-                </li>
-                <li>
-                    <div class="dropdown-item">
-                        Sorting by name
-                    </div>
-                </li>
-                <li>
-                    <div class="dropdown-item">
-                        Sorting by rating
-                    </div>
-                </li>
+                <% ["No sorting", "Sorting by name", "Sorting by rating"].forEach(function(value, index) { %>
+                    <li>
+                        <div class="dropdown-item <%= listSortingSelectionIndex === index ? 'active' : '' %>">
+                            <%= value %>
+                        </div>
+                    </li>
+                <% }) %>
             </ul>
         </div>
         <button type="button" class="iconLinkButton <%= 

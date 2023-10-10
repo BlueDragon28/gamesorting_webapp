@@ -168,7 +168,7 @@ router.get(
         });
     }
 
-    const [lists, items, pagination, itemsPagination] = await existingOrNewConnection(null, async function(connection) {
+    const [lists, items, pagination, itemsPagination, listSorting] = await existingOrNewConnection(null, async function(connection) {
         let lists = undefined;
         let pagination = undefined;
         if (!onlyItems) {
@@ -178,13 +178,15 @@ router.get(
         const selectedList = await List.findByID(listID, connection);
         let items = [];
         let itemsPagination = undefined;
+        const foundListSorting = await ListSorting.findByList(selectedList, connection);
 
         if (selectedList.parentCollection.userID == userID) {
+
             if (!onlyList) {
                 [items, itemsPagination] = await Item.findFromList(
                     selectedList, 
                     currentItemsPage, 
-                    undefined, 
+                    foundListSorting, 
                     connection, 
                     {
                         exactMatch: false,
@@ -197,7 +199,7 @@ router.get(
             listID = undefined;
         }
         
-        return [lists, items, pagination, itemsPagination];
+        return [lists, items, pagination, itemsPagination, foundListSorting];
     });
     const questionMarkPost = req.originalUrl.indexOf("?");
     const originalUrl = req.originalUrl.substring(
@@ -215,6 +217,7 @@ router.get(
         pagination,
         itemsPagination,
         searchTerm,
+        listSorting,
     });
 }));
 
