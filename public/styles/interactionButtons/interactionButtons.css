@@ -11,6 +11,14 @@
     transform: scaleY(-1);
 }
 
+.iconLinkButton.reversed svg {
+    transform: scaleY(-1);
+}
+
+.iconLinkButton svg.revert-color {
+    filter: invert();
+}
+
 button.iconLinkButton {
     background-color: transparent;
     border: none;
