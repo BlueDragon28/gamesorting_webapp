@@ -804,7 +804,6 @@ router.post("/lists/:listID/update-list-sorting", wrapAsync(async function(req, 
             foundListSorting.type = listSortingType;
         }
         await foundListSorting.save(connection);
-        console.log(foundListSorting);
         return [null];
     });
 
