@@ -11,7 +11,9 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
     <% if (typeof selectedID === "string" && selectedID.length ) { %>
     <div class="d-flex flex-row align-items-center">
         <div class="dropdown h-100">
-            <button type="button" class="btn p-0 py-1" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</button>
+            <button type="button" class="btn p-0 py-1" data-bs-toggle="dropdown" aria-expanded="false">
+                <%- include("../../icons/sorting_icon.ejs") %>
+            </button>
             <ul class="dropdown-menu">
                 <% [["No sorting", "no-sorting"], ["Sorting by name", "order-by-name"], ["Sorting by rating", "order-by-rating"]].forEach(function(value, index) { %>
                     <li>
