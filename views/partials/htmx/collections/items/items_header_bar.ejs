@@ -13,10 +13,16 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
         <div class="dropdown h-100">
             <button type="button" class="btn p-0 py-1" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</button>
             <ul class="dropdown-menu">
-                <% ["No sorting", "Sorting by name", "Sorting by rating"].forEach(function(value, index) { %>
+                <% [["No sorting", "no-sorting"], ["Sorting by name", "order-by-name"], ["Sorting by rating", "order-by-rating"]].forEach(function(value, index) { %>
                     <li>
-                        <div class="dropdown-item <%= listSortingSelectionIndex === index ? 'active' : '' %>">
-                            <%= value %>
+                        <div class="dropdown-item <%= listSortingSelectionIndex === index ? 'active' : '' %>"
+                            <% if (typeof baseUrl !== "undefined" && listSortingSelectionIndex !== index) { %>
+                                hx-post="<%= baseUrl %>/update-list-sorting"
+                                hx-push-url="false"
+                                hx-vals='{"listSorting":"<%= value[1] %>"}'
+                            <% } %>
+                        >
+                            <%= value[0] %>
                         </div>
                     </li>
                 <% }) %>

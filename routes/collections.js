@@ -782,7 +782,41 @@ router.post("/lists/:listID/switch-list-order", wrapAsync(async function(req, re
     res.set({
         "HX-Trigger": "update-items-list",
     }).status(204).send();
-}))
+}));
+
+router.post("/lists/:listID/update-list-sorting", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { listSorting: listSortingType } = req.body;
+
+    const [errorMessage] = await existingOrNewConnection(null, async function(connection) {
+        const foundList = await List.findByID(listID, connection);
+
+        let errors = isListOwned(foundList, userID);
+        if (errors) {
+            return [errors];
+        }
+
+        let foundListSorting = await ListSorting.findByList(foundList, connection);
+        if (!foundListSorting) {
+            foundListSorting = new ListSorting(listSortingType, foundList, false);
+        } else {
+            foundListSorting.type = listSortingType;
+        }
+        await foundListSorting.save(connection);
+        console.log(foundListSorting);
+        return [null];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.status(400).send();
+    }
+
+    res.set({
+        "HX-Trigger": "update-items-list",
+    }).status(204).send();
+}));
 
 router.put("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id.toString();
