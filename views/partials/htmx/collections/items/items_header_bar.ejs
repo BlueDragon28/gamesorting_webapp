@@ -3,6 +3,26 @@
     <div>Items</div>
     <% if (typeof selectedID === "string" && selectedID.length ) { %>
     <div class="d-flex flex-row align-items-center">
+        <div class="dropdown h-100">
+            <button type="button" class="btn p-0 py-1" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</button>
+            <ul class="dropdown-menu">
+                <li>
+                    <div class="dropdown-item">
+                        No sorting
+                    </div>
+                </li>
+                <li>
+                    <div class="dropdown-item">
+                        Sorting by name
+                    </div>
+                </li>
+                <li>
+                    <div class="dropdown-item">
+                        Sorting by rating
+                    </div>
+                </li>
+            </ul>
+        </div>
         <button type="button" class="iconLinkButton <%= 
                 itemsPagination.reverseOrder ? 'reversed' : '' %>"
             <% if (typeof baseUrl !== "undefined") { %>
