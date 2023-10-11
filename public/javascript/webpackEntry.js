@@ -28,6 +28,7 @@ import "alpinejs/dist/cdn";
 //import "./collections/lists/items/moveItemsMakeCopy";
 import "./htmx/mutation-observer";
 import "./htmx/search";
+import "./flashContainerHeight";
 
 // CSS
 import "../styles/starability-basic.min.css";
@@ -42,3 +43,5 @@ import "../styles/text.css";
 import "../styles/sorting-styles.css";
 import "../styles/searchBox.css";
 import '../styles/list-items.css';
+
+import "../styles/flash-container.css";

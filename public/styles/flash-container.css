@@ -1,0 +1,21 @@
+#runtime-flash-container {
+    overflow: auto;
+    height: 0;
+    max-height: 64px;
+}
+
+#runtime-flash-container.has-children {
+    height: 64px;
+}
+
+#runtime-flash-container > div.alert {
+    border-left: none;
+    border-bottom: none;
+    border-right: none;
+    border-top-width: 1px;
+}
+
+#runtime-flash-container > div.alert:first-child {
+    border-top-width: 0;
+}
+
