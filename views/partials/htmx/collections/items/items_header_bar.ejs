@@ -1,8 +1,8 @@
 <%
 const listSortingSelectionIndex = typeof listSorting === "undefined" ?
     null :
-    listSorting.type === "order-by-name" ? 1 :
-    listSorting.type === "order-by-rating" ? 2 : 0;
+    typeof listSorting === "object" && listSorting && listSorting.type === "order-by-name" ? 1 :
+    typeof listSorting === "object" && listSorting && listSorting.type === "order-by-rating" ? 2 : 0;
 %>
 
 <div class="card-header d-flex flex-row justify-content-between align-items-center"

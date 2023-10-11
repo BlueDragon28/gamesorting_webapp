@@ -243,7 +243,9 @@ router.get(
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(400).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 
     res.render("partials/htmx/collections/new_collection_list_form.ejs", {
@@ -280,9 +282,10 @@ router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
             selectedID,
         });
     } else {
-        res.render("partials/htmx/modals/errorModal.ejs", {
-            errorMessage,
-        });
+        req.flash("error", errorMessage);
+        res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 }));
 
@@ -304,7 +307,9 @@ router.get("/lists/:listID/new", wrapAsync(async function(req, res) {
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(500).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 
     res.render("partials/htmx/collections/items/new_item_form.ejs", {
@@ -359,7 +364,9 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(400).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 
     res.render("partials/htmx/collections/custom_columns/custom_columns_details.ejs", {
@@ -386,9 +393,10 @@ router.get("/lists/:listID/custom-columns/delete-modal", wrapAsync(async functio
             listColumnType
         })
     } else {
-        res.render("partials/htmx/modals/errorModal.ejs", {
-            errorMessage,
-        });
+        req.flash("error", errorMessage);
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 }));
 
@@ -407,12 +415,10 @@ router.get("/lists/:listID/custom-columns/edit-form", wrapAsync(async function(r
             existingName: listColumnType.name,
         });
     } else {
+        req.flash("error", errorMessage);
         res.set({
-            "HX-Reswap": "innerHTML",
-            "HX-Retarget": "#modal-content-section",
-        }).render("partials/htmx/modals/errorModal.ejs", {
-            errorMessage: "Something Went Wrong",
-        });
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 }));
 
@@ -452,7 +458,9 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(500).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     } 
 
     req.flash("success", `${collection.name}/${list.name} successfully deleted`);
@@ -463,7 +471,9 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
         }).send();
     }
 
-    res.status(200).send();
+    res.set({
+        "HX-Trigger": "new-flash-event",
+    }).send();
 }));
 
 router.get("/lists/:listID/item/:itemID", parseCurrentPageHeader, wrapAsync(async function(req, res) {
@@ -553,9 +563,10 @@ router.get("/lists/:listID/item/:itemID/delete-modal", wrapAsync(async function(
             destinationId,
         });
     } else {
-        res.render("partials/htmx/modals/errorModal.ejs", {
-            errorMessage
-        });
+        req.flash("error", errorMessage);
+        res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 }));
 
@@ -596,7 +607,9 @@ router.get("/lists/:listID/item/:itemID/edit", wrapAsync(async function(req, res
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(500).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 
     const existingValues = {
@@ -727,7 +740,9 @@ router.post("/lists/:listID",
 
         if (returnError) {
             req.flash("error", `ERROR: ${returnError}`);
-            return res.status(400).send();
+            return res.set({
+                "HX-Trigger": "new-flash-event",
+            }).send();
         }
 
         if (Object.keys(errorMessages).length) {
@@ -776,7 +791,9 @@ router.post("/lists/:listID/switch-list-order", wrapAsync(async function(req, re
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(400).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 
     res.set({
@@ -809,7 +826,9 @@ router.post("/lists/:listID/update-list-sorting", wrapAsync(async function(req, 
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(400).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 
     res.set({
@@ -930,7 +949,9 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(400).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 
     // if (Object.keys(errorMessages).length) {
@@ -983,7 +1004,9 @@ router.delete("/lists/:listID/custom-columns", wrapAsync(async function(req, res
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(500).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 
     res.status(204).set({
@@ -1032,7 +1055,9 @@ router.put("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        return res.status(400).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     }
 
     if (validationError) {
@@ -1140,7 +1165,9 @@ router.put("/lists/:listID/item/:itemID",
 
         if (returnError) {
             req.flash("error", `ERROR: ${returnError}`);
-            return res.status(400).send();
+            return res.set({
+                "HX-Trigger": "new-flash-event",
+            }).send();
         }
 
         if (Object.keys(errorMessages).length) {
@@ -1187,7 +1214,9 @@ router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) 
 
     if (errorMessage) {
         req.flash("error", errorMessage);
-        res.status(400).send();
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).send();
     } else {
         res.status(204).set({
             "HX-Location": `{"path":"/collections/lists/${listID}","target":"#item-detail-card","swap":"outerHTML","headers":{"GS-onlyItems":"true"}}`,
