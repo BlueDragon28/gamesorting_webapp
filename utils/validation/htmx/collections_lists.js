@@ -1,7 +1,24 @@
 const { existingOrNewConnection } = require("../../sql/sql");
 const { Collection } = require("../../../models/collections");
 const { List } = require("../../../models/lists");
+const { User } = require("../../../models/users");
 const { sanitizeText } = require("../../../utils/validation/sanitizeText");
+const { MAX_NUMBER_OF_LIST_PER_USER, EXTENDED_NUMBER_OF_LIST_PER_USER } = require("./maximumLimitsOfElements");
+
+async function checkIfUserCanCreateMoreLists(userID, connection) {
+    const isUserBypassingRestriction = await User.isBypassingRestriction(userID, connection);
+    const numberOfLists = await List.getCountFromUser(userID, connection);
+
+    const maximumLimitOfLists = isUserBypassingRestriction ?
+        EXTENDED_NUMBER_OF_LIST_PER_USER :
+        MAX_NUMBER_OF_LIST_PER_USER;
+
+    if (numberOfLists >= maximumLimitOfLists) {
+        return `You cannot created more than ${maximumLimitOfLists} lists`;
+    } else {
+        return undefined;
+    }
+}
 
 function validateCollectionListName(collectionListName) {
     let [collectionName,listName] = collectionListName.split("/");
@@ -36,6 +53,13 @@ function validateCollectionListName(collectionListName) {
 async function validateAndCreateCollectionsList(userID, collectionName, listName, connection) {
     return await existingOrNewConnection(connection, async function(connection) {
         let errorMessage = undefined;
+
+        errorMessage = await checkIfUserCanCreateMoreLists(userID, connection);
+
+        if (errorMessage) {
+            return [errorMessage];
+        }
+
         let collection = await Collection.findByName(userID, collectionName, connection);
 
         if (!collection) {
