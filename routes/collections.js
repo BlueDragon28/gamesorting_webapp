@@ -1224,6 +1224,8 @@ router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) 
     }
 }));
 
+router.use(htmxErrorsFlashMessage);
+
 /*
 Validate collectionID on each route asking for collection id
 */
@@ -1356,12 +1358,8 @@ router.delete("/:collectionID", checkCollectionAuth, isUserPasswordValid, wrapAs
             message: successMessage
         });
 }));
-
-/*
-Parsing celebrate errors
-*/
-router.use(parseCelebrateError);
-router.use(returnHasJSONIfNeeded);
-router.use(errorsWithPossibleRedirect("Cannot find this collection"));
+//router.use(parseCelebrateError);
+//router.use(returnHasJSONIfNeeded);
+//router.use(errorsWithPossibleRedirect("Cannot find this collection"));
 
 module.exports = router;

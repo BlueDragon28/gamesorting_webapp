@@ -85,9 +85,17 @@ function errorsWithPossibleRedirect(customErrorMessage, redirectLocation = null)
     }
 }
 
+function htmxErrorsFlashMessage(error, req,  res, next) {
+    req.flash("error", error.message);
+    res.set({
+        "HX-Trigger": "new-flash-event",
+    }).status(204).send();
+};
+
 module.exports = {
     parseCelebrateError,
     errorsWithPossibleRedirect,
     returnHasJSONIfNeeded,
-    flashJoiErrorMessage
+    flashJoiErrorMessage,
+    htmxErrorsFlashMessage,
 }
