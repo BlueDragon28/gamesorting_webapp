@@ -43,6 +43,7 @@ const {
     isItemDuplicate,
     saveItem,
     updateItem,
+    checkIfUserCanCreateAnItem,
 } = require("../utils/validation/htmx/items");
 const customDataValidation = require("../utils/validation/customDataValidation");
 const { 
@@ -706,6 +707,14 @@ router.post("/lists/:listID",
             }
 
             const listColumnsType = await ListColumnType.findFromList(foundList, connection);
+
+            const canCreateItemErrorMessage = 
+                await checkIfUserCanCreateAnItem(userID, connection);
+
+            if (canCreateItemErrorMessage) {
+                errorMessages.globalError = canCreateItemErrorMessage;
+                return [null, listColumnsType];
+            }
 
             if (Object.keys(errorMessages).length) {
                 return [null, listColumnsType];

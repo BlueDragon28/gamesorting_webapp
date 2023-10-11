@@ -1,7 +1,9 @@
 const { columnDataAndTypeValidation } = require("../customDataValidation");
 const Joi = require("../extendedJoi");
 const { Item } = require("../../../models/items");
+const { User } = require("../../../models/users");
 const { CustomRowsItems } = require("../../../models/customUserData");
+const { EXTENDED_MAX_NUMBER_OF_ITEMS, MAX_NUMBER_OF_ITEMS } = require("./maximumLimitsOfElements");
 
 const textValidation = Joi.string().sanitize().trim().min(3).max(300).required();
 const uriValidation = Joi.alternatives().try(
@@ -104,6 +106,21 @@ async function isItemDuplicate(name, list, connection, id=null) {
     return false;
 }
 
+async function checkIfUserCanCreateAnItem(userID, connection) {
+    const isUserBypassingRestriction = await User.isBypassingRestriction(userID, connection);
+    const numberOfItems = await Item.getCountFromUser(userID, connection);
+
+    const maxNumberOfItems = isUserBypassingRestriction ?
+        EXTENDED_MAX_NUMBER_OF_ITEMS :
+        MAX_NUMBER_OF_ITEMS;
+
+    if (numberOfItems >= maxNumberOfItems) {
+        return `You cannot create more than ${maxNumberOfItems} items`;
+    } else {
+        return undefined;
+    }
+}
+
 async function saveItem(name, url, rating, customColumns, parentList, connection) {
     const newItem = new Item(name, url, parentList);
     newItem.rating = rating;
@@ -189,6 +206,7 @@ module.exports = {
     validateItemHeader,
     validateCustomColumns,
     isItemDuplicate,
+    checkIfUserCanCreateAnItem,
     saveItem,
     updateItem,
     textValidation,
