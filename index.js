@@ -21,6 +21,7 @@ const itemsRouter = require("./routes/items");
 const usersRouter = require("./routes/users");
 const adminRouter = require("./routes/admin");
 const contactRouter = require("./routes/contact");
+const flashRouter = require("./routes/flash");
 const methodOverride = require("method-override");
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -111,6 +112,7 @@ app.use("/collections/:collectionID/lists/:listID", itemsRouter);
 app.use("/users", usersRouter);
 app.use("/admin", adminRouter);
 app.use("/", contactRouter);
+app.use("/flash", flashRouter);
 
 /*
 Parsing celebrate errors

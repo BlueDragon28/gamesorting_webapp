@@ -1,0 +1,13 @@
+<% for (const success of flashMessages.success) { %>
+    <%- include("flashMessageAlertItem.ejs", {
+        type: "success",
+        message: success,
+    }) %>
+<% } %>
+
+<% for (const error of flashMessages.errors) { %>
+    <%- include("flashMessageAlertItem.ejs", {
+        type: "danger",
+        message: error,
+    }) %>
+<% } %>
