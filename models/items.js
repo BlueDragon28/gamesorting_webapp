@@ -486,6 +486,36 @@ class Item {
         });
     }
 
+    static async getCountFromUser(userID, connection) {
+        if (!userID || !bigint.isValid(userID)) {
+            throw new ValueError(400, "Invalid UserID");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement = 
+                `
+                SELECT COUNT(*) AS count
+                FROM items i
+                INNER JOIN lists l USING(ListID)
+                INNER JOIN collections c USING(CollectionID)
+                WHERE c.UserID = ?`;
+            const queryArgs = [
+                userID,
+            ];
+
+            try {
+                const queryResult = (await connection.query(
+                    queryStatement,
+                    queryArgs,
+                ))[0];
+
+                return queryResult.count;
+            } catch (error) {
+                throw new SqlError(`Failed to query items count from user: ${error.message}`);
+            }
+        });
+    }
+
     static async isValidPageNumber(list, pageNumber, connection, searchOptions = null) {
         if (!list.isValid()) {
             throw new ValueError(400, "Invalid list");

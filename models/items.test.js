@@ -294,5 +294,13 @@ describe("collection dabase manipulation", function() {
         expect(error).toBe(undefined);
         expect(result[0].length).toBe(4);
     });
+
+    it("get count of items from user", async function() {
+        let [result, error] = await itemQuery(() => 
+            Item.getCountFromUser(list.parentCollection.userID));
+
+        expect(error).toBe(undefined);
+        expect(result).toBe(35n);
+    })
 });
 
