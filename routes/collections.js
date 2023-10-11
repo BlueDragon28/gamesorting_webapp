@@ -12,7 +12,8 @@ const validation = require("../utils/validation/validation");
 const { 
     parseCelebrateError, 
     errorsWithPossibleRedirect, 
-    returnHasJSONIfNeeded 
+    returnHasJSONIfNeeded,
+    htmxErrorsFlashMessage,
 } = require("../utils/errors/celebrateErrorsMiddleware");
 const { 
     deleteCollection,
@@ -245,7 +246,7 @@ router.get(
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 
     res.render("partials/htmx/collections/new_collection_list_form.ejs", {
@@ -285,7 +286,7 @@ router.get("/lists/:listID/delete-modal", wrapAsync(async function(req, res) {
         req.flash("error", errorMessage);
         res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 }));
 
@@ -309,7 +310,7 @@ router.get("/lists/:listID/new", wrapAsync(async function(req, res) {
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 
     res.render("partials/htmx/collections/items/new_item_form.ejs", {
@@ -366,7 +367,7 @@ router.get("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 
     res.render("partials/htmx/collections/custom_columns/custom_columns_details.ejs", {
@@ -396,7 +397,7 @@ router.get("/lists/:listID/custom-columns/delete-modal", wrapAsync(async functio
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 }));
 
@@ -418,7 +419,7 @@ router.get("/lists/:listID/custom-columns/edit-form", wrapAsync(async function(r
         req.flash("error", errorMessage);
         res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 }));
 
@@ -460,7 +461,7 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     } 
 
     req.flash("success", `${collection.name}/${list.name} successfully deleted`);
@@ -473,7 +474,7 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
 
     res.set({
         "HX-Trigger": "new-flash-event",
-    }).send();
+    }).status(204).send();
 }));
 
 router.get("/lists/:listID/item/:itemID", parseCurrentPageHeader, wrapAsync(async function(req, res) {
@@ -566,7 +567,7 @@ router.get("/lists/:listID/item/:itemID/delete-modal", wrapAsync(async function(
         req.flash("error", errorMessage);
         res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 }));
 
@@ -609,7 +610,7 @@ router.get("/lists/:listID/item/:itemID/edit", wrapAsync(async function(req, res
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 
     const existingValues = {
@@ -742,7 +743,7 @@ router.post("/lists/:listID",
             req.flash("error", `ERROR: ${returnError}`);
             return res.set({
                 "HX-Trigger": "new-flash-event",
-            }).send();
+            }).status(204).send();
         }
 
         if (Object.keys(errorMessages).length) {
@@ -793,7 +794,7 @@ router.post("/lists/:listID/switch-list-order", wrapAsync(async function(req, re
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 
     res.set({
@@ -828,7 +829,7 @@ router.post("/lists/:listID/update-list-sorting", wrapAsync(async function(req, 
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 
     res.set({
@@ -951,7 +952,7 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 
     // if (Object.keys(errorMessages).length) {
@@ -1006,7 +1007,7 @@ router.delete("/lists/:listID/custom-columns", wrapAsync(async function(req, res
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 
     res.status(204).set({
@@ -1057,7 +1058,7 @@ router.put("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     }
 
     if (validationError) {
@@ -1167,7 +1168,7 @@ router.put("/lists/:listID/item/:itemID",
             req.flash("error", `ERROR: ${returnError}`);
             return res.set({
                 "HX-Trigger": "new-flash-event",
-            }).send();
+            }).status(204).send();
         }
 
         if (Object.keys(errorMessages).length) {
@@ -1216,7 +1217,7 @@ router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) 
         req.flash("error", errorMessage);
         return res.set({
             "HX-Trigger": "new-flash-event",
-        }).send();
+        }).status(204).send();
     } else {
         res.status(204).set({
             "HX-Location": `{"path":"/collections/lists/${listID}","target":"#item-detail-card","swap":"outerHTML","headers":{"GS-onlyItems":"true"}}`,
