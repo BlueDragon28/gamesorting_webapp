@@ -55,6 +55,7 @@ const {
 } = require("../utils/validation/htmx/items");
 const { ListSorting } = require("../models/listSorting");
 const { User } = require("../models/users");
+const { importFromList } = require("../utils/sql/importFrom");
 
 const router = express.Router();
 
@@ -1031,6 +1032,55 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
         errorMessages,
         hasErrors: Object.keys(errorMessages).length > 0,
     });
+}));
+
+router.post("/lists/:listID/custom-columns/import-from", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { "import-from":importFrom } = req.body;
+
+    if (typeof importFrom !== "string" || !importFrom.length) {
+        req.flash("error", "You haven't selected a list to import");
+        return res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        }).status(204).send();
+    }
+
+    const [error] = await existingOrNewConnection(null, async function(connection) {
+        try {
+            if (!bigint.isValid(importFrom)) {
+                return [error];
+            }
+        } catch (error) {
+            return [error.message];
+        }
+
+        try {
+            await importFromList(
+                listID,
+                importFrom,
+                BigInt(userID),
+                connection,
+            );
+        } catch (error) {
+            return [error.message];
+        }
+
+        return [null];
+    });
+
+    if (error) {
+        req.flahs("error", error);
+        res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        });
+    } else {
+        res.set({
+            "HX-Trigger": "close-import-from-modal, update-list-columns-type-list",
+        });
+    }
+
+    res.status(204).send();
 }));
 
 router.delete("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {

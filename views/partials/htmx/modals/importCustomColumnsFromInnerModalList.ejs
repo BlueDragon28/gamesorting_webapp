@@ -2,7 +2,7 @@
 <ul class="list-group list-group-flush custom-columns-from-list" id="import-custom-columns-from-collections-lists-list">
     <% for (const list of searchedLists) { %>
         <li class="list-group-item p-0"> 
-            <input type="radio" class="btn-check" name="import-from" id="import-from-<%= list.id %>" autocomplete="false">
+            <input type="radio" class="btn-check" name="import-from" value="<%= list.id %>" id="import-from-<%= list.id %>" autocomplete="false">
             <label class="btn btn-outline-secondary d-block rounded-0 border-0" for="import-from-<%= list.id %>"><%=
                 list.parentCollection.name %>/<%= list.name %>
             </label>

@@ -28,6 +28,7 @@ import "alpinejs/dist/cdn";
 //import "./collections/lists/items/moveItemsMakeCopy";
 import "./htmx/mutation-observer";
 import "./htmx/search";
+import "./htmx/close-import-from-modal";
 import "./flashContainerHeight";
 
 // CSS

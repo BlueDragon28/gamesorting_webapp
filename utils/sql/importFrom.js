@@ -32,7 +32,7 @@ async function importList(toList, columnType, connection) {
 async function importFromList(toListID, fromListID, userID, connection) {
     const toList = await List.findByID(toListID, connection);
 
-    if (!toList || !toList instanceof List || !toList.isValid()) {
+    if (!toList || !(toList instanceof List) || !toList.isValid()) {
         throw new ValueError(404, "List not found");
     }
 
@@ -40,7 +40,7 @@ async function importFromList(toListID, fromListID, userID, connection) {
 
     if (
         !fromList || 
-        !toList instanceof List || 
+        !(toList instanceof List) || 
         !toList.isValid()
     ) {
         throw new ValueError(404, "Cannot import from an non existing list");
