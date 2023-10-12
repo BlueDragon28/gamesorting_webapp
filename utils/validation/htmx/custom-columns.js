@@ -1,4 +1,5 @@
 const { ListColumnType } = require("../../../models/listColumnsType");
+const { User } = require("../../../models/users");
 const Joi = require("../extendedJoi");
 const { 
     textValidation, 
@@ -6,6 +7,7 @@ const {
     validateText,
     validateURL,
 } = require("./items");
+const { EXTENDED_MAX_NUMBER_OF_CUSTOM_COLUMNS, MAX_NUMBER_OF_CUSTOM_COLUMNS } = require("./maximumLimitsOfElements");
 
 function validateType(name, value) {
     const schema = Joi.object({
@@ -64,6 +66,22 @@ function validateCustomColumn(values, errorMessages) {
     ];
 }
 
+async function checkIfUserCanCreateMoreCustomColumns(userID, connection) {
+    const isUserBypassingRestriction = await User.isBypassingRestriction(userID, connection);
+
+    const customColumnsCount = await ListColumnType.getCountFromUser(userID, connection);
+
+    const maxNumberOfCustomColumns = isUserBypassingRestriction ?
+        EXTENDED_MAX_NUMBER_OF_CUSTOM_COLUMNS :
+        MAX_NUMBER_OF_CUSTOM_COLUMNS;
+
+    if (customColumnsCount >= maxNumberOfCustomColumns) {
+        return `You cannot create more than ${maxNumberOfCustomColumns} custom columns`;
+    } else {
+        return undefined;
+    }
+}
+
 async function isColumnDuplicated(name, list, connection, id=null) {
     const foundListColumnType = await ListColumnType.findFromName(
         name,
@@ -115,4 +133,5 @@ module.exports = {
     validateCustomColumn,
     isColumnDuplicated,
     saveCustomColumn,
+    checkIfUserCanCreateMoreCustomColumns,
 };

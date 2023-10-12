@@ -34,6 +34,7 @@ const {
     validateCustomColumn,
     isColumnDuplicated,
     saveCustomColumn,
+    checkIfUserCanCreateMoreCustomColumns,
 } = require("../utils/validation/htmx/custom-columns");
 const { getCustomControlType } = require("../utils/ejs/customControlData");
 const { parseCustomColumnsData } = require("../utils/data/listCustomColumnsMiddlewares");
@@ -970,6 +971,12 @@ router.post("/lists/:listID/custom-columns", wrapAsync(async function(req, res) 
 
         let errorMessage = isListOwned(selectedList, userID);
         if (errorMessage) return [errorMessage];
+
+        errorMessage = await checkIfUserCanCreateMoreCustomColumns(userID, connection);
+
+        if (errorMessage) {
+            return [errorMessage];
+        }
 
         const listColumnsType = await ListColumnType.findFromList(
             selectedList, 
