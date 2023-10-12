@@ -249,6 +249,14 @@ describe("collection dabase manipulation", function() {
             expect(foundListsColumnType[2].name).toBe("list_2");
         });
 
+        it("get count from user", async function() {
+            const [count, error] =
+                await listColumnTypeQuery(() => ListColumnType.getCountFromUser(newList.parentCollection.userID));
+
+            expect(error).toBe(undefined);
+            expect(count).toBe(8n);
+        });
+
         it("add a custom user data", async function() {
             const newItem = new Item("item", null, list);
             let [,error] = await listColumnTypeQuery(async () => newItem.save());

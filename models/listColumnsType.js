@@ -408,6 +408,36 @@ class ListColumnType {
         });
     }
 
+    static async getCountFromUser(userID, connection) {
+        if (!bigint.isValid(userID)) {
+            throw new ValueError(400, "Invalid User");
+        }
+
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                `
+                SELECT COUNT(*) AS count FROM listColumnsType lt
+                INNER JOIN lists l USING (ListID)
+                INNER JOIN collections c USING (CollectionID)
+                WHERE c.UserID = ?`;
+            
+            const queryArgs = [
+                userID,
+            ];
+
+            try {
+                const queryResult = (await connection.query(
+                    queryStatement,
+                    queryArgs,
+                ))[0];
+
+                return queryResult.count;
+            } catch (error) {
+                throw new SqlError(`Failed to query the number of custom columns from user: ${error.message}`);
+            }
+        });
+    }
+
     static #parseFoundColumnsType(list, columnsType) {
         const columnTypeArray = [];
 
