@@ -436,6 +436,19 @@ router.get("/lists/:listID/custom-columns/new-form", function(req, res) {
     });
 });
 
+router.get("/lists/:listID/custom-columns/import-from-modal", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const isSearchingState = req.get("GS-SearchState") === "true";
+
+    if (!isSearchingState) {
+        return res.render("partials/htmx/modals/modalImportCustomColumnsFrom.ejs", {
+            listID,
+        });
+    }
+
+}));
+
 router.delete("/lists/:listID", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;

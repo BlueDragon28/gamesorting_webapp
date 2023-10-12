@@ -45,3 +45,4 @@ import "../styles/searchBox.css";
 import '../styles/list-items.css';
 
 import "../styles/flash-container.css";
+import "../styles/modal-import-custom-columns-from.css";
