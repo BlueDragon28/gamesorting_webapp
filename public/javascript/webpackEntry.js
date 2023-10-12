@@ -29,6 +29,7 @@ import "alpinejs/dist/cdn";
 import "./htmx/mutation-observer";
 import "./htmx/search";
 import "./htmx/close-import-from-modal";
+import "./htmx/open-modal-when-mounted";
 import "./flashContainerHeight";
 
 // CSS
