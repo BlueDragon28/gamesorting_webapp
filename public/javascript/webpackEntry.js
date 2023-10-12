@@ -4,7 +4,6 @@ window.bootstrap = bootstrap;
 import "bootstrap/dist/css/bootstrap.min.css";
 import htmx from "htmx.org";
 window.htmx = htmx;
-import "alpinejs/dist/cdn";
 
 //import "./checkFormValidation";
 //import "./runtimeFlash/serverFlashes";
