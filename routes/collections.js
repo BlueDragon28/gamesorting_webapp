@@ -54,6 +54,7 @@ const {
     validateText,
 } = require("../utils/validation/htmx/items");
 const { ListSorting } = require("../models/listSorting");
+const { User } = require("../models/users");
 
 const router = express.Router();
 
@@ -440,6 +441,7 @@ router.get("/lists/:listID/custom-columns/import-from-modal", wrapAsync(async fu
     const userID = req.session.user.id.toString();
     const { listID } = req.params;
     const isSearchingState = req.get("GS-SearchState") === "true";
+    const searchTerm = req.query.search ?? "";
 
     if (!isSearchingState) {
         return res.render("partials/htmx/modals/modalImportCustomColumnsFrom.ejs", {
@@ -447,6 +449,40 @@ router.get("/lists/:listID/custom-columns/import-from-modal", wrapAsync(async fu
         });
     }
 
+    const [error, list, searchedLists] = await existingOrNewConnection(null, async function(connection) {
+        const foundList = await List.findByID(listID, connection);
+
+        const error = isListOwned(foundList, userID.toString());
+        if (error) {
+            return [error];
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            return ["Could not find user"];
+        }
+
+        const searchedLists = await List.findAllListFromUserByName(
+            foundUser,
+            searchTerm,
+            foundList,
+            connection,
+        );
+
+        if (!Array.isArray(searchedLists)) {
+            return ["Could not find valid lists"];
+        }
+
+        return [null, foundList, searchedLists];
+    });
+
+    return res.render("partials/htmx/modals/importCustomColumnsFromInnerModalList.ejs", {
+        listID,
+        searchedLists,
+        isError: error != undefined,
+        errorMessage: error,
+    });
 }));
 
 router.delete("/lists/:listID", wrapAsync(async function(req, res) {

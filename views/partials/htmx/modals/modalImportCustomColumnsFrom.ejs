@@ -6,10 +6,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="input-group mb-3">
-                    <input class="form-control" type="text" placeholder="Search">
-                    <button type="button" class="btn btn-outline-secondary">Search</button>
-                </div>
+                <form class="input-group mb-3"
+                    hx-get="/collections/lists/<%= listID %>/custom-columns/import-from-modal"
+                    hx-push-url="false"
+                    hx-target="#import-custom-columns-from-collections-lists-list"
+                    hx-swap="outerHTML"
+                    hx-headers='{"GS-SearchState":"true"}'
+                >
+                    <input class="form-control" type="text" name="search" placeholder="Search">
+                    <button type="submit" class="btn btn-outline-secondary">Search</button>
+                </form>
+
                 <div class="card">
                     <ul class="list-group list-group-flush custom-columns-from-list" id="import-custom-columns-from-collections-lists-list">
 
