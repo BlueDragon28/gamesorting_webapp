@@ -1077,9 +1077,9 @@ router.post("/lists/:listID/custom-columns/import-from", wrapAsync(async functio
     });
 
     if (error) {
-        req.flahs("error", error);
+        req.flash("error", error);
         res.set({
-            "HX-Trigger": "new-flash-event, close-import-from-modal",
+            "HX-Trigger": "new-flash-event, close-import-from-modal, update-list-columns-type-list",
         });
     } else {
         res.set({

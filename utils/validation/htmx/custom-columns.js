@@ -66,7 +66,7 @@ function validateCustomColumn(values, errorMessages) {
     ];
 }
 
-async function checkIfUserCanCreateMoreCustomColumns(userID, connection) {
+async function getCustomColumnsCountAndLimit(userID, connection) {
     const isUserBypassingRestriction = await User.isBypassingRestriction(userID, connection);
 
     const customColumnsCount = await ListColumnType.getCountFromUser(userID, connection);
@@ -74,6 +74,13 @@ async function checkIfUserCanCreateMoreCustomColumns(userID, connection) {
     const maxNumberOfCustomColumns = isUserBypassingRestriction ?
         EXTENDED_MAX_NUMBER_OF_CUSTOM_COLUMNS :
         MAX_NUMBER_OF_CUSTOM_COLUMNS;
+
+    return [customColumnsCount, maxNumberOfCustomColumns];
+}
+
+async function checkIfUserCanCreateMoreCustomColumns(userID, connection) {
+    const [customColumnsCount, maxNumberOfCustomColumns] =
+        await getCustomColumnsCountAndLimit(userID, connection);
 
     if (customColumnsCount >= maxNumberOfCustomColumns) {
         return `You cannot create more than ${maxNumberOfCustomColumns} custom columns`;
@@ -134,4 +141,5 @@ module.exports = {
     isColumnDuplicated,
     saveCustomColumn,
     checkIfUserCanCreateMoreCustomColumns,
+    getCustomColumnsCountAndLimit,
 };

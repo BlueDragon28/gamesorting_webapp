@@ -1,12 +1,14 @@
 const { List } = require("../../models/lists");
 const { ListColumnType } = require("../../models/listColumnsType");
+const { getCustomColumnsCountAndLimit } = require("../validation/htmx/custom-columns");
+const { AuthorizationError } = require("../errors/exceptions");
 
 /*
 Find all the column type from the source list and insert
 them into the destination list if they do not already exists
 */
 
-async function importList(toList, columnType, connection) {
+async function importList(toList, columnType, connection, newCustomColumnsCallback) {
     const findColumnFromName = await ListColumnType.findFromName(
         columnType.name,
         toList,
@@ -23,6 +25,11 @@ async function importList(toList, columnType, connection) {
         toList
     );
     await newColumn.save(connection);
+    
+    if (typeof newCustomColumnsCallback === "function") {
+        newCustomColumnsCallback();
+    }
+
     return {
         fromID: columnType.id,
         toID: newColumn.id
@@ -54,10 +61,19 @@ async function importFromList(toListID, fromListID, userID, connection) {
     }
 
     const fromCustomColumns = await ListColumnType.findFromList(fromList, connection);
+
+    let [customColumnsCount, customColumnsLimit] =
+        await getCustomColumnsCountAndLimit(userID, connection);
     
     const newColumnID = []
     for (const column of fromCustomColumns) {
-        newColumnID.push(await importList(toList, column, connection));
+        if (customColumnsCount >= customColumnsLimit) {
+            throw new AuthorizationError(`You cannot create more than ${customColumnsLimit} custom columns!`);
+        }
+
+        newColumnID.push(await importList(toList, column, connection, () => {
+            customColumnsCount++;
+        }));
     }
 
     return [toList, fromList, newColumnID];
