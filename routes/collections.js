@@ -694,6 +694,57 @@ router.get("/lists/:listID/item/:itemID/edit", wrapAsync(async function(req, res
     });
 }));
 
+router.get("/lists/:listID/item/:itemID/move-to", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID, itemID } = req.params;
+    const isSearchingState = req.get("GS-SearchState") === "true";
+    const searchTerm = req.query.search ?? "";
+
+    if (!isSearchingState) {
+        return res.render("partials/htmx/modals/modalMoveItemTo.ejs", {
+            listID,
+            itemID,
+        });
+    }
+
+    const [error, searchedLists] = await existingOrNewConnection(null, async function(connection) {
+        const foundItem = await Item.findByID(itemID, connection);
+        const foundList = foundItem.parentList;
+
+        let error = isListOwned(foundList, userID);
+        if (error) {
+            return [error];
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            return ["Could not find user"];
+        }
+
+        const searchedLists = await List.findAllListFromUserByName(
+            foundUser,
+            searchTerm,
+            foundList,
+            connection,
+        );
+
+        if (!Array.isArray(searchedLists)) {
+            return ["Could not find valid lists"];
+        }
+
+        return [null, searchedLists];
+    });
+
+    res.render("partials/htmx/modals/moveItemToModalList.ejs", {
+        listID,
+        itemID,
+        searchedLists,
+        isError: typeof error === "string",
+        errorMessage: error,
+    });
+}));
+
 router.post("/lists", wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { collection_list_name: collectionListName } = req.body;

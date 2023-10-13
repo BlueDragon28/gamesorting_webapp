@@ -1,0 +1,16 @@
+<% if (!isError) { %>
+<ul class="list-group list-group-flush custom-columns-from-list" id="move-item-to-lists-list">
+    <% for (const list of searchedLists) { %>
+        <li class="list-group-item p-0">
+            <input type="radio" class="btn-check" name="move-to" value="<%= list.id %>" id="move-to-<%= list.id %>" autocomplete="false">
+            <label class="btn btn-outline-secondary d-block rounded-0 border-0" for="move-to-<%= list.id %>"><%=
+                list.parentCollection.name %>/<%= list.name %>
+            </label>
+        </li>
+    <% } %>
+</ul>
+<% } else { %>
+<div class="list-group list-group-flush custom-columns-from-list f-flex flex-column justify-content-center align-items-center" id="move-item-to-lists-list">
+    <div><%= errorMessage %></div>
+</div>
+<% } %>

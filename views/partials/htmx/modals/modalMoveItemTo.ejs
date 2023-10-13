@@ -1,0 +1,43 @@
+<div id="modal-move-item-to" class="modal fade" tabindex="-1" aria-labelledby="moveItemTo" aria-hidden="true" gs-new-modal="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Move Item To</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="input-group mb-3"
+                    hx-get="/collections/lists/<%= listID %>/item/<%= itemID %>/move-to"
+                    hx-push-url="false"
+                    hx-target="#move-item-to-lists-list"
+                    hx-swap="outerHTML"
+                    hx-headers='{"GS-SearchState":"true"}'
+                >
+                    <input class="form-control" type="text" name="search" placeholder="Search">
+                    <button type="submit" class="btn btn-outline-secondary">Search</button>
+                </form>
+
+                <form 
+                    id="modal-move-item-to-submit-form"
+                    hx-post="/collections/lists/<%= listID %>/item/<%= itemID %>/move-to"
+                    hx-push-url="false"
+                >
+                    <div class="card">
+                        <ul class="list-group list-group-flush custom-columns-from-list" id="move-item-to-lists-list">
+
+                        </ul>
+                    </div>
+
+                    <div class="mt-3">
+                        <input class="form-check-input" type="checkbox" name="make-a-copy" id="move-item-to-make-copy" checked>
+                        <label class="form-check-label" for="move-item-to-make-copy">Make a copy</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="move-item-to-submit-button" type="button" class="btn btn-outline-secondary">Move To</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -52,6 +52,16 @@ function getColumnType(columnTypeID) {
                                     Delete
                                 </div>
                             </li>
+                            <li>
+                                <div class="dropdown-item"
+                                    hx-get="/collections/lists/<%= item.parentList.id %>/item/<%= item.id %>/move-to"
+                                    hx-target="#modal-content-section"
+                                    hx-push-url="false"
+                                    hx-swap="innerHTML"
+                                >
+                                    Move To
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>
