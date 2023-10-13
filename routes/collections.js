@@ -1107,7 +1107,7 @@ router.post("/lists/:listID/custom-columns/import-from", wrapAsync(async functio
     const [error] = await existingOrNewConnection(null, async function(connection) {
         try {
             if (!bigint.isValid(importFrom)) {
-                return [error];
+                return ["Invalid list"];
             }
         } catch (error) {
             return [error.message];
