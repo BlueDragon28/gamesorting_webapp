@@ -18,6 +18,7 @@ const {
 const { 
     deleteCollection,
     deleteCustomDatasFromListColumnType,
+    deleteItem,
 } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn, isUserPasswordValid } = require("../utils/users/authentification");
@@ -57,6 +58,7 @@ const {
 const { ListSorting } = require("../models/listSorting");
 const { User } = require("../models/users");
 const { importFromList } = require("../utils/sql/importFrom");
+const { moveItemTo } = require("../utils/sql/moveTo");
 
 const router = express.Router();
 
@@ -1247,6 +1249,71 @@ router.put("/lists/:listID/custom-columns", wrapAsync(async function(req, res) {
             existingFieldsValues: {},
         });
     }
+}));
+
+router.post("/lists/:listID/item/:itemID/move-to", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID, itemID } = req.params;
+    const { "make-a-copy":makeACopy, "move-to": moveToListID } = req.body;
+
+    if (typeof moveToListID !== "string" || !moveToListID.length) {
+        req.flash("error", "You haven't selected a list");
+        return res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        }).status(204).send();
+    }
+
+    const [error, destinationList, newItem] = await existingOrNewConnection(null, async function(connection) {
+        try {
+            if (!bigint.isValid(moveToListID)) {
+                return ["Invalid list"];
+            }
+        } catch (error) {
+            return [error.message];
+        }
+
+        const foundItem = await Item.findByID(itemID, connection);
+
+        if (!foundItem || !(foundItem instanceof Item) || !foundItem.isValid()) {
+            return ["Could not find item"];
+        }
+
+        try {
+            const [moveToList, list, newColumnsID] = await importFromList(
+                moveToListID,
+                listID,
+                userID,
+                connection,
+            );
+
+            const newItem = await moveItemTo(
+                list, 
+                moveToList,
+                foundItem,
+                newColumnsID,
+                connection,
+            );
+
+            if (makeACopy !== "on") {
+                await deleteItem(foundItem.id, connection);
+            }
+
+            return [null, list, newItem];
+        } catch (error) {
+            return [error.message];
+        }
+    });
+
+    if (error) {
+        req.flash("error", error);
+        return res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal"
+        }).status(204).send();
+    }
+
+    res.set({
+        "HX-Trigger": "close-import-from-modal",
+    }).status(204).send();
 }));
 
 router.put("/lists/:listID/item/:itemID", 
