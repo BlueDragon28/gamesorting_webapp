@@ -534,7 +534,7 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
 router.get("/lists/:listID/item/:itemID", parseCurrentPageHeader, wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
     const { listID, itemID } = req.params;
-    const { fullPageLoad } = req.query;
+    const fullPageLoad = req.query.fullPageLoad || req.get("GS-FullPageLoad");
     const currentItemPage = req.currentItemsPageNumber;
     const itemsListSearchTerm = req.get("GS-searchTerm") ?? "";
 
