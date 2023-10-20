@@ -1298,7 +1298,7 @@ router.post("/lists/:listID/item/:itemID/move-to", wrapAsync(async function(req,
                 await deleteItem(foundItem.id, connection);
             }
 
-            return [null, list, newItem];
+            return [null, moveToList, newItem];
         } catch (error) {
             return [error.message];
         }
