@@ -27,7 +27,7 @@ const router = express.Router();
 
 router.get("/register", function(req, res) {
     res.locals.activeLink = "UserRegister";
-    res.render("login/register");
+    res.render("partials/htmx/login/register.ejs");
 });
 
 router.get("/login", function(req, res) {
