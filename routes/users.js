@@ -13,13 +13,15 @@ const {
     flashJoiErrorMessage
 } = require("../utils/errors/celebrateErrorsMiddleware");
 const {
-    validateRegisteringUser,
     validateLoginUser,
     validateEmailUpdate,
     validatePasswordUpdate,
     validateLostPasswordUpdate,
     validateDeleteUser
 } = require("../utils/validation/users");
+const {
+    validateUserRegistration,
+} = require("../utils/validation/htmx/validateUser");
 const { ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
 
@@ -83,14 +85,30 @@ router.get("/lostpassword/:tokenID", wrapAsync(async function(req, res) {
 }),
 errorsWithPossibleRedirect("Invalid token", "/"));
 
-router.post("/register", validateRegisteringUser(), wrapAsync(async function(req, res) {
-    const { username, email, password } = req.body.user;
-    const user = new User(username, email, password);
-    await user.save();
-    res.redirect("/users/login");
-}),
-    parseCelebrateError,
-    errorsWithPossibleRedirect("Invalid credentials", "/users/register"));
+router.post("/register", wrapAsync(async function(req, res) {
+    const { username, email, password, "retyped-password": retypedPassword } = req.body;
+
+    const errorMessages = {};
+
+    const [
+        validatedUsername,
+        validatedEmail,
+        validatedPassword,
+        validatedRetypedPassword,
+    ] = validateUserRegistration(
+        username,
+        email,
+        password,
+        retypedPassword,
+        errorMessages,
+    );
+
+    //const user = new User(username, email, password);
+    //await user.save();
+    //res.redirect("/users/login");
+    
+    res.status(204).send();
+}));
 
 router.post("/login", validateLoginUser(), wrapAsync(async function(req, res) {
     const { username, password } = req.body.user;
