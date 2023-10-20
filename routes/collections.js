@@ -1312,6 +1312,7 @@ router.post("/lists/:listID/item/:itemID/move-to", wrapAsync(async function(req,
     }
 
     res.set({
+        "HX-Location": `{"path":"/collections/lists/${destinationList.id}/item/${newItem.id}","target":"#collections-lists-global-row","swap":"outerHTML","headers":{"GS-FullPageLoad":"true"}}`,
         "HX-Trigger": "close-import-from-modal",
     }).status(204).send();
 }));
