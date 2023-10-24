@@ -21,12 +21,20 @@ function validateItem(joiField, name, value) {
 }
 
 function validateUserRegistration(
+    emptySet,
     username,
     email,
     password,
     retypedPassword,
     errorMessages,
 ) {
+    var [error] =
+        validateItem(emptyValidation, "Empty Set", emptySet);
+    if (error) {
+        console.log("emptySetError");
+        errorMessages.global = "Invalid Registering Form";
+    }
+
     var [error, validatedUsername] =
         validateItem(usernameValidation, "Username", username);
     if (error) {

@@ -86,7 +86,13 @@ router.get("/lostpassword/:tokenID", wrapAsync(async function(req, res) {
 errorsWithPossibleRedirect("Invalid token", "/"));
 
 router.post("/register", wrapAsync(async function(req, res) {
-    const { username, email, password, "retyped-password": retypedPassword } = req.body;
+    const { 
+        username, 
+        email, 
+        password, 
+        "retyped-password": retypedPassword,
+        emptySet,
+    } = req.body;
 
     const errorMessages = {};
 
@@ -96,6 +102,7 @@ router.post("/register", wrapAsync(async function(req, res) {
         validatedPassword,
         validatedRetypedPassword,
     ] = validateUserRegistration(
+        emptySet,
         username,
         email,
         password,
