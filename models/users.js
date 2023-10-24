@@ -380,6 +380,28 @@ class User {
         });
     }
 
+    static async checkIfItsDuplicate(username, email, connection) {
+        return await existingOrNewConnection(connection, async function(connection) {
+            const queryStatement =
+                "SELECT COUNT(1) AS count FROM users WHERE " +
+                "(Username = ? OR Email = ?) " +
+                "LIMIT 1";
+
+            const queryArgs = [
+                username,
+                email,
+            ];
+
+            try {
+                const queryResult = (await connection.query(queryStatement, queryArgs))[0];
+
+                return queryResult.count > 0;
+            } catch (err) {
+                throw new SqlError(`Failed to check if user is username or email is duplicate: ${err.message}`);
+            }
+        });
+    }
+
     static #parseFoundUsers(users) {
         const usersList = [];
 

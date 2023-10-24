@@ -110,20 +110,38 @@ router.post("/register", wrapAsync(async function(req, res) {
         errorMessages,
     );
 
-    //const user = new User(username, email, password);
-    //await user.save();
-    //res.redirect("/users/login");
-    
-    res.render("partials/htmx/login/register.ejs", {
-        registerValue: {
-            emptySet,
-            username: validatedUsername,
-            email: validatedEmail,
-            password: validatedPassword,
-            retypedPassword: validatedRetypedPassword,
-        },
-        errorMessages,
+    const newUser = await existingOrNewConnection(null, async function(connection) {
+        if (await User.checkIfItsDuplicate(validatedUsername, validatedEmail, connection)) {
+            errorMessages.global = "Credentials already exists";
+            return;
+        }
+
+        try {
+            const newUser = new User(validatedUsername, validatedEmail, validatedPassword);
+            await newUser.save(connection);
+            return newUser;
+        } catch (error) {
+            errorMessages.global = error.message;
+        }
     });
+
+    if (Object.keys(errorMessages).length) {
+        return res.render("partials/htmx/login/register.ejs", {
+            registerValue: {
+                emptySet,
+                username: validatedUsername,
+                email: validatedEmail,
+                password: validatedPassword,
+                retypedPassword: validatedRetypedPassword,
+            },
+            errorMessages,
+        });
+    }
+
+    req.session.user = newUser.toBaseObject();
+    res.set({
+        "HX-Location": "/collections",
+    }).send();
 }));
 
 router.post("/login", validateLoginUser(), wrapAsync(async function(req, res) {
