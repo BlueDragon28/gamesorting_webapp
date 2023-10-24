@@ -28,6 +28,16 @@ const { sendLostPasswordEmail } = require("../utils/email/email");
 const router = express.Router();
 
 router.get("/register", function(req, res) {
+    if (req.session.user) {
+        if (req.htmx.isHTMX) {
+            return res.set({
+                "HX-Location": "/collections",
+            }).send();
+        } else {
+            return res.redirect("/collections");
+        }
+    }
+
     res.locals.activeLink = "UserRegister";
     res.render("partials/htmx/login/register.ejs");
 });
