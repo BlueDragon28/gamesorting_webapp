@@ -122,6 +122,7 @@ router.post("/register", wrapAsync(async function(req, res) {
             password: validatedPassword,
             retypedPassword: validatedRetypedPassword,
         },
+        errorMessages,
     });
 }));
 

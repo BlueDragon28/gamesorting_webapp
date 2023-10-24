@@ -13,29 +13,47 @@
 
 <%
 const isValueAvailable = typeof registerValue === "object";
+const isErrorAvailable = typeof errorMessages === "object";
 %>
 
                 <h1 class="card-title fs-4">Register</h1>
+
+                <% if (isErrorAvailable && errorMessages.global) { %>
+                <p class="text-danger fs-5 text-underline"><%= errorMessages.global %></p>
+                <% } %>
+
                 <input type="hidden" name="emptySet", value="<%= isValueAvailable ? registerValue.emptySet : '' %>">
 
                 <div class="form-floating my-3">
-                    <input class="form-control" type="text" id="username" name="username" placeholder="" value="<%= isValueAvailable ? registerValue.username : '' %>">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.username ? 'is-invalid' : '' %>" type="text" id="username" name="username" placeholder="" value="<%= isValueAvailable ? registerValue.username : '' %>">
                     <label for="username">Username</label>
+                    <% if (isErrorAvailable && errorMessages.username) { %>
+                    <div class="invalid-feedback"><%= errorMessages.username %></div>
+                    <% } %>
                 </div>
 
                 <div class="form-floating my-3">
-                    <input class="form-control" type="email" id="email" name="email" placeholder="" value="<%= isValueAvailable ? registerValue.email : '' %>">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.email ? 'is-invalid' : '' %>" type="email" id="email" name="email" placeholder="" value="<%= isValueAvailable ? registerValue.email : '' %>">
                     <label for="email">Email</label>
+                    <% if (isErrorAvailable && errorMessages.email) { %>
+                    <div class="invalid-feedback"><%= errorMessages.email %></div>
+                    <% } %>
                 </div>
 
                 <div class="form-floating my-3">
-                    <input class="form-control" type="password" id="password" name="password" placeholder="" value="<%= isValueAvailable ? registerValue.password : '' %>">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.password ? 'is-invalid' : '' %>" type="password" id="password" name="password" placeholder="" value="<%= isValueAvailable ? registerValue.password : '' %>">
                     <label for="password">Password</label>
+                    <% if (isErrorAvailable && errorMessages.password) { %>
+                    <div class="invalid-feedback"><%= errorMessages.password %></div>
+                    <% } %>
                 </div>
 
                 <div class="form-floating my-3">
-                    <input class="form-control" type="password" id="retyped-password" name="retyped-password" placeholder="" value="<%= isValueAvailable ? registerValue.retypedPassword : '' %>">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.retypedPassword ? 'is-invalid' : '' %>" type="password" id="retyped-password" name="retyped-password" placeholder="" value="<%= isValueAvailable ? registerValue.retypedPassword : '' %>">
                     <label for="retyped-password">Retyped Password</label>
+                    <% if (isErrorAvailable && errorMessages.retypedPassword) { %>
+                    <div class="invalid-feedback"><%= errorMessages.retypedPassword %></div>
+                    <% } %>
                 </div>
 
                 <button type="submit" class="btn btn-outline-secondary">Submit</button>

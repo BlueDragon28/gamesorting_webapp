@@ -31,7 +31,6 @@ function validateUserRegistration(
     var [error] =
         validateItem(emptyValidation, "Empty Set", emptySet);
     if (error) {
-        console.log("emptySetError");
         errorMessages.global = "Invalid Registering Form";
     }
 
@@ -60,7 +59,7 @@ function validateUserRegistration(
             retypedPassword,
         );
     if (error) {
-        errorMessages.retypedPassword = error;
+        errorMessages.retypedPassword = "Passwords must be the same";
     }
 
     return [
