@@ -114,7 +114,15 @@ router.post("/register", wrapAsync(async function(req, res) {
     //await user.save();
     //res.redirect("/users/login");
     
-    res.status(204).send();
+    res.render("partials/htmx/login/register.ejs", {
+        registerValue: {
+            emptySet,
+            username: validatedUsername,
+            email: validatedEmail,
+            password: validatedPassword,
+            retypedPassword: validatedRetypedPassword,
+        },
+    });
 }));
 
 router.post("/login", validateLoginUser(), wrapAsync(async function(req, res) {
