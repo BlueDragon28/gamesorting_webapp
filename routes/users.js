@@ -111,6 +111,10 @@ router.post("/register", wrapAsync(async function(req, res) {
     );
 
     const newUser = await existingOrNewConnection(null, async function(connection) {
+        if (Object.keys(errorMessages).length) {
+            return;
+        }
+
         if (await User.checkIfItsDuplicate(validatedUsername, validatedEmail, connection)) {
             errorMessages.global = "Credentials already exists";
             return;
