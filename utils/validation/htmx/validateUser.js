@@ -127,8 +127,49 @@ function validateUpdateEmail(
     return [validatedEmail, validatedPassword];
 }
 
+function validatedUpdatePassword(
+    currentPassword,
+    newPassword,
+    retypedPassword,
+    errorMessages,
+) {
+    var [error, validatedCurrentPassword] =
+        validateItem(passwordValidation, "Current Password", currentPassword);
+    if (error) {
+        errorMessages.currentPassword = error;
+    }
+
+    var [error, validatedNewPassword] =
+        validateItem(passwordValidation, "New Password", newPassword);
+    if (error) {
+        errorMessages.newPassword = error;
+    }
+
+    var [error, validatedRetypedPassword] =
+        validateItem(passwordValidation, "Retyped Password", retypedPassword);
+    if (error) {
+        errorMessages.retypedPassword = error;
+    }
+
+    if (validatedNewPassword === validatedCurrentPassword && !errorMessages.newPassword) {
+        errorMessages.newPassword = "New password cannot be the same as the old one";
+    }
+
+    if (validatedRetypedPassword !== validatedNewPassword && !errorMessages.newPassword && !errorMessages.retypedPassword) {
+        errorMessages.newPassword = "Password must be the same";
+        errorMessages.retypedPassword = "Password must be the same";
+    }
+
+    return [
+        validatedCurrentPassword,
+        validatedNewPassword,
+        validatedRetypedPassword,
+    ];
+}
+
 module.exports = {
     validateUserRegistration,
     validateUserLogin,
     validateUpdateEmail,
+    validatedUpdatePassword,
 }

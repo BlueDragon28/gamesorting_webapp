@@ -23,6 +23,7 @@ const {
     validateUserRegistration,
     validateUserLogin,
     validateUpdateEmail,
+    validatedUpdatePassword,
 } = require("../utils/validation/htmx/validateUser");
 const { ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
@@ -322,6 +323,66 @@ router.get("/update-password", wrapAsync(async function(req, res) {
             retypedPassword: "",
         },
     });
+}));
+
+router.post("/update-password", wrapAsync(async function(req, res) {
+    if (!req.session.user) {
+        return htmxRedirect(req, res, "/");
+    }
+
+    const userID = req.session.user.id;
+    const {
+        "current-password": currentPassword,
+        "new-password": newPassword,
+        "new-retyped-password": retypedPassword,
+    } = req.body;
+
+    const errorMessages = {};
+
+    const [
+        validatedCurrentPassword,
+        validatedNewPassword,
+        validatedRetypedPassword,
+    ] = validatedUpdatePassword(
+        currentPassword, 
+        newPassword, 
+        retypedPassword, 
+        errorMessages
+    );
+
+    await existingOrNewConnection(null, async function(connection) {
+        if (Object.keys(errorMessages).length) {
+            return;
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            errorMessages.flobal = "Could not find user";
+            return;
+        }
+
+        if (!foundUser.compare(foundUser.username, validatedCurrentPassword)) {
+            errorMessages.currentPassword = "Invalid Password";
+            return;
+        }
+
+        foundUser.setPassword(validatedNewPassword);
+        await foundUser.save(connection);
+    });
+
+    if (Object.keys(errorMessages).length) {
+        res.render("partials/htmx/login/edit_password.ejs", {
+            editValues: {
+                currentPassword: validatedCurrentPassword,
+                newPassword: validatedNewPassword,
+                retypedPassword: validatedRetypedPassword,
+            },
+            errorMessages,
+        });
+    } else {
+        htmxRedirect(req, res, "/users/informations");
+    }
 }));
 
 router.post("/lostpassword", wrapAsync(async function(req, res) {
