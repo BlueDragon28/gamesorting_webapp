@@ -4,19 +4,37 @@
 <div class="row mt-3">
     <div class="col-12 col-md-6 offset-md-3">
         <div class="card">
-            <form class="card-body">
+            <form class="card-body"
+                hx-post="/users/update-email"
+                hx-push-url="false"
+                hx-swap="innerHTMX"
+            >
 <% } %>
+
+<%
+const isErrorAvailable = typeof errorMessages === "object";
+%>
 
                 <h1 class="card-title fs-4">Update Email</h1>
 
+                <% if (isErrorAvailable && errorMessages.global) { %>
+                <p class="text-danger fs-5 text-underline"><%= errorMessages.global %></p>
+                <% } %>
+
                 <div class="form-floating my-3">
-                    <input class="form-control" type="email" name="email" id="email" placeholder="" value="<%= editValues.email %>">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.email ? 'is-invalid' : '' %>" type="email" name="email" id="email" placeholder="" value="<%= editValues.email %>">
                     <label for="email">Email</label>
+                    <% if (isErrorAvailable && errorMessages.email) { %>
+                    <div class="invalid-feedback"><%= errorMessages.email %></div>
+                    <% } %>
                 </div>
 
                 <div class="form-floating my-3">
-                    <input class="form-control" type="password" name="password" id="password" placeholder="" value="<%= editValues.password %>">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.password ? 'is-invalid' : '' %>" type="password" name="password" id="password" placeholder="" value="<%= editValues.password %>">
                     <label for="password">Password</label>
+                    <% if (isErrorAvailable && errorMessages.password) { %>
+                    <div class="invalid-feedback"><%= errorMessages.password %></div>
+                    <% } %>
                 </div>
 
                 <button class="btn btn-outline-secondary" type="submit">Update Email</button>

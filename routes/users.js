@@ -22,6 +22,7 @@ const {
 const {
     validateUserRegistration,
     validateUserLogin,
+    validateUpdateEmail,
 } = require("../utils/validation/htmx/validateUser");
 const { ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
@@ -239,6 +240,63 @@ router.get("/update-email", wrapAsync(async function(req, res) {
             password: "",
         },
     });
+}));
+
+router.post("/update-email", wrapAsync(async function(req, res) {
+    if (!req.session.user) {
+        return htmxRedirect(req, res, "/");
+    }
+
+    const userID = req.session.user.id;
+    const {
+        email,
+        password
+    } = req.body;
+
+    const errorMessages = {};
+
+    const [
+        validatedEmail,
+        validatedPassword,
+    ] = validateUpdateEmail(email, password, errorMessages);
+
+    await existingOrNewConnection(null, async function(connection) {
+        if (Object.keys(errorMessages).length) {
+            return;
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            errorMessages.global = "Could not find user";
+            return;
+        }
+
+        if (!foundUser.compare(foundUser.username, validatedPassword)) {
+            errorMessages.password = "Invalid Password";
+            return;
+        }
+
+        if (await User.checkIfItsDuplicate(foundUser.username, validatedEmail, connection, foundUser.id)) {
+            errorMessages.global = "Email already exists";
+            return;
+        }
+
+        foundUser.email = validatedEmail;
+        await foundUser.save(connection);
+    });
+
+    if (Object.keys(errorMessages).length) {
+        res.render("partials/htmx/login/edit_email.ejs", {
+            editValues: {
+                email: validatedEmail,
+                password: validatedPassword,
+            },
+            errorMessages,
+        });
+    } else {
+        htmxRedirect(req, res, "/users/informations");
+    }
 }));
 
 router.post("/lostpassword", wrapAsync(async function(req, res) {

@@ -107,7 +107,28 @@ function validateUserLogin(
     ];
 }
 
+function validateUpdateEmail(
+    email,
+    password,
+    errorMessages,
+) {
+    var [error, validatedEmail] = 
+        validateItem(emailValidation, "Email", email);
+    if (error) {
+        errorMessages.email = error;
+    }
+
+    var [error, validatedPassword] =
+        validateItem(passwordValidation, "Password", password);
+    if (error) {
+        errorMessages.password = error;
+    }
+
+    return [validatedEmail, validatedPassword];
+}
+
 module.exports = {
     validateUserRegistration,
     validateUserLogin,
+    validateUpdateEmail,
 }

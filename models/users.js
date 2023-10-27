@@ -380,16 +380,18 @@ class User {
         });
     }
 
-    static async checkIfItsDuplicate(username, email, connection) {
+    static async checkIfItsDuplicate(username, email, connection, userIDNotIncluded) {
         return await existingOrNewConnection(connection, async function(connection) {
             const queryStatement =
                 "SELECT COUNT(1) AS count FROM users WHERE " +
                 "(Username = ? OR Email = ?) " +
+                (userIDNotIncluded ? "AND UserID != ? " : '') +
                 "LIMIT 1";
 
             const queryArgs = [
                 username,
                 email,
+                ...(userIDNotIncluded ? [userIDNotIncluded] : []),
             ];
 
             try {
