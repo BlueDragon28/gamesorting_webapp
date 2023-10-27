@@ -21,6 +21,7 @@ const {
 } = require("../utils/validation/users");
 const {
     validateUserRegistration,
+    validateUserLogin,
 } = require("../utils/validation/htmx/validateUser");
 const { ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
@@ -163,24 +164,39 @@ router.post("/register", wrapAsync(async function(req, res) {
     }).send();
 }));
 
-router.post("/login", validateLoginUser(), wrapAsync(async function(req, res) {
-    const { username, password } = req.body.user;
-    const foundUser = await User.findByNameOrEmail(username);
-
-    if (foundUser && !foundUser.compare(username, password) ||
-            !foundUser) {
-        req.session.user = null;
-        req.flash("error", "Invalid Credentials");
-        return res.redirect(`${req.baseUrl}/login`);
+router.post("/login", wrapAsync(async function(req, res) {
+    if (req.session.user) {
+        if (req.htmx.isHTMX) {
+            return res.set({
+                "HX-Location": "/collections",
+            }).send();
+        } else {
+            return res.redirect("/collections");
+        }
     }
 
-    req.session.user = foundUser.toBaseObject();
+    const {
+        username,
+        password,
+        emptySet
+    } = req.body;
 
-    req.flash("success", "Welcome Back!");
-    res.redirect("/collections");
-}),
-    parseCelebrateError,
-    errorsWithPossibleRedirect("Invalid credentials", "/users/login"));
+    const errorMessages = {};
+
+    const [
+        validatedUsername,
+        validatedPassword,
+    ] = validateUserLogin(emptySet, username, password, errorMessages);
+
+    res.render("partials/htmx/login/login.ejs", {
+        loginValue: {
+            emptySet,
+            username: validatedUsername,
+            password: validatedPassword,
+        },
+        errorMessages,
+    });
+}));
 
 router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
     const userID = req.session.user.id;

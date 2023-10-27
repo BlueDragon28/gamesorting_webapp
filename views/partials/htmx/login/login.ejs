@@ -4,21 +4,40 @@
 <div class="row mt-3">
     <div class="col-12 col-md-6 offset-md-3">
         <div class="card">
-            <form class="card-body">
+            <form class="card-body"
+                hx-post="/users/login"
+                hx-swap="innerHTML"
+                hx-push-url="false"
+                >
 <% } %>
+
+<%
+const isValueAvailable = typeof loginValue === "object";
+const isErrorAvailable = typeof errorMessages === "object";
+%>
 
                 <h1 class="card-title fs-4">Login</h1>
 
-                <input type="hidden" name="emptySet" value="">
+                <% if (isErrorAvailable && errorMessages.global) { %>
+                <p class="text-danger fs-5 text-underline"><%= errorMessages.global %></p>
+                <% } %>
+
+                <input type="hidden" name="emptySet" value="<%= isValueAvailable ? loginValue.emptySet : '' %>">
 
                 <div class="form-floating my-3">
-                    <input class="form-control" type="text" name="username" id="username" placeholder="" value="">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.username ? 'is-invalid' : '' %>" type="text" name="username" id="username" placeholder="" value="<%= isValueAvailable ? loginValue.username : '' %>">
                     <label for="username">Username/Email</label>
+                    <% if (isErrorAvailable && errorMessages.username) { %>
+                    <div class="invalid-feedback"><%= errorMessages.username %></div>
+                    <% } %>
                 </div>
 
                 <div class="form-floating my-3">
-                    <input class="form-control" type="password" name="password" id="password" placeholder="" value="">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.password ? 'is-invalid' : '' %>" type="password" name="password" id="password" placeholder="" value="<%= isValueAvailable ? loginValue.password : '' %>">
                     <label for="password">Password</label>
+                    <% if (isErrorAvailable && errorMessages.password) { %>
+                    <div class="invalid-feedback"><%= errorMessages.password %></div>
+                    <% } %>
                 </div>
 
                 <button type="submit" class="btn btn-outline-secondary">Login</button>

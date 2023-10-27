@@ -70,6 +70,44 @@ function validateUserRegistration(
     ];
 }
 
+function validateUserLogin(
+    emptySet,
+    username,
+    password,
+    errorMessages,
+) {
+    var [error] =
+        validateItem(emptyValidation, "Empty Set", emptySet);
+    if (error) {
+        errorMessages.global = "Invalid Login Form";
+    }
+
+    var [error, validatedUsername] =
+        validateItem(usernameValidation, "Username", username);
+    if (error) {
+        const [emailError, validatedEmail] =
+            validateItem(emailValidation, "Email", username);
+
+        if (emailError) {
+            errorMessages.username = error;
+        } else {
+            validatedUsername = validatedEmail;
+        }
+    }
+
+    var [error, validatedPassword] =
+        validateItem(passwordValidation, "Password", password);
+    if (error) {
+        errorMessages.password = error;
+    }
+
+    return [
+        validatedUsername,
+        validatedPassword,
+    ];
+}
+
 module.exports = {
     validateUserRegistration,
+    validateUserLogin,
 }
