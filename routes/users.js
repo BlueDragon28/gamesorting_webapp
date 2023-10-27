@@ -59,17 +59,6 @@ router.get("/login", function(req, res) {
     res.render("partials/htmx/login/login.ejs");
 });
 
-router.get("/logout", function(req, res) {
-    if (!req.session.user || !checkIfUserValid(req.session.user)) {
-        req.flash("success", "Already Logged Out");
-        return res.redirect("/");
-    }
-
-    req.session.user = null;
-    req.flash("success", "Successfully Logged Out");
-    res.redirect("/");
-});
-
 router.get("/lostpassword", function(req, res) {
     if (req.session.user && checkIfUserValid(req.session.user)) {
         req.flash("success", "Already logged in");
@@ -230,6 +219,18 @@ router.post("/login", wrapAsync(async function(req, res) {
         res.redirect("/collections");
     }
 }));
+
+router.post("/logout", function(req, res) {
+    req.session.user = null;
+
+    if (req.htmx.isHTMX) {
+        res.set({
+            "HX-Location": "/",
+        }).send();
+    } else {
+        res.redirect("/");
+    }
+});
 
 router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
