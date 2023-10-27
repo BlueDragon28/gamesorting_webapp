@@ -236,10 +236,37 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
     const userID = req.session.user.id;
 
     const foundUser = await User.findByID(userID);
+    if (!foundUser || !(foundUser instanceof User || !foundUser.isValid())) {
+        req.flash("error", "Failed to found user");
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).status(204).send();
+    }
 
-    res.locals.activeLink = "UserInformations"; // Activate user information navlink
+    res.locals.activeLink = "UserInformations";
+    res.render("partials/htmx/login/informations.ejs", {
+        user: foundUser,
+    });
+}));
 
-    res.render("login/userInformations", { user: foundUser });
+router.get("/update-email", wrapAsync(async function(req, res) {
+    const userID = req.session.user.id;
+
+    const foundUser = await User.findByID(userID);
+    if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+        req.flahs("error", "Failed to found user");
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).status(204).send();
+    }
+
+    res.locals.activeLink = "UserInformations";
+    res.render("partials/htmx/login/edit_email.ejs", {
+        editValues: {
+            email: foundUser.email,
+            password: "",
+        },
+    });
 }));
 
 router.post("/lostpassword", wrapAsync(async function(req, res) {
