@@ -188,14 +188,43 @@ router.post("/login", wrapAsync(async function(req, res) {
         validatedPassword,
     ] = validateUserLogin(emptySet, username, password, errorMessages);
 
-    res.render("partials/htmx/login/login.ejs", {
-        loginValue: {
-            emptySet,
-            username: validatedUsername,
-            password: validatedPassword,
-        },
-        errorMessages,
+    const loginUser = await existingOrNewConnection(null, async function(connection) {
+        if (Object.keys(errorMessages).length) {
+            return;
+        }
+
+        const foundUser = await User.findByNameOrEmail(username, connection);
+
+        if (
+            !foundUser || 
+            !foundUser.compare(username, password)
+        ) {
+            errorMessages.global = "Invalid Credentials";
+            return;
+        }
+
+        return foundUser;
     });
+
+    if (Object.keys(errorMessages).length || !loginUser) {
+        return res.render("partials/htmx/login/login.ejs", {
+            loginValue: {
+                emptySet,
+                username: validatedUsername,
+                password: validatedPassword,
+            },
+            errorMessages,
+        });
+    }
+
+    req.session.user = loginUser.toBaseObject();
+    if (req.htmx.isHTMX) {
+        res.set({
+            "HX-Location": "/collections",
+        }).send();
+    } else {
+        res.redirect("/collections");
+    }
 }));
 
 router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
