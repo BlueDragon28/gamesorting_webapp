@@ -299,6 +299,31 @@ router.post("/update-email", wrapAsync(async function(req, res) {
     }
 }));
 
+router.get("/update-password", wrapAsync(async function(req, res) {
+    if (!req.session.user) {
+        return htmxRedirect(req, res, "/");
+    }
+
+    const userID = req.session.user.id;
+
+    const foundUser = await User.findByID(userID);
+    if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+        req.flahs("error", "Failed to found user");
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).status(204).send();
+    }
+
+    res.locals.activeLink = "UserInformations";
+    res.render("partials/htmx/login/edit_password.ejs", {
+        editValues: {
+            currentPassword: "",
+            newPassword: "",
+            retypedPassword: "",
+        },
+    });
+}));
+
 router.post("/lostpassword", wrapAsync(async function(req, res) {
     throw new InternalError("Not yet implemented");
     const { email } = req.body;
