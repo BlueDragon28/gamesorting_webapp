@@ -51,6 +51,17 @@ function checkIfHTMX(req, res, next) {
     next();
 }
 
+function htmxRedirect(req, res, location) {
+    if (req.htmx.isHTMX) {
+        res.set({
+            "HX-Location": location,
+        }).send();
+    } else {
+        res.redirect(location);
+    }
+}
+
 module.exports = {
-    checkIfHTMX
+    checkIfHTMX,
+    htmxRedirect,
 };

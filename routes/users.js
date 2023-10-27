@@ -25,18 +25,13 @@ const {
 } = require("../utils/validation/htmx/validateUser");
 const { ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
+const { htmxRedirect } = require("../utils/htmx/htmx");
 
 const router = express.Router();
 
 router.get("/register", function(req, res) {
     if (req.session.user) {
-        if (req.htmx.isHTMX) {
-            return res.set({
-                "HX-Location": "/collections",
-            }).send();
-        } else {
-            return res.redirect("/collections");
-        }
+        return htmxRedirect(req, res, "/collections");
     }
 
     res.locals.activeLink = "UserRegister";
@@ -45,17 +40,10 @@ router.get("/register", function(req, res) {
 
 router.get("/login", function(req, res) {
     if (req.session.user) {
-        if (req.htmx.isHTMX) {
-            return res.set({
-                "HX-Location": "/collections",
-            }).send();
-        } else {
-            return res.redirect("/collections");
-        }
+        return htmxRedirect(req, res, "/collections");
     }
 
     res.locals.activeLink = "UserLogin";
-
     res.render("partials/htmx/login/login.ejs");
 });
 
@@ -148,24 +136,12 @@ router.post("/register", wrapAsync(async function(req, res) {
     }
 
     req.session.user = newUser.toBaseObject();
-    if (req.htmx.isHTMX) {
-        res.set({
-            "HX-Location": "/collections",
-        }).send();
-    } else {
-        res.redirect("/collections");
-    }
+    htmxRedirect(req, res, "/collections");
 }));
 
 router.post("/login", wrapAsync(async function(req, res) {
     if (req.session.user) {
-        if (req.htmx.isHTMX) {
-            return res.set({
-                "HX-Location": "/collections",
-            }).send();
-        } else {
-            return res.redirect("/collections");
-        }
+        return htmxRedirect(req, res, "/collections");
     }
 
     const {
@@ -211,28 +187,20 @@ router.post("/login", wrapAsync(async function(req, res) {
     }
 
     req.session.user = loginUser.toBaseObject();
-    if (req.htmx.isHTMX) {
-        res.set({
-            "HX-Location": "/collections",
-        }).send();
-    } else {
-        res.redirect("/collections");
-    }
+    htmxRedirect(req, res, "/collections");
 }));
 
 router.post("/logout", function(req, res) {
     req.session.user = null;
 
-    if (req.htmx.isHTMX) {
-        res.set({
-            "HX-Location": "/",
-        }).send();
-    } else {
-        res.redirect("/");
-    }
+    htmxRedirect(req, res, "/");
 });
 
 router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
+    if (!req.session.user) {
+        return htmxRedirect(req, res, "/");
+    }
+
     const userID = req.session.user.id;
 
     const foundUser = await User.findByID(userID);
@@ -250,6 +218,10 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
 }));
 
 router.get("/update-email", wrapAsync(async function(req, res) {
+    if (!req.session.user) {
+        return htmxRedirect(req, res, "/");
+    }
+
     const userID = req.session.user.id;
 
     const foundUser = await User.findByID(userID);
