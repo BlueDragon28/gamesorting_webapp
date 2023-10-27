@@ -54,7 +54,7 @@ function checkIfHTMX(req, res, next) {
 function htmxRedirect(req, res, location) {
     if (req.htmx.isHTMX) {
         res.set({
-            "HX-Location": location,
+            "HX-Location": `{"path":"${location}","headers":{"HX-Boosted":"true"}}`,
         }).send();
     } else {
         res.redirect(location);
