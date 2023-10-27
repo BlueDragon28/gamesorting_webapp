@@ -159,9 +159,13 @@ router.post("/register", wrapAsync(async function(req, res) {
     }
 
     req.session.user = newUser.toBaseObject();
-    res.set({
-        "HX-Location": "/collections",
-    }).send();
+    if (req.htmx.isHTMX) {
+        res.set({
+            "HX-Location": "/collections",
+        }).send();
+    } else {
+        res.redirect("/collections");
+    }
 }));
 
 router.post("/login", wrapAsync(async function(req, res) {
