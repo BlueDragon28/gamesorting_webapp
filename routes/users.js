@@ -43,14 +43,19 @@ router.get("/register", function(req, res) {
 });
 
 router.get("/login", function(req, res) {
-    if (req.session.user && checkIfUserValid(req.session.user)) {
-        req.flash("success", "Already Logged In");
-        return res.redirect("/collections");
+    if (req.session.user) {
+        if (req.htmx.isHTMX) {
+            return res.set({
+                "HX-Location": "/collections",
+            }).send();
+        } else {
+            return res.redirect("/collections");
+        }
     }
 
     res.locals.activeLink = "UserLogin";
 
-    res.render("login/index");
+    res.render("partials/htmx/login/login.ejs");
 });
 
 router.get("/logout", function(req, res) {
