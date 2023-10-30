@@ -30,8 +30,17 @@
                         class="btn m-0 p-0"
                         href="/users/update-password"
                         hx-boost="true"
-                    ><%- include("../icons/edit.ejs") %></button>
+                    ><%- include("../icons/edit.ejs") %></a>
                 </div>
+
+                <button 
+                    class="btn btn-outline-danger mt-2" 
+                    type="button"
+                    hx-get="/users/delete-modal"
+                    hx-push-url="false"
+                    hx-target="#modal-content-section"
+                    hx-swap="innerHTML"
+                >Delete</button>
             </div>
         </div>
     </div>
