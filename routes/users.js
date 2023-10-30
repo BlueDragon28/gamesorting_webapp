@@ -219,6 +219,30 @@ router.get("/informations", isLoggedIn, wrapAsync(async function(req, res) {
     });
 }));
 
+router.get("/update-username", wrapAsync(async function(req, res) {
+    if (!req.session.user) {
+        return htmxRedirect(req, res, "/");
+    }
+
+    const userID = req.session.user.id;
+
+    const foundUser = await User.findByID(userID);
+    if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+        req.flash("error", "Failed to found user");
+        return res.set({
+            "HX-Trigger": "new-flash-event",
+        }).status(204).send();
+    }
+
+    res.locals.activeLink = "UserInformations";
+    res.render("partials/htmx/login/edit_username.ejs", {
+        editValues: {
+            username: foundUser.username,
+            password: "",
+        },
+    });
+}));
+
 router.get("/update-email", wrapAsync(async function(req, res) {
     if (!req.session.user) {
         return htmxRedirect(req, res, "/");

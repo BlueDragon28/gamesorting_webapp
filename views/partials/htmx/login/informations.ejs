@@ -6,7 +6,14 @@
     <div class="col-12 col-md-6 offset-md-3">
         <div class="card">
             <div class="card-body">
-                <h1 class="card-title fs-4"><%= user.username %></h1>
+                <div class="d-flex flex-row justify-content-between align-items-center">
+                    <h1 class="card-title fs-4"><%= user.username %></h1>
+                    <a 
+                        class="btn m-0 p-0"
+                        href="/users/update-username"
+                        hx-boost="true"
+                    ><%- include("../icons/edit.ejs") %></a>
+                </div>
 
                 <div class="d-flex flex-row justify-content-between align-items-center">
                     <div><%= user.email %></div>
@@ -17,7 +24,7 @@
                     ><%- include("../icons/edit.ejs") %></a>
                 </div>
 
-                <div class="d-flex flex-row justify-content-between align-items-center mt-3">
+                <div class="d-flex flex-row justify-content-between align-items-center">
                     <div>Password: ****</div>
                     <a 
                         class="btn m-0 p-0"
