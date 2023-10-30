@@ -24,6 +24,7 @@ const {
     validateUserLogin,
     validateUpdateEmail,
     validatedUpdatePassword,
+    validateUpdateUsername,
 } = require("../utils/validation/htmx/validateUser");
 const { ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
@@ -241,6 +242,65 @@ router.get("/update-username", wrapAsync(async function(req, res) {
             password: "",
         },
     });
+}));
+
+router.post("/update-username", wrapAsync(async function(req, res) {
+    if (!req.session.user) {
+        return htmxRedirect(req, res, "/");
+    }
+
+    const userID = req.session.user.id;
+    const { 
+        username, 
+        password 
+    } = req.body;
+
+    const errorMessages = {};
+
+    const [
+        validatedUsername,
+        validatedPassword,
+    ] = validateUpdateUsername(username, password, errorMessages);
+
+    await existingOrNewConnection(null, async function(connection) {
+        if (Object.keys(errorMessages).length) {
+            return;
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            errorMessages.global = "Could not find user";
+            return;
+        }
+
+        if (!foundUser.compare(foundUser.username, validatedPassword)) {
+            errorMessages.password = "Invalid Password";
+            return;
+        }
+
+        if (validatedUsername === foundUser.username) return;
+
+        if (await User.checkIfItsDuplicate(validatedUsername, foundUser.email, connection, foundUser.id)) {
+            errorMessages.global = "Username already exists";
+            return;
+        }
+
+        foundUser.username = validatedUsername;
+        await foundUser.save(connection);
+    });
+
+    if (Object.keys(errorMessages).length) {
+        res.render("partials/htmx/login/edit_username.ejs", {
+            editValues: {
+                username: validatedUsername,
+                password: validatedPassword,
+            },
+            errorMessages,
+        });
+    } else {
+        htmxRedirect(req, res, "/users/informations");
+    }
 }));
 
 router.get("/update-email", wrapAsync(async function(req, res) {
