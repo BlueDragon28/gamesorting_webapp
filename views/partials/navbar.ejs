@@ -28,7 +28,7 @@
                         <a href="/users/informations" class="nav-link <%= activeLink === 'UserInformations' ? 'active' : '' %>"><%= currentUser.username %></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" hx-post="/users/logout" hx-push-url="false">Logout</a>
+                        <a class="nav-link" href="#" hx-post="/users/logout" hx-push-url="false">Logout</a>
                     </li>
                 <% } else { %>
                     <li class="nav-item">
