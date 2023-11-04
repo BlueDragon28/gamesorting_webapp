@@ -19,6 +19,7 @@ const {
     deleteCollection,
     deleteCustomDatasFromListColumnType,
     deleteItem,
+    deleteList,
 } = require("../utils/data/deletionHelper");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const { isLoggedIn, isUserPasswordValid } = require("../utils/users/authentification");
@@ -503,7 +504,7 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
         }
 
         const parentCollection = foundList.parentCollection;;
-        await foundList.delete(connection);
+        await deleteList(foundList.id, connection);
         if (await List.getCount(parentCollection, connection) === 0n) {
             await parentCollection.delete(connection);
         }
@@ -1443,7 +1444,7 @@ router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) 
             return ["You do not own this item"];
         }
 
-        await foundItem.delete(connection);
+        await deleteItem(foundItem.id, connection);
         return [null];
     });
 
