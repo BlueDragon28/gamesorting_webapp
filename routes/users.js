@@ -25,6 +25,7 @@ const {
     validateUpdateEmail,
     validatedUpdatePassword,
     validateUpdateUsername,
+    validatePassword,
 } = require("../utils/validation/htmx/validateUser");
 const { ValueError, InternalError } = require("../utils/errors/exceptions");
 const { sendLostPasswordEmail } = require("../utils/email/email");
@@ -487,7 +488,62 @@ router.get("/delete-modal", wrapAsync(async function(req, res) {
     res.locals.activeLink = "UserInformations";
     res.render("partials/htmx/modals/deleteUserModal.ejs", {
         user: foundUser,
+        passwordInput: "",
+        isValidation: false,
     });
+}));
+
+router.delete("/", wrapAsync(async function(req, res) {
+    if (!req.session.user) {
+        return htmxRedirect(req, res, "/");
+    }
+
+    const userID = req.session.user.id;
+    const { password } = req.body;
+
+    const errorMessages = {};
+
+    const validatedPassword = validatePassword(password, errorMessages);
+
+    const [errorMessage, foundUser] = await existingOrNewConnection(null, async function(connection) {
+        const foundUser = await User.findByID(userID, connection);
+
+        if (Object.keys(errorMessages).length) {
+            return [null, foundUser];
+        }
+
+        if (!foundUser.compare(foundUser.username, validatedPassword)) {
+            errorMessages.password = "Invalid Password";
+            return [null, foundUser];
+        }
+
+        try {
+            await deleteUser(userID, connection);
+        } catch (_) {
+            return ["Failed to delete user", foundUser];
+        }
+
+        req.session.user = undefined;
+        return [null, foundUser];
+    });
+
+    if (Object.keys(errorMessages).length) {
+        return res.render("partials/htmx/modals/deleteUserModal.ejs", {
+            user: foundUser,
+            passwordInput: password,
+            errorMessages,
+            isValidation: true,
+        });
+    }
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        }).status(204).send();
+    } else {
+        htmxRedirect(req, res, "/");
+    }
 }));
 
 router.post("/lostpassword", wrapAsync(async function(req, res) {

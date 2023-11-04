@@ -1,6 +1,18 @@
+<% if (!isValidation) { %>
 <div id="delete-user-modal-<%= user.id %>" class="modal fade" tabindex="-1" aria-labelledby="deleteUserModal" aria-hidden="true" gs-new-modal="true">
     <div class="modal-dialog">
-        <form class="modal-content">
+        <form 
+            class="modal-content"
+            hx-delete="/users"
+            hx-push-url="false"
+            hx-swap="innerHTML"
+        >
+<% } %>
+
+<%
+const isErrorAvailable = typeof errorMessages === "object";
+%>
+
             <div class="modal-header">
                 <h1 class="modal-title fs-5">Delete User</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -8,14 +20,20 @@
             <div class="modal-body">
                 <p>Do you really want to delete this account?</p>
                 <div class="form-floating my-3">
-                    <input class="form-control" type="password" name="password" id="password" placeholder="" value="">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.password ? 'is-invalid' : '' %>" type="password" name="password" id="password" placeholder="" value="<%= passwordInput %>">
                     <label for="password">Password</label>
+                    <% if (isErrorAvailable && errorMessages.password) { %>
+                    <div class="invalid-feedback"><%= errorMessages.password %></div>
+                    <% } %>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-danger">Delete</button>
             </div>
+
+<% if (!isValidation) { %>
         </form>
     </div>
 </div>
+<% } %>

@@ -187,10 +187,24 @@ function validatedUpdatePassword(
     ];
 }
 
+function validatePassword(
+    password,
+    errorMessages,
+) {
+    var [error, validatedPassword] =
+        validateItem(passwordValidation, "Password", password);
+    if (error) {
+        errorMessages.password = error;
+    }
+
+    return validatedPassword;
+}
+
 module.exports = {
     validateUserRegistration,
     validateUserLogin,
     validateUpdateUsername,
     validateUpdateEmail,
     validatedUpdatePassword,
+    validatePassword
 }
