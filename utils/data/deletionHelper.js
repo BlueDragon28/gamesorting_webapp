@@ -42,11 +42,16 @@ async function deleteCustomDatasFromItemID(itemID, connection) {
 }
 
 async function deleteItem(itemID, connection) {
-    if (!bigint.isValid(itemID)) {
-        return;
-    }
+    let foundItem;
+    if (!(itemID instanceof Item)) {
+        if (!bigint.isValid(itemID)) {
+            return;
+        }
 
-    const foundItem = await Item.findByID(itemID, connection);
+        foundItem = await Item.findByID(itemID, connection);
+    } else {
+        foundItem = itemID;
+    }
 
     if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
         return;
@@ -85,11 +90,16 @@ async function deleteListSorting(list, connection) {
 }
 
 async function deleteList(listID, connection) {
-    if (!bigint.isValid(listID)) {
-        return;
-    }
+    let foundList;
+    if (!(listID instanceof List)) {
+        if (!bigint.isValid(listID)) {
+            return;
+        }
 
-    const foundList = await List.findByID(listID, connection);
+        foundList = await List.findByID(listID, connection);
+    } else {
+        foundList = listID;
+    }
 
     if (!foundList || !foundList instanceof List || !foundList.isValid()) {
         return;
@@ -126,12 +136,22 @@ async function deleteCollection(collectionID, connection) {
 }
 
 async function deleteUser(userID, connection) {
-    if (!bigint.isValid(userID)) {
+    let foundUser;
+    if (!(userID instanceof User)) {
+        if (!bigint.isValid(userID)) {
+            return;
+        }
+
+        foundUser = await User.findByID(userID, connection);
+    } else {
+        foundUser = userID;
+    }
+
+    if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
         return;
     }
 
-    const foundUser = await User.findByID(userID, connection);
-    const [foundCollections] = await Collection.findFromUserID(userID, 0, connection);
+    const [foundCollections] = await Collection.findFromUserID(foundUser.id, 0, connection);
 
     for (let collection of foundCollections) {
         await deleteCollection(collection.id, connection);

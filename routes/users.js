@@ -518,8 +518,9 @@ router.delete("/", wrapAsync(async function(req, res) {
         }
 
         try {
-            await deleteUser(userID, connection);
-        } catch (_) {
+            await deleteUser(foundUser, connection);
+        } catch (err) {
+            console.log(err);
             return ["Failed to delete user", foundUser];
         }
 

@@ -504,7 +504,7 @@ router.delete("/lists/:listID", wrapAsync(async function(req, res) {
         }
 
         const parentCollection = foundList.parentCollection;;
-        await deleteList(foundList.id, connection);
+        await deleteList(foundList, connection);
         if (await List.getCount(parentCollection, connection) === 0n) {
             await parentCollection.delete(connection);
         }
@@ -1444,7 +1444,7 @@ router.delete("/lists/:listID/item/:itemID", wrapAsync(async function(req, res) 
             return ["You do not own this item"];
         }
 
-        await deleteItem(foundItem.id, connection);
+        await deleteItem(foundItem, connection);
         return [null];
     });
 
