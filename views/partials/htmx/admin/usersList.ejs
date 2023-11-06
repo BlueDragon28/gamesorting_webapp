@@ -1,7 +1,7 @@
 <% layout("layouts/boilerplate.ejs") -%>
 
-<div class="row mt-3">
-    <div class="col-md-6 offset-md-3">
+<div class="row overflow-y-auto" style="height: 100%;">
+    <div class="col-md-6 offset-md-3 my-3">
         <div class="card">
             <div class="card-header fw-bold">
                 Users Control
@@ -11,6 +11,11 @@
                     <a hx-boost="true" href="/admin/users/<%= user.id %>" class="list-group-item list-group-item-action"><%= user.username %></a>
                 <% } %>
             </div>
+            <%- include("../collections/partials/pagination_footer.ejs", {
+                pagination: typeof pagination === "object" ? pagination : undefined,
+                previousHTMX: ``,
+                nextHTMX: ``,
+            }) %>
         </div>
     </div>
 </div>
