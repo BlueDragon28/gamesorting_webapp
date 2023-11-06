@@ -141,7 +141,7 @@ router.get("/users", Pagination.parsePageNumberMiddleware,
         throw new InternalError("Failed to Query Users");
     }
 
-    res.render("admin/usersControl.ejs", { users, pagination });
+    res.render("partials/htmx/admin/usersList.ejs", { users, pagination });
 }));
 
 router.get("/users/:userID", wrapAsync(async function(req, res) {
