@@ -1,6 +1,8 @@
+<% if (!htmx.isHTMX || (htmx.isHTMX && htmx.isBoosted)) { %>
 <% layout("layouts/boilerplate.ejs") -%>
+<% } %>
 
-<div class="row overflow-y-auto" style="height: 100%;">
+<div id="admin-users-control-panel" class="row overflow-y-auto" style="height: 100%;">
     <div class="col-md-6 offset-md-3 my-3">
         <div class="card">
             <div class="card-header fw-bold">
@@ -13,8 +15,18 @@
             </div>
             <%- include("../collections/partials/pagination_footer.ejs", {
                 pagination: typeof pagination === "object" ? pagination : undefined,
-                previousHTMX: ``,
-                nextHTMX: ``,
+            previousHTMX: `
+                hx-get='/admin/users'
+                hx-target='#admin-users-control-panel'
+                hx-swap='outerHTML'
+                hx-headers='{"GS-currentPage":${pagination.currentPage-1}}'
+            `,
+            nextHTMX: `
+                hx-get='/admin/users'
+                hx-target='#admin-users-control-panel'
+                hx-swap='outerHTML'
+                hx-headers='{"GS-currentPage":${pagination.currentPage+1}}'
+            `,
             }) %>
         </div>
     </div>

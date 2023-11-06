@@ -4,13 +4,25 @@ const { UserActivity } = require("../models/userActivity");
 const { isLoggedIn, isUserPasswordValid } = require("../utils/users/authentification");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const wrapAsync = require("../utils/errors/wrapAsync");
-const Pagination = require("../utils/sql/pagination");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const { returnHasJSONIfNeeded, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const bigint = require("../utils/numbers/bigint");
 const { deleteUser } = require("../utils/data/deletionHelper");
 
 const router = express.Router();
+
+function parseCurrentPageHeader(req, res, next) {
+    const pageHeader = req.get("GS-currentPage");
+    try {
+        req.currentPageNumber = Math.max(Number(pageHeader), 1);
+        if (typeof req.currentPageNumber !== "number" || isNaN(req.currentPageNumber)) {
+            req.currentPageNumber = 1;
+        }
+    } catch {
+        req.currentPageNumber = 1;
+    }
+    next();
+}
 
 async function isUserAdmin(req, res, next) {
     const isUserAdmin = await User.isAdmin(req.session.user.id);
@@ -130,10 +142,10 @@ router.get("/activities/byday/:day", wrapAsync(async function(req, res) {
     res.render("admin/activitiesByDay", { userActivities, uniqueUser});
 }));
 
-router.get("/users", Pagination.parsePageNumberMiddleware,
+router.get("/users", parseCurrentPageHeader,
     wrapAsync(async function(req, res) {
 
-    const pageNumber = req.query.pn;
+    const pageNumber = req.currentPageNumber;
 
     const [users, pagination] = await User.findUsers(pageNumber);
 
