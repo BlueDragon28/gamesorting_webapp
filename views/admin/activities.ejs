@@ -11,7 +11,7 @@
                 <dd class="chart-content">
                     <div class="chart-element-text">Day <%= day.day %></div>
                     <div class="inner-chart-content">
-                        <a class="chart-line" style="width: <%= percentage %>%;" href="/admin/activities/byday/<%= day.day %>"></a>
+                        <a hx-boost="true" class="chart-line" style="width: <%= percentage %>%;" href="/admin/activities/byday/<%= day.day %>"></a>
                     </div>
                 </dd>
                 <% } %>
