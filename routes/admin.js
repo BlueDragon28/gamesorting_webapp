@@ -28,7 +28,7 @@ function parseCurrentPageHeader(req, res, next) {
 async function isUserAdmin(req, res, next) {
     const isUserAdmin = await User.isAdmin(req.session.user.id);
 
-    if (isUserAdmin) {
+    if (!isUserAdmin) {
         if (req.htmx.isHTMX) {
             req.flash("error", "You cannot access this section");
             return res.set({
