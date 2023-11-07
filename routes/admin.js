@@ -8,6 +8,7 @@ const { InternalError, ValueError } = require("../utils/errors/exceptions");
 const { returnHasJSONIfNeeded, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
 const bigint = require("../utils/numbers/bigint");
 const { deleteUser } = require("../utils/data/deletionHelper");
+const { validatePassword } = require("../utils/validation/htmx/validateUser");
 
 const router = express.Router();
 
@@ -158,6 +159,7 @@ router.get("/users", parseCurrentPageHeader,
 
 router.get("/users/:userID", wrapAsync(async function(req, res) {
     let userID = req.params.userID;
+    const displayOnlyElements = req.get("GS-onlyElements") === "true";
 
     if (!userID || !bigint.isValid(userID)) {
         throw new ValueError(404, "Invalid user ID");
@@ -173,7 +175,7 @@ router.get("/users/:userID", wrapAsync(async function(req, res) {
 
     const isCurrentUser = req.session?.user?.id == user.id;
 
-    res.render("admin/userInfo.ejs", { user, isCurrentUser });
+    res.render("admin/userInfo.ejs", { user, isCurrentUser, displayOnlyElements });
 }));
 
 router.get("/users/:userID/bypass-restriction-modal", wrapAsync(async function(req, res) {
@@ -198,63 +200,81 @@ router.get("/users/:userID/bypass-restriction-modal", wrapAsync(async function(r
     
     res.render("partials/htmx/modals/bypassingRestrictionsModal.ejs", {
         user: foundUser,
+        validationPhase: false,
+        editValues: {
+            password: "",
+        },
     });
 }));
 
-router.post("/users/:userID/bypass-restriction", isUserPasswordValid, 
-        wrapAsync(async function(req, res) {
-    const { bypass } = req.body;
-    let userID = req.params.userID;
+router.post("/users/:userID/bypass-restriction", wrapAsync(async function(req, res) {
+    const adminUsersID = req.session.user.id;
+    const { userID } = req.params;
+    const { password } = req.body;
 
-    if (!userID || !bigint.isValid(userID)) {
-        return res.set("Content-type", "application/json")
-            .status(400)
-            .send({
-                type: "ERROR",
-                message: "Invalid user id"
-            });
-    }
+    const errorMessages = {};
 
-    userID = bigint.toBigInt(userID);
+    const validatedPassword = validatePassword(
+        password,
+        errorMessages,
+    );
 
-    if (bypass !== true && bypass !== false) {
-        return res.set("Content-type", "application/json")
-            .status(400)
-            .send({
-                type: "ERROR",
-                message: "Invalid request"
-            });
-    }
+    const [error, foundUser] = await existingOrNewConnection(null, async function(connection) {
+        const foundAdminUser = await User.findByID(adminUsersID, connection);
 
-    const [success, error] = await existingOrNewConnection(null, async function(connection) {
-        try {
-            const user = await User.findByID(userID, connection);
-
-            user.bypassRestriction = bypass;
-
-            if (!user.isValid()) {
-                throw new Error("Invalid user action");
-            }
-
-            await user.save(connection);
-        } catch (error) {
-            return [false, {statusCode: 500, message: `Failed to make user bypass/not bypass restrictions: ${error.message}`}];
+        if (!foundAdminUser || !(foundAdminUser instanceof User) || !foundAdminUser.isValid()) {
+            return ["Could not find current user"];
         }
 
-        return [true, null];
+        if (foundAdminUser.isAdmin !== true) {
+            return ["You are not admin"];
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            return ["Could not find this user"];
+        }
+
+        if (Object.keys(errorMessages).length) {
+            return [null, foundUser];
+        }
+
+        if (!foundAdminUser.compare(foundAdminUser.username, validatedPassword)) {
+            errorMessages.password = "Invalid Password";
+            return [null, foundUser];
+        }
+
+        foundUser.bypassRestriction = foundUser.bypassRestriction === true ?
+            false :
+            true;
+        await foundUser.save(connection);
+
+        return [null, foundUser];
     });
 
-    if (!success) {
-        return next(error);
+    if (error) {
+        req.flash("error", error);
+        return res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        }).status(204).send();
     }
 
-    const successMessage = "Successfully updated bypass restriction";
-    req.flash("success", successMessage);
-    res.set("Content-type", "application/json")
-        .send({
-            type: "SUCCESS",
-            message: successMessage
+    if (Object.keys(errorMessages).length) {
+        res.render("partials/htmx/modals/bypassingRestrictionsModal.ejs", {
+            user: foundUser,
+            editValues: {
+                password: validatedPassword,
+            },
+            errorMessages,
+            validationPhase: true,
         });
+    } else {
+        res.set({
+            "HX-Trigger": "close-import-from-modal",
+            "HX-Location": `{"path":"/admin/users/${foundUser.id}","target":"#admin-user-info-card","swap":"outerHTML","headers":{"GS-onlyElements":"true"}}`,
+        }).status(204).send();
+    }
 }));
 
 router.delete("/users/:userID", isUserPasswordValid, 

@@ -1,5 +1,15 @@
+<% if (!validationPhase) { %>
 <div id="bypassing-restrictions-modal" class="modal fade" tabindex="-1" aria-labelledby="deleteItemModal" aria-hidden="true" gs-new-modal="true">
-    <form class="modal-dialog">
+    <form 
+        class="modal-dialog"
+        hx-post="/admin/users/<%= user.id %>/bypass-restriction"
+        hx-push-url="false"
+        hx-swap="innerHTML"
+    >
+<% } %>
+<%
+const isErrorAvailable = typeof errorMessages === "object";
+%>
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5">Bypassing Restriction</h1>
@@ -12,14 +22,19 @@
                     <p>Make user <%= user.username %> bypassing restriction!</p>
                 <% } %>
                 <div class="form-floating my-3">
-                    <input class="form-control" type="password" name="password" id="password" placeholder="">
+                    <input class="form-control <%= isErrorAvailable && errorMessages.password ? 'is-invalid' : '' %>" type="password" name="password" id="password" placeholder="" value="<%= editValues.password %>">
                     <label for="password">Password</label>
+                    <% if (isErrorAvailable && errorMessages.password) { %>
+                    <div class="invalid-feedback"><%= errorMessages.password %></div>
+                    <% } %>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
-                <button class="btn btn-outline-secondary" type="button">Submit</button>
+                <button class="btn btn-outline-secondary" type="submit">Submit</button>
             </div>
         </div>
+<% if (!validationPhase) { %>
     </form>
 </div>
+<% } %>
