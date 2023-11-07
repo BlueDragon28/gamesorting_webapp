@@ -5,7 +5,7 @@ const { isLoggedIn, isUserPasswordValid } = require("../utils/users/authentifica
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
-const { returnHasJSONIfNeeded, errorsWithPossibleRedirect } = require("../utils/errors/celebrateErrorsMiddleware");
+const { returnHasJSONIfNeeded, errorsWithPossibleRedirect, htmxErrorsFlashMessage } = require("../utils/errors/celebrateErrorsMiddleware");
 const bigint = require("../utils/numbers/bigint");
 const { deleteUser } = require("../utils/data/deletionHelper");
 const { validatePassword } = require("../utils/validation/htmx/validateUser");
@@ -399,7 +399,6 @@ router.delete("/users/:userID", wrapAsync(async function(req, res) {
     }
 }));
 
-router.use(returnHasJSONIfNeeded);
-router.use(errorsWithPossibleRedirect("Oups, something went wrong", "/admin"));
+router.use(htmxErrorsFlashMessage);
 
 module.exports = router;
