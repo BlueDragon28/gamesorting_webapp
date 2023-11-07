@@ -179,9 +179,20 @@ router.get("/users/:userID", wrapAsync(async function(req, res) {
 }));
 
 router.get("/users/:userID/bypass-restriction-modal", wrapAsync(async function(req, res) {
+    const adminUserID = req.session.user.id;
     const { userID } = req.params;
 
     const [errorMessage, foundUser] = await existingOrNewConnection(null, async function(connection) {
+        const foundAdminUser = await User.findByID(adminUserID, connection);
+
+        if (!foundAdminUser || !(foundAdminUser instanceof User) || !foundAdminUser.isValid()) {
+            return ["Could not find current user"];
+        }
+
+        if (foundAdminUser.isAdmin !== true) {
+            return ["You are not admin"];
+        }
+
         const foundUser = await User.findByID(userID, connection);
 
         if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
