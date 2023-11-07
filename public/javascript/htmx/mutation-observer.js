@@ -1,5 +1,6 @@
 import { addListenerToMinMaxInput } from "./custom-columns.js";
 import { addObserverToModalContentSection } from "./open-modal-when-mounted.js";
+import { addObserverToRuntimeFlashSection } from "../flashContainerHeight.js";
 
 function mutationObserver(mutationList, observer) {
     for (const mutation of mutationList) {
@@ -8,6 +9,7 @@ function mutationObserver(mutationList, observer) {
                 if (element.nodeType === 1) {
                     addListenerToMinMaxInput(element);
                     addObserverToModalContentSection(element);
+                    addObserverToRuntimeFlashSection(element);
                 }
             }
         }
