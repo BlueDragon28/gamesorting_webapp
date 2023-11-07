@@ -54,39 +54,6 @@
 
 <% if (!displayOnlyElements) { %>
 
-<div class="modal fade" id="bypass-restriction-modal" tabindex="-1" aria-labelledby="bypassUserRectriction">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5"><%= user.bypassRestriction ? "Stop bypassing restriction" : "Bypass restriction" %></h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <%- include("../partials/modalErrorCard.ejs") %>
-                <div class="mb-3">
-                    <% if (user.bypassRestriction) { %>
-                        <p>Stop user from bypassing restrictions!</p>
-                    <% } else { %>
-                        <p>Make user bypassing restrictions!</p>
-                    <% } %>
-                </div>
-                <div>
-                    <label class="form-label" for="">Admin Password</label>
-                    <input class="form-control" type="password" name="password" id="modal-bypass-admin-password">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <% if (user.bypassRestriction) { %>
-                    <button type="button" class="btn btn-success" id="modal-stop-bypass-button">Stop bypass restrictions</button>
-                <% } else { %>
-                    <button type="button" class="btn btn-success" id="modal-bypass-button">Bypass restrictions</button>
-                <% } %>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" id="delete-user-modal" tabindex="-1" aria-labelledby="deleteUserModal">
     <div class="modal-dialog">
         <div class="modal-content">
