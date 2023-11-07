@@ -101,7 +101,6 @@ function activitiesADay(activities) {
     };
 }
 
-router.use(isLoggedIn);
 router.use(wrapAsync(isUserAdmin));
 router.use(function(req, res, next) {
     res.locals.activeLink = "Admin";
