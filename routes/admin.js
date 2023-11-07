@@ -28,9 +28,15 @@ function parseCurrentPageHeader(req, res, next) {
 async function isUserAdmin(req, res, next) {
     const isUserAdmin = await User.isAdmin(req.session.user.id);
 
-    if (!isUserAdmin) {
-        req.flash("error", "You cannot access this section");
-        return res.redirect("/");
+    if (isUserAdmin) {
+        if (req.htmx.isHTMX) {
+            req.flash("error", "You cannot access this section");
+            return res.set({
+                "HX-Trigger": "new-flash-event",
+            }).status(204).send();
+        } else {
+            return res.redirect("/");
+        }
     }
 
     next();
