@@ -328,55 +328,70 @@ router.get("/users/:userID/delete-modal", wrapAsync(async function(req, res) {
     });
 }));
 
-router.delete("/users/:userID", isUserPasswordValid, 
-        wrapAsync(async function(req, res, next) {
-    
-    const { delete: deleteUserAction } = req.body;
-    let userID = req.params.userID;
+router.delete("/users/:userID", wrapAsync(async function(req, res) {
+    const adminUsersID = req.session.user.id;
+    const { userID } = req.params;
+    const { password } = req.body;
 
-    if (!userID || !bigint.isValid(userID)) {
-        return next({
-            statusCode: 400,
-            message: "Invalid request"
-        });
-    }
+    const errorMessages = {};
 
-    userID = bigint.toBigInt(userID);
+    const validatedPassword = validatePassword(
+        password,
+        errorMessages,
+    );
 
-    if (deleteUserAction !== true) {
-        return next({
-            statusCode: 400,
-            message: "Invalid user id"
-        });
-    }
+    const [error, foundUser] = await existingOrNewConnection(null, async function(connection) {
+        const foundAdminUser = await User.findByID(adminUsersID, connection);
 
-    const [success, error] = await existingOrNewConnection(null, async function(connection) {
-        try {
-            const foundUser = await User.findByID(userID, connection);
-
-            if (!foundUser || !foundUser?.isValid()) {
-                return [false, {statusCode: 400, message:"Invalid user id"}];
-            }
-
-            await deleteUser(userID, connection);
-
-            return [true, null];
-        } catch (error) {
-            return [false, {statusCode: 500, message: `Failed to delete user: ${error.message}`}];
+        if (!foundAdminUser || !(foundAdminUser instanceof User) || !foundAdminUser.isValid()) {
+            return ["Could not find current user"];
         }
-    })
 
-    if (!success) {
-        return next(error);
+        if (foundAdminUser.isAdmin !== true) {
+            return ["You are not admin"];
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            return ["Could not find this user"];
+        }
+
+        if (Object.keys(errorMessages).length) {
+            return [null, foundUser];
+        }
+
+        if (!foundAdminUser.compare(foundAdminUser.username, validatedPassword)) {
+            errorMessages.password = "Invalid Password";
+            return [null, foundUser];
+        }
+
+        await deleteUser(foundUser, connection);
+        return [null, foundUser];
+    });
+
+    if (error) {
+        req.flash("error", error);
+        return res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        }).status(204).send();
     }
 
-    const successMessage = "Successfully deleted user";
-    req.flash("success", successMessage);
-    res.set("Content-type", "application/json")
-        .send({
-            type: "SUCCESS",
-            message: successMessage
+    if (Object.keys(errorMessages).length) {
+        res.render("partials/htmx/modals/adminDeleteUserModal.ejs", {
+            user: foundUser,
+            validationPhase: true,
+            editValues: {
+                password: validatedPassword,
+            },
+            errorMessages,
         });
+    } else {
+        res.set({
+            "HX-Trigger": "close-import-from-modal",
+            "HX-Location": '{"path":"/admin/users","target":"body","headers":{"HX-Boosted":"true"}}',
+        }).status(204).send();
+    }
 }));
 
 router.use(returnHasJSONIfNeeded);
