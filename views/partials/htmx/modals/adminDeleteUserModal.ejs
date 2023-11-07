@@ -1,0 +1,30 @@
+<% if (!validationPhase) { %>
+<div id="admin-delete-user-modal" class="modal fade" tabindex="-1" aria-labelledby="deleteItemModal" aria-hidden="true" gs-new-modal="true">
+    <form 
+        class="modal-dialog"
+    >
+<% } %>
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5">Delete User</h1>
+            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p>Do you realy want to delete <%= user.username %>?</p>
+
+            <div class="form-floating my-3">
+                <input class="form-control" type="password" name="password" id="password" placeholder="" value="<%= editValues.password %>">
+                <label for="password">Password</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+            <button class="btn btn-outline-secondary" type="submit">Delete</button>
+        </div>
+    </div>
+
+<% if (!validationPhase) { %>
+    </form>
+</div>
+<% } %>

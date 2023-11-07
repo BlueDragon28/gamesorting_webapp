@@ -45,7 +45,15 @@
                         </button>
                     <% } %>
 
-                    <button id="delete-user-button" class="btn btn-outline-secondary">Delete</button>
+                    <button 
+                        class="btn btn-outline-secondary"
+                        hx-get="/admin/users/<%= user.id %>/delete-modal"
+                        hx-target="#modal-content-section"
+                        hx-push-url="false"
+                        hx-swap="innerHTML"
+                    >
+                        Delete
+                    </button>
                 <% } %>
             </div>
         </div>

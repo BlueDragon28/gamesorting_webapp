@@ -288,6 +288,46 @@ router.post("/users/:userID/bypass-restriction", wrapAsync(async function(req, r
     }
 }));
 
+router.get("/users/:userID/delete-modal", wrapAsync(async function(req, res) {
+    const adminUserID = req.session.user.id;
+    const { userID } = req.params;
+
+    const [errorMessage, foundUser] = await existingOrNewConnection(null, async function(connection) {
+        const foundAdminUser = await User.findByID(adminUserID, connection);
+
+        if (!foundAdminUser || !(foundAdminUser instanceof User) || !foundAdminUser.isValid()) {
+            return ["Could not find current user"];
+        }
+
+        if (foundAdminUser.isAdmin !== true) {
+            return ["You are not admin"];
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            return ["Could not find user"];
+        }
+
+        return [null, foundUser];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        }).status(204).send();
+    }
+
+    res.render("partials/htmx/modals/adminDeleteUserModal.ejs", {
+        user: foundUser,
+        validationPhase: false,
+        editValues: {
+            password: "",
+        },
+    });
+}));
+
 router.delete("/users/:userID", isUserPasswordValid, 
         wrapAsync(async function(req, res, next) {
     
