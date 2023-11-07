@@ -22,9 +22,25 @@
 
                 <% if (!isCurrentUser) { %>
                     <% if (user.bypassRestriction) { %>
-                        <button id="stop-user-bypass-restriction-button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#bypass-restriction-modal">Stop bypassing restrictions</button>
+                    <button 
+                        class="btn btn-outline-secondary" 
+                        hx-get="/admin/users/<%= user.id %>/bypass-restriction-modal"
+                        hx-target="#modal-content-section"
+                        hx-push-url="false"
+                        hx-swap="innerHTML"
+                    >
+                        Stop bypassing restrictions
+                    </button>
                     <% } else { %>
-                        <button id="make-user-bypass-restriction-button" class="btn btn-outline-secondary">Bypassing restrictions</button>
+                        <button 
+                            class="btn btn-outline-secondary"
+                            hx-get="/admin/users/<%= user.id %>/bypass-restriction-modal"
+                            hx-target="#modal-content-section"
+                            hx-push-url="false"
+                            hx-swap="innerHTML"
+                        >
+                            Bypassing restrictions
+                        </button>
                     <% } %>
 
                     <button id="delete-user-button" class="btn btn-outline-secondary">Delete</button>

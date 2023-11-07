@@ -176,6 +176,31 @@ router.get("/users/:userID", wrapAsync(async function(req, res) {
     res.render("admin/userInfo.ejs", { user, isCurrentUser });
 }));
 
+router.get("/users/:userID/bypass-restriction-modal", wrapAsync(async function(req, res) {
+    const { userID } = req.params;
+
+    const [errorMessage, foundUser] = await existingOrNewConnection(null, async function(connection) {
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            return ["Could not find user"];
+        }
+
+        return [null, foundUser];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        }).status(204).send();
+    }
+    
+    res.render("partials/htmx/modals/bypassingRestrictionsModal.ejs", {
+        user: foundUser,
+    });
+}));
+
 router.post("/users/:userID/bypass-restriction", isUserPasswordValid, 
         wrapAsync(async function(req, res) {
     const { bypass } = req.body;
