@@ -1,7 +1,6 @@
 services:
   gamesorting_webapp:
     image: bluedragon28/gamesorting_webapp
-    build: ../
     ports:
       - 8080:8080
     environment:
