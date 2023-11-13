@@ -9,7 +9,7 @@ services:
     volumes:
       - /opt/gamesorting_webapp/app-config:/config_file
       - gamesorting_app_client_tmp_data:/app/clientData
-    restart: always
+    restart: unless-stopped
     
     depends_on:
       gamesorting_mariadb:
@@ -26,7 +26,7 @@ services:
       - MARIADB_PASSWORD_HASH_FILE=/config_file/user_hash
       - MARIADB_ROOT_PASSWORD_HASH_FILE=/config_file/root_hash
       - MARIADB_DATABASE=gamesorting_webapp
-    restart: always
+    restart: unless-stopped
     
     healthcheck:
       test: ["CMD", "mysqladmin", "ping",]
