@@ -13,12 +13,7 @@ function getListIDFromLocation() {
     return listID;
 }
 
-document.body.addEventListener("click", function(event) {
-    if (event.target.id !== "search-box-button") {
-        return;
-    }
-
-    const searchInput = event.target.previousElementSibling;
+function submitEvent(searchInput) {
     if (!searchInput) {
         return console.error("Invalid search input");
     }
@@ -58,5 +53,16 @@ document.body.addEventListener("click", function(event) {
         .catch((_) => {
             console.error("Oups: something went wrong!");
         });
-});
+}
 
+document.body.addEventListener("submit", function(event) {
+    if (event.target.id !== "search-box") {
+        return;
+    }
+
+    event.preventDefault();
+    console.log("prevent default");
+    
+    const searchInput = event.target.firstElementChild;
+    submitEvent(searchInput);
+});
