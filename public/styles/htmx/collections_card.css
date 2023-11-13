@@ -1,9 +1,11 @@
 .inner-card-height {
     height: 2.1rem !important;
+    min-height: 2.1rem !important;
 }
 
 .footer-card-height {
     height: 3.18rem !important;
+    min-height: 3.18rem !important;
 }
 
 .text-ellipsis {
