@@ -1,17 +1,4 @@
-.gamesorting_h1 {
-    text-align: center;
-    font-size: 5rem;
-}
-
-.presentation_text {
-    text-align: center;
-    font-size: 1.5rem;
-}
-
 .large_register_button {
-    display: block;
     width: 11rem;
     height: 4rem;
-    font-size: 2rem;
-    margin: 0 auto;
 }
