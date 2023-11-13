@@ -37,7 +37,6 @@ import "../styles/index.css";
 import "../styles/admin/activities.css";
 import "../styles/admin/adminIndex.css";
 import "../styles/interactionButtons/interactionButtons.css";
-import "../styles/searchBox.css";
 import '../styles/list-items.css';
 
 import "../styles/flash-container.css";
