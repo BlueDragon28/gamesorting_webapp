@@ -13,3 +13,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+.font-size-85 {
+    font-size: 0.85rem;
+}
