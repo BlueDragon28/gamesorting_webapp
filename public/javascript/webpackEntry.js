@@ -34,7 +34,6 @@ import "./flashContainerHeight";
 // CSS
 import "../styles/starability-basic.min.css";
 import "../styles/index.css";
-import "../styles/contactLink.css";
 import "../styles/admin/activities.css";
 import "../styles/admin/adminIndex.css";
 import "../styles/interactionButtons/interactionButtons.css";
