@@ -6,3 +6,8 @@
     height: 3.18rem !important;
 }
 
+.text-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

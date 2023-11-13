@@ -67,7 +67,7 @@ function getColumnType(columnTypeID) {
                 </div>
                 <div class="list-group list-group-flush h-100 overflow-auto">
                     <% if (item.url) { %>
-                        <div class="list-group-item d-flex align-items-center" style="height: 3.18rem;">URL: <a class="card-link" href="<%= item.url %>"><%= item.url %></a></div>
+                        <div class="list-group-item d-flex align-items-center" style="height: 3.18rem;">URL: <a class="d-block ms-1 card-link text-ellipsis" href="<%= item.url %>"><%= item.url %></a></div>
                     <% } %>
 
                     <% if (item.rating) { %>
@@ -87,7 +87,7 @@ function getColumnType(columnTypeID) {
                                     <div class="starability-result" data-rating="<%= customData.value %>"></div>
                                 </div>
                             <% } else if (columnType.type.type === "@Href") {%>
-                                <div><%= columnType.name %>: <a href="<%= customData.value %>"><%= customData.value %></a></div>
+                                <div class="text-ellipsis"><%= columnType.name %>: <a href="<%= customData.value %>"><%= customData.value %></a></div>
                             <% } else { %>
                                 <div><%= columnType.name %>: <%= customData.value %></div>
                             <% } %>
