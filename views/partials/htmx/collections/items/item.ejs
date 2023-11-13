@@ -67,12 +67,11 @@ function getColumnType(columnTypeID) {
                 </div>
                 <div class="list-group list-group-flush h-100 overflow-auto">
                     <% if (item.url) { %>
-                        <div class="list-group-item d-flex align-items-center" style="height: 3.18rem;">URL: <a class="d-block ms-1 card-link text-ellipsis" href="<%= item.url %>"><%= item.url %></a></div>
+                        <div class="list-group-item d-flex align-items-center footer-card-height">URL: <a class="d-block ms-1 card-link text-ellipsis" href="<%= item.url %>"><%= item.url %></a></div>
                     <% } %>
 
                     <% if (item.rating) { %>
-                        <div class="list-group-item d-flex flex-row align-items-center" 
-                            style="height: 3.18rem;">
+                        <div class="list-group-item d-flex flex-row align-items-center footer-card-height">
                             <div class="me-2">Rating:</div> <div class="starability-result" data-rating="<%= item.rating%>">Rated: <%= item.rating %> star<%= item.rating > 1 ? 's' : '' %></div>
                         </div>
                     <% } %>
@@ -80,7 +79,7 @@ function getColumnType(columnTypeID) {
                     <% for (let customData of item.customData) { %>
                         <% const columnType = getColumnType(customData.columnTypeID); %>
 
-                        <div class="list-group-item d-flex align-items-center" style="height: 3.18rem;">
+                        <div class="list-group-item d-flex align-items-center footer-card-height">
                             <% if (columnType.type.type === "@Stars") { %>
                                 <div class="d-flex flex-row justify-content-start align-items-center">
                                     <div class="me-1"><%= columnType.name %>:</div>
