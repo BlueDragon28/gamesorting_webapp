@@ -37,8 +37,6 @@ import "../styles/index.css";
 import "../styles/admin/activities.css";
 import "../styles/admin/adminIndex.css";
 import "../styles/interactionButtons/interactionButtons.css";
-import '../styles/list-items.css';
-
 import "../styles/flash-container.css";
 import "../styles/modal-import-custom-columns-from.css";
 import "../styles/htmx/collections_card.css";
