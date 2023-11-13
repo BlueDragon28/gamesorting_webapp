@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --runInBand",
     "dev": "node-reload -w index.js,models,routes,sql,utils",
-    "prod": "NODE_ENV=production node-reload --autorestart",
+    "prod": "NODE_ENV=production node index.js",
     "webpack-dev": "NODE_ENV=development webpack --config public.javascript.webpack.development.config.js",
     "webpack-prod": "NODE_ENV=production webpack --config public.javascript.webpack.development.config.js"
   },
