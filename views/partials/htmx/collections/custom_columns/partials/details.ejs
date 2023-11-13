@@ -50,8 +50,7 @@ if (typeof existingValues !== "object") {
             >
 <% } %>
                 <% for (columnType of listColumnsType) { %>
-                    <div class="list-group-item d-flex flex-row align-items-center justify-content-between" 
-                        style="height: 3.18rem; text-overflox: elipsis;"
+                    <div class="list-group-item d-flex flex-row align-items-center justify-content-between footer-card-height" 
                     >
                         <div><%= columnType.name %> | Type: <%= columnType.type.type %><% 
                             if (columnType.type.type === "@Int") { 
