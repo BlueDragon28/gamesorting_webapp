@@ -1,5 +1,4 @@
 const express = require("express");
-const flash = require("connect-flash");
 const { isLoggedIn } = require("../utils/users/authentification");
 
 const router = express.Router();

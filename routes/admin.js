@@ -1,11 +1,10 @@
 const express = require("express");
 const { User } = require("../models/users");
 const { UserActivity } = require("../models/userActivity");
-const { isLoggedIn, isUserPasswordValid } = require("../utils/users/authentification");
 const { existingOrNewConnection } = require("../utils/sql/sql");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { InternalError, ValueError } = require("../utils/errors/exceptions");
-const { returnHasJSONIfNeeded, errorsWithPossibleRedirect, htmxErrorsFlashMessage } = require("../utils/errors/celebrateErrorsMiddleware");
+const { htmxErrorsFlashMessage } = require("../utils/errors/celebrateErrorsMiddleware");
 const bigint = require("../utils/numbers/bigint");
 const { deleteUser } = require("../utils/data/deletionHelper");
 const { validatePassword } = require("../utils/validation/htmx/validateUser");

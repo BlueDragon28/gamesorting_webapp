@@ -16,17 +16,13 @@ const http = require("http");
 const { configureHelmet } = require("./utils/security/basicSecurity");
 const ejsMate = require("ejs-mate");
 const collectionsRouter = require("./routes/collections");
-const listsRouter = require("./routes/lists");
-const itemsRouter = require("./routes/items");
 const usersRouter = require("./routes/users");
 const adminRouter = require("./routes/admin");
-const contactRouter = require("./routes/contact");
 const flashRouter = require("./routes/flash");
 const aboutRouter = require("./routes/about");
 const methodOverride = require("method-override");
 const session = require("express-session");
 const flash = require("connect-flash");
-const { parseFlashMessage } = require("./utils/flash/parseFlashMessage");
 const { parseCelebrateError } = require("./utils/errors/celebrateErrorsMiddleware");
 const mariadb = require("./sql/connection");
 const { applyRevisions } = require("./sql/revisions");
@@ -107,11 +103,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/collections", collectionsRouter);
-app.use("/collections/:collectionID", listsRouter);
-app.use("/collections/:collectionID/lists/:listID", itemsRouter);
 app.use("/users", usersRouter);
 app.use("/admin", adminRouter);
-app.use("/", contactRouter);
 app.use("/flash", flashRouter);
 app.use("/", aboutRouter);
 

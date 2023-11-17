@@ -10,13 +10,10 @@ const {
     parseCelebrateError, 
     errorsWithPossibleRedirect, 
     returnHasJSONIfNeeded,
-    flashJoiErrorMessage
 } = require("../utils/errors/celebrateErrorsMiddleware");
 const {
-    validateLoginUser,
     validateEmailUpdate,
     validatePasswordUpdate,
-    validateLostPasswordUpdate,
     validateDeleteUser
 } = require("../utils/validation/users");
 const {
@@ -27,8 +24,7 @@ const {
     validateUpdateUsername,
     validatePassword,
 } = require("../utils/validation/htmx/validateUser");
-const { ValueError, InternalError } = require("../utils/errors/exceptions");
-const { sendLostPasswordEmail } = require("../utils/email/email");
+const { ValueError } = require("../utils/errors/exceptions");
 const { htmxRedirect } = require("../utils/htmx/htmx");
 
 const router = express.Router();
@@ -546,66 +542,6 @@ router.delete("/", wrapAsync(async function(req, res) {
         htmxRedirect(req, res, "/");
     }
 }));
-
-router.post("/lostpassword", wrapAsync(async function(req, res) {
-    throw new InternalError("Not yet implemented");
-    const { email } = req.body;
-
-    await existingOrNewConnection(null, async function(connection) {
-        const foundUser = await User.findByNameOrEmail(email, connection);
-
-        if (!foundUser || !foundUser instanceof User || !foundUser.isValid()) {
-            return;
-        }
-
-        const lostUser = new UserLostPassword(foundUser);
-
-        await sendLostPasswordEmail(foundUser.email, 
-            `${process.env.DOMAINE_NAME}/users/lostpassword/${lostUser.token}`);
-
-        await lostUser.save(connection);
-    });
-
-    res.redirect("/");
-}));
-
-router.post("/lostpassword/:tokenID", validateLostPasswordUpdate(),  wrapAsync(async function(req, res) {
-    const { tokenID } = req.params;
-    const { password, retypedPassword } = req.body;
-
-    if (!password?.length || retypedPassword !== password) {
-        req.flash("error", "Password must be the same");
-        return res.redirect(`/users/lostpassword/${tokenID}`);
-    }
-
-    try {
-        await existingOrNewConnection(null, async function(connection) {
-            const tokenData = await UserLostPassword.findByToken(tokenID, connection);
-
-            if (!tokenData || !tokenData?.isValid() || !tokenData?.parentUser || !tokenData?.parentUser?.isValid() || !tokenData?.isRecent()) {
-                throw new Error();
-            }
-
-            const user = tokenData.parentUser;
-            user.setPassword(password);
-            await user.save(connection);
-            await tokenData.delete(connection);
-        });
-    } catch (error) {
-        req.flash(error, "Invalid token");
-        return res.redirect("/");
-    }
-
-    req.flash("success", "Password updated successfully");
-    res.redirect("/users/login");
-}), parseCelebrateError, function(err, req, res, next) {
-    if (err.name === "ValidationError") {
-        flashJoiErrorMessage(err, req);
-        return res.redirect(req.originalUrl);
-    }
-
-    next(err);
-});
 
 router.delete("/", isLoggedIn, validateDeleteUser(), isUserPasswordValid, wrapAsync(async function(req, res, next) {
     const { deleteUser: removeUser, password: currentPassword } = req.body;
