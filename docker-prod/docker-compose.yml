@@ -28,10 +28,9 @@ services:
     restart: unless-stopped
     
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      test: ["CMD", "mysqladmin", "ping",]
+      timeout: 20s
+      retries: 10
 
 volumes:
   gamesorting_mariadb_data:
