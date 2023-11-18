@@ -7,7 +7,6 @@ const styleSrcUrls = [
 
 const scriptSrcUrls = [
     "'self'",
-    "'unsafe-inline'",
 ]
 
 const imgSrcUrls = [
