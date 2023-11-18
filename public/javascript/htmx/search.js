@@ -25,16 +25,12 @@ function submitEvent(searchInput) {
         return console.error("collection items list not available!");
     }
 
-    console.log(`preparing a search with term: ${searchTerm}`);
-
     let listID;
     try {
         listID = getListIDFromLocation();
     } catch (e) {
         return console.log(e.message);
     }
-
-    console.log(`current listID is ${listID}`);
 
     htmx.ajax(
         "GET",
@@ -47,9 +43,7 @@ function submitEvent(searchInput) {
             },
         },
     )
-        .then(() => {
-            console.log("Request Success");
-        })
+        .then(() => {})
         .catch((_) => {
             console.error("Oups: something went wrong!");
         });
@@ -61,7 +55,6 @@ document.body.addEventListener("submit", function(event) {
     }
 
     event.preventDefault();
-    console.log("prevent default");
     
     const searchInput = event.target.firstElementChild;
     submitEvent(searchInput);
