@@ -3,19 +3,16 @@ const helmet = require("helmet");
 const styleSrcUrls = [
     "'self'",
     "'unsafe-inline'",
-    "https://cdn.jsdelivr.net",
 ];
 
 const scriptSrcUrls = [
     "'self'",
     "'unsafe-inline'",
-    "https://cdn.jsdelivr.net"
 ]
 
 const imgSrcUrls = [
     "'self'",
     "data:",
-    "https://cdn.jsdelivr.net"
 ]
 
 function configureHelmet(app) {
