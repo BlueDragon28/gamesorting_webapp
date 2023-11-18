@@ -15,14 +15,16 @@ const imgSrcUrls = [
 ]
 
 function configureHelmet(app) {
-    app.use(helmet.contentSecurityPolicy({
-        useDefaults: false,
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: scriptSrcUrls,
-            styleSrc: styleSrcUrls,
-            upgradeInsecureRequests: process.env.NODE_END === "production" ? [] : null,
-            imgSrc: imgSrcUrls
+    app.use(helmet({
+        contentSecurityPolicy: {
+            useDefaults: false,
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: scriptSrcUrls,
+                styleSrc: styleSrcUrls,
+                upgradeInsecureRequests: process.env.NODE_END === "production" ? [] : null,
+                imgSrc: imgSrcUrls
+            }
         }
     }));
 }
