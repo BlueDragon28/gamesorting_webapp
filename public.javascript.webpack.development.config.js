@@ -6,7 +6,7 @@ module.exports = {
     entry: "./public/javascript/webpackEntry.js",
     output: {
         path: path.resolve(__dirname, "public/dist"),
-        filename: "public-js.bundle.2.0.0.js"
+        filename: "public-js.bundle.2.0.1.js"
     },
     resolve: {
         roots: [path.resolve(__dirname, "public"), path.resolve(__dirname, "node_modules")]
@@ -28,7 +28,7 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "app.2.0.0.css"
+            filename: "app.2.0.1.css"
         })
     ]
 }
