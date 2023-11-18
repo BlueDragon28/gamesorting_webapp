@@ -1,6 +1,6 @@
 function getListIDFromLocation() {
     const currentLocation = window.location.pathname;
-    const valueRegex = /^\/collections\/lists\/([0-9*])$/
+    const valueRegex = /^\/collections\/lists\/([0-9]+)$/
     if (!valueRegex.test(currentLocation)) {
         throw new Error("Cannot make a search request");
     }
