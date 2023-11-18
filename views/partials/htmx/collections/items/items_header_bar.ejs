@@ -11,6 +11,15 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
     <div>Items</div>
     <% if (typeof selectedID === "string" && selectedID.length ) { %>
     <div class="d-flex flex-row align-items-center">
+        <button 
+            type="button" 
+            class="btn p-1"
+            hx-get="/collections/lists/<%= selectedID %>/new"
+            hx-target="#collections-items-list-row"
+            hx-swap="outerHTML"
+        >
+            <%- include("../../icons/new.ejs") %>
+        </button>
         <div class="dropdown h-100">
             <button type="button" class="btn p-0 py-1" data-bs-toggle="dropdown" aria-expanded="false">
                 <%- include("../../icons/sorting_icon.ejs") %>
