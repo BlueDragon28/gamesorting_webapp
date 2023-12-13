@@ -43,7 +43,7 @@ function getColumnType(columnTypeID) {
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <div class="dropdown-item user-select-none"
+                                <div class="dropdown-item user-select-none cursor-pointer"
                                     hx-get="/collections/lists/<%= item.parentList.id %>/item/<%= item.id %>/edit"
                                     hx-target="#item-detail-card"
                                     hx-push-url="false"
@@ -53,7 +53,7 @@ function getColumnType(columnTypeID) {
                                 </div>
                             </li>
                             <li>
-                                <div class="dropdown-item user-select-none"
+                                <div class="dropdown-item user-select-none cursor-pointer"
                                     hx-get="/collections/lists/<%= item.parentList.id %>/item/<%= item.id %>/delete-modal?destinationId=item-detail-card"
                                     hx-target="#modal-content-section"
                                     hx-push-url="false"
@@ -63,7 +63,7 @@ function getColumnType(columnTypeID) {
                                 </div>
                             </li>
                             <li>
-                                <div class="dropdown-item user-select-none"
+                                <div class="dropdown-item user-select-none cursor-pointer"
                                     hx-get="/collections/lists/<%= item.parentList.id %>/item/<%= item.id %>/move-to"
                                     hx-target="#modal-content-section"
                                     hx-push-url="false"
