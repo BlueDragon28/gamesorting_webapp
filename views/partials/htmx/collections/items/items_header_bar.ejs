@@ -27,7 +27,7 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
             <ul class="dropdown-menu">
                 <% [["No sorting", "no-sorting"], ["Sorting by name", "order-by-name"], ["Sorting by rating", "order-by-rating"]].forEach(function(value, index) { %>
                     <li>
-                        <div class="dropdown-item user-select-none <%= listSortingSelectionIndex === index ? 'active' : '' %>"
+                        <div class="dropdown-item user-select-none cursor-pointer <%= listSortingSelectionIndex === index ? 'active' : '' %>"
                             <% if (typeof baseUrl !== "undefined" && listSortingSelectionIndex !== index) { %>
                                 hx-post="<%= baseUrl %>/update-list-sorting"
                                 hx-push-url="false"
@@ -56,7 +56,7 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
             </button>
             <ul class="dropdown-menu">
                 <li>
-                    <div class="dropdown-item user-select-none"
+                    <div class="dropdown-item user-select-none cursor-pointer"
                         hx-get="/collections/lists/<%= selectedID %>/new"
                         hx-target="#collections-items-list-row"
                         hx-swap="outerHTML"
@@ -65,7 +65,7 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
                     </div>
                 </li>
                 <li>
-                    <div class="dropdown-item user-select-none"
+                    <div class="dropdown-item user-select-none cursor-pointer"
                         hx-get="/collections/lists/<%= selectedID %>/custom-columns?only_custom_columns=true"
                         hx-target="#collections-items-list-row"
                         hx-swap="outerHTML"
