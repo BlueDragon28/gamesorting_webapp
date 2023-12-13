@@ -30,7 +30,7 @@ if (typeof existingValues !== "object") {
                 </button>
                 <ul class="dropdown-menu">
                     <li>
-                        <div class="dropdown-item"
+                        <div class="dropdown-item cursor-pointer"
                             hx-get="/collections/lists/<%= selectedID %>/custom-columns/import-from-modal"
                             hx-push-url="false"
                             hx-target="#modal-content-section"
@@ -62,7 +62,7 @@ if (typeof existingValues !== "object") {
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <div class="dropdown-item user-select-none"
+                                    <div class="dropdown-item user-select-none cursor-pointer"
                                         hx-get="/collections/lists/<%= selectedID %>/custom-columns/edit-form?listColumnsTypeID=<%= columnType.id %>"
                                         hx-target="#custom-columns-edit-form"
                                         hx-push-url="false"
@@ -72,7 +72,7 @@ if (typeof existingValues !== "object") {
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="dropdown-item user-select-none"
+                                    <div class="dropdown-item user-select-none cursor-pointer"
                                         hx-get="/collections/lists/<%= selectedID %>/custom-columns/delete-modal?listColumnsTypeID=<%= columnType.id %>"
                                         hx-target="#modal-content-section"
                                         hx-push-url="false"
