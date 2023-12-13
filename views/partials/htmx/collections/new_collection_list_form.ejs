@@ -7,7 +7,7 @@ const isEditing = typeof editing === "boolean" && editing;
 <% if (isNotValidation) { %>
 <div id="collection-list-form-card" class="col-4 m-0 p-0">
     <div class="card h-100 border-end-0 border-start-0 rounded-0">
-        <div class="card-header d-flex flex-row flex-start align-items-center">
+        <div class="card-header d-flex flex-row flex-start align-items-center user-select-none">
             <div class="btn p-0 py-1 px-1"
                 <% if (typeof returnUrl === "string" && returnUrl.length) { %>
                     hx-get="<%= returnUrl %>?onlyList=true"
@@ -19,7 +19,7 @@ const isEditing = typeof editing === "boolean" && editing;
             &lt;</div>
             New Collection/List
         </div>
-        <form class="card-body d-flex flex-column justify-content-center align-items-center h-100"
+        <form class="card-body d-flex flex-column justify-content-center align-items-center h-100 user-select-none"
             <% if (isEditing) { %>
                 hx-put="/collections/lists/<%= list.id %>"
             <% } else { %>
