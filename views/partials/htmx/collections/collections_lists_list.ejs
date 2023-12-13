@@ -8,7 +8,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li>
-                        <div class="dropdown-item"
+                        <div class="dropdown-item cursor-pointer"
                             hx-get="/collections/new"
                             hx-target="#collections-lists-list-outer-column"
                             hx-swap="outerHTML"
@@ -49,7 +49,7 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <div class="dropdown-item"
+                                <div class="dropdown-item cursor-pointer"
                                     hx-get="/collections/lists/<%= list.id %>/delete-modal?destinationId=button-list-<%= list.id %>&selectedID=<%= selectedID %>"
                                     hx-target="#modal-content-section"
                                     hx-push-url="false"
@@ -59,7 +59,7 @@
                                 </div>
                             </li>
                             <li>
-                                <div class="dropdown-item"
+                                <div class="dropdown-item cursor-pointer"
                                     hx-get="/collections/lists/<%= list.id %>/edit"
                                     hx-target="#collections-lists-list-outer-column"
                                     hx-push-url="false"
