@@ -7,7 +7,7 @@
     <div class="my-2 w-100 <%= customColumn.type.type === '@Stars' ? 'starability-basic' : 'form-floating' %>">
         <% const customColumnName = `customColumns[${customColumnID}]`; %>
         <% if (customColumn.type.type === "@Stars") { %>
-            <div class="form-label"><%= customColumn.name %></div>
+            <div class="form-label user-select-none"><%= customColumn.name %></div>
             <input type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-no-rate" <%= customColumnValue ? customColumnValue.Value === "0" ? "checked" : "" : "checked" %> value="0">
             <% for (let indexStar = 0; indexStar < 5; indexStar++) { %>
                 <input class="first-rate<%= indexStar+1 %>" type="radio" name="<%= customColumnName %>" id="<%= customColumnName %>-rate<%= indexStar+1 %>" value="<%= indexStar+1 %>" <%= customColumnValue && customColumnValue.Value === (indexStar+1).toString() ? "checked" : "" %>>
