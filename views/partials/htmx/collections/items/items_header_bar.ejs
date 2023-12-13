@@ -27,7 +27,7 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
             <ul class="dropdown-menu">
                 <% [["No sorting", "no-sorting"], ["Sorting by name", "order-by-name"], ["Sorting by rating", "order-by-rating"]].forEach(function(value, index) { %>
                     <li>
-                        <div class="dropdown-item <%= listSortingSelectionIndex === index ? 'active' : '' %>"
+                        <div class="dropdown-item user-select-none <%= listSortingSelectionIndex === index ? 'active' : '' %>"
                             <% if (typeof baseUrl !== "undefined" && listSortingSelectionIndex !== index) { %>
                                 hx-post="<%= baseUrl %>/update-list-sorting"
                                 hx-push-url="false"
