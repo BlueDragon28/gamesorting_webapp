@@ -15,9 +15,9 @@ const sections = [
 ];
 %>
 
-<h1 class="display-4 mt-3">Admin Control Center</h1>
+<h1 class="display-4 mt-3 user-select-none">Admin Control Center</h1>
 
-<div class="d-flex flex-row flex-wrap justify-content-start">
+<div class="d-flex flex-row flex-wrap justify-content-start user-select-none">
     <% for (const section of sections) { %>
         <a hx-boost="true" href="<%= section.endpoint %>" class="card section-card">
             <div class="card-body">
