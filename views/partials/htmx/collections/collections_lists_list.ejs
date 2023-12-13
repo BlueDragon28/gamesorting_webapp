@@ -1,6 +1,6 @@
 <div id="collections-lists-list-outer-column" class="col-4 m-0 p-0 overflow-hidden h-100">
     <div class="card h-100 border-end-0 border-start-0 rounded-0">
-        <div class="card-header d-flex flex-row justify-content-between align-items-center">
+        <div class="card-header d-flex flex-row justify-content-between align-items-center user-select-none">
             <div>Collections/Lists</div>
             <div class="dropdown h-100">
                 <button type="button" class="btn p-0 py-1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -27,7 +27,7 @@
                 <div
                     id="button-list-<%= list.id %>"
                     role="button" 
-                    class="button-list-<%= list.id %> list-group-item list-group-item-action <%= selectedID == list.id  ? 'active' : ''%> d-flex flex-row justify-content-between align-items-center"
+                    class="button-list-<%= list.id %> list-group-item list-group-item-action <%= selectedID == list.id  ? 'active' : ''%> d-flex flex-row justify-content-between align-items-center user-select-none"
                     hx-get="/collections/lists/<%= list.id %>"
                     hx-trigger="click target:.button-list-<%= list.id %>"
                     hx-target="#collections-lists-global-row"
