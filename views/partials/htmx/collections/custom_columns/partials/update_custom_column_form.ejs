@@ -6,7 +6,7 @@
     hx-push-url="false"
 >
 <% } %>
-    <h3 class="display-7 my-2 text-center">Editing <%= listColumnType.name %></h3>
+    <h3 class="display-7 my-2 text-center user-select-none">Editing <%= listColumnType.name %></h3>
 
     <div class="form-floating w-100 my-2">
         <input id="custom-column-name-input" class="form-control <%= typeof nameValidationError !== 'undefined' && nameValidationError ? 'is-invalid' : '' %>" type="text" name="name" placeholder="" value="<%= typeof existingName !== "undefined" ? existingName : "" %>">
