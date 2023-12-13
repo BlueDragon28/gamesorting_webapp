@@ -8,7 +8,7 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
 <div class="card-header d-flex flex-row justify-content-between align-items-center <%=
     typeof selectedID === 'string' && selectedID.length ? 'py-1' : '' %>"
 >
-    <div>Items</div>
+    <div class="user-select-none">Items</div>
     <% if (typeof selectedID === "string" && selectedID.length ) { %>
     <div class="d-flex flex-row align-items-center">
         <button 
@@ -56,7 +56,7 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
             </button>
             <ul class="dropdown-menu">
                 <li>
-                    <div class="dropdown-item"
+                    <div class="dropdown-item user-select-none"
                         hx-get="/collections/lists/<%= selectedID %>/new"
                         hx-target="#collections-items-list-row"
                         hx-swap="outerHTML"
@@ -65,7 +65,7 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
                     </div>
                 </li>
                 <li>
-                    <div class="dropdown-item"
+                    <div class="dropdown-item user-select-none"
                         hx-get="/collections/lists/<%= selectedID %>/custom-columns?only_custom_columns=true"
                         hx-target="#collections-items-list-row"
                         hx-swap="outerHTML"
