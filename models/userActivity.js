@@ -97,9 +97,12 @@ class UserActivity {
         }
 
         return await existingOrNewConnection(connection, async function(connection) {
-            const timeNow = Date.now();
-            const begin = timeNow - UserActivity.#fromHoursToMilliseconds(timelapsHoursBegin);
-            const end = timeNow - UserActivity.#fromHoursToMilliseconds(timelapsHoursEnd);
+            const timeNow = new Date();
+            timeNow.setHours(0, 0, 0, 0);
+            timeNow.setDate(timeNow.getDate() + 1);
+            const endOfDay = timeNow.valueOf();
+            const begin = endOfDay - UserActivity.#fromHoursToMilliseconds(timelapsHoursBegin);
+            const end = endOfDay - UserActivity.#fromHoursToMilliseconds(timelapsHoursEnd);
 
             const queryStatement =
                 "SELECT UserActivityID, UserID, Type, Time FROM userActivity " +
