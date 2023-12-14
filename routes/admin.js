@@ -50,15 +50,19 @@ function divideActivitiesByDays(activities) {
         };
     }
 
-    const now = Date.now();
     const parsedDate = [];
     const aDayInMilliseconds = 24 * 60 * 60 * 1000;
     let maxActivityADay = 0;
     let totalActivity = 0;
 
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    now.setDate(now.getDate() + 1);
+    const endOfToday = now.valueOf();
+
     for (let i = 0; i < 30; i++) {
-        const endTime = now - (aDayInMilliseconds * i);
-        const startTime = now - (aDayInMilliseconds * (i+1));
+        const endTime = endOfToday - (aDayInMilliseconds * i);
+        const startTime = endOfToday - (aDayInMilliseconds * (i+1));
         const day = {
             day: i+1,
             activities: 0
