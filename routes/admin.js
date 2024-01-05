@@ -8,6 +8,7 @@ const { htmxErrorsFlashMessage } = require("../utils/errors/celebrateErrorsMiddl
 const bigint = require("../utils/numbers/bigint");
 const { deleteUser } = require("../utils/data/deletionHelper");
 const { validatePassword } = require("../utils/validation/htmx/validateUser");
+const { generatePassword, RANDOM_PASSWORD_LENGTH } = require("../utils/users/passwordManipulation");
 
 const router = express.Router();
 
@@ -398,6 +399,120 @@ router.delete("/users/:userID", wrapAsync(async function(req, res) {
         res.set({
             "HX-Trigger": "close-import-from-modal",
             "HX-Location": '{"path":"/admin/users","target":"body","headers":{"HX-Boosted":"true"}}',
+        }).status(204).send();
+    }
+}));
+
+router.get("/users/:userID/reset-password-modal", wrapAsync(async function(req, res) {
+    const adminUserID = req.session.user.id;
+    const { userID } = req.params;
+
+    const [errorMessage, foundUser] = await existingOrNewConnection(null, async function(connection) {
+        const foundAdminUser = await User.findByID(adminUserID, connection);
+
+        if (!foundAdminUser || !(foundAdminUser instanceof User) || !foundAdminUser.isValid()) {
+            return ["Could not find current user"];
+        }
+
+        if (foundAdminUser.isAdmin !== true) {
+            return ["You are not admin"];
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            return ["Could not find user"];
+        }
+
+        return [null, foundUser];
+    });
+
+    if (errorMessage) {
+        req.flash("error", errorMessage);
+        return res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        }).status(204).send();
+    }
+
+    res.render("partials/htmx/modals/adminResetUserPasswordModal.ejs", {
+        user: foundUser,
+        validationPhase: false,
+        editValues: {
+            password: "",
+        },
+    });
+}));
+
+router.post("/users/:userID/reset-password", wrapAsync(async function(req, res) {
+    const adminUserID = req.session.user.id;
+    const { userID } = req.params;
+    const { password } = req.body;
+
+    const errorMessages = {};
+
+    const validatedPassword = validatePassword(
+        password,
+        errorMessages,
+    );
+
+    const [error, foundUser, newPassword] = await existingOrNewConnection(null, async function(connection) {
+        const foundAdminUser = await User.findByID(adminUserID, connection);
+
+        if (!foundAdminUser || !(foundAdminUser instanceof User) || !foundAdminUser.isValid()) {
+            return ["Could not find current user"];
+        }
+
+        if (foundAdminUser.isAdmin !== true) {
+            return ["You are not admin"];
+        }
+
+        const foundUser = await User.findByID(userID, connection);
+
+        if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+            return ["Could not find this user"];
+        }
+
+        if (Object.keys(errorMessages).length) {
+            return [null, foundUser];
+        }
+
+        if (!foundAdminUser.compare(foundAdminUser.username, validatedPassword)) {
+            errorMessages.password = "Invalid Password";
+            return [null, foundUser];
+        }
+
+        const newPassword = generatePassword(RANDOM_PASSWORD_LENGTH);
+        foundUser.setPassword(newPassword, true);
+        await foundUser.save(connection);
+
+        return [null, foundUser, newPassword];
+    });
+
+    if (error) {
+        req.flash("error", error);
+        return res.set({
+            "HX-Trigger": "new-flash-event, close-import-from-modal",
+        }).status(204).send();
+    }
+
+    if (Object.keys(errorMessages).length) {
+        res.render("partials/htmx/modals/adminResetUserPasswordModal.ejs", {
+            user: foundUser,
+            editValues: {
+                password: validatedPassword,
+            },
+            errorMessages,
+            validationPhase: true,
+        });
+    } else if (newPassword) {
+        res.render("partials/htmx/modals/adminResetUserPasswordModal.ejs", {
+            user: foundUser,
+            newPassword,
+            validationPhase: true,
+        });
+    } else {
+        res.set({
+            "HX-Trigger": "close-import-from-modal",
         }).status(204).send();
     }
 }));
