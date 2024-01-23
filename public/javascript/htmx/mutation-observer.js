@@ -3,27 +3,24 @@ import { addObserverToModalContentSection } from "./open-modal-when-mounted.js";
 import { addObserverToRuntimeFlashSection } from "../flashContainerHeight.js";
 
 function mutationObserver(mutationList, observer) {
-    for (const mutation of mutationList) {
-        if (mutation.type === "childList") {
-            for (const element of mutation.addedNodes) {
-                if (element.nodeType === 1) {
-                    addListenerToMinMaxInput(element);
-                    addObserverToModalContentSection(element);
-                    addObserverToRuntimeFlashSection(element);
-                }
-            }
+  for (const mutation of mutationList) {
+    if (mutation.type === "childList") {
+      for (const element of mutation.addedNodes) {
+        if (element.nodeType === 1) {
+          addListenerToMinMaxInput(element);
+          addObserverToModalContentSection(element);
+          addObserverToRuntimeFlashSection(element);
         }
+      }
     }
+  }
 }
 
-(function() {
-    const observer = new MutationObserver(mutationObserver);
-    observer.observe(
-        document.body,
-        {
-            attributes: false,
-            childList: true,
-            subtree: true,
-        }
-    );
+(function () {
+  const observer = new MutationObserver(mutationObserver);
+  observer.observe(document.body, {
+    attributes: false,
+    childList: true,
+    subtree: true,
+  });
 })();
