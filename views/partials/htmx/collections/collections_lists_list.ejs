@@ -22,7 +22,7 @@
                 </ul>
             </div>
         </div>
-        <div id="collections-lists-list-button" class="list-group list-group-flush overflow-auto h-100">
+      <div id="collections-lists-list-button" class="list-group list-group-flush overflow-auto h-100" gs-keep-scroll="collections-lists-<%= pagination.currentPage %>">
             <% for (const list of lists) { %>
                 <div
                     id="button-list-<%= list.id %>"
