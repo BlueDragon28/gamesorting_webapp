@@ -90,6 +90,7 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     proxy: true,
+    rolling: true,
     cookie: {
       secure: secureCookie,
       httpOnly: true,
