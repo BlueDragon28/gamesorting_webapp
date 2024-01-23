@@ -10,7 +10,7 @@ const itemSearchTerm = typeof searchTerm === "string" ? searchTerm : undefined;
 >
     <div class="card h-100 border-end-0 rounded-0 overflow-hidden">
         <%- include("./items_header_bar.ejs") %>
-        <div class="list-group list-group-flush overflow-auto h-100">
+        <div class="list-group list-group-flush overflow-auto h-100" gs-keep-scroll="items-<%= listID %>-<%= itemsPagination.currentPage %>">
             <% for (const item of items) { %>
                 <button 
                     class="list-group-item list-group-item-action d-flex flex-row align-items-center footer-card-height"
