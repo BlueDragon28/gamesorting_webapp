@@ -15,6 +15,9 @@
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
+            <btn id="bootstrap-change-light-dark-theme" class="btn mx-2 p-0 my-0">
+              <%- include("./htmx/icons/light_dark_theme_icon.ejs") %>
+            </btn>
                 <% if (activeLink === 'Collections') { %>
                     <form class="d-flex" id="search-box" action="#" hx-disable="true">
                         <input id="search-box-input" type="search" class="form-control me-2" placeholder="Search" aria-label="Search">
