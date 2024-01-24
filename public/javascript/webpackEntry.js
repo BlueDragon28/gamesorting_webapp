@@ -10,6 +10,7 @@ import "./htmx/mutation-observer";
 import "./htmx/search";
 import "./htmx/close-import-from-modal";
 import "./htmx/open-modal-when-mounted";
+import "./htmx/bootstrap-update-theme";
 import "./flashContainerHeight";
 
 // CSS
