@@ -20,10 +20,18 @@ export function restoreScrollPosition(element) {
       );
       if (typeof scrollValue !== "string" || !scrollValue.length) return;
 
-      const scrollPosition = sessionStorage.getItem(scrollValue);
+      const scrollPosition = parseInt(sessionStorage.getItem(scrollValue)) || 0;
 
       // restore scroll position
-      listGroupElement.scrollTop = parseInt(scrollPosition) || 0;
+      listGroupElement.scrollTop = scrollPosition;
+
+      // if scrollPosition not applied, set it with delay time.
+      if (
+        listGroupElement.scrollTop === 0 &&
+        listGroupElement.scrollTop != scrollPosition
+      ) {
+        setTimeout(() => (listGroupElement.scrollTop = scrollPosition), 100);
+      }
 
       // add attribute to indicate the the scroll has been restored
       listGroupElement.classList.add(KEEP_SCROLL_RESTORED);
