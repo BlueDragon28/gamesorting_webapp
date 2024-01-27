@@ -79,6 +79,13 @@ if (
   dbConnectionInfo.connectionLimit = process.env.MARIADB_CONNECTION_LIMIT;
 }
 
+if (
+  typeof process.env.MARIADB_SOCKET_PATH === "string" &&
+  process.env.MARIADB_SOCKET_PATH.length
+) {
+  dbConnectionInfo.socketPath = process.env.MARIADB_SOCKET_PATH;
+}
+
 function openPool(suffix = "") {
   if (process.env.NODE_ENV === "production") {
     pool = mariadb.createPool(dbConnectionInfo);
