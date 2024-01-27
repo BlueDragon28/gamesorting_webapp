@@ -65,7 +65,9 @@ app.use(checkIfHTMX);
 
 const sessionStore = new Session();
 
-const secureCookie = process.env.NODE_ENV === "production";
+const secureCookie =
+  process.env.NODE_ENV === "production" &&
+  process.env.SECURE_SESSION_COOKIE === "true";
 let sessionSecret;
 if (process.env.NODE_ENV !== "production") {
   sessionSecret = "mytestsecret";
