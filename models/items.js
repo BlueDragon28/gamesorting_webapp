@@ -42,6 +42,7 @@ function applyListSorting(listSorting) {
       ? "DESC"
       : "ASC"
     : "ASC";
+  const reversedReserveSqlValue = reverseSqlValue === "ASC" ? "DESC" : "ASC";
 
   if (isValidListSorting(listSorting) && listSorting.type === "order-by-name") {
     queryStatement += `Name ${reverseSqlValue} `;
@@ -57,9 +58,19 @@ function applyListSorting(listSorting) {
     queryStatement += `Name ${reverseSqlValue}, Rating ${reverseSqlValue} `;
   } else if (
     isValidListSorting(listSorting) &&
+    listSorting.type === "order-by-name-and-rating-inversed"
+  ) {
+    queryStatement += `Name ${reverseSqlValue}, Rating ${reversedReserveSqlValue} `;
+  } else if (
+    isValidListSorting(listSorting) &&
     listSorting.type === "order-by-rating-and-name"
   ) {
     queryStatement += `Rating ${reverseSqlValue}, Name ${reverseSqlValue} `;
+  } else if (
+    isValidListSorting(listSorting) &&
+    listSorting.type === "order-by-rating-and-name-reversed"
+  ) {
+    queryStatement += `Rating ${reverseSqlValue}, Name ${reversedReserveSqlValue} `;
   } else {
     queryStatement += `ItemID ${reverseSqlValue} `;
   }
