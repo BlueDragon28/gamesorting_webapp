@@ -35,7 +35,11 @@
                 hx-target="#collections-items-list-row"
                 hx-swap="outerHTML"
             >&lt;</div>
+            <% if (isEditing) { %>
+            Update Item
+            <% } else { %> 
             New Item
+            <% } %>
         </div>
         <form class="card-body d-flex flex-column align-items-center overflow-auto"
             <% if (isEditing) { %>
@@ -46,7 +50,7 @@
             hx-swap="innerHTML"
         >
 <% } %>
-            <h3 class="display-7 my-2">Creating Item</h3>
+            <h3 class="display-7 my-2"><% if (isEditing) { %>Updating Item<% } else { %>Creating Item<% } %></h3>
             <% if (isErrorObj && errorMessages.globalError) { %>
                 <p class="text-centered text-danger mt-2"><%= errorMessages.globalError %></p>
             <% } %>
@@ -98,7 +102,7 @@
                 isEditing,
             }) %>
             
-            <button class="btn btn-outline-secondary w-100 my-2" type="submit">Create</button>
+            <button class="btn btn-outline-secondary w-100 my-2" type="submit"><% if (isEditing) { %>Updating<% } else { %>Create<% } %></button>
 <% if (isNotValidation) { %>
         </form>
     </div>
