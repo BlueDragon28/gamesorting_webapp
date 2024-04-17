@@ -50,6 +50,16 @@ function applyListSorting(listSorting) {
     listSorting.type === "order-by-rating"
   ) {
     queryStatement += `Rating ${reverseSqlValue} `;
+  } else if (
+    isValidListSorting(listSorting) &&
+    listSorting.type === "order-by-name-and-rating"
+  ) {
+    queryStatement += `Name ${reverseSqlValue}, Rating ${reverseSqlValue} `;
+  } else if (
+    isValidListSorting(listSorting) &&
+    listSorting.type === "order-by-rating-and-name"
+  ) {
+    queryStatement += `Rating ${reverseSqlValue}, Name ${reverseSqlValue} `;
   } else {
     queryStatement += `ItemID ${reverseSqlValue} `;
   }

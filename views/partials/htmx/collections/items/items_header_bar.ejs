@@ -2,7 +2,9 @@
 const listSortingSelectionIndex = typeof listSorting === "undefined" ?
     null :
     typeof listSorting === "object" && listSorting && listSorting.type === "order-by-name" ? 1 :
-    typeof listSorting === "object" && listSorting && listSorting.type === "order-by-rating" ? 2 : 0;
+    typeof listSorting === "object" && listSorting && listSorting.type === "order-by-rating" ? 2 : 
+    typeof listSorting === "object" && listSorting && listSorting.type === "order-by-name-and-rating" ? 3 :
+    typeof listSorting === "object" && listSorting && listSorting.type === "order-by-rating-and-name" ? 4 : 0;
 %>
 
 <div class="card-header d-flex flex-row justify-content-between align-items-center <%=
@@ -25,7 +27,7 @@ const listSortingSelectionIndex = typeof listSorting === "undefined" ?
                 <%- include("../../icons/sorting_icon.ejs") %>
             </button>
             <ul class="dropdown-menu">
-                <% [["No sorting", "no-sorting"], ["Sorting by name", "order-by-name"], ["Sorting by rating", "order-by-rating"]].forEach(function(value, index) { %>
+                <% [["No sorting", "no-sorting"], ["Sorting by name", "order-by-name"], ["Sorting by rating", "order-by-rating"], ["Sorting by name and rating", "order-by-name-and-rating"], ["Sorting by rating and name", "order-by-rating-and-name"]].forEach(function(value, index) { %>
                     <li>
                         <div class="dropdown-item user-select-none cursor-pointer <%= listSortingSelectionIndex === index ? 'active' : '' %>"
                             <% if (typeof baseUrl !== "undefined" && listSortingSelectionIndex !== index) { %>
