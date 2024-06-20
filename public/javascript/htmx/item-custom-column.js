@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 const CUSTOM_COLUMN_ATT_NAME = "gs-new-custom-column-data";
 const CUSTOM_COLUMN_BTN = "btn";
 const CUSTOM_COLUMN_LIST = "list";
@@ -25,11 +27,13 @@ document.body.addEventListener("click", function (evt) {
 });
 
 function addNewCustomField(selectedList) {
+  const rowUUID = uuidv4();
+
   selectedList.innerHTML += `
     <div class="d-flex flex-row" ${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_BLOCK}">
       <div class="flex-fill">
-        <input type="text" class="form-control form-control-sm border-bottom-0 rounded-top rounded-bottom-0 mt-2" placeholder="Name" />
-        <input type="text" class="form-control border-top-0 rounded-top-0 rounded-bottom" placeholder="Value" />
+        <input type="text" class="form-control form-control-sm border-bottom-0 rounded-top rounded-bottom-0 mt-2" placeholder="Name" name="custom-col-${rowUUID}[name]" />
+        <input type="text" class="form-control border-top-0 rounded-top-0 rounded-bottom" placeholder="Value" name="custom-col-${rowUUID}[value]" />
       </div>
       <div class="d-flex flex-column justify-content-center">
         <button type="button" class="btn-close my-auto" ${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_DELETE}" />
