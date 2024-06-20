@@ -46,16 +46,19 @@ export function addListenerItemCustomColumn(element) {
           `[${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_BTN}"]`
         );
 
-  if (!selectBtn) return;
+  if (!selectBtn || selectBtn.classList.contains("is-watched")) return;
+  selectBtn.classList.add("is-watched");
 
   const selectList = selectBtn.previousElementSibling;
 
   if (
     !selectList ||
+    selectList.classList.contains("is-watched") ||
     selectList.getAttribute(CUSTOM_COLUMN_ATT_NAME) !== CUSTOM_COLUMN_LIST
   ) {
     return;
   }
 
+  selectList.classList.add("is-watched");
   selectBtn.addEventListener("click", (evt) => addNewCustomField(selectList));
 }
