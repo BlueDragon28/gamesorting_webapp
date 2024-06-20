@@ -3,96 +3,143 @@ const { ListColumnType } = require("../../models/listColumnsType");
 const { existingOrNewConnection } = require("../sql/sql");
 const bigint = require("../numbers/bigint");
 const { sanitizeText } = require("../validation/sanitizeText");
+const uuid = require("uuid");
 
 function isUserEnteredTwoColumnWithSameName(newColumns) {
-    for (let i = 0; i < newColumns.length; i++) {
-        const copyWithouCurrentIndex = newColumns.filter((column, index) => index !== i);
+  for (let i = 0; i < newColumns.length; i++) {
+    const copyWithouCurrentIndex = newColumns.filter(
+      (column, index) => index !== i
+    );
 
-        const filteredList = copyWithouCurrentIndex.filter(column => newColumns[i].name === column.name);
-        if (filteredList.length > 0) {
-            return true;
-        }
+    const filteredList = copyWithouCurrentIndex.filter(
+      (column) => newColumns[i].name === column.name
+    );
+    if (filteredList.length > 0) {
+      return true;
     }
+  }
 
-    return false;
+  return false;
 }
 
 async function checkForDuplicate(req, res, next) {
-    const { newColumns } = req.body;
+  const { newColumns } = req.body;
 
-    if (isUserEnteredTwoColumnWithSameName(newColumns)) {
-        req.flash("error", "Two Columns Cannot Have The Same Name");
-        return res.status(400).send("Two Column Cannot Have The Same Name");
-    }
+  if (isUserEnteredTwoColumnWithSameName(newColumns)) {
+    req.flash("error", "Two Columns Cannot Have The Same Name");
+    return res.status(400).send("Two Column Cannot Have The Same Name");
+  }
 
-    next();
+  next();
 }
 
 function trimColumns(req, res, next) {
-    req.body.newColumns = req.body.newColumns.map(column => ({...column, name: column.name.trim()}));
-    next();
+  req.body.newColumns = req.body.newColumns.map((column) => ({
+    ...column,
+    name: column.name.trim(),
+  }));
+  next();
 }
 
 async function retrievePreviousColumns(req, res, next) {
-    const { listID } = req.params;
+  const { listID } = req.params;
 
-    const listCustomColumns = await existingOrNewConnection(null, async connection => {
-        const list = await List.findByID(listID, connection);
-        const listCustomColumns = await ListColumnType.findFromList(list, connection);
+  const listCustomColumns = await existingOrNewConnection(
+    null,
+    async (connection) => {
+      const list = await List.findByID(listID, connection);
+      const listCustomColumns = await ListColumnType.findFromList(
+        list,
+        connection
+      );
 
-        return listCustomColumns;
-    });
+      return listCustomColumns;
+    }
+  );
 
-    req.body.listCustomColumns = listCustomColumns;
-    next();
+  req.body.listCustomColumns = listCustomColumns;
+  next();
 }
 
 async function checkForDuplicateWithCurrentColumns(req, res, next) {
-    const { newColumns, listCustomColumns } = req.body;
+  const { newColumns, listCustomColumns } = req.body;
 
-    for (let column of newColumns) {
-        const filteredCustomColumns = 
-            listCustomColumns.filter(customColumn => column.name === customColumn.name);
-        
-        if (filteredCustomColumns.length > 0) {
-            req.flash("error", "Two Column Cannot Have The Same Name");
-            return res.status(400).send("Two Column Cannot Have The Same Name");
-        }
+  for (let column of newColumns) {
+    const filteredCustomColumns = listCustomColumns.filter(
+      (customColumn) => column.name === customColumn.name
+    );
+
+    if (filteredCustomColumns.length > 0) {
+      req.flash("error", "Two Column Cannot Have The Same Name");
+      return res.status(400).send("Two Column Cannot Have The Same Name");
     }
+  }
 
-    next();
+  next();
 }
 
 function parseCustomColumnsData(req, res, next) {
-    if (!req.body.customColumns) {
-        req.body.customColumns = [];
+  if (!req.body.customColumns) {
+    req.body.customColumns = [];
+  }
+
+  const customColumnsData = [];
+
+  for (let [strID, value] of Object.entries(req.body.customColumns)) {
+    const id = bigint.toBigInt(strID.split("_")[1]);
+
+    if (!bigint.isValid(id)) {
+      throw new ValueError(400, "Invalid ListColumnTypeID");
     }
 
-    const customColumnsData = [];
+    const columnIDName =
+      req.method === "POST" ? "ListColumnTypeID" : "CustomRowItemsID";
 
-    for (let [strID, value] of Object.entries(req.body.customColumns)) {
-        const id = bigint.toBigInt(strID.split("_")[1]);
+    customColumnsData.push({
+      [columnIDName]: id.toString(),
+      Value: sanitizeText(value),
+    });
+  }
 
-        if (!bigint.isValid(id)) {
-            throw new ValueError(400, "Invalid ListColumnTypeID");
-        }
+  req.body.customColumns = customColumnsData;
+  next();
+}
 
-        const columnIDName = req.method === "POST" ? "ListColumnTypeID" : "CustomRowItemsID";
+function parseItemCustomColData(req, res, next) {
+  const keys = Object.keys(req.body).filter((el) =>
+    el.startsWith("custom-col-")
+  );
 
-        customColumnsData.push({
-            [columnIDName]: id.toString(),
-            Value: sanitizeText(value),
-        });
+  req.body.itemCustomCol = [];
+
+  for (const key of keys) {
+    const uuidVal = key.replace("custom-col-", "");
+    const name = req.body[key]?.name;
+    const value = req.body[key]?.value;
+
+    if (
+      uuid.validate(uuidVal) &&
+      typeof name === "string" &&
+      typeof value === "string"
+    ) {
+      req.body.itemCustomCol.push({
+        uuid: uuidVal,
+        name,
+        value,
+      });
     }
 
-    req.body.customColumns = customColumnsData;
-    next();
+    delete req.body[key];
+  }
+
+  next();
 }
 
 module.exports = {
-    checkForDuplicate,
-    trimColumns,
-    retrievePreviousColumns,
-    checkForDuplicateWithCurrentColumns,
-    parseCustomColumnsData,
-}
+  checkForDuplicate,
+  trimColumns,
+  retrievePreviousColumns,
+  checkForDuplicateWithCurrentColumns,
+  parseCustomColumnsData,
+  parseItemCustomColData,
+};

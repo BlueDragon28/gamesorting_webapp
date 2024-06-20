@@ -31,6 +31,7 @@ const {
 const { getCustomControlType } = require("../utils/ejs/customControlData");
 const {
   parseCustomColumnsData,
+  parseItemCustomColData,
 } = require("../utils/data/listCustomColumnsMiddlewares");
 const {
   validateItemHeader,
@@ -939,6 +940,7 @@ router.post(
 router.post(
   "/lists/:listID",
   parseCustomColumnsData,
+  parseItemCustomColData,
   customDataValidation.parseColumnsType,
   wrapAsync(async function (req, res) {
     const userID = req.session.user.id;
