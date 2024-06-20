@@ -30,9 +30,9 @@ function addNewCustomField(selectedList) {
   const rowUUID = uuidv4();
 
   selectedList.innerHTML += `
-    <div class="d-flex flex-row" ${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_BLOCK}">
+    <div class="d-flex flex-row my-3" ${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_BLOCK}">
       <div class="flex-fill">
-        <input type="text" class="form-control form-control-sm border-bottom-0 rounded-top rounded-bottom-0 mt-2" placeholder="Name" name="custom-col-${rowUUID}[name]" />
+        <input type="text" class="form-control form-control-sm border-bottom-0 rounded-top rounded-bottom-0" placeholder="Name" name="custom-col-${rowUUID}[name]" />
         <input type="text" class="form-control border-top-0 rounded-top-0 rounded-bottom" placeholder="Value" name="custom-col-${rowUUID}[value]" />
       </div>
       <div class="d-flex flex-column justify-content-center">
