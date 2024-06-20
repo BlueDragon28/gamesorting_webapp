@@ -2,6 +2,7 @@ import { addListenerToMinMaxInput } from "./custom-columns.js";
 import { addObserverToModalContentSection } from "./open-modal-when-mounted.js";
 import { addObserverToRuntimeFlashSection } from "../flashContainerHeight.js";
 import { restoreScrollPosition } from "./keep-scrolling-after-update.js";
+import { addListenerItemCustomColumn } from "./item-custom-column.js";
 
 function mutationObserver(mutationList, observer) {
   for (const mutation of mutationList) {
@@ -12,6 +13,7 @@ function mutationObserver(mutationList, observer) {
           addObserverToModalContentSection(element);
           addObserverToRuntimeFlashSection(element);
           restoreScrollPosition(element);
+          addListenerItemCustomColumn(element);
         }
       }
     }
