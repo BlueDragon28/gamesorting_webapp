@@ -110,7 +110,7 @@ function parseItemCustomColData(req, res, next) {
     el.startsWith("custom-col-")
   );
 
-  req.body.itemCustomCol = [];
+  req.body.itemCustomCols = [];
 
   for (const key of keys) {
     const uuidVal = key.replace("custom-col-", "");
@@ -122,7 +122,7 @@ function parseItemCustomColData(req, res, next) {
       typeof name === "string" &&
       typeof value === "string"
     ) {
-      req.body.itemCustomCol.push({
+      req.body.itemCustomCols.push({
         uuid: uuidVal,
         name,
         value,
