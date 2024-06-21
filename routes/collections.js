@@ -1612,11 +1612,12 @@ router.post(
 router.put(
   "/lists/:listID/item/:itemID",
   parseCustomColumnsData,
+  parseItemCustomColData,
   customDataValidation.parseColumnsType,
   wrapAsync(async function (req, res) {
     const userID = req.session.user.id.toString();
     const { listID, itemID } = req.params;
-    const { name, url, rating, customColumns } = req.body;
+    const { name, url, rating, customColumns, itemCustomCols } = req.body;
 
     const errorMessages = {};
 
@@ -1629,6 +1630,11 @@ router.put(
 
     const validatedCustomColumns = validateCustomColumns(
       customColumns,
+      errorMessages
+    );
+
+    const validatedItemCustomCols = validateItemCustomCols(
+      itemCustomCols,
       errorMessages
     );
 
@@ -1676,6 +1682,7 @@ router.put(
           validatedUrl.URL,
           validatedRating.Rating,
           validatedCustomColumns,
+          validatedItemCustomCols,
           listColumnsType,
           foundList,
           foundItem,
@@ -1714,6 +1721,7 @@ router.put(
           url,
           rating,
           customColumns,
+          itemCustomCols,
         },
       });
     } else {

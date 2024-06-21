@@ -194,6 +194,7 @@ async function updateItem(
   url,
   rating,
   customColumns,
+  itemCustomCols,
   listColumnsType,
   parentList,
   item,
@@ -203,6 +204,7 @@ async function updateItem(
   updatedItem.name = name;
   updatedItem.url = url;
   updatedItem.rating = rating;
+  updatedItem.itemCustomCols = itemCustomCols;
 
   if (!updatedItem.isValid()) {
     return "Invalid item";

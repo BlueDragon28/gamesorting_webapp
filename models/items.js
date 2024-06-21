@@ -321,6 +321,8 @@ class Item {
     } catch (error) {
       throw new SqlError(`Failed to update item: ${error.message}`);
     }
+
+    await this._createItemCustomCol(connection);
   }
 
   async #_isDuplicate(connection) {
