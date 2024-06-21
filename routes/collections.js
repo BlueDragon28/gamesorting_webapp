@@ -1012,6 +1012,7 @@ router.post(
           validatedUrl.URL,
           validatedRating.Rating,
           validatedCustomColumns,
+          validatedItemCustomCols,
           foundList,
           connection
         );

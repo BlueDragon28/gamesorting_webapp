@@ -161,10 +161,11 @@ async function saveItem(
   url,
   rating,
   customColumns,
+  itemCustomCols,
   parentList,
   connection
 ) {
-  const newItem = new Item(name, url, parentList);
+  const newItem = new Item(name, url, parentList, undefined, itemCustomCols);
   newItem.rating = rating;
 
   if (!newItem.isValid()) {

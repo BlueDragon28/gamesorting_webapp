@@ -85,8 +85,9 @@ class Item {
   rating = 0;
   parentList;
   customData;
+  itemCustomCols;
 
-  constructor(name, url, parentList, customData) {
+  constructor(name, url, parentList, customData, itemCustomCols) {
     if (name && typeof name === "string") {
       this.name = name;
     }
@@ -103,6 +104,10 @@ class Item {
 
     if (customData && Array.isArray(customData)) {
       this.customData = customData;
+    }
+
+    if (itemCustomCols && Array.isArray(itemCustomCols)) {
+      this.itemCustomCols = itemCustomCols;
     }
   }
 
@@ -129,6 +134,13 @@ class Item {
       !this.parentList ||
       !this.parentList instanceof List ||
       !this.parentList.isValid()
+    ) {
+      return false;
+    }
+
+    if (
+      this.itemCustomCols !== undefined &&
+      !Array.isArray(this.itemCustomCols)
     ) {
       return false;
     }
@@ -251,6 +263,36 @@ class Item {
     } catch (error) {
       console.log(error);
       throw new SqlError(`Failed to insert a item: ${error.message}`);
+    }
+
+    await this._createItemCustomCol(connection);
+  }
+
+  async _createItemCustomCol(connection) {
+    if (
+      !this.itemCustomCols ||
+      !Array.isArray(this.itemCustomCols) ||
+      this.itemCustomCols.length === 0
+    ) {
+      return;
+    }
+
+    const queryStatement =
+      "INSERT INTO itemCustomCols(ItemID, data) VALUES (?, ?) ON DUPLICATE KEY UPDATE data = ?";
+    const jsonData = JSON.stringify(this.itemCustomCols);
+    const queryArgs = [this.id, jsonData, jsonData];
+
+    try {
+      const queryResult = await connection.query(queryStatement, queryArgs);
+
+      if (queryResult.affectedRows === 0) {
+        throw new Error("Invalid inserted ID or item custom columns");
+      }
+    } catch (error) {
+      console.log(error);
+      throw new SqlError(
+        `Failed to insert item custom columns: ${error.message}`
+      );
     }
   }
 
