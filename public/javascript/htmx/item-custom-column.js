@@ -37,7 +37,7 @@ function addNewCustomField(selectedList) {
       </div>
       <div class="d-flex flex-column justify-content-center">
         <button type="button" class="btn-close my-auto" ${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_DELETE}" />
-      <div>
+      </div>
     </div>
   `;
 }
