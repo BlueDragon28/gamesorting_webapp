@@ -345,6 +345,31 @@ class Item {
     }
   }
 
+  static async _findItemCustomCols(id, connection) {
+    return await existingOrNewConnection(
+      connection,
+      async function (connection) {
+        const queryStatement =
+          "SELECT ItemID, data FROM itemCustomCols WHERE ItemID = ?";
+        const queryArgs = [id];
+
+        try {
+          const queryResult = await connection.query(queryStatement, queryArgs);
+
+          if (!queryResult.length) {
+            return [];
+          }
+
+          return queryResult[0].data;
+        } catch (error) {
+          throw new SqlError(
+            `Failed to find item custom columns: ${error.message}`
+          );
+        }
+      }
+    );
+  }
+
   static async findByID(id, connection) {
     id = bigint.toBigInt(id);
 
@@ -395,6 +420,12 @@ class Item {
             connection
           );
           foundItem.customData = foundCustomData;
+
+          const foundItemCustomCols = await Item._findItemCustomCols(
+            id,
+            connection
+          );
+          foundItem.itemCustomCols = foundItemCustomCols;
 
           return foundItem;
         } catch (error) {
@@ -520,6 +551,12 @@ class Item {
           connection
         );
         item.customData = foundCustomData;
+
+        const foundItemCustomCols = await Item._findItemCustomCols(
+          item.id,
+          connection
+        );
+        item.itemCustomCols = foundItemCustomCols;
 
         return item;
       } catch (error) {
