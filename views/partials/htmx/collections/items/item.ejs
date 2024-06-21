@@ -102,6 +102,12 @@ function getColumnType(columnTypeID) {
                             <% } %>
                         </div>
                     <% } %>
+
+                    <% for (const itemCustomData of item.itemCustomCols) { %>
+                        <div class="list-group-item d-flex flex-row align-items-center footer-card-height">
+                            <div><%= itemCustomData.name %>: <%= itemCustomData.value %></div>
+                        </div>
+                    <% } %>
                 </div>
             </div>
         </div>
