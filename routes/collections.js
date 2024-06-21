@@ -814,6 +814,7 @@ router.get(
       url: item.url,
       rating: item.rating.toString(),
       customColumns: [],
+      itemCustomCols: item.itemCustomCols,
     };
 
     for (const columnType of listColumnsType) {
