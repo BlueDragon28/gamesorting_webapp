@@ -147,6 +147,14 @@ function columnDataAndTypeValidation() {
   );
 }
 
+function itemCustomColumnValidation() {
+  return Joi.object({
+    uuid: Joi.string().sanitize().trim().required(),
+    name: Joi.string().sanitize().trim().required(),
+    value: Joi.string().sanitize().trim().required(),
+  }).required();
+}
+
 function validate() {
   const celebrateValidation = {
     [Segments.BODY]: Joi.object({
@@ -188,6 +196,7 @@ function validateImportCustomColumns() {
 module.exports = {
   parseColumnsType: wrapAsync(parseColumnsType),
   columnDataAndTypeValidation,
+  itemCustomColumnValidation,
   validate,
   validateImportCustomColumns,
   _: {

@@ -1,4 +1,7 @@
-const { columnDataAndTypeValidation } = require("../customDataValidation");
+const {
+  columnDataAndTypeValidation,
+  itemCustomColumnValidation,
+} = require("../customDataValidation");
 const Joi = require("../extendedJoi");
 const { Item } = require("../../../models/items");
 const { User } = require("../../../models/users");
@@ -64,6 +67,13 @@ function validateCustomColumn(customColumn) {
   return [error, validatedCustomColumn];
 }
 
+function validateItemCustomCol(itemCustomCol) {
+  const schema = itemCustomColumnValidation();
+  const { error, value: validatedItemCustomCol } =
+    schema.validate(itemCustomCol);
+  return [error, validatedItemCustomCol];
+}
+
 function validateItemHeader(name, url, rating, errorMessages) {
   var [error, validatedName] = validateText("Name", name);
   if (error) {
@@ -98,6 +108,21 @@ function validateCustomColumns(customColumns, errorMessages) {
     validatedCustomColumns.push(validatedCustomColumn);
   }
   return validatedCustomColumns;
+}
+
+function validateItemCustomCols(itemCustomCols, errorMesssages) {
+  const validatedItemCustomCols = [];
+  for (const itemCustomCol of itemCustomCols) {
+    const [error, validatedItemCustomCol] =
+      validateItemCustomCol(itemCustomCol);
+
+    if (error) {
+      errorMesssages[`custom-col-${itemCustomCol.uuid}`] = error;
+    }
+    validatedItemCustomCols.push(validatedItemCustomCol);
+  }
+
+  return validatedItemCustomCols;
 }
 
 async function isItemDuplicate(name, list, connection, id = null) {
@@ -230,6 +255,7 @@ module.exports = {
   validateStar,
   validateItemHeader,
   validateCustomColumns,
+  validateItemCustomCols,
   isItemDuplicate,
   checkIfUserCanCreateAnItem,
   saveItem,

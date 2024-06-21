@@ -40,6 +40,7 @@ const {
   saveItem,
   updateItem,
   checkIfUserCanCreateAnItem,
+  validateItemCustomCols,
 } = require("../utils/validation/htmx/items");
 const customDataValidation = require("../utils/validation/customDataValidation");
 const {
@@ -945,7 +946,7 @@ router.post(
   wrapAsync(async function (req, res) {
     const userID = req.session.user.id;
     const { listID } = req.params;
-    const { name, url, rating, customColumns } = req.body;
+    const { name, url, rating, customColumns, itemCustomCols } = req.body;
 
     const errorMessages = {};
 
@@ -958,6 +959,11 @@ router.post(
 
     const validatedCustomColumns = validateCustomColumns(
       customColumns,
+      errorMessages
+    );
+
+    const validatedItemCustomCols = validateItemCustomCols(
+      itemCustomCols,
       errorMessages
     );
 
@@ -1040,6 +1046,7 @@ router.post(
           url,
           rating,
           customColumns,
+          itemCustomCols,
         },
       });
     } else {
