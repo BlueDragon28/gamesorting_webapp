@@ -32,8 +32,8 @@ function addNewCustomField(selectedList) {
   selectedList.innerHTML += `
     <div class="d-flex flex-row my-3" ${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_BLOCK}">
       <div class="flex-fill">
-        <input type="text" class="form-control form-control-sm border-bottom-0 rounded-top rounded-bottom-0" placeholder="Name" name="custom-col-${rowUUID}[name]" />
-        <input type="text" class="form-control border-top-0 rounded-top-0 rounded-bottom" placeholder="Value" name="custom-col-${rowUUID}[value]" />
+        <input type="text" class="form-control form-control-sm item-custom-col-input-top rounded-top rounded-bottom-0" placeholder="Name" name="custom-col-${rowUUID}[name]" />
+        <input type="text" class="form-control item-custom-col-input-bottom rounded-top-0 rounded-bottom" placeholder="Value" name="custom-col-${rowUUID}[value]" />
       </div>
       <div class="d-flex flex-column justify-content-center">
         <button type="button" class="btn-close my-auto" ${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_DELETE}" />

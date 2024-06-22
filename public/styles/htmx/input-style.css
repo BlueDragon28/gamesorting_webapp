@@ -1,0 +1,11 @@
+.item-custom-col-input-top {
+  box-shadow: none !important;
+  outline: none;
+  border-bottom: 0;
+}
+
+.item-custom-col-input-bottom {
+  box-shadow: none !important;
+  outline: none;
+  border-top: 0;
+}

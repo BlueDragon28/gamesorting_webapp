@@ -22,3 +22,4 @@ import "../styles/interactionButtons/interactionButtons.css";
 import "../styles/flash-container.css";
 import "../styles/modal-import-custom-columns-from.css";
 import "../styles/htmx/collections_card.css";
+import "../styles/htmx/input-style.css";

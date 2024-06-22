@@ -110,8 +110,8 @@
                         <% const customColInputError = isItemCustomColAsError ? " is-invalid" : "" %>
                         <div class="d-flex flex-row my-3" gs-new-custom-column-data="inputBlock">
                             <div class="flex-fill">
-                                <input type="text" class="form-control form-control-sm border-bottom-0 rounded-top rounded-bottom-0<%= customColInputError %>" placeholder="Name" name="custom-col-<%= item.uuid %>[name]" value="<%= item.name %>" />
-                                <input type="text" class="form-control border-top-0 rounded-top-0 rounded-bottom<%= customColInputError %>" placeholder="Value" name="custom-col-<%= item.uuid %>[value]" value="<%= item.value %>" />
+                                <input type="text" class="form-control form-control-sm item-custom-col-input-top rounded-top rounded-bottom-0<%= customColInputError %>" placeholder="Name" name="custom-col-<%= item.uuid %>[name]" value="<%= item.name %>" />
+                                <input type="text" class="form-control item-custom-col-input-bottom rounded-top-0 rounded-bottom<%= customColInputError %>" placeholder="Value" name="custom-col-<%= item.uuid %>[value]" value="<%= item.value %>" />
                                 <% if (customColInputError) { %>
                                     <div class="invalid-feedback"><%= errorMessages[`custom-col-${item.uuid}`] %></div>
                                 <% } %>
