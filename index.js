@@ -85,7 +85,6 @@ if (
     ? getEnvValueFromFile(process.env.SESSION_SECRET_KEY)
     : process.env.SESSION_SECRET_KEY;
 }
-console.log(sessionSecret);
 
 app.use(
   session({
