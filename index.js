@@ -3,7 +3,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 } else {
   require("./utils/loadingEnvVariable").loadEnvVariableFromFile(
-    process.env.ENV_VAR_FILE,
+    process.env.ENV_VAR_FILE
   );
 }
 
@@ -69,25 +69,28 @@ const secureCookie =
   process.env.NODE_ENV === "production" &&
   process.env.SECURE_SESSION_COOKIE === "true";
 let sessionSecret;
-if (process.env.NODE_ENV !== "production") {
-  sessionSecret = "mytestsecret";
-} else {
-  if (
-    typeof process.env.SESSION_SECRET_KEY !== "string" ||
-    !process.env.SESSION_SECRET_KEY.length
-  ) {
-    throw new Error("No session secret provided");
+if (
+  typeof process.env.SESSION_SECRET_KEY !== "string" ||
+  !process.env.SESSION_SECRET_KEY.length
+) {
+  if (process.env.NODE_ENV !== "production") {
+    sessionSecret = "mytestsecret";
+  } else {
+    sessionSecret = Array.from({ length: 16 }, () =>
+      Math.floor(Math.random() * 256)
+    ).join();
   }
-
+} else {
   sessionSecret = isFileBased(process.env.SESSION_SECRET_KEY)
     ? getEnvValueFromFile(process.env.SESSION_SECRET_KEY)
     : process.env.SESSION_SECRET_KEY;
 }
+console.log(sessionSecret);
 
 app.use(
   session({
     name: "sessionID",
-    secret: process.env.SESSION_SECRET_KEY,
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
@@ -98,7 +101,7 @@ app.use(
       httpOnly: true,
       maxAge: 1000 * 3600 * 24 * 7,
     },
-  }),
+  })
 );
 app.use(flash());
 app.use(function (req, res, next) {
