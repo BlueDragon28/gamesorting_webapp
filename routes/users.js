@@ -1,8 +1,6 @@
 const express = require("express");
 const wrapAsync = require("../utils/errors/wrapAsync");
 const { User } = require("../models/users");
-const { UserLostPassword } = require("../models/usersLostPassword");
-const { checkIfUserValid } = require("../utils/validation/users");
 const {
   isLoggedIn,
   isUserPasswordValid,
@@ -49,46 +47,6 @@ router.get("/login", function (req, res) {
   res.locals.activeLink = "UserLogin";
   res.render("partials/htmx/login/login.ejs");
 });
-
-router.get("/lostpassword", function (req, res) {
-  if (req.session.user && checkIfUserValid(req.session.user)) {
-    req.flash("success", "Already logged in");
-    return res.redirect("/collections");
-  }
-
-  res.render("login/lostPassword");
-});
-
-router.get(
-  "/lostpassword/:tokenID",
-  wrapAsync(async function (req, res) {
-    const { tokenID } = req.params;
-
-    const [tokenData, isFound, isRecent] = await existingOrNewConnection(
-      null,
-      async function (connection) {
-        const lostUserData = await UserLostPassword.findByToken(
-          tokenID,
-          connection
-        );
-
-        return [
-          lostUserData,
-          lostUserData instanceof UserLostPassword && lostUserData.isValid(),
-          lostUserData instanceof UserLostPassword && lostUserData.isRecent(),
-        ];
-      }
-    );
-
-    if (!isFound || !isRecent) {
-      req.flash("error", "Invalid token");
-      return res.redirect("/");
-    }
-
-    res.render("login/createNewPasswordOnLoss", { tokenID });
-  }),
-  errorsWithPossibleRedirect("Invalid token", "/")
-);
 
 router.post(
   "/register",
