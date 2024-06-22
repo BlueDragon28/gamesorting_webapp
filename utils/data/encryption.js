@@ -14,7 +14,7 @@ if (
   if (process.env.NODE_ENV !== "production") {
     process.env.ENCRYPT_KEY = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16";
   } else {
-    process.env.ENCRYPT_KEY = Array.from({ length: 16 }, (_, _) =>
+    process.env.ENCRYPT_KEY = Array.from({ length: 16 }, () =>
       Math.floor(Math.random() * 256)
     ).join();
   }
@@ -28,7 +28,7 @@ if (
   if (process.env.NODE_ENV != "production") {
     process.env.ENCRYPT_IV = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16";
   } else {
-    process.env.ENCRYPT_IV = Array.from({ length: 16 }, (_, _) =>
+    process.env.ENCRYPT_IV = Array.from({ length: 16 }, () =>
       Math.floor(Math.random() * 256)
     ).join();
   }
