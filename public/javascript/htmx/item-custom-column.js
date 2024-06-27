@@ -29,7 +29,9 @@ document.body.addEventListener("click", function (evt) {
 function addNewCustomField(selectedList) {
   const rowUUID = uuidv4();
 
-  selectedList.innerHTML += `
+  selectedList.insertAdjacentHTML(
+    "beforeend",
+    `
     <div class="d-flex flex-row my-3" ${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_BLOCK}">
       <div class="flex-fill">
         <input type="text" class="form-control form-control-sm item-custom-col-input-top rounded-top rounded-bottom-0" placeholder="Name" name="custom-col-${rowUUID}[name]" />
@@ -39,7 +41,8 @@ function addNewCustomField(selectedList) {
         <button type="button" class="btn-close my-auto" ${CUSTOM_COLUMN_ATT_NAME}="${CUSTOM_COLUMN_DELETE}" />
       </div>
     </div>
-  `;
+    `
+  );
 }
 
 export function addListenerItemCustomColumn(element) {
