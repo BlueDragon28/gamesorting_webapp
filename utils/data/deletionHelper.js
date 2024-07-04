@@ -8,164 +8,126 @@ const { User } = require("../../models/users");
 const bigint = require("../numbers/bigint");
 
 async function deleteCustomDatas(customDatas, connection) {
-    if (!Array.isArray(customDatas)) {
-        return;
+  if (!Array.isArray(customDatas)) {
+    return;
+  }
+
+  for (let customData of customDatas) {
+    if (
+      !customData | (!customData instanceof CustomRowsItems) ||
+      !customData.isValid()
+    ) {
+      continue;
     }
 
-    for (let customData of customDatas) {
-        if (!customData | !customData instanceof CustomRowsItems || !customData.isValid()) {
-            continue;
-        }
-
-        await customData.delete(connection);
-    }
+    await customData.delete(connection);
+  }
 }
 
 async function deleteCustomDatasFromListColumnType(listColumnID, connection) {
-    if (!bigint.isValid(listColumnID)) {
-        return;
-    }
+  if (!bigint.isValid(listColumnID)) {
+    return;
+  }
 
-    const customDatas = await CustomRowsItems.findFromListColumn(listColumnID, connection);
+  const customDatas = await CustomRowsItems.findFromListColumn(
+    listColumnID,
+    connection
+  );
 
-    deleteCustomDatas(customDatas, connection);
+  deleteCustomDatas(customDatas, connection);
 }
 
 async function deleteCustomDatasFromItemID(itemID, connection) {
-    if (!bigint.isValid(itemID)) {
-        return;
-    }
+  if (!bigint.isValid(itemID)) {
+    return;
+  }
 
-    const customDatas = await CustomRowsItems.findFromItem(itemID, connection);
+  const customDatas = await CustomRowsItems.findFromItem(itemID, connection);
 
-    deleteCustomDatas(customDatas, connection);
+  deleteCustomDatas(customDatas, connection);
 }
 
 async function deleteItem(itemID, connection) {
-    let foundItem;
-    if (!(itemID instanceof Item)) {
-        if (!bigint.isValid(itemID)) {
-            return;
-        }
-
-        foundItem = await Item.findByID(itemID, connection);
-    } else {
-        foundItem = itemID;
+  let foundItem;
+  if (!(itemID instanceof Item)) {
+    if (!bigint.isValid(itemID)) {
+      return;
     }
 
-    if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
-        return;
-    }
+    foundItem = await Item.findByID(itemID, connection);
+  } else {
+    foundItem = itemID;
+  }
 
-    await deleteCustomDatasFromItemID(foundItem.id, connection);
+  if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
+    return;
+  }
 
-    await Item.deleteFromID(foundItem.id, connection);
-}
-
-async function deleteItemsFromList(list, connection) {
-    if (!list || !list instanceof List || !list.isValid()) {
-        return;
-    }
-
-    const [items] = await Item.findFromList(list, 0, false, connection);
-    for (let item of items) {
-        await deleteItem(item.id, connection);
-    }
-}
-
-async function deleteListColumnsType(listID, connection) {
-    if (!bigint.isValid(listID)) {
-        return;
-    }
-
-    await ListColumnType.deleteFromList(listID, connection);
+  await Item.deleteFromID(foundItem.id, connection);
 }
 
 async function deleteListSorting(list, connection) {
-    if (!list instanceof List || !list.isValid()) {
-        return;
-    }
+  if (!list instanceof List || !list.isValid()) {
+    return;
+  }
 
-    await ListSorting.deleteFromList(list, connection);
+  await ListSorting.deleteFromList(list, connection);
 }
 
 async function deleteList(listID, connection) {
-    let foundList;
-    if (!(listID instanceof List)) {
-        if (!bigint.isValid(listID)) {
-            return;
-        }
-
-        foundList = await List.findByID(listID, connection);
-    } else {
-        foundList = listID;
+  let foundList;
+  if (!(listID instanceof List)) {
+    if (!bigint.isValid(listID)) {
+      return;
     }
 
-    if (!foundList || !foundList instanceof List || !foundList.isValid()) {
-        return;
-    }
+    foundList = await List.findByID(listID, connection);
+  } else {
+    foundList = listID;
+  }
 
-    await deleteListColumnsType(foundList.id, connection)
-    await deleteItemsFromList(foundList, connection)
-    await deleteListSorting(foundList, connection);
-    await List.deleteFromID(foundList.id, connection);
-}
+  if (!foundList || !foundList instanceof List || !foundList.isValid()) {
+    return;
+  }
 
-async function deleteLists(collection, connection) {
-    if (!collection || !collection instanceof Collection || !collection.isValid()) {
-        return;
-    }
-
-    const [lists] = await List.findFromCollection(collection, 0, connection);
-
-    for (let list of lists) {
-        await deleteList(list.id, connection);
-    }
+  await List.deleteFromID(foundList.id, connection);
 }
 
 async function deleteCollection(collectionID, connection) {
-    if (!bigint.isValid(collectionID)) {
-        return;
-    }
+  if (!bigint.isValid(collectionID)) {
+    return;
+  }
 
-    const foundCollection = await Collection.findByID(collectionID, connection);
+  const foundCollection = await Collection.findByID(collectionID, connection);
 
-    await deleteLists(foundCollection, connection);
-
-    await Collection.deleteFromID(foundCollection.id, connection);
+  await Collection.deleteFromID(foundCollection.id, connection);
 }
 
 async function deleteUser(userID, connection) {
-    let foundUser;
-    if (!(userID instanceof User)) {
-        if (!bigint.isValid(userID)) {
-            return;
-        }
-
-        foundUser = await User.findByID(userID, connection);
-    } else {
-        foundUser = userID;
+  let foundUser;
+  if (!(userID instanceof User)) {
+    if (!bigint.isValid(userID)) {
+      return;
     }
 
-    if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
-        return;
-    }
+    foundUser = await User.findByID(userID, connection);
+  } else {
+    foundUser = userID;
+  }
 
-    const [foundCollections] = await Collection.findFromUserID(foundUser.id, 0, connection);
+  if (!foundUser || !(foundUser instanceof User) || !foundUser.isValid()) {
+    return;
+  }
 
-    for (let collection of foundCollections) {
-        await deleteCollection(collection.id, connection);
-    }
-
-    await foundUser.delete(connection);
+  await foundUser.delete(connection);
 }
 
 module.exports = {
-    deleteCustomDatasFromListColumnType,
-    deleteCustomDatasFromItemID,
-    deleteListSorting,
-    deleteItem,
-    deleteList,
-    deleteCollection,
-    deleteUser
+  deleteCustomDatasFromListColumnType,
+  deleteCustomDatasFromItemID,
+  deleteListSorting,
+  deleteItem,
+  deleteList,
+  deleteCollection,
+  deleteUser,
 };
