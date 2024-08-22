@@ -4,8 +4,9 @@ const { CustomRowsItems } = require("../../models/customUserData");
 const { ValueError } = require("../errors/exceptions");
 
 function findColumnsID(customRow, newColumnsID) {
-    const filteredList = 
-        newColumnsID.filter(columnID => columnID.fromID === customRow.columnTypeID);
+  const filteredList = newColumnsID.filter(
+    (columnID) => columnID.fromID === customRow.columnTypeID
+  );
     return filteredList.length ? filteredList[0] : null;
 }
 
@@ -24,20 +25,38 @@ async function newCustomRow(item, fromCustomRow, newColumnsID, connection) {
 }
 
 async function moveItemTo(fromList, toList, item, newColumnsID, connection) {
-    if (!fromList || !fromList instanceof List || !fromList.isValid() ||
-            !toList || !toList instanceof List || !toList.isValid() ||
-            !item || !item instanceof Item || !item.isValid()) {
-
+  if (
+    !fromList ||
+    !fromList instanceof List ||
+    !fromList.isValid() ||
+    !toList ||
+    !toList instanceof List ||
+    !toList.isValid() ||
+    !item ||
+    !item instanceof Item ||
+    !item.isValid()
+  ) {
         throw new ValueError(400, "Invalid lists/item provided");
     }
 
-    const foundItemByName = await Item.findFromName(item.name, toList, connection);
+  const foundItemByName = await Item.findFromName(
+    item.name,
+    toList,
+    connection
+  );
 
     if (foundItemByName instanceof Item) {
-        throw new ValueError(400, "An item with this name already exists in the destination list");
+    throw new ValueError(
+      400,
+      "An item with this name already exists in the destination list"
+    );
     }
 
-    const newItem = new Item(item.name, item.url, toList);
+  const newItem = new Item(
+    item.name,
+    item.url,
+    toList,
+  );
     newItem.rating = item.rating;
     await newItem.save(connection);
 
@@ -49,5 +68,5 @@ async function moveItemTo(fromList, toList, item, newColumnsID, connection) {
 }
 
 module.exports = {
-    moveItemTo
+  moveItemTo,
 };
