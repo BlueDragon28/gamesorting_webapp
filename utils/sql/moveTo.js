@@ -7,21 +7,21 @@ function findColumnsID(customRow, newColumnsID) {
   const filteredList = newColumnsID.filter(
     (columnID) => columnID.fromID === customRow.columnTypeID
   );
-    return filteredList.length ? filteredList[0] : null;
+  return filteredList.length ? filteredList[0] : null;
 }
 
 async function newCustomRow(item, fromCustomRow, newColumnsID, connection) {
-    const newColumnID = findColumnsID(fromCustomRow, newColumnsID);
-    if (!newColumnID) {
-        console.log("Failed to find new column type");
-    }
+  const newColumnID = findColumnsID(fromCustomRow, newColumnsID);
+  if (!newColumnID) {
+    console.log("Failed to find new column type");
+  }
 
-    const newCustomRow = new CustomRowsItems(
-        fromCustomRow.value,
-        item.id,
-        newColumnID.toID
-    );
-    await newCustomRow.save(connection);
+  const newCustomRow = new CustomRowsItems(
+    fromCustomRow.value,
+    item.id,
+    newColumnID.toID
+  );
+  await newCustomRow.save(connection);
 }
 
 async function moveItemTo(fromList, toList, item, newColumnsID, connection) {
@@ -36,8 +36,8 @@ async function moveItemTo(fromList, toList, item, newColumnsID, connection) {
     !item instanceof Item ||
     !item.isValid()
   ) {
-        throw new ValueError(400, "Invalid lists/item provided");
-    }
+    throw new ValueError(400, "Invalid lists/item provided");
+  }
 
   const foundItemByName = await Item.findFromName(
     item.name,
@@ -45,26 +45,28 @@ async function moveItemTo(fromList, toList, item, newColumnsID, connection) {
     connection
   );
 
-    if (foundItemByName instanceof Item) {
+  if (foundItemByName instanceof Item) {
     throw new ValueError(
       400,
       "An item with this name already exists in the destination list"
     );
-    }
+  }
 
   const newItem = new Item(
     item.name,
     item.url,
     toList,
+    undefined,
+    item.itemCustomCols
   );
-    newItem.rating = item.rating;
-    await newItem.save(connection);
+  newItem.rating = item.rating;
+  await newItem.save(connection);
 
-    for (const customRow of item.customData) {
-        await newCustomRow(newItem, customRow, newColumnsID, connection);
-    }
+  for (const customRow of item.customData) {
+    await newCustomRow(newItem, customRow, newColumnsID, connection);
+  }
 
-    return newItem;
+  return newItem;
 }
 
 module.exports = {
