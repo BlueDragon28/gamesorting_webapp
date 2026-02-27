@@ -5,6 +5,10 @@ const BUTTON_LIST_ID_STARTSWITH = "button-list-";
 const BUTTON_LIST_COLLECTION_CURRENT_PAGE_STARTSWITH =
   "button-collection-current-page-";
 
+const BUTTON_ITEM_FROM_LIST_STR = "button-item-from-list";
+const BUTTON_ITEM_FROM_LIST_STARTSWITH = "item-from-list-id-";
+const GS_BASE_URL = "GS-base-url";
+
 function get_id_from_class(element, id_starts_with) {
   if (!element || !id_starts_with) return;
 
@@ -12,9 +16,11 @@ function get_id_from_class(element, id_starts_with) {
 
   for (let i = 0; i < element.classList.length; i++) {
     const class_element = element.classList.item(i);
-    if (class_element.startsWith(BUTTON_LIST_ID_STARTSWITH)) {
-      class_element.replace(BUTTON_LIST_ID_STARTSWITH, "");
-      searched_id = class_element;
+    console.log(class_element);
+    if (class_element.startsWith(id_starts_with)) {
+      const class_element_with_id = class_element.replace(id_starts_with, "");
+      searched_id = class_element_with_id;
+      break;
     }
   }
 
@@ -32,9 +38,41 @@ function load_collection(targetCollectionID, page_id) {
   htmx.ajax("GET", `/collections/lists/${id}`, {
     target: "#collections-lists-global-row",
     swap: "outerHTML",
-    push: true,
+    push: "true",
     headers,
   });
+}
+
+function load_item(targetItemID, baseUrl) {
+  if (!targetItemID || !baseUrl) return;
+  console.log("item: ", targetItemID);
+  console.log("baseUrl", baseUrl);
+  htmx.ajax("GET", `${baseUrl}/item/${targetItemID}`, {
+    target: "#collections-items-list-row",
+    swap: "outerHTML",
+    push: "true",
+    headers: {
+      "GS-currentItemsPage": "0",
+      "GS-searchTerm": "",
+    },
+  });
+}
+
+function handling_open_item(element) {
+  console.log("item1:", element);
+  if (element.id !== BUTTON_ITEM_FROM_LIST_STR) {
+    element = element.closest(`#${BUTTON_ITEM_FROM_LIST_STR}`);
+    console.log("item2:", element);
+    if (!element) return;
+  }
+  let item_id = get_id_from_class(element, BUTTON_ITEM_FROM_LIST_STARTSWITH);
+  console.log("item_id:", item_id);
+  if (!item_id) return;
+  let baseUrl = element.getAttribute(GS_BASE_URL);
+  console.log("baseUrl:", baseUrl);
+  if (!baseUrl) return;
+
+  load_item(item_id, baseUrl);
 }
 
 document.body.addEventListener("click", function (event) {
@@ -55,5 +93,10 @@ document.body.addEventListener("click", function (event) {
 
     load_collection(item_id, page_id);
   }
+
+  if (event.target) {
+    handling_open_item(event.target);
+  }
+
   console.log("test");
 });

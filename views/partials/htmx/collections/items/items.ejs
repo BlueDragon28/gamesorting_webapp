@@ -13,13 +13,9 @@ const itemSearchTerm = typeof searchTerm === "string" ? searchTerm : undefined;
         <div class="list-group list-group-flush overflow-auto h-100" gs-keep-scroll="items-<%= listID %>-<%= itemsPagination.currentPage %>">
             <% for (const item of items) { %>
                 <button 
-                    class="list-group-item list-group-item-action d-flex flex-row align-items-center footer-card-height"
-                    hx-get="<%= baseUrl %>/item/<%= item.id %>"
-                    hx-target="#collections-items-list-row"
-                    hx-swap="outerHTML"
-                    hx-push-url="true"
-                    hx-headers='{"GS-currentItemsPage":<%= itemsPagination.currentPage %><%=
-                        itemSearchTerm ? `,"GS-searchTerm":"${itemSearchTerm}"` : "" %>}'
+                    id="button-item-from-list"
+                    class="item-from-list-id-<%= item.id %> list-group-item list-group-item-action d-flex flex-row align-items-center footer-card-height"
+                    GS-base-url="<%= baseUrl %>"
                 >
                     <div class="flex-fill three-dot-text text-start"><%= item.name %></div>
                     <% if (typeof item.rating === "number") { %>
