@@ -3,7 +3,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 } else {
   require("./utils/loadingEnvVariable").loadEnvVariableFromFile(
-    process.env.ENV_VAR_FILE
+    process.env.ENV_VAR_FILE,
   );
 }
 
@@ -77,7 +77,7 @@ if (
     sessionSecret = "mytestsecret";
   } else {
     sessionSecret = Array.from({ length: 16 }, () =>
-      Math.floor(Math.random() * 256)
+      Math.floor(Math.random() * 256),
     ).join();
   }
 } else {
@@ -100,7 +100,7 @@ app.use(
       httpOnly: true,
       maxAge: 1000 * 3600 * 24 * 7,
     },
-  })
+  }),
 );
 app.use(flash());
 app.use(function (req, res, next) {
