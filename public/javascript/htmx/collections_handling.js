@@ -16,7 +16,6 @@ function get_id_from_class(element, id_starts_with) {
 
   for (let i = 0; i < element.classList.length; i++) {
     const class_element = element.classList.item(i);
-    console.log(class_element);
     if (class_element.startsWith(id_starts_with)) {
       const class_element_with_id = class_element.replace(id_starts_with, "");
       searched_id = class_element_with_id;
@@ -58,44 +57,55 @@ function load_item(targetItemID, baseUrl) {
   });
 }
 
+function handling_open_list(element) {
+  let item_id = element.id;
+  let page_id;
+
+  if (!item_id.startsWith(BUTTON_LIST_ID_STARTSWITH)) return false;
+
+  if (!item_id) {
+    element = element.closest(`.${BUTTON_LIST_SRC_STR}`);
+    if (!element) return false;
+    item_id = get_id_from_class(element, BUTTON_LIST_ID_STARTSWITH);
+    if (!item_id) return false;
+  }
+
+  page_id = get_id_from_class(
+    element,
+    BUTTON_LIST_COLLECTION_CURRENT_PAGE_STARTSWITH,
+  );
+
+  console.log("handling_open_list");
+
+  load_collection(item_id, page_id);
+
+  return true;
+}
+
 function handling_open_item(element) {
   console.log("item1:", element);
   if (element.id !== BUTTON_ITEM_FROM_LIST_STR) {
     element = element.closest(`#${BUTTON_ITEM_FROM_LIST_STR}`);
     console.log("item2:", element);
-    if (!element) return;
+    if (!element) return false;
   }
   let item_id = get_id_from_class(element, BUTTON_ITEM_FROM_LIST_STARTSWITH);
   console.log("item_id:", item_id);
-  if (!item_id) return;
+  if (!item_id) return false;
   let baseUrl = element.getAttribute(GS_BASE_URL);
   console.log("baseUrl:", baseUrl);
-  if (!baseUrl) return;
+  if (!baseUrl) return false;
+
+  console.log("handling open_item");
 
   load_item(item_id, baseUrl);
+
+  return true;
 }
 
 document.body.addEventListener("click", function (event) {
-  if (event.target && event.target.classList.contains(BUTTON_LIST_SRC_STR)) {
-    let element = event.target;
-    let item_id = element.id;
-    let page_id;
-    if (!item_id) {
-      element = event.target.closest(`.${BUTTON_LIST_SRC_STR}`);
-      if (!element) return;
-      item_id = get_id_from_class(element, BUTTON_LIST_ID_STARTSWITH);
-      if (!item_id) return;
-    }
-    page_id = get_id_from_class(
-      element,
-      BUTTON_LIST_COLLECTION_CURRENT_PAGE_STARTSWITH,
-    );
-
-    load_collection(item_id, page_id);
-  }
-
   if (event.target) {
-    handling_open_item(event.target);
+    handling_open_list(event.target) || handling_open_item(event.target);
   }
 
   console.log("test");
