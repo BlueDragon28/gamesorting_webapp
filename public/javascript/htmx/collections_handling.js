@@ -12,6 +12,21 @@ const GS_BASE_URL = "GS-base-url";
 const PREVIOUS_BUTTON_LIST_PAGE = "button-previous-list-page";
 const NEXT_BUTTON_LIST_PAGE = "button-next-list-page";
 
+function getListPage(listID) {
+  let currentPage = parseInt(
+    sessionStorage.getItem(`collection-list-${listID}-page`),
+  );
+  if (!currentPage) {
+    currentPage = 1;
+  }
+  return currentPage;
+}
+
+function setListPage(listID, pageNumber) {
+  if (!listID || !pageNumber) return;
+  sessionStorage.setItem(`collection-list-${listID}-page`, pageNumber);
+}
+
 function get_id_from_class(element, id_starts_with) {
   if (!element || !id_starts_with) return;
 
@@ -31,11 +46,13 @@ function get_id_from_class(element, id_starts_with) {
 
 function load_collection(targetCollectionID, page_id) {
   const id = targetCollectionID.replace("button-list-", "");
+  const listPageID = getListPage(id);
   console.log("target id:", id);
   console.log("ready to replace");
   let headers = {};
   if (page_id) {
     headers["GS-currentPage"] = `page_id`;
+    headers["GS-currentItemsPage"] = listPageID;
   }
   htmx.ajax("GET", `/collections/lists/${id}`, {
     target: "#collections-lists-global-row",
@@ -107,14 +124,9 @@ function handling_next_list(element) {
   const listID = element.getAttribute("GS-current-id");
   if (!listID) return false;
 
-  let currentPage = parseInt(
-    sessionStorage.getItem(`collection-list-${listID}-page`),
-  );
-  if (!currentPage) {
-    currentPage = 1;
-  }
+  let currentPage = getListPage(listID);
   currentPage += 1;
-  sessionStorage.setItem(`collection-list-${listID}-page`, currentPage);
+  setListPage(listID, currentPage);
   load_next_item_page(listID, currentPage);
 
   return true;
@@ -127,14 +139,12 @@ function handling_previous_list(element) {
   const listID = element.getAttribute("GS-current-id");
   if (!listID) return false;
 
-  let currentPage = parseInt(
-    sessionStorage.getItem(`collection-list-${listID}-page`),
-  );
+  let currentPage = getListPage(listID);
   if (!currentPage || currentPage <= 1) {
     return false;
   }
   currentPage -= 1;
-  sessionStorage.setItem(`collection-list-${listID}-page`, currentPage);
+  setListPage(listID, currentPage);
   load_next_item_page(listID, currentPage);
 
   console.log("end");
