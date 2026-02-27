@@ -26,17 +26,12 @@ const itemSearchTerm = typeof searchTerm === "string" ? searchTerm : undefined;
         </div>
         <%- include("../partials/pagination_footer.ejs", {
             pagination: typeof itemsPagination === "object" ? itemsPagination : undefined,
+            previousButtonID: "button-previous-list-page",
+            nextButtonID: "button-next-list-page",
+            currentListID: selectedID,
             previousHTMX: `
-                hx-get='/collections/lists/${selectedID}?onlyItems=true'
-                hx-target="#collections-items-list-row"
-                hx-swap="outerHTML"
-                hx-headers='{"GS-currentItemsPage":${itemsPagination.currentPage-1}${itemSearchTerm?",\"GS-searchTerm\":\""+itemSearchTerm+"\"":""}}'
             `,
             nextHTMX: `
-                hx-get='/collections/lists/${selectedID}?onlyItems=true'
-                hx-target="#collections-items-list-row"
-                hx-swap="outerHTML"
-                hx-headers='{"GS-currentItemsPage":${itemsPagination.currentPage+1}${itemSearchTerm?",\"GS-searchTerm\":\""+itemSearchTerm+"\"":""}}'
             `,
         }) %>
     </div>

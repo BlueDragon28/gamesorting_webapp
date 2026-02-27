@@ -9,6 +9,9 @@ const BUTTON_ITEM_FROM_LIST_STR = "button-item-from-list";
 const BUTTON_ITEM_FROM_LIST_STARTSWITH = "item-from-list-id-";
 const GS_BASE_URL = "GS-base-url";
 
+const PREVIOUS_BUTTON_LIST_PAGE = "button-previous-list-page";
+const NEXT_BUTTON_LIST_PAGE = "button-next-list-page";
+
 function get_id_from_class(element, id_starts_with) {
   if (!element || !id_starts_with) return;
 
@@ -57,6 +60,21 @@ function load_item(targetItemID, baseUrl) {
   });
 }
 
+function load_next_item_page(listID, pageNumber) {
+  if (!listID || !pageNumber) return;
+
+  console.log("pageNumber", pageNumber);
+
+  htmx.ajax("GET", `/collections/lists/${listID}?onlyItems=true`, {
+    target: "#collections-items-list-row",
+    swap: "outerHTML",
+    headers: {
+      "GS-currentItemsPage": pageNumber,
+      "GS-searchTerm": "",
+    },
+  });
+}
+
 function handling_open_list(element) {
   let item_id = element.id;
   let page_id;
@@ -78,6 +96,48 @@ function handling_open_list(element) {
   console.log("handling_open_list");
 
   load_collection(item_id, page_id);
+
+  return true;
+}
+
+function handling_next_list(element) {
+  let item_id = element.id;
+  if (item_id !== NEXT_BUTTON_LIST_PAGE) return false;
+
+  const listID = element.getAttribute("GS-current-id");
+  if (!listID) return false;
+
+  let currentPage = parseInt(
+    sessionStorage.getItem(`collection-list-${listID}-page`),
+  );
+  if (!currentPage) {
+    currentPage = 1;
+  }
+  currentPage += 1;
+  sessionStorage.setItem(`collection-list-${listID}-page`, currentPage);
+  load_next_item_page(listID, currentPage);
+
+  return true;
+}
+
+function handling_previous_list(element) {
+  let item_id = element.id;
+  if (item_id !== PREVIOUS_BUTTON_LIST_PAGE) return false;
+
+  const listID = element.getAttribute("GS-current-id");
+  if (!listID) return false;
+
+  let currentPage = parseInt(
+    sessionStorage.getItem(`collection-list-${listID}-page`),
+  );
+  if (!currentPage || currentPage <= 1) {
+    return false;
+  }
+  currentPage -= 1;
+  sessionStorage.setItem(`collection-list-${listID}-page`, currentPage);
+  load_next_item_page(listID, currentPage);
+
+  console.log("end");
 
   return true;
 }
@@ -105,7 +165,10 @@ function handling_open_item(element) {
 
 document.body.addEventListener("click", function (event) {
   if (event.target) {
-    handling_open_list(event.target) || handling_open_item(event.target);
+    handling_open_list(event.target) ||
+      handling_open_item(event.target) ||
+      handling_next_list(event.target) ||
+      handling_previous_list(event.target);
   }
 
   console.log("test");

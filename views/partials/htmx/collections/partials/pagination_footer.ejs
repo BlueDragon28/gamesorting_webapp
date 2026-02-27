@@ -2,6 +2,12 @@
     <% if (typeof pagination === "object" && pagination.currentPage > 1) { %>
         <button 
             type="button"
+            <% if (typeof previousButtonID === "string") { %>
+              id="<%= previousButtonID %>"
+            <% } %>
+            <% if (typeof currentListID === "string") { %>
+              GS-current-id="<%= currentListID %>"
+            <% } %>
             class="btn p-0 m-0 border-0"
             <% if (typeof previousHTMX === "string") { %>
                 <%- previousHTMX %>
@@ -20,6 +26,12 @@
     <% if (typeof pagination === "object" && pagination.currentPage < pagination.numberOfPages) { %>
         <button 
             type="button"
+            <% if (typeof nextButtonID === "string") { %>
+              id="<%= nextButtonID %>"
+            <% } %>
+            <% if (typeof currentListID === "string") { %>
+              GS-current-id="<%= currentListID %>"
+            <% } %>
             class="btn p-0 m-0 border-0"
             <% if (typeof nextHTMX === "string") { %>
                 <%- nextHTMX %>
