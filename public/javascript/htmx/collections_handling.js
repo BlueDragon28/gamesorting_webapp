@@ -98,7 +98,7 @@ function handling_open_list(element) {
   let item_id = element.id;
   let page_id;
 
-  if (!item_id.startsWith(BUTTON_LIST_ID_STARTSWITH)) return false;
+  if (!item_id.startsWith(BUTTON_LIST_ID_STARTSWITH)) item_id = null;
 
   if (!item_id) {
     element = element.closest(`.${BUTTON_LIST_SRC_STR}`);
@@ -111,8 +111,6 @@ function handling_open_list(element) {
     element,
     BUTTON_LIST_COLLECTION_CURRENT_PAGE_STARTSWITH,
   );
-
-  console.log("handling_open_list");
 
   load_collection(item_id, page_id);
 
