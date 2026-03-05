@@ -12,6 +12,7 @@ const GS_BASE_URL = "GS-base-url";
 const PREVIOUS_BUTTON_LIST_PAGE = "button-previous-list-page";
 const NEXT_BUTTON_LIST_PAGE = "button-next-list-page";
 const GS_NUMBER_OF_PAGES = "GS-number-of-pages";
+const GS_CURRENT_ID = "GS-current-id";
 
 function getListPage(listID) {
   let currentPage = parseInt(
@@ -122,7 +123,7 @@ function handling_next_list(element) {
   let item_id = element.id;
   if (item_id !== NEXT_BUTTON_LIST_PAGE) return false;
 
-  const listID = element.getAttribute("GS-current-id");
+  const listID = element.getAttribute(GS_CURRENT_ID);
   const numberOfPages = element.getAttribute(GS_NUMBER_OF_PAGES);
   if (!listID) return false;
 
@@ -141,7 +142,7 @@ function handling_previous_list(element) {
   let item_id = element.id;
   if (item_id !== PREVIOUS_BUTTON_LIST_PAGE) return false;
 
-  const listID = element.getAttribute("GS-current-id");
+  const listID = element.getAttribute(GS_CURRENT_ID);
   const numberOfPages = element.getAttribute(GS_NUMBER_OF_PAGES);
   if (!listID) return false;
 
