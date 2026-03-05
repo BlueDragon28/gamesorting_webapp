@@ -57,7 +57,7 @@ function load_collection(targetCollectionID, page_id) {
   let headers = {};
   console.log("page_id:", page_id);
   if (page_id) {
-    headers["GS-currentPage"] = `page_id`;
+    headers["GS-currentPage"] = page_id;
     headers["GS-currentItemsPage"] = listPageID;
   }
   htmx.ajax("GET", `/collections/lists/${id}`, {
