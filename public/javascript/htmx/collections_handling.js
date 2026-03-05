@@ -4,6 +4,7 @@ const BUTTON_LIST_SRC_STR = "button-collection-list";
 const BUTTON_LIST_ID_STARTSWITH = "button-list-";
 const BUTTON_LIST_COLLECTION_CURRENT_PAGE_STARTSWITH =
   "button-collection-current-page-";
+const LIST_ITEMS_BLOCK_ID = "#collections-items-list-row";
 
 const BUTTON_ITEM_FROM_LIST_STR = "button-item-from-list";
 const BUTTON_ITEM_FROM_LIST_STARTSWITH = "item-from-list-id-";
@@ -69,7 +70,7 @@ function load_item(targetItemID, baseUrl) {
   console.log("item: ", targetItemID);
   console.log("baseUrl", baseUrl);
   htmx.ajax("GET", `${baseUrl}/item/${targetItemID}`, {
-    target: "#collections-items-list-row",
+    target: LIST_ITEMS_BLOCK_ID,
     swap: "outerHTML",
     push: "true",
     headers: {
@@ -85,7 +86,7 @@ function load_next_item_page(listID, pageNumber) {
   console.log("pageNumber", pageNumber);
 
   htmx.ajax("GET", `/collections/lists/${listID}?onlyItems=true`, {
-    target: "#collections-items-list-row",
+    target: LIST_ITEMS_BLOCK_ID,
     swap: "outerHTML",
     headers: {
       "GS-currentItemsPage": pageNumber,
