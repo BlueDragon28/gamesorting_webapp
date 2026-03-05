@@ -11,6 +11,7 @@ const GS_BASE_URL = "GS-base-url";
 
 const PREVIOUS_BUTTON_LIST_PAGE = "button-previous-list-page";
 const NEXT_BUTTON_LIST_PAGE = "button-next-list-page";
+const GS_NUMBER_OF_PAGES = "GS-number-of-pages";
 
 function getListPage(listID) {
   let currentPage = parseInt(
@@ -122,10 +123,14 @@ function handling_next_list(element) {
   if (item_id !== NEXT_BUTTON_LIST_PAGE) return false;
 
   const listID = element.getAttribute("GS-current-id");
+  const numberOfPages = element.getAttribute(GS_NUMBER_OF_PAGES);
   if (!listID) return false;
 
   let currentPage = getListPage(listID);
   currentPage += 1;
+  if (typeof numberOfPages === "number" && currentPage > numberOfPages) {
+    currentPage = 1;
+  }
   setListPage(listID, currentPage);
   load_next_item_page(listID, currentPage);
 
@@ -137,6 +142,7 @@ function handling_previous_list(element) {
   if (item_id !== PREVIOUS_BUTTON_LIST_PAGE) return false;
 
   const listID = element.getAttribute("GS-current-id");
+  const numberOfPages = element.getAttribute(GS_NUMBER_OF_PAGES);
   if (!listID) return false;
 
   let currentPage = getListPage(listID);
@@ -144,6 +150,9 @@ function handling_previous_list(element) {
     return false;
   }
   currentPage -= 1;
+  if (typeof numberOfPages === "number" && currentPage > numberOfPages) {
+    currentPage = 1;
+  }
   setListPage(listID, currentPage);
   load_next_item_page(listID, currentPage);
 
