@@ -23,15 +23,16 @@
 <div id="collections-items-list-row" class="col-8 m-0 p-0 h-100 overflow-hidden">
     <div class="card h-100 border-end-0 rounded-0 overflow-hidden">
         <div class="card-header d-flex flex-row flex-start align-items-center user-select-none">
-            <div class="btn py-1 px-1"
+            <div 
+                <% const classContent="btn py-1 px-1"; %>
                 <% if (isEditing) { %>
+                    class="<%= classContent %>"
                     <% const endpoint = `/collections/lists/${listID}/item/${itemID}`; %>
                     hx-get="<%= endpoint %>"
                     hx-push-url="false"
                 <% } else { %>
-                    <% const endpoint = `/collections/lists/${listID}`; %>
-                    hx-get="<%= endpoint %>?onlyItems=true"
-                    hx-push-url="<%= endpoint %>"
+                  class="<%= classContent %> button-go-back-to-list not-from-item-go-back"
+                  gs-current-id="<%= listID %>"
                 <% } %>
                 hx-target="#collections-items-list-row"
                 hx-swap="outerHTML"

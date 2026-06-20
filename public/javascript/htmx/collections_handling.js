@@ -205,7 +205,8 @@ function handling_go_back_to_list(element) {
   const list_id = element.getAttribute(GS_CURRENT_ID);
   if (typeof list_id !== "string" || list_id.length === 0) return false;
 
-  load_list(list_id, ITEM_BLOCK_ID);
+  const isItem = !element.classList.contains("not-from-item-go-back");
+  load_list(list_id, isItem ? ITEM_BLOCK_ID : LIST_ITEMS_BLOCK_ID);
 
   return true;
 }
