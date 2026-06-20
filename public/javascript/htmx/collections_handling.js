@@ -1,12 +1,18 @@
 import htmx from "htmx.org";
 
+import {
+  LIST_ITEMS_BLOCK_ID,
+  ITEM_BLOCK_ID,
+  getListPage,
+  setListPage,
+  load_list,
+} from "./collections_handling_common";
+
 const BUTTON_LIST_SRC_STR = "button-collection-list";
 const BUTTON_LIST_ID_STARTSWITH = "button-list-";
 const BUTTON_LIST_COLLECTION_CURRENT_PAGE_STARTSWITH =
   "button-collection-current-page-";
 const BUTTON_GO_BACK_TO_LIST = "button-go-back-to-list";
-const LIST_ITEMS_BLOCK_ID = "#collections-items-list-row";
-const ITEM_BLOCK_ID = "#item-detail-card";
 
 const BUTTON_ITEM_FROM_LIST_STR = "button-item-from-list";
 const BUTTON_ITEM_FROM_LIST_STARTSWITH = "item-from-list-id-";
@@ -16,21 +22,6 @@ const PREVIOUS_BUTTON_LIST_PAGE = "button-previous-list-page";
 const NEXT_BUTTON_LIST_PAGE = "button-next-list-page";
 const GS_NUMBER_OF_PAGES = "GS-number-of-pages";
 const GS_CURRENT_ID = "GS-current-id";
-
-function getListPage(listID) {
-  let currentPage = parseInt(
-    sessionStorage.getItem(`collection-list-${listID}-page`),
-  );
-  if (!currentPage) {
-    currentPage = 1;
-  }
-  return currentPage;
-}
-
-function setListPage(listID, pageNumber) {
-  if (!listID || !pageNumber) return;
-  sessionStorage.setItem(`collection-list-${listID}-page`, pageNumber);
-}
 
 function get_id_from_class(element, id_starts_with) {
   if (!element || !id_starts_with) return;
@@ -64,20 +55,6 @@ function load_collection(targetCollectionID, page_id) {
     target: "#collections-lists-global-row",
     swap: "outerHTML",
     push: "true",
-    headers,
-  });
-}
-
-function load_list(listID, blockID = LIST_ITEMS_BLOCK_ID) {
-  const listPageID = getListPage(listID);
-  let headers = {
-    "GS-currentItemsPage": listPageID,
-  };
-
-  htmx.ajax("GET", `/collections/lists/${listID}?onlyItems=true`, {
-    target: blockID,
-    swap: "outerHTML",
-    push: true,
     headers,
   });
 }

@@ -1,3 +1,9 @@
+import {
+  setListPage,
+  load_list,
+  LIST_ITEMS_BLOCK_ID,
+} from "./collections_handling_common";
+
 function getListIDFromLocation() {
   const currentLocation = window.location.pathname;
   const valueRegex = /^\/collections\/lists\/([0-9]+)$/;
@@ -34,18 +40,8 @@ function submitEvent(searchInput) {
     return console.log(e.message);
   }
 
-  htmx
-    .ajax("GET", `/collections/lists/${listID}?onlyItems=true`, {
-      target: collectionsItemsList,
-      swap: "outerHTML",
-      headers: {
-        "GS-searchTerm": searchTerm,
-      },
-    })
-    .then(() => {})
-    .catch((_) => {
-      console.error("Oups: something went wrong!");
-    });
+  setListPage(listID, 1);
+  load_list(listID, LIST_ITEMS_BLOCK_ID, searchTerm);
 }
 
 document.body.addEventListener("submit", function (event) {
