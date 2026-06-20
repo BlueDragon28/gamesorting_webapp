@@ -51,27 +51,31 @@ function load_collection(targetCollectionID, page_id) {
     headers["GS-currentPage"] = page_id;
     headers["GS-currentItemsPage"] = listPageID;
   }
-  htmx.ajax("GET", `/collections/lists/${id}`, {
-    target: "#collections-lists-global-row",
-    swap: "outerHTML",
-    push: "true",
-    headers,
-  });
+  htmx
+    .ajax("GET", `/collections/lists/${id}`, {
+      target: "#collections-lists-global-row",
+      swap: "outerHTML",
+      push: "true",
+      headers,
+    })
+    .then(() => history.pushState({}, null, `/collections/lists/${id}`));
 }
 
 function load_item(targetItemID, baseUrl) {
   if (!targetItemID || !baseUrl) return;
   console.log("item: ", targetItemID);
   console.log("baseUrl", baseUrl);
-  htmx.ajax("GET", `${baseUrl}/item/${targetItemID}`, {
-    target: LIST_ITEMS_BLOCK_ID,
-    swap: "outerHTML",
-    push: "true",
-    headers: {
-      "GS-currentItemsPage": "0",
-      "GS-searchTerm": "",
-    },
-  });
+  htmx
+    .ajax("GET", `${baseUrl}/item/${targetItemID}`, {
+      target: LIST_ITEMS_BLOCK_ID,
+      swap: "outerHTML",
+      push: "true",
+      headers: {
+        "GS-currentItemsPage": "0",
+        "GS-searchTerm": "",
+      },
+    })
+    .then(() => history.pushState({}, null, `${baseUrl}/item/${targetItemID}`));
 }
 
 function load_next_item_page(listID, pageNumber) {

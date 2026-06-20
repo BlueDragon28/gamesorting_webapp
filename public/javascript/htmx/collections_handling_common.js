@@ -30,12 +30,14 @@ function load_list(
     "GS-searchTerm": searchTerm,
   };
 
-  htmx.ajax("GET", `/collections/lists/${listID}?onlyItems=true`, {
-    target: blockID,
-    swap: "outerHTML",
-    push: true,
-    headers,
-  });
+  htmx
+    .ajax("GET", `/collections/lists/${listID}?onlyItems=true`, {
+      target: blockID,
+      swap: "outerHTML",
+      push: true,
+      headers,
+    })
+    .then(() => history.pushState({}, null, `/collections/lists/${listID}`));
 }
 
 export {
