@@ -140,12 +140,12 @@ function handling_next_list(element) {
   if (item_id !== NEXT_BUTTON_LIST_PAGE) return false;
 
   const listID = element.getAttribute(GS_CURRENT_ID);
-  const numberOfPages = element.getAttribute(GS_NUMBER_OF_PAGES);
+  let numberOfPages = parseInt(element.getAttribute(GS_NUMBER_OF_PAGES)) ?? 1;
   if (!listID) return false;
 
-  let currentPage = getListPage(listID);
+  let currentPage = parseInt(getListPage(listID)) ?? 1;
   currentPage += 1;
-  if (typeof numberOfPages === "number" && currentPage > numberOfPages) {
+  if (currentPage > numberOfPages) {
     currentPage = 1;
   }
   setListPage(listID, currentPage);

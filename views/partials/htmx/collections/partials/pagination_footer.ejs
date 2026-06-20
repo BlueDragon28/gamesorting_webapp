@@ -35,6 +35,9 @@
             <% if (typeof currentListID === "string") { %>
               GS-current-id="<%= currentListID %>"
             <% } %>
+            <% if (typeof pagination === "object") { %>
+              GS-number-of-pages="<%= pagination.numberOfPages %>"
+            <% } %>
             class="btn p-0 m-0 border-0"
             <% if (typeof nextHTMX === "string") { %>
                 <%- nextHTMX %>
