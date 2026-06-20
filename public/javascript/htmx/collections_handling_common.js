@@ -18,8 +18,13 @@ function setListPage(listID, pageNumber) {
   sessionStorage.setItem(`collection-list-${listID}-page`, pageNumber);
 }
 
-function load_list(listID, blockID = LIST_ITEMS_BLOCK_ID, searchTerm = "") {
-  const listPageID = getListPage(listID);
+function load_list(
+  listID,
+  blockID = LIST_ITEMS_BLOCK_ID,
+  searchTerm = "",
+  pageNumber = null,
+) {
+  const listPageID = pageNumber ?? getListPage(listID);
   let headers = {
     "GS-currentItemsPage": listPageID,
     "GS-searchTerm": searchTerm,

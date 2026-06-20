@@ -76,17 +76,7 @@ function load_item(targetItemID, baseUrl) {
 
 function load_next_item_page(listID, pageNumber) {
   if (!listID || !pageNumber) return;
-
-  console.log("pageNumber", pageNumber);
-
-  htmx.ajax("GET", `/collections/lists/${listID}?onlyItems=true`, {
-    target: LIST_ITEMS_BLOCK_ID,
-    swap: "outerHTML",
-    headers: {
-      "GS-currentItemsPage": pageNumber,
-      "GS-searchTerm": "",
-    },
-  });
+  load_list(listID, LIST_ITEMS_BLOCK_ID, "", pageNumber);
 }
 
 function handling_open_list(element) {
