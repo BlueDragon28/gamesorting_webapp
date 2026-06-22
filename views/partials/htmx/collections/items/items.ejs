@@ -23,6 +23,9 @@ const itemSearchTerm = typeof searchTerm === "string" ? searchTerm : undefined;
                       <div class="starability-result starsSize" data-rating="<%= item.rating%>">Rated: <%= item.rating %> star<%= item.rating > 1 ? 's' : '' %></div>
                       <% } %>
                     </div>
+                    <% for (let customData of item.customData) { %>
+                      <div><%= customData.value %></div>
+                    <% } %>
                     <div>Hello</div>
                 </button>
             <% } %>

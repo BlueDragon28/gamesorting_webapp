@@ -16,13 +16,26 @@ function toJSON(json) {
   });
 }
 
+class OnListItem {
+  static NO = "no";
+  static ON_TITLE = "on-title";
+  static UNDER_ITEM = "under-item";
+
+  static isValid(onListItem) {
+    return [OnListItem.NO, OnListItem.ON_TITLE, OnListItem.UNDER_ITEM].includes(
+      onListItem,
+    );
+  }
+}
+
 class ListColumnType {
   id;
   name;
   type;
   parentList;
+  onListItem;
 
-  constructor(name, type, parentList) {
+  constructor(name, type, parentList, onListItem = "no") {
     if (name && typeof name === "string") {
       this.name = name;
     }
@@ -33,6 +46,12 @@ class ListColumnType {
 
     if (parentList && parentList instanceof List) {
       this.parentList = parentList;
+    }
+
+    if (onListItem && OnListItem.isValid(onListItem)) {
+      this.onListItem = onListItem;
+    } else {
+      this.onListItem = "no";
     }
   }
 
@@ -51,7 +70,9 @@ class ListColumnType {
       typeof this.type?.type !== "string" ||
       !this.parentList ||
       (!this.parentList) instanceof List ||
-      !this.parentList.isValid()
+      !this.parentList.isValid() ||
+      !this.onListItem ||
+      !OnListItem.isValid(this.onListItem)
     ) {
       return false;
     }
@@ -120,6 +141,7 @@ class ListColumnType {
       name: this.name,
       type: this.type,
       parentListID: this.parentList.id,
+      onListItem: this.onListItem,
     };
   }
 
@@ -176,9 +198,15 @@ class ListColumnType {
 
   async #_createListColumnType(connection) {
     const queryStatement =
-      "INSERT INTO listColumnsType(ListID, Name, Type) VALUES " + "(?, ?, ?)";
+      "INSERT INTO listColumnsType(ListID, Name, Type, onListItem) VALUES " +
+      "(?, ?, ?, ?)";
 
-    const queryArgs = [this.parentList.id, this.name, toJSON(this.type)];
+    const queryArgs = [
+      this.parentList.id,
+      this.name,
+      toJSON(this.type),
+      this.onListItem,
+    ];
 
     try {
       const queryResult = await connection.query(queryStatement, queryArgs);
@@ -204,9 +232,10 @@ class ListColumnType {
 
   async #_updateListColumnType(connection) {
     let queryStatement =
-      "UPDATE listColumnsType SET Name = ? " + "WHERE ListColumnTypeID = ?";
+      "UPDATE listColumnsType SET Name = ?, onListItem = ? " +
+      "WHERE ListColumnTypeID = ?";
 
-    const queryArgs = [this.name, this.id];
+    const queryArgs = [this.name, this.onListItem, this.id];
 
     try {
       const result = await connection.query(queryStatement, queryArgs);
@@ -230,7 +259,7 @@ class ListColumnType {
       connection,
       async function (connection) {
         const queryStatement =
-          "SELECT ListID, ListColumnTypeID, Name, Type " +
+          "SELECT ListID, ListColumnTypeID, Name, Type, onListItem " +
           "FROM listColumnsType WHERE ListColumnTypeID = ?";
 
         const queryArgs = [id];
@@ -254,6 +283,7 @@ class ListColumnType {
             queryResult[0].Name,
             queryResult[0].Type,
             foundList,
+            queryResult[0].onListItem,
           );
           foundColumnType.id = queryResult[0].ListColumnTypeID;
 
@@ -286,7 +316,7 @@ class ListColumnType {
       connection,
       async function (connection) {
         const queryStatement =
-          "SELECT ListColumnTypeID, Name, Type FROM listColumnsType WHERE Name = ? AND ListID = ?";
+          "SELECT ListColumnTypeID, Name, Type, onListItem FROM listColumnsType WHERE Name = ? AND ListID = ?";
 
         const queryArgs = [name, list.id];
 
@@ -301,6 +331,7 @@ class ListColumnType {
             queryResult[0].Name,
             queryResult[0].Type,
             list,
+            queryResult[0].onListItem,
           );
           foundColumnType.id = queryResult[0].ListColumnTypeID;
 
@@ -327,7 +358,7 @@ class ListColumnType {
       connection,
       async function (connection) {
         const queryStatement =
-          "SELECT ListColumnTypeID, Name, Type FROM listColumnsType WHERE ListID = ?;";
+          "SELECT ListColumnTypeID, Name, Type, onListItem FROM listColumnsType WHERE ListID = ?;";
 
         const queryArgs = [list.id];
 
@@ -356,7 +387,7 @@ class ListColumnType {
       connection,
       async function (connection) {
         const queryStatement =
-          "SELECT l.ListColumnTypeID AS ListColumnTypeID, l.Name AS Name, l.Type AS Type " +
+          "SELECT l.ListColumnTypeID AS ListColumnTypeID, l.Name AS Name, l.Type AS Type, l.onListItem AS onListItem " +
           "FROM listColumnsType l " +
           "INNER JOIN customRowsItems USING (ListColumnTypeID) " +
           "WHERE CustomRowItemsID = ?";
@@ -494,7 +525,12 @@ class ListColumnType {
     const columnTypeArray = [];
 
     for (let item of columnsType) {
-      const columnType = new ListColumnType(item.Name, item.Type, list);
+      const columnType = new ListColumnType(
+        item.Name,
+        item.Type,
+        list,
+        item.onListItem,
+      );
       columnType.id = item.ListColumnTypeID;
 
       if (columnType.isValid()) {
@@ -508,4 +544,5 @@ class ListColumnType {
 
 module.exports = {
   ListColumnType,
+  OnListItem,
 };

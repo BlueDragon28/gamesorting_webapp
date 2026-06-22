@@ -132,7 +132,7 @@ class Item {
       typeof this.name !== "string" ||
       !this.name.length ||
       !this.parentList ||
-      !this.parentList instanceof List ||
+      (!this.parentList) instanceof List ||
       !this.parentList.isValid()
     ) {
       return false;
@@ -186,7 +186,7 @@ class Item {
 
     return await existingOrNewConnection(
       connection,
-      this.#_isDuplicate.bind(this)
+      this.#_isDuplicate.bind(this),
     );
   }
 
@@ -229,7 +229,7 @@ class Item {
   async #createItem(connection) {
     return await existingOrNewConnection(
       connection,
-      this.#_createItem.bind(this)
+      this.#_createItem.bind(this),
     );
   }
 
@@ -291,7 +291,7 @@ class Item {
     } catch (error) {
       console.log(error);
       throw new SqlError(
-        `Failed to insert item custom columns: ${error.message}`
+        `Failed to insert item custom columns: ${error.message}`,
       );
     }
   }
@@ -299,7 +299,7 @@ class Item {
   async #updateItem(connection) {
     return await existingOrNewConnection(
       connection,
-      this.#_updateItem.bind(this)
+      this.#_updateItem.bind(this),
     );
   }
 
@@ -342,7 +342,7 @@ class Item {
       return queryResult.count > 0;
     } catch (error) {
       throw new SqlError(
-        `Failed to check for item duplicate: ${error.message}`
+        `Failed to check for item duplicate: ${error.message}`,
       );
     }
   }
@@ -365,10 +365,10 @@ class Item {
           return queryResult[0].data;
         } catch (error) {
           throw new SqlError(
-            `Failed to find item custom columns: ${error.message}`
+            `Failed to find item custom columns: ${error.message}`,
           );
         }
-      }
+      },
     );
   }
 
@@ -399,7 +399,7 @@ class Item {
 
           const foundList = await List.findByID(
             queryResult[0].ListID,
-            connection
+            connection,
           );
           if (!foundList.isValid()) {
             throw new Error("Failed to retrieve parent list");
@@ -408,7 +408,7 @@ class Item {
           const foundItem = new Item(
             queryResult[0].Name,
             queryResult[0].URL,
-            foundList
+            foundList,
           );
           foundItem.id = queryResult[0].ItemID;
           foundItem.rating = queryResult[0].Rating;
@@ -419,13 +419,13 @@ class Item {
 
           const foundCustomData = await CustomRowsItems.findFromItem(
             foundItem.id,
-            connection
+            connection,
           );
           foundItem.customData = foundCustomData;
 
           const foundItemCustomCols = await Item._findItemCustomCols(
             id,
-            connection
+            connection,
           );
           foundItem.itemCustomCols = foundItemCustomCols;
 
@@ -433,7 +433,7 @@ class Item {
         } catch (error) {
           throw new SqlError(`Failed to get item from ID: ${error.message}`);
         }
-      }
+      },
     );
   }
 
@@ -442,11 +442,11 @@ class Item {
     pageNumber = 0,
     listSorting = null,
     connection,
-    searchOptions = null
+    searchOptions = null,
   ) {
     if (
       !list ||
-      !list instanceof List ||
+      (!list) instanceof List ||
       !list.isValid() ||
       typeof pageNumber !== "number" ||
       pageNumber < 0
@@ -467,7 +467,7 @@ class Item {
           list,
           pageNumber,
           connection,
-          searchOptions
+          searchOptions,
         );
         const validPageNumber = isValidPageNumber ? pageNumber : 1;
 
@@ -476,7 +476,7 @@ class Item {
           numberOfItems,
           foundListSorting instanceof ListSorting
             ? foundListSorting.reverseOrder
-            : false
+            : false,
         );
         if (!pagination.isValid) {
           throw new ValueError(400, "Invalid page number");
@@ -495,7 +495,7 @@ class Item {
 
           queryArgs.push(
             Pagination.ITEM_PER_PAGES,
-            Pagination.calcOffset(validPageNumber)
+            Pagination.calcOffset(validPageNumber),
           );
         }
 
@@ -506,11 +506,14 @@ class Item {
             return [[], pagination];
           }
 
-          return [Item.#parseFoundItems(list, queryResult), pagination];
+          return [
+            await Item.#parseFoundItems(list, queryResult, true, connection),
+            pagination,
+          ];
         } catch (error) {
           throw new SqlError(`Failed to get all lists: ${error.message}`);
         }
-      }
+      },
     );
   }
 
@@ -524,7 +527,7 @@ class Item {
     if (
       !trimmedName.length ||
       !list ||
-      !list instanceof List ||
+      (!list) instanceof List ||
       !list.isValid()
     ) {
       return null;
@@ -550,13 +553,13 @@ class Item {
 
         const foundCustomData = await CustomRowsItems.findFromItem(
           item.id,
-          connection
+          connection,
         );
         item.customData = foundCustomData;
 
         const foundItemCustomCols = await Item._findItemCustomCols(
           item.id,
-          connection
+          connection,
         );
         item.itemCustomCols = foundItemCustomCols;
 
@@ -589,7 +592,7 @@ class Item {
         } catch (error) {
           throw new SqlError(`Failed to delete list ${id}: ${error.message}`);
         }
-      }
+      },
     );
   }
 
@@ -617,10 +620,10 @@ class Item {
           return queryResult[0].count > 0;
         } catch (error) {
           throw new SqlError(
-            `Failed to check if user is allowed to view this item`
+            `Failed to check if user is allowed to view this item`,
           );
         }
-      }
+      },
     );
   }
 
@@ -647,10 +650,10 @@ class Item {
           return queryResult.count;
         } catch (error) {
           throw new SqlError(
-            `Failed to query number of items in lists: ${error.message}`
+            `Failed to query number of items in lists: ${error.message}`,
           );
         }
-      }
+      },
     );
   }
 
@@ -678,10 +681,10 @@ class Item {
           return queryResult.count;
         } catch (error) {
           throw new SqlError(
-            `Failed to query items count from user: ${error.message}`
+            `Failed to query items count from user: ${error.message}`,
           );
         }
-      }
+      },
     );
   }
 
@@ -689,7 +692,7 @@ class Item {
     list,
     pageNumber,
     connection,
-    searchOptions = null
+    searchOptions = null,
   ) {
     if (!list.isValid()) {
       throw new ValueError(400, "Invalid list");
@@ -701,13 +704,18 @@ class Item {
 
     const itemCount = await Item.getCount(list, connection, searchOptions);
     const numberOfPages = Math.ceil(
-      Number(itemCount) / Pagination.ITEM_PER_PAGES
+      Number(itemCount) / Pagination.ITEM_PER_PAGES,
     );
 
     return [pageNumber <= numberOfPages, itemCount];
   }
 
-  static #parseFoundItems(list, items) {
+  static async #parseFoundItems(
+    list,
+    items,
+    fetchCustomsData = null,
+    connection = null,
+  ) {
     const itemsArray = [];
 
     for (let item of items) {
@@ -716,6 +724,13 @@ class Item {
       newItem.rating = item.Rating;
 
       if (newItem.isValid()) {
+        if (fetchCustomsData) {
+          const foundCustomData = await CustomRowsItems.findFromItem(
+            newItem.id,
+            connection,
+          );
+          newItem.customData = foundCustomData;
+        }
         itemsArray.push(newItem);
       }
     }
