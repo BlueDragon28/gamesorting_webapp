@@ -122,10 +122,10 @@ router.get(
         const [lists, pagination] = await List.findFromUser(
           userID,
           connection,
-          currentPage
+          currentPage,
         );
         return [lists, pagination];
-      }
+      },
     );
 
     res.render("partials/htmx/collections/collections_lists_list", {
@@ -133,7 +133,7 @@ router.get(
       selectedID,
       pagination,
     });
-  })
+  }),
 );
 
 router.get(
@@ -147,7 +147,7 @@ router.get(
       currentUrl.indexOf("/collections"),
       currentUrl.indexOf("?") !== -1
         ? currentUrl.indexOf("?")
-        : currentUrl.length
+        : currentUrl.length,
     );
 
     if (returnUrl === "/collections") {
@@ -158,7 +158,7 @@ router.get(
       returnUrl,
       currentPage,
     });
-  })
+  }),
 );
 
 router.get(
@@ -171,8 +171,8 @@ router.get(
       req.query.onlyItems === "true"
         ? true
         : req.get("GS-onlyItems") === "true"
-        ? true
-        : undefined;
+          ? true
+          : undefined;
     const onlyList = req.query.onlyList === "true" ? true : undefined;
     const currentPage = req.currentPageNumber;
     const currentItemsPage = req.currentItemsPageNumber;
@@ -183,7 +183,7 @@ router.get(
         "partials/htmx/collections/collections_lists_selection",
         {
           originalUrl: req.originalUrl,
-        }
+        },
       );
     }
 
@@ -195,7 +195,7 @@ router.get(
           [lists, pagination] = await List.findFromUser(
             userID,
             connection,
-            currentPage
+            currentPage,
           );
         }
 
@@ -204,7 +204,7 @@ router.get(
         let itemsPagination = undefined;
         const foundListSorting = await ListSorting.findByList(
           selectedList,
-          connection
+          connection,
         );
 
         if (selectedList.parentCollection.userID == userID) {
@@ -218,7 +218,7 @@ router.get(
                 exactMatch: false,
                 regex: false,
                 text: searchTerm,
-              }
+              },
             );
           }
         } else {
@@ -230,7 +230,7 @@ router.get(
     const questionMarkPost = req.originalUrl.indexOf("?");
     const originalUrl = req.originalUrl.substring(
       0,
-      questionMarkPost >= 0 ? questionMarkPost : req.originalUrl.length
+      questionMarkPost >= 0 ? questionMarkPost : req.originalUrl.length,
     );
 
     res.render("partials/htmx/collections/collections_lists_selection", {
@@ -245,7 +245,7 @@ router.get(
       searchTerm,
       listSorting,
     });
-  })
+  }),
 );
 
 router.get(
@@ -267,7 +267,7 @@ router.get(
         }
 
         return [null, foundList];
-      }
+      },
     );
 
     if (errorMessage) {
@@ -287,7 +287,7 @@ router.get(
       inputValue: `${list.parentCollection.name}/${list.name}`,
       currentPage,
     });
-  })
+  }),
 );
 
 router.get(
@@ -310,7 +310,7 @@ router.get(
         }
 
         return [null, foundList];
-      }
+      },
     );
 
     if (!errorMessage) {
@@ -328,7 +328,7 @@ router.get(
         .status(204)
         .send();
     }
-  })
+  }),
 );
 
 router.get(
@@ -349,10 +349,10 @@ router.get(
 
         const listColumnsType = await ListColumnType.findFromList(
           foundList,
-          connection
+          connection,
         );
         return [null, listColumnsType];
-      }
+      },
     );
 
     if (errorMessage) {
@@ -369,7 +369,7 @@ router.get(
       listID,
       listColumnsType,
     });
-  })
+  }),
 );
 
 router.get(
@@ -386,7 +386,7 @@ router.get(
     const questionMarkPos = req.originalUrl.indexOf("?");
     const originalUrl = req.originalUrl.substring(
       0,
-      questionMarkPos >= 0 ? questionMarkPos : req.originalUrl.length
+      questionMarkPos >= 0 ? questionMarkPos : req.originalUrl.length,
     );
 
     if (!req.htmx.isHTMX || (req.htmx.isHTMX && req.htmx.isBoosted)) {
@@ -395,7 +395,7 @@ router.get(
         {
           loadingPage: true,
           originalUrl,
-        }
+        },
       );
     }
 
@@ -408,7 +408,7 @@ router.get(
 
         const listColumnsType = await ListColumnType.findFromList(
           selectedList,
-          connection
+          connection,
         );
 
         let lists = null;
@@ -440,9 +440,9 @@ router.get(
         listColumnsType,
         listID,
         pagination,
-      }
+      },
     );
-  })
+  }),
 );
 
 router.get(
@@ -468,7 +468,7 @@ router.get(
         .status(204)
         .send();
     }
-  })
+  }),
 );
 
 router.get(
@@ -488,7 +488,7 @@ router.get(
           listColumnType,
           selectedID: listID,
           existingName: listColumnType.name,
-        }
+        },
       );
     } else {
       req.flash("error", errorMessage);
@@ -499,7 +499,7 @@ router.get(
         .status(204)
         .send();
     }
-  })
+  }),
 );
 
 router.get("/lists/:listID/custom-columns/new-form", function (req, res) {
@@ -513,7 +513,7 @@ router.get("/lists/:listID/custom-columns/new-form", function (req, res) {
       isErrors: false,
       errorMessages: {},
       existingFieldsValues: {},
-    }
+    },
   );
 });
 
@@ -530,7 +530,7 @@ router.get(
         "partials/htmx/modals/modalImportCustomColumnsFrom.ejs",
         {
           listID,
-        }
+        },
       );
     }
 
@@ -558,7 +558,7 @@ router.get(
           foundUser,
           searchTerm,
           foundList,
-          connection
+          connection,
         );
 
         if (!Array.isArray(searchedLists)) {
@@ -566,7 +566,7 @@ router.get(
         }
 
         return [null, foundList, searchedLists];
-      }
+      },
     );
 
     return res.render(
@@ -576,9 +576,9 @@ router.get(
         searchedLists,
         isError: error != undefined,
         errorMessage: error,
-      }
+      },
     );
-  })
+  }),
 );
 
 router.delete(
@@ -605,7 +605,7 @@ router.delete(
         }
 
         return [null, foundList, parentCollection];
-      }
+      },
     );
 
     if (errorMessage) {
@@ -620,7 +620,7 @@ router.delete(
 
     req.flash(
       "success",
-      `${collection.name}/${list.name} successfully deleted`
+      `${collection.name}/${list.name} successfully deleted`,
     );
 
     if (selectedID === list.id.toString()) {
@@ -638,7 +638,7 @@ router.delete(
       })
       .status(204)
       .send();
-  })
+  }),
 );
 
 router.get(
@@ -656,7 +656,7 @@ router.get(
         await existingOrNewConnection(null, async function (connection) {
           const [lists, pagination] = await List.findFromUser(
             userID,
-            connection
+            connection,
           );
 
           const selectedList = await List.findByID(listID, connection);
@@ -671,7 +671,7 @@ router.get(
 
           const listColumnsType = await ListColumnType.findFromList(
             currentItem.parentList,
-            connection
+            connection,
           );
 
           return [lists, currentItem, listColumnsType, pagination];
@@ -697,11 +697,11 @@ router.get(
 
           const listColumnsType = await ListColumnType.findFromList(
             currentItem.parentList,
-            connection
+            connection,
           );
 
           return [currentItem, listColumnsType];
-        }
+        },
       );
 
       return res.render("partials/htmx/collections/items/item", {
@@ -716,7 +716,7 @@ router.get(
         originalUrl: req.originalUrl,
       });
     }
-  })
+  }),
 );
 
 router.get(
@@ -744,7 +744,7 @@ router.get(
         }
 
         return [null, foundItem];
-      }
+      },
     );
 
     if (!errorMessage) {
@@ -761,7 +761,7 @@ router.get(
         .status(204)
         .send();
     }
-  })
+  }),
 );
 
 router.get(
@@ -781,7 +781,7 @@ router.get(
 
         const listColumnsType = await ListColumnType.findFromList(
           foundList,
-          connection
+          connection,
         );
 
         const foundItem = await Item.findByID(itemID, connection);
@@ -819,7 +819,7 @@ router.get(
 
     for (const columnType of listColumnsType) {
       const customData = item.customData.filter(
-        (data) => data.columnTypeID === columnType.id
+        (data) => data.columnTypeID === columnType.id,
       )[0];
 
       if (customData) {
@@ -839,7 +839,7 @@ router.get(
       editing: true,
       existingValues,
     });
-  })
+  }),
 );
 
 router.get(
@@ -882,7 +882,7 @@ router.get(
           foundUser,
           searchTerm,
           foundList,
-          connection
+          connection,
         );
 
         if (!Array.isArray(searchedLists)) {
@@ -890,7 +890,7 @@ router.get(
         }
 
         return [null, searchedLists];
-      }
+      },
     );
 
     res.render("partials/htmx/modals/moveItemToModalList.ejs", {
@@ -900,7 +900,7 @@ router.get(
       isError: typeof error === "string",
       errorMessage: error,
     });
-  })
+  }),
 );
 
 router.post(
@@ -917,7 +917,7 @@ router.post(
         await validateAndCreateCollectionsList(
           userID,
           collectionName,
-          listName
+          listName,
         );
       errorMessage = validationErrorMessage;
 
@@ -936,7 +936,7 @@ router.post(
       justValidation: true,
       inputValue: collectionListName,
     });
-  })
+  }),
 );
 
 router.post(
@@ -955,17 +955,17 @@ router.post(
       name,
       url,
       rating,
-      errorMessages
+      errorMessages,
     );
 
     const validatedCustomColumns = validateCustomColumns(
       customColumns,
-      errorMessages
+      errorMessages,
     );
 
     const validatedItemCustomCols = validateItemCustomCols(
       itemCustomCols,
-      errorMessages
+      errorMessages,
     );
 
     const [returnError, listColumnsType, list] = await existingOrNewConnection(
@@ -980,12 +980,12 @@ router.post(
 
         const listColumnsType = await ListColumnType.findFromList(
           foundList,
-          connection
+          connection,
         );
 
         const canCreateItemErrorMessage = await checkIfUserCanCreateAnItem(
           userID,
-          connection
+          connection,
         );
 
         if (canCreateItemErrorMessage) {
@@ -1000,7 +1000,7 @@ router.post(
         const isDuplicate = await isItemDuplicate(
           validatedName.Name,
           foundList,
-          connection
+          connection,
         );
 
         if (isDuplicate) {
@@ -1015,7 +1015,7 @@ router.post(
           validatedCustomColumns,
           validatedItemCustomCols,
           foundList,
-          connection
+          connection,
         );
 
         if (errorMessage) {
@@ -1024,7 +1024,7 @@ router.post(
         }
 
         return [null, listColumnsType, foundList];
-      }
+      },
     );
 
     if (returnError) {
@@ -1059,7 +1059,7 @@ router.post(
         })
         .send();
     }
-  })
+  }),
 );
 
 router.post(
@@ -1080,7 +1080,7 @@ router.post(
 
         let foundListSorting = await ListSorting.findByList(
           foundList,
-          connection
+          connection,
         );
         if (!foundListSorting) {
           foundListSorting = new ListSorting("no-order", foundList, true);
@@ -1090,7 +1090,7 @@ router.post(
         await foundListSorting.save(connection);
 
         return [null];
-      }
+      },
     );
 
     if (errorMessage) {
@@ -1109,7 +1109,7 @@ router.post(
       })
       .status(204)
       .send();
-  })
+  }),
 );
 
 router.post(
@@ -1131,7 +1131,7 @@ router.post(
 
         let foundListSorting = await ListSorting.findByList(
           foundList,
-          connection
+          connection,
         );
         if (!foundListSorting) {
           foundListSorting = new ListSorting(listSortingType, foundList, false);
@@ -1140,7 +1140,7 @@ router.post(
         }
         await foundListSorting.save(connection);
         return [null];
-      }
+      },
     );
 
     if (errorMessage) {
@@ -1159,7 +1159,7 @@ router.post(
       })
       .status(204)
       .send();
-  })
+  }),
 );
 
 router.put(
@@ -1179,7 +1179,7 @@ router.put(
           userID,
           listID,
           collectionName,
-          listName
+          listName,
         );
       errorMessage = validationErrorMessage;
       foundList = list;
@@ -1205,7 +1205,7 @@ router.put(
       editing: true,
       list: foundList,
     });
-  })
+  }),
 );
 
 router.post(
@@ -1225,7 +1225,7 @@ router.post(
           min,
           max,
         },
-        errorMessages
+        errorMessages,
       );
 
     const [errorMessage, listColumnsType] = await existingOrNewConnection(
@@ -1238,7 +1238,7 @@ router.post(
 
         errorMessage = await checkIfUserCanCreateMoreCustomColumns(
           userID,
-          connection
+          connection,
         );
 
         if (errorMessage) {
@@ -1247,7 +1247,7 @@ router.post(
 
         const listColumnsType = await ListColumnType.findFromList(
           selectedList,
-          connection
+          connection,
         );
 
         if (Object.keys(errorMessages).length) {
@@ -1257,7 +1257,7 @@ router.post(
         const isDuplicate = await isColumnDuplicated(
           validatedName,
           selectedList,
-          connection
+          connection,
         );
 
         if (isDuplicate) {
@@ -1271,7 +1271,7 @@ router.post(
           validatedMin,
           validatedMax,
           selectedList,
-          connection
+          connection,
         );
 
         if (errorMessage) {
@@ -1279,7 +1279,7 @@ router.post(
         }
 
         return [null, listColumnsType];
-      }
+      },
     );
 
     if (errorMessage) {
@@ -1311,9 +1311,9 @@ router.post(
         },
         errorMessages,
         hasErrors: Object.keys(errorMessages).length > 0,
-      }
+      },
     );
-  })
+  }),
 );
 
 router.post(
@@ -1351,7 +1351,7 @@ router.post(
         }
 
         return [null];
-      }
+      },
     );
 
     if (error) {
@@ -1367,7 +1367,7 @@ router.post(
     }
 
     res.status(204).send();
-  })
+  }),
 );
 
 router.delete(
@@ -1382,7 +1382,7 @@ router.delete(
       async function (connection) {
         const listColumnType = await ListColumnType.findByID(
           listColumnTypeID,
-          connection
+          connection,
         );
 
         if (
@@ -1405,12 +1405,12 @@ router.delete(
 
         await deleteCustomDatasFromListColumnType(
           listColumnType.id,
-          connection
+          connection,
         );
         await listColumnType.delete(connection);
 
         return [null, listColumnType];
-      }
+      },
     );
 
     if (errorMessage) {
@@ -1429,7 +1429,7 @@ router.delete(
         "HX-Trigger": "update-list-columns-type-list",
       })
       .send();
-  })
+  }),
 );
 
 router.put(
@@ -1442,7 +1442,7 @@ router.put(
 
     let [validationError, { "Column Name": validatedName }] = validateText(
       "Column Name",
-      columnTypeName
+      columnTypeName,
     );
 
     const [errorMessage, listColumnType] = await existingOrNewConnection(
@@ -1453,7 +1453,7 @@ router.put(
             userID,
             listID,
             listColumnTypeID,
-            connection
+            connection,
           );
 
         if (errorMessage) return [errorMessage];
@@ -1466,7 +1466,7 @@ router.put(
           validatedName,
           foundList,
           connection,
-          listColumnType.id
+          listColumnType.id,
         );
 
         if (isDuplicate) {
@@ -1480,7 +1480,7 @@ router.put(
         }
 
         return [null, listColumnType];
-      }
+      },
     );
 
     if (errorMessage) {
@@ -1502,7 +1502,7 @@ router.put(
           selectedID: listID,
           existingName: columnTypeName,
           nameValidationError: validationError,
-        }
+        },
       );
     } else {
       res
@@ -1518,10 +1518,10 @@ router.put(
             isErrors: false,
             errorMessages: {},
             existingFieldsValues: {},
-          }
+          },
         );
     }
-  })
+  }),
 );
 
 router.post(
@@ -1567,7 +1567,7 @@ router.post(
             moveToListID,
             listID,
             userID,
-            connection
+            connection,
           );
 
           const newItem = await moveItemTo(
@@ -1575,7 +1575,7 @@ router.post(
             moveToList,
             foundItem,
             newColumnsID,
-            connection
+            connection,
           );
 
           if (makeACopy !== "on") {
@@ -1586,7 +1586,7 @@ router.post(
         } catch (error) {
           return [error.message];
         }
-      }
+      },
     );
 
     if (error) {
@@ -1606,7 +1606,7 @@ router.post(
       })
       .status(204)
       .send();
-  })
+  }),
 );
 
 router.put(
@@ -1625,17 +1625,17 @@ router.put(
       name,
       url,
       rating,
-      errorMessages
+      errorMessages,
     );
 
     const validatedCustomColumns = validateCustomColumns(
       customColumns,
-      errorMessages
+      errorMessages,
     );
 
     const validatedItemCustomCols = validateItemCustomCols(
       itemCustomCols,
-      errorMessages
+      errorMessages,
     );
 
     const [returnError, listColumnsType, list, item] =
@@ -1658,7 +1658,7 @@ router.put(
 
         const listColumnsType = await ListColumnType.findFromList(
           foundList,
-          connection
+          connection,
         );
 
         if (Object.keys(errorMessages).length) {
@@ -1669,7 +1669,7 @@ router.put(
           validatedName.Name,
           foundList,
           connection,
-          foundItem.id
+          foundItem.id,
         );
 
         if (isDuplicate) {
@@ -1686,7 +1686,7 @@ router.put(
           listColumnsType,
           foundList,
           foundItem,
-          connection
+          connection,
         );
 
         if (errorMessage) {
@@ -1732,7 +1732,7 @@ router.put(
         })
         .send();
     }
-  })
+  }),
 );
 
 router.delete(
@@ -1746,7 +1746,11 @@ router.delete(
       async function (connection) {
         const foundItem = await Item.findByID(itemID, connection);
 
-        if (!foundItem || !foundItem instanceof Item || !foundItem.isValid()) {
+        if (
+          !foundItem ||
+          (!foundItem) instanceof Item ||
+          !foundItem.isValid()
+        ) {
           return ["Item do not exists"];
         } else if (
           foundItem.parentList.parentCollection.userID.toString() !== userID
@@ -1756,7 +1760,7 @@ router.delete(
 
         await deleteItem(foundItem, connection);
         return [null];
-      }
+      },
     );
 
     if (errorMessage) {
@@ -1775,7 +1779,7 @@ router.delete(
         })
         .send();
     }
-  })
+  }),
 );
 
 router.use(htmxErrorsFlashMessage);
