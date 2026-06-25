@@ -78,6 +78,36 @@ if (typeof existingValues !== "object") {
                                         Delete
                                     </div>
                                 </li>
+                                <li>
+                                    <div class="dropdown-item user-select-none cursor-pointer"
+                                        hx-get="/collections/lists/<%= selectedID %>/custom-columns/edit-form?listColumnsTypeID=<%= columnType.id %>"
+                                        hx-target="#custom-columns-edit-form"
+                                        hx-push-url="false"
+                                        hx-swap="outerHTML"
+                                    >
+                                        Not displayed
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="dropdown-item user-select-none cursor-pointer"
+                                        hx-get="/collections/lists/<%= selectedID %>/custom-columns/edit-form?listColumnsTypeID=<%= columnType.id %>"
+                                        hx-target="#custom-columns-edit-form"
+                                        hx-push-url="false"
+                                        hx-swap="outerHTML"
+                                    >
+                                        On title
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="dropdown-item user-select-none cursor-pointer"
+                                        hx-get="/collections/lists/<%= selectedID %>/custom-columns/edit-form?listColumnsTypeID=<%= columnType.id %>"
+                                        hx-target="#custom-columns-edit-form"
+                                        hx-push-url="false"
+                                        hx-swap="outerHTML"
+                                    >
+                                        Under title
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                     </div>

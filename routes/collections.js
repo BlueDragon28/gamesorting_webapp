@@ -1432,6 +1432,44 @@ router.delete(
   }),
 );
 
+router.post(
+  "/lists/:listID/custom-columns",
+  wrapAsync(async function (req, res) {
+    const userID = req.session.user.id.toString();
+    const { listID } = req.params;
+    const { onList } = req.body;
+    const { listColumnTypeID } = req.query;
+
+    const [errorMessage, validatedOnList] = await existingOrNewConnection(
+      null,
+      async function (connection) {
+        const listColumnType = await ListColumnType.findByID(
+          listColumnTypeID,
+          connection,
+        );
+
+        if (
+          !listColumnType ||
+          !(listColumnType instanceof ListColumnType) ||
+          !listColumnType.isValid()
+        ) {
+          return ["Could not find list column type"];
+        }
+
+        const foundList = listColumnType.parentList;
+        const errorMessage = isListOwned(foundList, userID);
+        if (errorMessage) {
+          return [errorMessage];
+        }
+
+        if (foundList.id.toString() !== listID) {
+          return ["The custom column is not own by this list"];
+        }
+      },
+    );
+  }),
+);
+
 router.put(
   "/lists/:listID/custom-columns",
   wrapAsync(async function (req, res) {
