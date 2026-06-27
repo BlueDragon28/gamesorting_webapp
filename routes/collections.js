@@ -189,46 +189,63 @@ router.get(
       );
     }
 
-    const [lists, items, pagination, itemsPagination, listSorting] =
-      await existingOrNewConnection(null, async function (connection) {
-        let lists = undefined;
-        let pagination = undefined;
-        if (!onlyItems) {
-          [lists, pagination] = await List.findFromUser(
-            userID,
+    const [
+      lists,
+      items,
+      pagination,
+      itemsPagination,
+      listSorting,
+      listColumnsType,
+    ] = await existingOrNewConnection(null, async function (connection) {
+      let lists = undefined;
+      let pagination = undefined;
+      if (!onlyItems) {
+        [lists, pagination] = await List.findFromUser(
+          userID,
+          connection,
+          currentPage,
+        );
+      }
+
+      const selectedList = await List.findByID(listID, connection);
+      let items = [];
+      let itemsPagination = undefined;
+      const foundListSorting = await ListSorting.findByList(
+        selectedList,
+        connection,
+      );
+      const listColumnsType = await ListColumnType.findFromList(
+        selectedList,
+        connection,
+      );
+
+      if (selectedList.parentCollection.userID == userID) {
+        if (!onlyList) {
+          [items, itemsPagination] = await Item.findFromList(
+            selectedList,
+            currentItemsPage,
+            foundListSorting,
             connection,
-            currentPage,
+            {
+              exactMatch: false,
+              regex: false,
+              text: searchTerm,
+            },
           );
         }
+      } else {
+        listID = undefined;
+      }
 
-        const selectedList = await List.findByID(listID, connection);
-        let items = [];
-        let itemsPagination = undefined;
-        const foundListSorting = await ListSorting.findByList(
-          selectedList,
-          connection,
-        );
-
-        if (selectedList.parentCollection.userID == userID) {
-          if (!onlyList) {
-            [items, itemsPagination] = await Item.findFromList(
-              selectedList,
-              currentItemsPage,
-              foundListSorting,
-              connection,
-              {
-                exactMatch: false,
-                regex: false,
-                text: searchTerm,
-              },
-            );
-          }
-        } else {
-          listID = undefined;
-        }
-
-        return [lists, items, pagination, itemsPagination, foundListSorting];
-      });
+      return [
+        lists,
+        items,
+        pagination,
+        itemsPagination,
+        foundListSorting,
+        listColumnsType,
+      ];
+    });
     const questionMarkPost = req.originalUrl.indexOf("?");
     const originalUrl = req.originalUrl.substring(
       0,
@@ -246,6 +263,7 @@ router.get(
       itemsPagination,
       searchTerm,
       listSorting,
+      listColumnsType,
     });
   }),
 );

@@ -1,4 +1,14 @@
 <%
+function getColumnType(columnTypeID) {
+    for (let item of listColumnsType) {
+        if (item.id === columnTypeID) {
+            return item;
+        }
+    }
+}
+%>
+
+<%
 const itemSearchTerm = typeof searchTerm === "string" ? searchTerm : undefined;
 %>
 
@@ -18,7 +28,7 @@ const itemSearchTerm = typeof searchTerm === "string" ? searchTerm : undefined;
                     GS-base-url="<%= baseUrl %>"
                 >
                     <div class="d-flex flex-row align-items-center footer-card-height">
-                      <div class="flex-fill three-dot-text text-start"><%= item.name %></div>
+                      <div class="flex-fill three-dot-text text-start text-dark-emphasis"><%= item.name %><% for (let customData of item.customData) { const columnType = getColumnType(customData.columnTypeID); if (columnType.onListItem === "on-title") {%><span class="text-secondary"> - <%= customData.value %></span><%break;}}%></div>
                       <% if (typeof item.rating === "number") { %>
                       <div class="starability-result starsSize" data-rating="<%= item.rating%>">Rated: <%= item.rating %> star<%= item.rating > 1 ? 's' : '' %></div>
                       <% } %>
