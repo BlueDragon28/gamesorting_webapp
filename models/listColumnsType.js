@@ -88,21 +88,21 @@ class ListColumnType {
     return true;
   }
 
-  async save(connection) {
+  async save(connection, justOnList = false) {
     const isListColumnTypeExisting = await this.exists(connection);
 
     if (!this.isValid(connection) || !bigint.isValid(this.parentList.id)) {
       throw new ValueError(400, "Invalid List Column Type Name");
     }
 
-    if (await this.isDuplicate(connection)) {
+    if (!justOnList && (await this.isDuplicate(connection))) {
       throw new ValueError(400, "List Column Type Name Is Already Used");
     }
 
     if (!isListColumnTypeExisting) {
       await this.#createListColumnType(connection);
     } else {
-      await this.#updateListColumnType(connection);
+      await this.#updateListColumnType(connection, justOnList);
     }
   }
 
@@ -230,12 +230,17 @@ class ListColumnType {
     );
   }
 
-  async #_updateListColumnType(connection) {
+  async #_updateListColumnType(connection, justOnList = false) {
+    const setQueryValue = justOnList
+      ? "onListItem = ?"
+      : "Name = ?, onListItem = ?";
     let queryStatement =
-      "UPDATE listColumnsType SET Name = ?, onListItem = ? " +
+      `UPDATE listColumnsType SET ${setQueryValue} ` +
       "WHERE ListColumnTypeID = ?";
 
-    const queryArgs = [this.name, this.onListItem, this.id];
+    const queryArgs = justOnList
+      ? [this.onListItem, this.id]
+      : [this.name, this.onListItem, this.id];
 
     try {
       const result = await connection.query(queryStatement, queryArgs);
@@ -539,6 +544,32 @@ class ListColumnType {
     }
 
     return columnTypeArray;
+  }
+
+  static async resetOnListItemFromAList(
+    listID,
+    fromOnListItem,
+    toOnListItem,
+    connection,
+  ) {
+    if (!bigint.isValid(listID)) {
+      throw new ValueError(400, "Invalid List");
+    }
+
+    return await existingOrNewConnection(
+      connection,
+      async function (connection) {
+        const queryStatement =
+          "UPDATE listColumnsType SET onListItem = ? WHERE ListID = ? AND onListItem = ?;";
+        const queryArgs = [toOnListItem, listID, fromOnListItem];
+
+        try {
+          await connection.query(queryStatement, queryArgs);
+        } catch (error) {
+          throw new SqlError(`Failed to reset onListItem: ${error.message}`);
+        }
+      },
+    );
   }
 }
 

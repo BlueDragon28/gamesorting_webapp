@@ -27,6 +27,8 @@ const {
   isColumnDuplicated,
   saveCustomColumn,
   checkIfUserCanCreateMoreCustomColumns,
+  validateOnList,
+  updateOnList,
 } = require("../utils/validation/htmx/custom-columns");
 const { getCustomControlType } = require("../utils/ejs/customControlData");
 const {
@@ -1433,14 +1435,25 @@ router.delete(
 );
 
 router.post(
-  "/lists/:listID/custom-columns",
+  "/lists/:listID/custom-columns/update-onlist",
   wrapAsync(async function (req, res) {
     const userID = req.session.user.id.toString();
     const { listID } = req.params;
-    const { onList } = req.body;
-    const { listColumnTypeID } = req.query;
+    const { listColumnTypeID, onList } = req.query;
 
-    const [errorMessage, validatedOnList] = await existingOrNewConnection(
+    const [error, onListValidated] = validateOnList(onList);
+
+    if (error) {
+      req.flash("error", "Invalid value for onList item");
+      return res
+        .set({
+          "HX-Trigger": "new-flash-event",
+        })
+        .status(204)
+        .send();
+    }
+
+    const [errorMessage] = await existingOrNewConnection(
       null,
       async function (connection) {
         const listColumnType = await ListColumnType.findByID(
@@ -1465,8 +1478,29 @@ router.post(
         if (foundList.id.toString() !== listID) {
           return ["The custom column is not own by this list"];
         }
+
+        return [
+          await updateOnList(listColumnType, onListValidated, connection),
+        ];
       },
     );
+
+    if (errorMessage) {
+      req.flash("error", errorMessage);
+      return res
+        .set({
+          "HX-Trigger": "new-flash-event",
+        })
+        .status(204)
+        .send();
+    }
+
+    res
+      .set({
+        "HX-Trigger": "update-list-columns-type-list",
+      })
+      .status(204)
+      .send();
   }),
 );
 

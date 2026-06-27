@@ -49,10 +49,15 @@ if (typeof existingValues !== "object") {
                 <% for (columnType of listColumnsType) { %>
                     <div class="list-group-item d-flex flex-row align-items-center justify-content-between footer-card-height" 
                     >
-                        <div class="user-select-none"><%= columnType.name %> | Type: <%= columnType.type.type %><% 
+                        <div class="user-select-none flex-fill"><%= columnType.name %> | Type: <%= columnType.type.type %><% 
                             if (columnType.type.type === "@Int") { 
                         %>, Min: <%= columnType.type.min %>, Max: <%= columnType.type.max %>
                         <% } %></div>
+                        <% if (columnType.onListItem === "on-title") { %>
+                          <div class="badge text-bg-primary mt-1">Title</div>
+                        <% } else if (columnType.onListItem === "under-item")  {%>
+                          <div class="badge text-bg-primary mt-1">Column</div>
+                        <% } %>
                         <div id="inner-list-columns-type-<%= columnType.id %>" class="dropdown">
                             <button type="button" class="btn p-0 py-1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <%- include("../../../icons/vertical_three_dots.ejs") %>
@@ -80,30 +85,24 @@ if (typeof existingValues !== "object") {
                                 </li>
                                 <li>
                                     <div class="dropdown-item user-select-none cursor-pointer"
-                                        hx-get="/collections/lists/<%= selectedID %>/custom-columns/edit-form?listColumnsTypeID=<%= columnType.id %>"
-                                        hx-target="#custom-columns-edit-form"
+                                        hx-post="/collections/lists/<%= selectedID %>/custom-columns/update-onlist?listColumnTypeID=<%= columnType.id %>&onList=no"
                                         hx-push-url="false"
-                                        hx-swap="outerHTML"
                                     >
                                         Not displayed
                                     </div>
                                 </li>
                                 <li>
                                     <div class="dropdown-item user-select-none cursor-pointer"
-                                        hx-get="/collections/lists/<%= selectedID %>/custom-columns/edit-form?listColumnsTypeID=<%= columnType.id %>"
-                                        hx-target="#custom-columns-edit-form"
+                                        hx-post="/collections/lists/<%= selectedID %>/custom-columns/update-onlist?listColumnTypeID=<%= columnType.id %>&onList=on-title"
                                         hx-push-url="false"
-                                        hx-swap="outerHTML"
                                     >
                                         On title
                                     </div>
                                 </li>
                                 <li>
                                     <div class="dropdown-item user-select-none cursor-pointer"
-                                        hx-get="/collections/lists/<%= selectedID %>/custom-columns/edit-form?listColumnsTypeID=<%= columnType.id %>"
-                                        hx-target="#custom-columns-edit-form"
+                                        hx-post="/collections/lists/<%= selectedID %>/custom-columns/update-onlist?listColumnTypeID=<%= columnType.id %>&onList=under-item"
                                         hx-push-url="false"
-                                        hx-swap="outerHTML"
                                     >
                                         Under title
                                     </div>

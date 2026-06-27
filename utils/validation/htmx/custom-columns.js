@@ -12,6 +12,12 @@ const {
   MAX_NUMBER_OF_CUSTOM_COLUMNS,
 } = require("./maximumLimitsOfElements");
 
+const onListValidation = Joi.string()
+  .sanitize()
+  .trim()
+  .valid("no", "on-title", "under-item")
+  .required();
+
 function validateType(name, value) {
   const schema = Joi.object({
     [name]: Joi.any().valid("@String", "@Int", "@Stars", "@Href").required(),
@@ -63,6 +69,16 @@ function validateCustomColumn(values, errorMessages) {
     validatedMin,
     validatedMax,
   ];
+}
+
+function validateOnList(value) {
+  const schema = Joi.object({
+    onList: onListValidation,
+  }).required();
+  const { error, value: validatedValue } = schema.validate({
+    onList: value,
+  });
+  return [error, validatedValue?.onList];
 }
 
 async function getCustomColumnsCountAndLimit(userID, connection) {
@@ -137,10 +153,33 @@ async function saveCustomColumn(
   return null;
 }
 
+async function updateOnList(listColumnType, newOnListValue, connection) {
+  listColumnType.onListItem = newOnListValue;
+  if (!listColumnType.isValid()) {
+    return "Invalid onListItem value";
+  }
+
+  // reset onListItem field from all ListColumnType object that have the value "on-title" to the value of "no"
+  if (newOnListValue === "on-title") {
+    await ListColumnType.resetOnListItemFromAList(
+      listColumnType.parentList.id,
+      "on-title",
+      "no",
+      connection,
+    );
+  }
+
+  await listColumnType.save(connection, true);
+
+  return null;
+}
+
 module.exports = {
   validateCustomColumn,
   isColumnDuplicated,
   saveCustomColumn,
   checkIfUserCanCreateMoreCustomColumns,
   getCustomColumnsCountAndLimit,
+  validateOnList,
+  updateOnList,
 };
