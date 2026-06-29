@@ -51,6 +51,8 @@ function load_collection(targetCollectionID, page_id) {
     headers["GS-currentPage"] = page_id;
     headers["GS-currentItemsPage"] = listPageID;
   }
+  const searchTerm = sessionStorage.getItem("searchTerm") || "";
+  headers["GS-searchTerm"] = searchTerm;
   htmx
     .ajax("GET", `/collections/lists/${id}`, {
       target: "#collections-lists-global-row",
@@ -177,7 +179,8 @@ function handling_go_back_to_list(element) {
   if (typeof list_id !== "string" || list_id.length === 0) return false;
 
   const isItem = !element.classList.contains("not-from-item-go-back");
-  load_list(list_id, isItem ? ITEM_BLOCK_ID : LIST_ITEMS_BLOCK_ID);
+  const searchTerm = sessionStorage.getItem("searchTerm") || "";
+  load_list(list_id, isItem ? ITEM_BLOCK_ID : LIST_ITEMS_BLOCK_ID, searchTerm);
 
   return true;
 }

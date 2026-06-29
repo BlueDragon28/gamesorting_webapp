@@ -41,6 +41,7 @@ function submitEvent(searchInput) {
   }
 
   setListPage(listID, 1);
+  sessionStorage.setItem("searchTerm", searchTerm);
   load_list(listID, LIST_ITEMS_BLOCK_ID, searchTerm);
 }
 
