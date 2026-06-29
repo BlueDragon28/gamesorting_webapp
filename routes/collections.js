@@ -180,8 +180,6 @@ router.get(
     const currentItemsPage = req.currentItemsPageNumber;
     const searchTerm = req.get("GS-searchTerm") ?? "";
 
-    console.log("searchTerm = ", searchTerm);
-
     if (!req.htmx.isHTMX || req.htmx.isBoosted) {
       return res.render(
         "partials/htmx/collections/collections_lists_selection",
